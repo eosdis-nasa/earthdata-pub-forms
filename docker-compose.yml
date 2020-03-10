@@ -1,0 +1,10 @@
+version: '3'
+services:
+    forms:
+        build: .
+        image: earthdata-pub-forms
+        ports:
+            - "8080:8080"
+        volumes:
+            - ../forms:/app
+        tty: true
