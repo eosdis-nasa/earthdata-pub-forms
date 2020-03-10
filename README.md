@@ -5,7 +5,7 @@ This is the forms code repository for Earthdata Pub.
 ### Table of Contents
 
 - **[Contributing](#contributing)**
-- **[Framework: vue.js](#framework-vue.js)**
+- **[Framework: vue.js](#framework-vuejs)**
 - **[Develop using Docker](#develop-using-docker)**
 - **[Testing with Jest](#testing-with-jest)**
 
