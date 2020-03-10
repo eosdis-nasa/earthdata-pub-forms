@@ -2,11 +2,18 @@
 
 This is the forms code repository for Earthdata Pub.
 
+### Table of Contents
+
+- **[Contributing](#contributing)**
+- **[Framework: vue.js](#framework-vue.js)**
+- **[Develop using Docker](#develop-using-docker)**
+- **[Testing with Jest](#testing-with-jest)**
+
 ## Contributing
 
 The [`CONTRIBUTING.md`](./CONTRIBUTING.md) has instruction for contributing to the Earthata Pub project. Be sure to read that before submitting pull requests.
 
-## Framework
+## Framework: vue.js
 
 Earthdata Pub Forms uses [Vue.js](https://vuejs.org/), the progressive JavaScript framework.
 
@@ -24,7 +31,9 @@ $ docker-compose up
 
 ### Initialize Vue application using Docker
 
-If the vue.js application has not yet been initialized, a Docker container can be used to do so. Follow the directions in `[vue-init.txt](./vue-init.txt)` to initialize an application using a Docker container.
+_(skip this if the vue.js app already exists)_
+
+If the vue.js application has not yet been initialized, a Docker container can be used to do so. Follow the directions in [`vue-init.txt`](./vue-init.txt) to initialize an application using a Docker container.
 
 ### Edits to code
 
@@ -37,6 +46,8 @@ The Docker container can be entered to run npm or vue commands that will persist
 ```bash
 $ docker exec -it forms_forms_1 /bin/bash
 ```
+
+You can run `vue run build` or other commands.
 
 ## Testing with Jest
 
