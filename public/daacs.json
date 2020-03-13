@@ -1,0 +1,64 @@
+{
+    "data": [
+            {
+                    "long_name": "Atmospheric Science Data Center (ASDC)",
+                    "url": "https://eosweb.larc.nasa.gov/",
+                    "short_name": "ASDC"
+            },
+            {
+                    "long_name": "Alaska Satellite Facility (ASF) Distributed Active Archive Center (DAAC)",
+                    "url": "https://www.asf.alaska.edu/?_ga=2.11078268.912458096.1583768373-843631388.1568298089",
+                    "short_name": "ASF DAAC"
+            },
+            {
+                    "long_name": "Crustal Dynamics Data Information System (CDDIS)",
+                    "url": "http://cddis.gsfc.nasa.gov/",
+                    "short_name": "CDDIS"
+            },
+            {
+                    "long_name": "Goddard Earth Sciences Data and Information Services Center (GES DISC)",
+                    "url": "https://disc.gsfc.nasa.gov/",
+                    "short_name": "GES DISC"
+            },
+            {
+                    "long_name": "Global Hydrology Resource Center (GHRC) Distributed Active Archive Center (DAAC)",
+                    "url": "https://ghrc.nsstc.nasa.gov/home/",
+                    "short_name": "GHRC DAAC"
+            },
+            {
+                    "long_name": "Level 1 Atmosphere Archive and Distribution System (LAADS) Distributed Active Archive Center (DAAC)",
+                    "url": "https://ladsweb.modaps.eosdis.nasa.gov/",
+                    "short_name": "LAADS DAAC"
+            },
+            {
+                    "long_name": "Land Processes Distributed Active Archive Center (LP DAAC)",
+                    "url": "https://lpdaac.usgs.gov/",
+                    "short_name": "LP DAAC"
+            },
+            {
+                    "long_name": "National Snow and Ice Data Center (NSIDC) Distributed Active Archive Center (DAAC)",
+                    "url": "http://nsidc.org/daac/",
+                    "short_name": "NSIDC DAAC"
+            },
+            {
+                    "long_name": "Ocean Biology Distributed Active Archive Center (OB.DAAC)",
+                    "url": "https://oceancolor.gsfc.nasa.gov/",
+                    "short_name": "OB.DAAC"
+            },
+            {
+                    "long_name": "Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)",
+                    "url": "http://daac.ornl.gov/",
+                    "short_name": "ORNL DAAC"
+            },
+            {
+                    "long_name": "Physical Oceanography Distributed Active Archive Center (PO.DAAC)",
+                    "url": "http://podaac.jpl.nasa.gov/",
+                    "short_name": "PO.DAAC"
+            },
+            {
+                    "long_name": "Socioeconomic Data and Applications Data Center (SEDAC)",
+                    "url": "http://sedac.ciesin.columbia.edu/",
+                    "short_name": "SEDAC"
+            }
+    ]
+}
