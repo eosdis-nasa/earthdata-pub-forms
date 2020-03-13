@@ -15,10 +15,10 @@
         color: #2c3e50;
     }
     .selector-for-some-widget {
-        box-sizing: content-box;    
+        box-sizing: content-box;
     }
     #nav {
-        padding: 30px;  
+        padding: 30px;
     }
 
     #nav a {
