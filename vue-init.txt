@@ -12,7 +12,7 @@ docker exec -it <container_id> /bin/bash
     # now inside the container
 	cd /app
 	npm install -g @vue/cli
-	vue create forms
+	vue create .
         # pick your choices now or stick with the default config
         # After the installation you should see something like
             # Vue CLI v3.0.1
