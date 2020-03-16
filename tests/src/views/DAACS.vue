@@ -3,21 +3,14 @@
     <b-container>
         <div>
             <b-form-group label="Choose your DAAC:"><br>
-                <div>
-                    <div class="desc_div" v-if="selected" id="selected_description"></div>
-                    <div class="radio_div">
-                        <b-form-radio v-for="(item, index) in daacs" :key=index :name="item.short_name" :id="item.short_name + '_' + index" :value="item.long_name" @change.native="setSelectedValues(item.url, item.short_name, item.description)" v-model="selected">
-                            {{ item.short_name }}
-                        </b-form-radio>
-                    </div>
+                <b-form-radio v-for="(item, index) in daacs" :key=index :name="item.short_name" :id="item.short_name + '_' + index" :value="item.long_name" @change.native="setSelectedValues(item.url, item.short_name)" v-model="selected">
+                    {{ item.short_name }}
+                </b-form-radio>
+                <div class="mt-3" v-if="selected">
+                    You have selected:<br>
+                    <strong>{{ selected }}</strong>
                 </div>
-                <div style="clear:both">
-                    <div class="mt-3" v-if="selected">
-                        You have selected:<br>
-                        <strong>{{ selected }}</strong>
-                    </div>
-                    <div class="mt-3" v-if="selected" id="selected_url"></div>
-                </div>
+                <div class="mt-3" v-if="selected" id="selected_url"></div>
             </b-form-group>
         </div>
     </b-container>
@@ -51,10 +44,9 @@
                 })
                 return items
             },
-            setSelectedValues(url, short_name, description){
+            setSelectedValues(url, short_name){
                 var text = "For more information on <b>" + short_name + "</b>, visit <a href=\"" + url + "\">" + short_name + '\'s website</a>.'
                 $('#selected_url').html(text)
-                $('#selected_description').html(description)
             },
             enterSubmitForm(evt) {
                 evt.preventDefault()
@@ -93,13 +85,5 @@
     }
     .custom-radio{
         padding-bottom:1.5rem;
-    }
-    .radio_div{
-        width:25%;
-        float:left;
-    }
-    .desc_div{
-        width:75%;
-        float:right;
     }
 </style>

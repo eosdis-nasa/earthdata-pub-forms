@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/daacs">DAACS</router-link> | 
-      <router-link to="/questions">Questions</router-link> | 
-      <router-link to="/help">Help</router-link> 
+      <router-link to="/">DAACS</router-link>
     </div>
     <router-view/>
   </div>

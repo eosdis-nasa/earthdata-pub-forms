@@ -2,36 +2,24 @@
   <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
     <b-container>
         <div>
-            <b-form-group label="Choose your DAAC:"><br>
-                <div>
-                    <div class="desc_div" v-if="selected" id="selected_description"></div>
-                    <div class="radio_div">
-                        <b-form-radio v-for="(item, index) in daacs" :key=index :name="item.short_name" :id="item.short_name + '_' + index" :value="item.long_name" @change.native="setSelectedValues(item.url, item.short_name, item.description)" v-model="selected">
-                            {{ item.short_name }}
-                        </b-form-radio>
-                    </div>
-                </div>
-                <div style="clear:both">
-                    <div class="mt-3" v-if="selected">
-                        You have selected:<br>
-                        <strong>{{ selected }}</strong>
-                    </div>
-                    <div class="mt-3" v-if="selected" id="selected_url"></div>
-                </div>
-            </b-form-group>
+            <ul>
+                <li v-for="(heading, index) in questions" :key=index>
+                    <h3>{{heading.heading}}</h3>
+                </li>
+            </ul>
         </div>
     </b-container>
   </b-form>
 </template>
 <script>
     import $ from 'jquery'
-    
+
     export default {
-        name: 'DAACS',
+        name: 'Questions',
         data() {
             return {
                 selected: '',
-                daacs: this.fetchDaacs()
+                questions: this.fetchQuestions()
             }
         },
         props: {
@@ -42,14 +30,18 @@
         validations() {
         },
         methods: {
-            fetchDaacs(){
-                var items = []
-                $.getJSON( "daacs.json", function( daacs ) {
-                    for(var dict in daacs['data']) {
-                        items.push(daacs['data'][dict])
+            fetchQuestions(){
+                var question = []
+                $.getJSON( "questions.json", function( questions ) {
+                    for(var section in questions['sections']) {
+                        var heading = questions['sections'][section]['heading']
+                        var questions_section = questions['sections'][section]['questions']
+                        questions_section['heading'] = heading
+                        question.push(questions_section)
                     }
                 })
-                return items
+                console.log(question)
+                return question
             },
             setSelectedValues(url, short_name, description){
                 var text = "For more information on <b>" + short_name + "</b>, visit <a href=\"" + url + "\">" + short_name + '\'s website</a>.'
