@@ -6,6 +6,7 @@ import { BootstrapVue, BootstrapVueIcons, IconsPlugin } from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { OverlayPlugin } from 'bootstrap-vue'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
@@ -13,6 +14,8 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+
+Vue.use(OverlayPlugin)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
