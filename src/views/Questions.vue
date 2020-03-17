@@ -1,13 +1,21 @@
 <template>
   <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
     <b-container>
-        <div>
-            <ul>
-                <li v-for="(heading, index) in questions" :key=index>
-                    <h3>{{heading.heading}}</h3>
-                </li>
-            </ul>
-        </div>
+        <b-row v-for="(heading, a_key) in questions" :key="a_key">
+            <h3>{{heading.heading}}</h3>
+            <div id=questions>
+                <b-form-group v-for="(question, b_key) in heading" :key="b_key">
+                    <label :for="question.id">{{question.title}}:</label>
+                    <p :id="question.id">{{question.text}}</p>
+                    <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
+                        <label :for="input.id">{{input.label}}: </label>
+                        <div style="color:red;text-align:right" v-if="input.required == true">* required</div>
+                        <b-form-input :type="input.type" :id="input.id" :name="input.id" v-if="input.type == 'text' || input.type == 'password' || input.type == 'number' || input.type == 'url' || input.type == 'email' || input.type == 'search' || input.type == 'range' || input.type == 'date' || input.type == 'tel' || input.type == 'time' || input.type == 'color'"></b-form-input>
+                        <b-form-checkbox v-model="selected_checkboxes" :type="input.type" :id="input.id" :name="input.id" v-else-if="input.type == 'checkbox'"></b-form-checkbox>
+                    </b-row>
+                </b-form-group>
+            </div>
+        </b-row>
     </b-container>
   </b-form>
 </template>
@@ -18,8 +26,11 @@
         name: 'Questions',
         data() {
             return {
-                selected: '',
-                questions: this.fetchQuestions()
+                selected_options:[],
+                selected_radios:[],
+                selected_checkboxes: [],
+                questions: this.fetchQuestions(),
+                dirty:false
             }
         },
         props: {
@@ -40,7 +51,6 @@
                         question.push(questions_section)
                     }
                 })
-                console.log(question)
                 return question
             },
             setSelectedValues(url, short_name, description){
@@ -69,19 +79,9 @@
         }
     }
 </script>
-<style>
+<style scoped>
     .col-form-label {
         font-weight:bold;
-    }
-    .mt-3 {
-        text-align: left;
-    }
-    strong {
-        margin-left:2rem;
-    }
-    .bv-no-focus-ring {
-        text-align:left;
-        margin-left:2rem;
     }
     .custom-radio{
         padding-bottom:1.5rem;
@@ -93,5 +93,10 @@
     .desc_div{
         width:75%;
         float:right;
+    }
+    h3{
+        display:block;
+        width:100%;
+        text-decoration:underline;
     }
 </style>

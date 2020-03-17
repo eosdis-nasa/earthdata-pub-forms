@@ -13,7 +13,7 @@
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        text-align: center;
+        text-align: left;
         color: #2c3e50;
     }
     .selector-for-some-widget {
@@ -21,14 +21,22 @@
     }
     #nav {
         padding: 30px;
+        text-align:center;
     }
-
     #nav a {
         font-weight: bold;
         color: #2c3e50;
     }
-
     #nav a.router-link-exact-active {
         color: #42b983;
+    }
+    label{
+        font-weight:bold;
+    }
+    div.row{
+        margin:0rem;
+    }
+    .custom-radio{
+        padding-bottom:1.5rem;
     }
 </style>

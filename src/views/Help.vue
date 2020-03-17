@@ -2,11 +2,11 @@
   <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
     <b-container>
         <div>
-            <b-overlay :show="null" v-for="(help_tip, index) in help_tips" :key=index>
+            <b-form-group v-for="(help_tip, index) in help_tips" :key=index>
                 <b-card :id=help_tip.id title="Help Tip" :aria-hidden="show">
                     <b-card-text>{{help_tip.help}}</b-card-text>
                 </b-card>
-            </b-overlay>
+            </b-form-group>
         </div>
     </b-container>
   </b-form>
@@ -69,18 +69,9 @@
         }
     }
 </script>
-<style>
-    .col-form-label, .card-title {
+<style scoped>
+    .card-title {
         font-weight:bold;
-    }
-    .mt-3 {
-        text-align: left;
-    }
-    strong {
-        margin-left:2rem;
-    }
-    b-overlay{
-        text-align:left
     }
     .card{
         border-radius:unset!important

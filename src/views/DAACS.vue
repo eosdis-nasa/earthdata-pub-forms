@@ -77,23 +77,7 @@
         }
     }
 </script>
-<style>
-    .col-form-label {
-        font-weight:bold;
-    }
-    .mt-3 {
-        text-align: left;
-    }
-    strong {
-        margin-left:2rem;
-    }
-    .bv-no-focus-ring {
-        text-align:left;
-        margin-left:2rem;
-    }
-    .custom-radio{
-        padding-bottom:1.5rem;
-    }
+<style scoped>
     .radio_div{
         width:25%;
         float:left;
