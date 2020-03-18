@@ -94,9 +94,9 @@
               "label": "Description",
               "validator": "not_null",
               "validation_error_msg": "Please enter a description.",
-              "attributes": {
-                "rows": 10,
-                "cols": 80
+              "attributes":{
+                "rows":"3",
+                "cols":"2"
               }
             }
           ]

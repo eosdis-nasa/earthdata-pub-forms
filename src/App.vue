@@ -36,7 +36,10 @@
     div.row{
         margin:0rem;
     }
-    .custom-radio{
-        padding-bottom:1.5rem;
+    input[type=radio   ]:not(old) + label{
+        cursor: pointer;
+    }
+    label {
+        margin-top: 0.5rem;
     }
 </style>
