@@ -5,7 +5,10 @@
             <h3>{{heading.heading}}</h3>
             <div id=questions>
                 <b-form-group v-for="(question, b_key) in heading" 
+                :class="{ 'form-group-error': ($v.data[question.id] || {}).$error }"
                 :key="b_key" 
+                size="lg"
+                :disabled="readonly"
                 :lg="question.width || 12">
                     <label :for="question.id" >{{question.title}}:</label>
                     <p :id="question.id || a_key">{{question.text}}</p>
@@ -16,6 +19,9 @@
                             :type="input.type" 
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]"
+                            size="lg"
+                            :disabled="readonly"
                             v-if="input.type == 'text' || 
                             input.type == 'password' || 
                             input.type == 'number' || 
@@ -33,6 +39,11 @@
                             :type="input.type" 
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]"
+                            size="lg"
+                            :disabled="readonly"
+                            value="true"
+                            unchecked-value="false"
                             v-else-if="input.type == 'checkbox'"
                             input.attrib_string>
                         </b-form-checkbox>
@@ -40,6 +51,9 @@
                             :type="input.type" 
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]"
+                            size="lg"
+                            :disabled="readonly"
                             v-else-if="input.type == 'textarea'" 
                             input.attrib_string>
                         </b-form-textarea>
@@ -47,6 +61,11 @@
                             :type="input.type" 
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]"
+                            size="lg"
+                            value="true"
+                            unchecked-value="false"
+                            :disabled="readonly"
                             v-else-if="input.type == 'radio'" 
                             :options="input.options"
                             input.attrib_string>
@@ -55,20 +74,25 @@
                             :type="input.type" 
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]"
+                            size="lg"
+                            :disabled="readonly"
                             v-else-if="input.type == 'select'" 
                             :options="input.options"
                             input.attrib_string>
                         </b-form-select>
                         <b-form-file
                             :type="input.type" 
-                            v-model="file"
-                            :state="Boolean(file)"
+                            :state="Boolean(values[input.id])"
                             :id="input.id" 
                             :name="input.id" 
+                            v-model="values[input.id]" 
+                            size="lg"
+                            :disabled="readonly"
                             v-else-if="input.type == 'file'" 
                             input.attrib_string>
                         </b-form-file>
-                        <div class="mt-3" v-if="input.type == 'file'">Selected file: {{ file ? file.name : '' }}</div>
+                        <div class="mt-3" v-if="input.type == 'file'">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
                     </b-row>
                 </b-form-group>
             </div>
@@ -90,22 +114,22 @@
         name: 'Questions',
         data() {
             return {
-                file:null,
+                values: {},
                 questions: this.fetchQuestions(),
                 dirty:false
             }
         },
         props: {
-            fields: {},
-            selectOptions: {},
             data: {},
             resetLabel: { default: 'Reset', type: String },
             submitLabel: { default: 'Submit', type: String },
-            enterSubmit: { default: false, type: Boolean },
+            enterSubmit: { default: false, type: Boolean }, 
             readonly: { default: false, type: Boolean },
             showResetButton: { default: true, type: Boolean }
         },
-        computed: {},
+        computed: {
+
+        },
         validations() {
             console.log('Validating ...')
             let val_fields = {
