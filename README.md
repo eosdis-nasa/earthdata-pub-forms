@@ -46,3 +46,18 @@ You can run `vue run build` or other commands.
 ## Testing with Jest
 
 Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing.
+
+## Deploying to AWS with Terrafrom
+
+Earthdata Pub forms deploys to AWS using Terraform through Bamboo. To create AWS resources, run:
+
+```bash
+$ terraform plan
+$ terraform apply
+```
+
+To destroy all AWS resoureces, run:
+
+```bash
+$ terraform destroy
+```
