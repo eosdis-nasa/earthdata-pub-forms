@@ -1,5 +1,9 @@
 FROM node:lts-slim
 
+# apt update -y
+# RUN apt-get -y update \
+# 	&& apt-get install -y git
+
 # install simple http server for serving static content
 RUN npm install -g http-server
 
@@ -12,8 +16,13 @@ COPY package*.json ./
 # install project dependencies
 RUN npm install
 
+# copy app into container
+COPY . .
+
+# npm audit fix
+
 # install Vue CLI
-RUN npm install -g @vue/cli
+RUN npm install @vue/cli
 
 EXPOSE 8080
 CMD ["npm", "run", "serve"]
