@@ -15,6 +15,7 @@
     "bootstrap-vue": "^2.6.1",
     "core-js": "^3.6.4",
     "jquery": "^3.4.1",
+    "undo-redo-vuex": "^1.2.0",
     "vee-validate": "^3.2.5",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
