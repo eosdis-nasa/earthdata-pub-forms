@@ -5,11 +5,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    myVal: null
   },
   mutations: {
-  },
-  actions: {
-  },
-  modules: {
+    emptyState() {
+      this.replaceState({ myval: null });       
+    }
   }
 })
