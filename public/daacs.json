@@ -75,7 +75,7 @@
             {
                 "long_name": "I don't know",
                 "url": "http://earthdata.nasa.gov/",
-                "short_name": "Unkown",
+                "short_name": "Unknown",
                 "description": "If do not know which DAAC is appropriate for your data, select this option. NASA's ESDIS will contact you."
             }
         ]
