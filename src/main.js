@@ -7,6 +7,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
+import VuexUndoRedo from './plugin';
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
@@ -16,11 +17,11 @@ Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
+// Install Undo/Redo mixin
+Vue.use(VuexUndoRedo);
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-// import './custom.scss'
-import "../node_modules/vuex-undo-redo/dist/vuex-undo-redo.min.js"
 
 // This imports all the layout components such as <b-container>, <b-row>, <b-col>:
 import { LayoutPlugin } from 'bootstrap-vue'
