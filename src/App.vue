@@ -1,8 +1,8 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Header />
-    <router-view/>
+    <Header :form_title="form_title"/>
+    <router-view ref="content"/>
   </div>
 </template>
 <!-- End of Main App -->
@@ -15,8 +15,24 @@
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
+        data() {
+            return {
+                form_title: ''
+            }
+        },
         components: {
             Header
+        },
+        mounted() {
+            this.$watch(
+                () => {
+                    return this.$refs.content.form_title
+                },
+                val => {
+                    this.form_title = val
+                }
+            )
+            this.form_title = this.$refs.content.form_title || ''
         }
     }
 </script>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import { store } from './store'
 import { BootstrapVue, BootstrapVueIcons, IconsPlugin } from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
@@ -20,6 +20,7 @@ Vue.use(Vuelidate)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 // import './custom.scss'
+import "../node_modules/vuex-undo-redo/dist/vuex-undo-redo.min.js"
 
 // This imports all the layout components such as <b-container>, <b-row>, <b-col>:
 import { LayoutPlugin } from 'bootstrap-vue'

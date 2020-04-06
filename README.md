@@ -24,6 +24,17 @@ $ npm build
 $ npm run serve
 ```
 
+## Custom styling
+
+At a base, eui styling has been applied to the form automatically.  If the questions.json has the tag "style" and then a "link" to a custom css sheet, that is appended to the end of the stylesheets as an override.
+
+An example of the questions.json header should look like this:
+
+```javascript
+npm build
+$ npm run serve
+```
+
 ## Develop using Docker
 
 _(Docker setup inspired by https://daten-und-bass.io/blog/getting-started-with-vue-cli-on-docker/)_

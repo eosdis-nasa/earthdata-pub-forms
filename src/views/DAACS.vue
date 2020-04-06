@@ -52,8 +52,6 @@
             }
         },
         props: {
-            // Reset label property and its type
-            resetLabel: { default: 'Reset', type: String },
             // Submit label property and its type
             submitLabel: { default: 'Submit', type: String }
         },
@@ -100,6 +98,7 @@
                 // Submit form (this.data) if valid
                 this.$v.$touch()
                 this.$emit('submitForm', this.data)
+                // Testing - what does below do
                 this.$router.push({ name: 'Questions', params: { DAAC: this.data } })
             },
             // @vuese
