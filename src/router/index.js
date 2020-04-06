@@ -7,7 +7,8 @@ import Help from '../views/Help.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', 
+  { 
+    path: '/', 
     redirect: '/daacs' 
   },
   {
