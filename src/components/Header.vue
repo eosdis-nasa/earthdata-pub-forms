@@ -1,47 +1,53 @@
 <template>
+  <!-- header with eui class -->
   <header class="doc-mast header">
     <div class="container">
+      <!-- Logo and menu -->
       <div class="eui-application-logo">
         <img
           alt="NASA logo"
           class="logo"
           src="https://cdn.earthdata.nasa.gov/eui/latest/docs/assets/ed-logos/app-logo.png"
         />
-        <h2>Archival Interest Form</h2>
+        <h2>{{form_title}}</h2>
         <div id="nav">
           <router-link to="/daacs">DAACS</router-link> | 
           <router-link to="/questions">Questions</router-link> | 
           <router-link to="/help">Help</router-link> 
-      </div>
+        </div>
+      <!-- End of Logo and menu -->
       </div>
     </div>
   </header>
+  <!-- end of header with eui class -->
 </template>
-
-<style scoped>
-h2{
-  text-align:left;
-  text-decoration: none;
+<script>
+  // Exports the header as a component
+  export default {
+  name: 'Header',
+  data() {
+      return {
+          
+      }
+  },
+  // The property to be set by questions.vue
+  props: {
+      // The form title parsed from questions.vue
+      form_title: { default: '', type: String }
+  }
 }
+</script>
+<style scoped>
+  h2{
+    text-align:left;
+    text-decoration: none;
+  }
   .header {
     width: 100%;
     background: #2276ac;
     box-shadow: 0 5px 5px rgba(189, 195, 199,0.15);
     display: flex;
     color:white
-  }
-  #header .container {
-    height: 100px;
-    line-height: 100px;
-    margin: 0 auto;
-    width: 95%;
-  }
-
-  #header .logo {
-    width: 100%;
-    max-width: 300px;
-    display: inline-block;
-    vertical-align: middle;
   }
 
   #title {
@@ -60,11 +66,11 @@ h2{
     vertical-align: middle;
   }
   
-@media screen and (max-width: 1330px)
+  @media screen and (max-width: 1330px) {
   .eui-masthead-logo {
       width: 300px;
   }
-.eui-masthead-logo.eui-application-logo a:link, .eui-masthead-logo.eui-application-logo a:visited {
+ .eui-masthead-logo.eui-application-logo a:link, .eui-masthead-logo.eui-application-logo a:visited {
     height: inherit;
     overflow: inherit;
     padding: 23px 0 5px 70px;
@@ -96,4 +102,11 @@ h2{
       margin-right: 2.35765%;
       width: 65.88078%;
   }
+  .eui-application-logo .logo {
+    padding-top:1rem;
+  }
+  img {
+      border: unset;
+  }
+}
 </style>
