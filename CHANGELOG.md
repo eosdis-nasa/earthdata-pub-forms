@@ -3,8 +3,13 @@ All notable changes to this project will be documented in this file. Changes sho
 
 ## [Unreleased]
 
+## [0.0.3] - 2020-04-06
+### Added
+ -  [Add undo/redo buttons](fb2a4dede443afdc801ecf96c5cc2f7b01799cd5)
+
 ## [0.0.2] - 2020-03-13
 ### Added
+ - [Addition of file,select,radio,textareas,dynamic attributes,options](78d68c03)
  - [Display DAAC selection as a first step](49e5ab6d071ad1b09198a95db477cb83735a469b)
 
 ## [0.0.1] - 2020-03-09

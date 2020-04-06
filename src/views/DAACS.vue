@@ -1,8 +1,10 @@
 <template>
-  <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
+  <!-- Form -->
+  <b-form @submit="enterSubmitForm">
     <b-container>
         <div>
             <b-form-group label="Choose your DAAC:"><br>
+                <!-- Radio Div with Description -->
                 <div>
                     <div class="desc_div" v-if="selected" id="selected_description"></div>
                     <div class="radio_div">
@@ -11,21 +13,36 @@
                         </b-form-radio>
                     </div>
                 </div>
+                <!-- End of Radio Div with Description -->
+                <!-- Selected Info -->
                 <div style="clear:both">
                     <div class="mt-3" v-if="selected">
                         You have selected:<br>
                         <strong>{{ selected }}</strong>
                     </div>
                     <div class="mt-3" v-if="selected" id="selected_url"></div>
+                    <!-- Submit Button -->
+                    <div v-if="selected" class="button_div mt-3">
+                        <b-button class="button" @click="submitForm()">
+                            Next
+                        </b-button>
+                    </div>
+                    <!-- End of Submit Button -->
                 </div>
+                <!-- End of Selected Info -->
             </b-form-group>
         </div>
     </b-container>
   </b-form>
+  <!-- End of Form -->
 </template>
 <script>
+    // Jquery javascript
     import $ from 'jquery'
     
+    // This DAACS component gets DAAC data and displays abbreviations as a radio selection
+    // On selection displays a link to the selected DAAC website, description and a 'Next
+    // Button' is displayed to allow users more info and to move on.
     export default {
         name: 'DAACS',
         data() {
@@ -35,14 +52,20 @@
             }
         },
         props: {
-            resetLabel: { default: 'Reset', type: String },
+            // Submit label property and its type
             submitLabel: { default: 'Submit', type: String }
         },
-        computed: {},
-        validations() {
+        computed: {
+
+        },
+        validations: {
+           
         },
         methods: {
+            // @vuese
+            // Fetchs the DAAC data
             fetchDaacs(){
+                // Gets DAAC data for template
                 var items = []
                 $.getJSON( "daacs.json", function( daacs ) {
                     for(var dict in daacs['data']) {
@@ -51,48 +74,56 @@
                 })
                 return items
             },
+            // @vuese
+            // On selected, builds dynamic text and sets html dynamically with the link
             setSelectedValues(url, short_name, description){
                 var text = "For more information on <b>" + short_name + "</b>, visit <a href=\"" + url + "\">" + short_name + '\'s website</a>.'
                 $('#selected_url').html(text)
                 $('#selected_description').html(description)
+                this.data = short_name
+                this.setSaveObject(this.data)
             },
+            // @vuese
+            // @arg The event
             enterSubmitForm(evt) {
+                // Calls submit form via enter key
                 evt.preventDefault()
                 if (this.enterSubmit) {
                     this.submitForm()
                 }
             },
+            // @vuese
+            // Used to submit the form data if valid
             submitForm() {
-                this.fixBooleans()
+                // Submit form (this.data) if valid
                 this.$v.$touch()
-                if (this.$v.$invalid) {
-                    alert('Please correct the errors on the form before saving.')
-                } else {
-                    this.$emit('submitForm', this.data)
-                }
+                this.$emit('submitForm', this.data)
+                // Testing - what does below do
+                this.$router.push({ name: 'Questions', params: { DAAC: this.data } })
             },
-            resetForm() {
-                this.$emit('resetForm')
+            // @vuese
+            // Used to save file
+            setSaveObject() {
+                // Saves file to localStorage
+                window.localStorage.setItem('DAAC', this.data);
             }
         }
     }
 </script>
-<style>
-    .col-form-label {
-        font-weight:bold;
+<style scoped>
+    .radio_div{
+        width:25%;
+        float:left;
+        margin-bottom:1rem;
     }
-    .mt-3 {
-        text-align: left;
+    .desc_div{
+        width:75%;
+        float:right;
     }
-    strong {
-        margin-left:2rem;
-    }
-    .bv-no-focus-ring {
+    .button_div{
+        margin-top:1rem;
         text-align:left;
-        margin-left:2rem;
-    }
-    .custom-radio{
-        padding-bottom:1.5rem;
+        float:left;
     }
     .radio_div{
         width:25%;

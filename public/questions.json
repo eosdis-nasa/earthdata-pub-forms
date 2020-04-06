@@ -2,6 +2,7 @@
   "id": "6c544723-241c-4896-a38c-adbc0a364293",
   "version": 1,
   "unique_name": "FAKEDAAC",
+  "form_title":"Archival Interest Form",
   "text": "This is an example form with example questions. Some of them are silly, some are not.",
   "sections": [
     {
@@ -39,12 +40,13 @@
           ]
         },
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfa",
           "version": 1,
           "unique_name": "checkboxes",
           "title": "Checkbox Example",
           "text": "These are a lot of checkboxes. Please check them.",
           "help": "Checkboxes can be used where 0 or more choices should be made from given options.",
+          "required":true,
           "inputs": [
             {
               "type": "checkbox",
@@ -94,15 +96,15 @@
               "label": "Description",
               "validator": "not_null",
               "validation_error_msg": "Please enter a description.",
-              "attributes": {
-                "rows": 10,
-                "cols": 80
+              "attributes":{
+                "rows":"3",
+                "cols":"2"
               }
             }
           ]
         },
         {
-          "id": "5ae650df-548a-4a9f-80fa-920c9c48286b",
+          "id": "5ae650df-548a-4a9f-80fa-920c9c48286b2",
           "version": 1,
           "unique_name": "radios",
           "title": "Radios and Numbers",
@@ -126,13 +128,13 @@
           ]
         },
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfc",
           "version": 1,
           "unique_name": "dataset_restrictions",
           "title": "Dataset Restrictions",
           "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "NASA Open Data Policy https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy",
-          "required": true,
+          "required": false,
           "inputs": [
             {
               "type": "checkbox",
@@ -142,7 +144,7 @@
           ]
         },
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfd",
           "version": 1,
           "unique_name": "multiselect",
           "help": "You can select up to 2 items",
@@ -172,13 +174,13 @@
       "heading": "Third Section",
       "questions": [
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfe",
           "version": 1,
           "unique_name": "example_file",
           "title": "Example File",
           "text": "This is an example of a file input.",
           "help": "This allows a user to specify a local file to upload.",
-          "required": true,
+          "required": false,
           "inputs": [
             {
               "type": "file",
@@ -188,7 +190,7 @@
           ]
         },
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcff",
           "version": 1,
           "unique_name": "example_date",
           "title": "Example Date",
@@ -204,13 +206,31 @@
           ]
         },
         {
-          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfg",
           "version": 1,
           "unique_name": "example_spatial",
           "title": "Example Spatial Extent",
           "text": "This is an example for the spatial extent widget.",
           "help": "This will be a graphical widget for defining the geographical spatial extent of a dataset.",
-          "required": true,
+          "required": false,
+          "template":"spatial",
+          "inputs": [
+            {
+              "type": "spatial",
+              "id": "example_spatial_where",
+              "label": "Where"
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfh",
+          "version": 1,
+          "unique_name": "example_table",
+          "title": "Example Table Author List",
+          "text": "This is an example for table type entries. Add to the table below",
+          "help": "Enter in the ",
+          "required": false,
+          "template":"table",
           "inputs": [
             {
               "type": "spatial",

@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
+import { store } from './store'
 import { BootstrapVue, BootstrapVueIcons, IconsPlugin } from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { OverlayPlugin } from 'bootstrap-vue'
+import Vuelidate from 'vuelidate'
+import VuexUndoRedo from './plugin';
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
@@ -14,12 +15,15 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+// Optionally install vuelidatejs plugin
+Vue.use(Vuelidate)
+// Install Undo/Redo mixin
+Vue.use(VuexUndoRedo);
 
 Vue.use(OverlayPlugin)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-// import './custom.scss'
 
 // This imports all the layout components such as <b-container>, <b-row>, <b-col>:
 import { LayoutPlugin } from 'bootstrap-vue'
