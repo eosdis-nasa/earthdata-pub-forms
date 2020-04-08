@@ -75,3 +75,38 @@ You can run `vue run build` or other commands.
 ## Testing with Jest
 
 Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing.
+
+## Open source liceneses for depenencies
+
+`fontawesome`
+`https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt`
+
+`bootstrap`
+`https://github.com/twbs/bootstrap/blob/master/LICENSE`
+
+`core-js`
+`https://github.com/zloirock/core-js/blob/master/LICENSE`
+
+`jquery`
+`https://github.com/jquery/jquery/blob/master/LICENSE.txt`
+
+`popper.js`
+`https://github.com/popperjs/popper-core/blob/master/LICENSE.md`
+
+`undo-redo-vuex`
+`https://github.com/factorial-io/undo-redo-vuex/blob/master/LICENSE`
+
+`vee-validate`
+`https://github.com/logaretm/vee-validate/blob/master/LICENSE`
+
+`vue`
+`https://github.com/vuejs/vue/blob/dev/LICENSE`
+
+`vue-router`
+`https://github.com/vuejs/vue-router/blob/dev/LICENSE`
+
+`vuelidate`
+`https://github.com/vuelidate/vuelidate/blob/master/LICENSE`
+
+`vuex`
+`https://github.com/vuejs/vuex/blob/dev/LICENSE`
