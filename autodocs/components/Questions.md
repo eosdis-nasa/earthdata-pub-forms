@@ -8,6 +8,9 @@ This questions component gets the questions data for the selected daac and sets 
 |Name|Description|Type|Required|Default|
 |---|---|---|---|---|
 |resetLabel|The reset label and type|`String`|`false`|Reset|
+|saveLabel|The save label and type|`String`|`false`|Save|
+|undoLabel|The undo label and type|`String`|`false`|Undo|
+|redoLabel|The redo label and type|`String`|`false`|Redo|
 |submitLabel|The submit label and type|`String`|`false`|Submit|
 |enterSubmit|The enter submit conditional to allow for submittal|`Boolean`|`false`|-|
 |readonly|The readonly attribute to pass in|`Boolean`|`false`|-|
@@ -22,7 +25,7 @@ This questions component gets the questions data for the selected daac and sets 
 |Event Name|Description|Parameters|
 |---|---|---|
 |submitForm|-|-|
-|resetForm|Resets form to blank entries|-|
+|resetForm|console.log('Resetting form ...') Resets form to blank entries|-|
 
 <!-- @vuese:Questions:events:end -->
 
@@ -32,12 +35,15 @@ This questions component gets the questions data for the selected daac and sets 
 <!-- @vuese:Questions:methods:start -->
 |Method|Description|Parameters|
 |---|---|---|
+|reApplyValues|Re-applies the data entry values from values from the store for on undo and redo|-|
 |fetchQuestions|Fetchs the questions data|-|
 |status|Validation of input data|-|
 |enterSubmitForm||The event|
 |submitForm|Used to submit the form data if valid|-|
 |saveFile|Used to save file TODO - API call will go here|-|
 |resetForm|Clear and reset form|-|
+|undoToPreviousState|Undos the form and reverts it to its previous state.|-|
+|redoToPreviousState|Redo the form and to its previous state.|-|
 
 <!-- @vuese:Questions:methods:end -->
 

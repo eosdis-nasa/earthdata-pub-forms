@@ -133,15 +133,11 @@
         <!-- End of Section -->
     </b-container>
     <!-- Button Options -->
-    <div align=right v-if="!readonly">
-        <!--<b-button class="button" type="redo" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
+    <div align=right v-if="!readonly" class="button_bar">
+        <b-button class="button" type="redo" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
         <b-button class="button" type="redo" v-else disabled>{{ redoLabel }}</b-button>
         <b-button class="button" type="undo" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-        <b-button class="button" type="undo" v-else disabled>{{ undoLabel }}</b-button>-->
-
-        <b-button class="button" type="redo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-        <b-button class="button" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-
+        <b-button class="button" type="undo" v-else disabled>{{ undoLabel }}</b-button>
         <b-button class="button" type="save" @click=saveFile(true)>{{ saveLabel }}</b-button>
         <b-button class="button" type="submit" @click=submitForm>{{ submitLabel }}</b-button>
         <b-button class="button" type="reset" v-if="showResetButton">{{ resetLabel }}</b-button>
@@ -165,7 +161,7 @@
                 values: {},
                 questions: {},
                 dirty:false,
-                form_title: '',
+                formTitle: '',
                 saveTimeout: 0
             }
         },
@@ -248,7 +244,10 @@
                     }
                 }
             }
-            window.localStorage.setItem(window.localStorage.getItem('DAAC') + '_required', JSON.stringify(val_fields.values))
+            let DAAC_SET = window.localStorage.getItem('DAAC')
+            if(DAAC_SET !== null){
+                window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
+            }
             return val_fields
         },
         methods: {
@@ -272,7 +271,7 @@
                 var ignore_attributes = ['list','step','pattern','accept','autocomplete','autofocus','capture','dirname']
                 $.getJSON( "questions.json", ( questions ) => {
                     //The below line looks for custom css and applies it to the head (eui is done first)
-                    this.form_title = questions.form_title
+                    this.formTitle = questions.form_title
                     $('head link[data-eui="yes"]').remove()
                     if(questions.style){
                         $('head link[data-custom="yes"]').remove()
@@ -361,12 +360,13 @@
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
                 if (this.$v.$invalid) {
-                    var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
-                    console.log(required_ids_to_check)
-                    for(var r in required_ids_to_check){
-                        console.log(required_ids_to_check[r])
-                    }
-                    alert('Please correct the errors on the form before saving.')
+                    //TODO
+                    //var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
+                    //console.log(required_ids_to_check)
+                    //for(var r in required_ids_to_check){
+                        //console.log(required_ids_to_check[r])
+                    //}
+                    //alert('Please correct the errors on the form before saving.')
                 } else {
                     this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
                 }
@@ -379,7 +379,7 @@
                 // Saves file to localStorage
                 const data = JSON.stringify(this.values)
                 var DAAC = window.localStorage.getItem('DAAC')
-                if(DAAC != null){
+                if(DAAC !== null && data !== JSON.stringify({})){
                     window.localStorage.setItem(DAAC + '_questions', data);
                 }
                 if(with_msg){
@@ -409,8 +409,8 @@
         },
         // This is equivalent to js document.ready
         mounted() {
-            var DAAC = window.localStorage.getItem('DAAC')
-            this.questions = this.fetchQuestions(DAAC)
+            this.showDaacs = window.localStorage.getItem('showDaacs')
+            this.questions = this.fetchQuestions(window.localStorage.getItem('DAAC'))
         }
     }
 </script>
@@ -448,8 +448,7 @@
         margin-top:1rem;
     }
     button {
-       margin-right:1rem;
-       margin-bottom:1rem;
+       margin:1rem;
     }
     .help {
         text-align:right;
@@ -467,5 +466,9 @@
     }
     fieldset {
         border-left: unset
+    }
+    .button_bar {
+        background:#dedede;
+        border-top:1px solid #dfdfdf
     }
 </style>
