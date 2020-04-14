@@ -1,7 +1,7 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Header :form_title="form_title"/>
+    <Header :formTitle="formTitle"/>
     <router-view ref="content"/>
   </div>
 </template>
@@ -17,8 +17,11 @@
     export default {
         data() {
             return {
-                form_title: ''
+                formTitle: ''
             }
+        },
+        props:{
+            
         },
         components: {
             Header
@@ -26,13 +29,13 @@
         mounted() {
             this.$watch(
                 () => {
-                    return this.$refs.content.form_title
+                    return this.$refs.content.formTitle
                 },
                 val => {
-                    this.form_title = val
+                    this.formTitle = val
                 }
             )
-            this.form_title = this.$refs.content.form_title || ''
+            this.formTitle = this.$refs.content.formTitle
         }
     }
 </script>
@@ -58,11 +61,10 @@
         text-align:right;
     }
     #nav a {
-        font-weight: bold;
         color:white;
     }
     #nav a.router-link-exact-active {
-        color: #42b983;
+        font-weight: bold;
     }
     label{
         font-weight:bold;
