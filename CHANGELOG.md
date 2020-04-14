@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file. Changes sho
 
 ## [Unreleased]
 
-## [0.0.3] - 2020-04-06
+## [0.0.3] - 2020-04-03
 ### Added
- -  [Add undo/redo buttons](fb2a4dede443afdc801ecf96c5cc2f7b01799cd5)
+ - [Addition of undo redo](fc60bbfb1076619ae9fe081a721c5cf2b940547f)
 
 ## [0.0.2] - 2020-03-13
 ### Added
