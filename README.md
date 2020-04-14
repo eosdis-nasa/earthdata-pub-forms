@@ -42,9 +42,19 @@ To deploy using docker-compose, simply:
 $ docker-compose up
 ```
 
-## Edits to code
+### Edits to code
 
 The vue.js application code base is mounted into the Docker container as a volume. This allows the code to be edited outside of the container while vue updates what is served within the container.
+
+### Vue builds inside Docker
+
+The Docker container can be entered to run npm or vue commands that will persist outside of the container. To enter the container:
+
+```bash
+$ docker exec -it forms_forms_1 /bin/bash
+```
+
+You can run `vue run build` or other commands.
 
 ## Auto documentation using vuese plugin
 
@@ -72,16 +82,6 @@ $ npm i -g serve && serve .
 
 You should now be able to view the files on your [localhost](http://localhost:5000).
 [More documentation as well as an example, can be found here](https://docute.org/)
-
-### Vue builds inside Docker
-
-The Docker container can be entered to run npm or vue commands that will persist outside of the container. To enter the container:
-
-```bash
-$ docker exec -it forms_forms_1 /bin/bash
-```
-
-You can run `vue run build` or other commands.
 
 ## Testing with Jest
 
