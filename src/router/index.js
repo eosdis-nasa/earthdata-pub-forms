@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Daacs from '../views/Daacs.vue'
+import Daacs from '../views/DAACS.vue'
 import Questions from '../views/Questions.vue'
 import Help from '../views/Help.vue'
 import Home from '../views/Home.vue'
