@@ -21,11 +21,11 @@ export const store = new Vuex.Store({
     },
     // .emptyState() is needed by VuexUndoRedo
     emptyState() {
-      this.replaceState({ question_answers: [] });       
+      this.replaceState({ question_answers: [] });
     },
   },
   actions: {
-    
+
   },
   getters: {
 

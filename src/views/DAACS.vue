@@ -40,11 +40,11 @@
     // Jquery javascript
     import $ from 'jquery'
     
-    // This DAACS component gets DAAC data and displays abbreviations as a radio selection
+    // This Daacs component gets DAAC data and displays abbreviations as a radio selection
     // On selection displays a link to the selected DAAC website, description and a 'Next
     // Button' is displayed to allow users more info and to move on.
     export default {
-        name: 'DAACS',
+        name: 'Daacs',
         data() {
             return {
                 selected: '',
@@ -52,8 +52,6 @@
             }
         },
         props: {
-            // Submit label property and its type
-            submitLabel: { default: 'Submit', type: String }
         },
         computed: {
 
@@ -97,8 +95,6 @@
             submitForm() {
                 // Submit form (this.data) if valid
                 this.$v.$touch()
-                this.$emit('submitForm', this.data)
-                // Testing - what does below do
                 this.$router.push({ name: 'Questions', params: { DAAC: this.data } })
             },
             // @vuese

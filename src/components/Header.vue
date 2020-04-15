@@ -7,11 +7,13 @@
         <img
           alt="NASA logo"
           class="logo"
-          src="https://cdn.earthdata.nasa.gov/eui/latest/docs/assets/ed-logos/app-logo.png"
+          src="../assets/nasa-logo-circle.png"
         />
-        <h2>{{form_title}}</h2>
+        <h2 v-if="formTitle">{{formTitle}}</h2>
+        <h2 v-else-if="showDaacs">Earthdata Archival Interest Form</h2>
+        <h2 v-else>Earthdata Publication</h2>
         <div id="nav">
-          <router-link to="/daacs">DAACS</router-link> | 
+          <router-link v-if="showDaacs" to="/daacs">DAACS</router-link><div class="inline" v-if="showDaacs"> | </div>
           <router-link to="/questions">Questions</router-link> | 
           <router-link to="/help">Help</router-link> 
         </div>
@@ -27,20 +29,37 @@
   name: 'Header',
   data() {
       return {
-          
+        showDaacs:false
       }
   },
   // The property to be set by questions.vue
   props: {
       // The form title parsed from questions.vue
-      form_title: { default: '', type: String }
+      formTitle: { default: '', type: String }
+  },
+  computed: {
+
+  },
+  created() {
+    this.showDaacs = window.localStorage.getItem('showDaacs')
   }
 }
 </script>
 <style scoped>
+  .inline {
+    display:inline;
+  }
+  img {
+      border: unset!important;
+  }
+  img.logo {
+    margin-top:1rem;
+  }
   h2{
-    text-align:left;
-    text-decoration: none;
+    border-bottom: 1px solid #cbcbcb;
+    padding-bottom: 0.2em;
+    font-size: 1.6em;
+    font-weight: normal;
   }
   .header {
     width: 100%;
@@ -104,9 +123,6 @@
   }
   .eui-application-logo .logo {
     padding-top:1rem;
-  }
-  img {
-      border: unset;
   }
 }
 </style>

@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import './logger-init.js';
 import App from './App.vue'
 import router from './router'
 import { store } from './store'
@@ -16,8 +17,6 @@ Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
-// Install Undo/Redo mixin
-Vue.use(VuexUndoRedo);
 
 Vue.use(OverlayPlugin)
 

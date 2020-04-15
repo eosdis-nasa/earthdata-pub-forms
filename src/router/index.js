@@ -1,20 +1,23 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import DAACS from '../views/DAACS.vue'
+import Daacs from '../views/DAACS.vue'
 import Questions from '../views/Questions.vue'
 import Help from '../views/Help.vue'
+import Home from '../views/Home.vue'
+import PageNotFound from '../views/PageNotFound.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  { 
-    path: '/', 
-    redirect: '/daacs' 
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
   },
   {
     path: '/daacs',
-    name: 'DAACS',
-    component: DAACS
+    name: 'Daacs',
+    component: Daacs
   },
   {
     path: '/questions',
@@ -25,11 +28,17 @@ const routes = [
     path: '/help',
     name: 'Help',
     component: Help
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: PageNotFound
   }
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  mode: 'history'
 })
 
 export default router
