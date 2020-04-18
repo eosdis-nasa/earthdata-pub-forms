@@ -121,4 +121,12 @@
         text-align:left;
         float:left;
     }
+    .radio_div{
+        width:25%;
+        float:left;
+    }
+    .desc_div{
+        width:75%;
+        float:right;
+    }
 </style>
