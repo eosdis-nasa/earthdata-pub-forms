@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file. Changes sho
 
 ## [Unreleased]
 
+## [0.0.4] - 2020-04-17
+### Added
+ - [Incorporate logging into output object](bb7dd43a0b0b13118af78049509b1d702d205a32)
+
 ## [0.0.3] - 2020-04-03
 ### Added
  - [Addition of undo redo](fc60bbfb1076619ae9fe081a721c5cf2b940547f)
