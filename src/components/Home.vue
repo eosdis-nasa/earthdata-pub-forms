@@ -25,7 +25,6 @@
         },
         // This is equivalent to document.ready
         mounted() {
-            //console.log('mounted HOME')
             let parameters = this.$route.query
             var redirect = ''
             if(parameters['showDaacs']==true || this.showDaacs || window.localStorage.getItem('showDaacs')){

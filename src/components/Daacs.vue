@@ -63,7 +63,6 @@
         watch: {
             loaded: function(val) {
                 setTimeout(() => {
-                    console.log('LOADED DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACS')
                     if(val){
                         this.GetCurrentDaacAndUpdate()
                     }
@@ -76,7 +75,6 @@
             }
         },
         mounted() {
-            console.log('MOUNTED DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACS')
             this.daacs = this.fetchDaacs()
             this.GetCurrentDaacAndUpdate()
         },
@@ -150,7 +148,6 @@
                     }
                 }
                 let links = this.setActiveLocationWithoutReload(location.href, short_name)
-                //console.log('set links daac.vue',links['questions_nav_link'],links['daacs_nav_link'])
                 document.getElementById('questions_nav_link').href = links['questions_nav_link']
                 document.getElementById('daacs_nav_link').href = links['daacs_nav_link']
                 this.setSaveObject(short_name)
@@ -189,6 +186,7 @@
                         }
                     }*/
                     window.localStorage.setItem('DAAC', short_name.replace(/ /g,'_').toUpperCase());
+                    window.headerComponent.daac = short_name.replace(/ /g,'_').toUpperCase()
                 }
             },
             GetCurrentDaacAndUpdate(){

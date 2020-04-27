@@ -416,7 +416,6 @@
         },
         // This is equivalent to js document.ready
         mounted() {
-            //console.log('MOUNTED QUESTIONSSSSSSSSSSSSSSSSSSSSSSSSS')
             this.showDaacs = window.localStorage.getItem('showDaacs')
             this.daac = window.localStorage.getItem('DAAC')
             this.questions = this.fetchQuestions()

@@ -46,7 +46,12 @@
         formTitle: { default: '', type: String }
     },
     computed: {
-      
+        
+    },
+    watch: {
+        windowDaac: function(val) {
+          console.log('new daac', val)
+        }
     },
     created() {
         this.daac = window.localStorage.getItem('DAAC')
@@ -60,6 +65,7 @@
                 window.localStorage.setItem('showDaacs',false)
             }
         }
+        
     },
     methods: {
       // @vuese
@@ -72,7 +78,7 @@
       }
     },
     mounted(){
-      
+        window.headerComponent = this
     }
 }
 </script>
