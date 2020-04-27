@@ -26,9 +26,8 @@
         name: 'Help',
         data() {
             return {
-                show:true,
                 selected: '',
-                help_tips: {}
+                help_tips: []
             }
         },
         computed: {
@@ -37,18 +36,26 @@
         validations() {
 
         },
+        watch: {
+            help_tips: function() {
+                setTimeout(() => {
+                    this.setActiveNav('help')
+                }, 1)
+            }
+        },
         methods: {
             // Loops through the questions.json and builds a help object from that.
             // If a id is passed in, it just displays 'Help Tip'
             fetchHelp(help_id){
+                //console.log('fetching help...')
                 var help_tips = []
-                $.getJSON( "questions.json", function( questions ) {
+                $.getJSON( "../questions.json", ( questions ) => {
                     for(var section in questions['sections']) {
                         var questions_section = questions['sections'][section]['questions']
                         for(var q in questions_section){
                             var question_id = questions_section[q]['id']
                             var title = questions_section[q]['title']
-                            if(help_id != null && question_id != help_id){ continue }
+                            if(typeof help_id != 'undefined' && help_id != null && question_id != help_id){ continue }
                             var help = questions_section[q]['help']
                             var help_json = {
                                 'help_id':question_id,

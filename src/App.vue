@@ -11,13 +11,13 @@
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
     import Header from '@/components/Header'
-
+    
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
         data() {
             return {
-                formTitle: ''
+                formTitle: '',
             }
         },
         props:{
@@ -27,15 +27,29 @@
             Header
         },
         mounted() {
-            this.$watch(
-                () => {
-                    return this.$refs.content.formTitle
-                },
-                val => {
-                    this.formTitle = val
+            if(typeof this.$refs.content !='undefined'){
+                this.$watch(
+                    () => {
+                        return this.$refs.content.formTitle
+                    },
+                    val => {
+                        this.formTitle = val
+                    }
+                )
+                this.formTitle = this.$refs.content.formTitle
+            } else {
+                if(typeof this.$refs.content =='undefined' && window.localStorage.getItem('DAAC')!=null){
+                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC') })
+                } else {
+                    this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
                 }
-            )
-            this.formTitle = this.$refs.content.formTitle
+            }
+        },
+        watch: {
+            
+        },
+        methods: {
+            
         }
     }
 </script>

@@ -85,4 +85,4 @@ You should now be able to view the files on your [localhost](http://localhost:50
 
 ## Testing with Jest
 
-Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing.
+Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing.  I used a [getting started](https://jestjs.io/docs/en/getting-started) guide for Jest.

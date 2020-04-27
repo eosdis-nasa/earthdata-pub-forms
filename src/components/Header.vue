@@ -12,10 +12,14 @@
         <h2 v-if="formTitle">{{formTitle}}</h2>
         <h2 v-else-if="showDaacs">Earthdata Archival Interest Form</h2>
         <h2 v-else>Earthdata Publication</h2>
-        <div id="nav">
-          <router-link v-if="showDaacs" to="/daacs">DAACS</router-link><div class="inline" v-if="showDaacs"> | </div>
-          <router-link to="/questions">Questions</router-link> | 
-          <router-link to="/help">Help</router-link> 
+        <div id="nav" >
+          <span v-if="showDaacs">
+            <router-link id="daacs_nav_link" v-if="daac !=='selection'" :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}">DAACS1</router-link><div v-if="daac !== 'selection'" class="inline"> | </div>
+            <router-link id="daacs_nav_link" v-if="daac =='selection'" :to="{ name: 'Daacs', path: '/daacs/selection' }">DAACS2</router-link><div v-if="daac == 'selection'" class="inline"> | </div>
+          </span>
+          <router-link id="questions_nav_link" v-if="daac !=='selection'" :to="{ name: 'Questions', path: '/questions', params: { default: daac }}">Questions</router-link><div class="inline" v-if="daac !=='selection'"> | </div>
+          <router-link id="questions_nav_link" v-if="daac =='selection'" @click="requireDaacSelection()">Questions2</router-link><div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
+          <router-link id="help_nav_link" to="/help">Help</router-link> 
         </div>
       <!-- End of Logo and menu -->
       </div>
@@ -24,25 +28,52 @@
   <!-- end of header with eui class -->
 </template>
 <script>
+  // Jquery javascript
+  //import $ from 'jquery'
+
   // Exports the header as a component
   export default {
-  name: 'Header',
-  data() {
-      return {
-        showDaacs:false
+    name: 'Header',
+    data() {
+        return {
+          showDaacs:true,
+          daac:'selection'
+        }
+    },
+    // The property to be set by questions.vue
+    props: {
+        // The form title parsed from questions.vue
+        formTitle: { default: '', type: String }
+    },
+    computed: {
+      
+    },
+    created() {
+        this.daac = window.localStorage.getItem('DAAC')
+        this.showDaacs = window.localStorage.getItem('showDaacs')
+        if(this.showDaacs == null){
+          let parameters = this.$route.query
+            if(parameters['showDaacs']==true){
+                this.showDaacs = true
+                window.localStorage.setItem('showDaacs',true)
+            } else {
+                window.localStorage.setItem('showDaacs',false)
+            }
+        }
+    },
+    methods: {
+      // @vuese
+      // Re-applies the data entry values from values from the store for on undo and redo
+      requireDaacSelection(){
+        if(this.daac == '' || this.daac == 'selection'){
+          alert('Please select a daac to continue.')
+          return false;
+        }
       }
-  },
-  // The property to be set by questions.vue
-  props: {
-      // The form title parsed from questions.vue
-      formTitle: { default: '', type: String }
-  },
-  computed: {
-
-  },
-  created() {
-    this.showDaacs = window.localStorage.getItem('showDaacs')
-  }
+    },
+    mounted(){
+      
+    }
 }
 </script>
 <style scoped>

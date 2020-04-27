@@ -162,7 +162,8 @@
                 questions: {},
                 dirty:false,
                 formTitle: '',
-                saveTimeout: 0
+                saveTimeout: 0,
+                daac:''
             }
         },
         props: {
@@ -203,6 +204,9 @@
         },
         created () {
             
+        },
+        components: {
+
         },
         validations() {
             //console.log('Validations ...')
@@ -246,6 +250,7 @@
             }
             let DAAC_SET = window.localStorage.getItem('DAAC')
             if(DAAC_SET !== null){
+                this.daac = DAAC_SET
                 window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
             }
             return val_fields
@@ -263,13 +268,13 @@
             },
             // @vuese
             // Fetchs the questions data
-            fetchQuestions(DAAC){
+            fetchQuestions(){
                 // Fires on load when building the form content
                 // AJAX CALL HERE
-                console.log('DAAC being passed into fetchQuestions is ' + DAAC)
+                //console.log('DAAC being passed into fetchQuestions is ' + DAAC)
                 var question = []
                 var ignore_attributes = ['list','step','pattern','accept','autocomplete','autofocus','capture','dirname']
-                $.getJSON( "questions.json", ( questions ) => {
+                $.getJSON( "../questions.json", ( questions ) => {
                     //The below line looks for custom css and applies it to the head (eui is done first)
                     this.formTitle = questions.form_title
                     $('head link[data-eui="yes"]').remove()
@@ -378,7 +383,9 @@
                 //console.log('Executing save file ...')
                 // Saves file to localStorage
                 const data = JSON.stringify(this.values)
-                var DAAC = window.localStorage.getItem('DAAC')
+                if(this.daac == null){
+                    var DAAC = window.localStorage.getItem('DAAC')
+                }
                 if(DAAC !== null && data !== JSON.stringify({})){
                     window.localStorage.setItem(DAAC + '_questions', data);
                 }
@@ -409,8 +416,18 @@
         },
         // This is equivalent to js document.ready
         mounted() {
+            //console.log('MOUNTED QUESTIONSSSSSSSSSSSSSSSSSSSSSSSSS')
             this.showDaacs = window.localStorage.getItem('showDaacs')
-            this.questions = this.fetchQuestions(window.localStorage.getItem('DAAC'))
+            this.daac = window.localStorage.getItem('DAAC')
+            this.questions = this.fetchQuestions()
+            this.setActiveNav('questions')
+            let set_loc = location.href
+            if(!set_loc.match(/questions/g)){
+                set_loc += 'questions/'
+            }
+            let links = this.setActiveLocationWithoutReload(set_loc, this.daac)
+            document.getElementById('questions_nav_link').href = links['questions_nav_link']
+            document.getElementById('daacs_nav_link').href = links['daacs_nav_link']
         }
     }
 </script>
