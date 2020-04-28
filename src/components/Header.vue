@@ -14,8 +14,8 @@
         <h2 v-else>Earthdata Publication</h2>
         <div id="nav" >
           <span v-if="showDaacs">
-            <router-link id="daacs_nav_link" v-if="daac !=='selection'" :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}">DAACS1</router-link><div v-if="daac !== 'selection'" class="inline"> | </div>
-            <router-link id="daacs_nav_link" v-if="daac =='selection'" :to="{ name: 'Daacs', path: '/daacs/selection' }">DAACS2</router-link><div v-if="daac == 'selection'" class="inline"> | </div>
+            <router-link id="daacs_nav_link" v-if="daac !=='selection'" :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}">DAACS</router-link><div v-if="daac !== 'selection'" class="inline"> | </div>
+            <router-link id="daacs_nav_link" v-if="daac =='selection'" :to="{ name: 'Daacs', path: '/daacs/selection' }">DAACS</router-link><div v-if="daac == 'selection'" class="inline"> | </div>
           </span>
           <router-link id="questions_nav_link" v-if="daac !=='selection'" :to="{ name: 'Questions', path: '/questions', params: { default: daac }}">Questions</router-link><div class="inline" v-if="daac !=='selection'"> | </div>
           <router-link id="questions_nav_link" v-if="daac =='selection'" @click="requireDaacSelection()">Questions2</router-link><div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
