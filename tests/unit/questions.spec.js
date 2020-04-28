@@ -28,7 +28,7 @@ describe('Sanity and system checks', () => {
     return
   })
   // With this first simple test, I am making sure that my component does not crash completely with empty data.
-  it('should renders a vue instance', () => {
+  test('should renders a vue instance', () => {
     expect(wrapper.isVueInstance()).toBe(true)
   });  
 })
@@ -83,7 +83,7 @@ describe('Daacs selection', () => {
   
   // END-TO-END TESTS
   // You can directly manipulate the state of the component using the setData or setProps method on the wrapper:
-  it('description and selection text should be blank, then should render "You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)"', async () => {
+  test('description and selection text should be blank, then should render "You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)"', async () => {
     expect(wrapper.text()).not.toMatch(/You have selected:/g)
     wrapper.setData({
       selected: 'Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)'
@@ -129,3 +129,122 @@ describe('Help', () => {
   // END-TO-END TESTS
   // 
 });
+
+
+/*** COMPONENT MARKUP / EVALUATION ***/
+/*Header and component navigation:
+	props/data:
+		showDaacs
+		daac
+		formTitle
+		functions:
+			showdaacs:
+				if !showdaacs, opens questions with default = the daac
+			on created:
+				get parameters sent in and sets this.showDaacs and localStorage
+				else get daac from localStorage if its set and sets this.showdaacs
+				else set localStorage to default of data prop
+			on clicking nav after selection:
+				from daacs:
+					daacs - nothing
+					questions - loads questions defaulting to the selected daac
+					help - loads all help
+				from questions:
+					daacs - loads questions defaulting to the selected daac
+					questions - nothing
+					help - loads all help
+				from help:
+					daacs - loads questions defaulting to the selected daac
+					questions - loads questions defaulting to the selected daac
+					help - nothing
+				refreshes the header
+				sets the class of the header active object
+			on clicking nav NO selection:
+				from /:
+					routes to /daacs/selection
+					refreshes the header
+					sets the class of the header active object
+					sets showDaacs in localStorage
+					
+					clicking:
+						daacs - nothing
+						questions - should alert to select a daac first
+						help - loads all help
+				from /daacs:
+					routes to /daacs/selection ('/')
+				from /questions:
+					routes to /daacs/selection ('/')
+
+Daacs:
+	props/data:
+		selected,
+		loaded
+		daacs
+		unique functions:
+			fetchsDaacs
+			GetCurrentDaacAndUpdate:
+				On load, looks for this.selected, param default or localStorage for autoselection then clicks daac radio object (executes the setSelectedValues)
+			setSelectedValues:
+				Receives the selected daac data ({ 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }), 
+				then sets the current daac objects (setCurrentDaacObjects). 
+				Then if there's a new daac selected, reruns with the new daac short name, 
+				updates the address bar, 
+				updates the header and saves
+			getDaac(daac)
+				Gets this.daacs specific daac data and returns the daacs { 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }
+			setCurrentDaacObjects:
+				Receives getDaac data or if none, looks it up (getDaac), then sets the text, url, description, this.selected and this.data (returns short_name). Sets active link in header.
+			save:
+				if something was selected, saves to localStorage and updates the header
+			submit:
+				if seomthing was selected, pushes through the router to Questions with the default as the selected or reroutes to daacs
+
+Questions:
+	props/data:
+		values
+		questions
+		dirty (only file uses this)
+		formTitle:
+		saveTimeout:0
+		daac
+		resetLabel
+		saveLabel
+		undoLabel
+		redoLabel
+		submitLabel
+		enterSubmit
+		readonly
+		showResetButton
+	validations:
+		sets the daac if in localStorage
+		gathers required inputs and stores them in localStorage for later evaluation -> returns this object
+	mounted:
+		on load, gets daac from local storage and if showDaacs is false refreshes header in form. sets this.daac
+		runs questions function (fetchQuestions)
+		sets active nav link
+		update the address bar without reload (or state capture) to reflect the daac
+		update header
+	functions:
+		reApplyValues
+			resets values from undo redo
+		fetchQuestions
+			sets this.formTitle
+			loads question data
+			appends style
+			returns question object
+		submitForm:
+			does this.$emit from localStorage question data object
+		saveFile:
+			gets values
+			gets daac from local storage if not set in questions.vue
+			sets data storage if not empty
+			Will alert a message if is passed string
+		reset:
+			Clears form
+		redo:
+			Redos last action
+			then reApplyValues
+		undo:
+			Undoes last action
+      then reApplyValues
+*/

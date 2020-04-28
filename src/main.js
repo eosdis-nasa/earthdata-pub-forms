@@ -69,6 +69,7 @@ Vue.mixin({
     setActiveNav(activeElement, navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
       setTimeout(() => {
         for(var n in navs){
+          if((!window.headerComponent.showDaacs && navs[n] == 'daacs')){ continue }
           if(document.getElementById(activeElement + '_nav_link') != null){
             var prevClassname
             if (navs[n] == activeElement){
@@ -86,6 +87,7 @@ Vue.mixin({
     // Get active nav element according to class of nav elements
     getActiveNavViaClass(navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active.router-link-active'){
       for(var n in navs){
+        if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
         if ($('#' + navs[n] + '_nav_link').hasClass(activeClass)){
           return navs[n]
         }
@@ -96,6 +98,7 @@ Vue.mixin({
     setActiveNavViaLocation(navs = ['daacs', 'help', 'questions']){
         var match_found = false
         for(var n in navs){
+          if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
           var reg = '/' + navs[n] + '/'
           var re = new RegExp(reg, "g")
           if(location.href.match(re)){

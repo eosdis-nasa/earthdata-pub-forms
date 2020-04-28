@@ -18,8 +18,8 @@
             <router-link id="daacs_nav_link" v-if="daac =='selection'" :to="{ name: 'Daacs', path: '/daacs/selection' }">DAACS</router-link><div v-if="daac == 'selection'" class="inline"> | </div>
           </span>
           <router-link id="questions_nav_link" v-if="daac !=='selection'" :to="{ name: 'Questions', path: '/questions', params: { default: daac }}">Questions</router-link><div class="inline" v-if="daac !=='selection'"> | </div>
-          <router-link id="questions_nav_link" v-if="daac =='selection'" @click="requireDaacSelection()">Questions2</router-link><div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
-          <router-link id="help_nav_link" to="/help">Help</router-link> 
+          <a id="questions_nav_link" v-if="daac =='selection'" href="#" @click="requireDaacSelection()">Questions</a><div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
+          <router-link id="help_nav_link" :to="{ name: 'Help', path: '/help'}">Help</router-link> 
         </div>
       <!-- End of Logo and menu -->
       </div>
@@ -48,41 +48,58 @@
     computed: {
         
     },
+    // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
     watch: {
         windowDaac: function(val) {
           console.log('new daac', val)
+        },
+        showDaacs: function(val){
+          if(val =='false'){
+            this.$router.push({ name: 'Questions', params: { default: this.daac.toLowerCase() } })
+          }
         }
     },
     created() {
-        this.daac = window.localStorage.getItem('DAAC')
-        this.showDaacs = window.localStorage.getItem('showDaacs')
-        if(this.showDaacs == null){
-          let parameters = this.$route.query
-            if(parameters['showDaacs']==true){
-                this.showDaacs = true
-                window.localStorage.setItem('showDaacs',true)
-            } else {
-                window.localStorage.setItem('showDaacs',false)
-            }
+        if(window.localStorage.getItem('DAAC')!= null){
+          this.daac = window.localStorage.getItem('DAAC')
+        } else {
+          this.daac = 'selection'
         }
-        
+        let parameters = this.$route.query
+        if(parameters['showDaacs']){
+          this.showDaacs = parameters['showDaacs']
+          window.localStorage.setItem('showDaacs',parameters['showDaacs'])
+        } else if (window.localStorage.getItem('showDaacs')!=null){
+          this.showDaacs = Boolean(window.localStorage.getItem('showDaacs'))
+        } else {
+          window.localStorage.setItem('showDaacs',this.showDaacs)
+        }
     },
     methods: {
       // @vuese
       // Re-applies the data entry values from values from the store for on undo and redo
       requireDaacSelection(){
-        if(this.daac == '' || this.daac == 'selection'){
+        if(!location.href.match(/help/g)){
           alert('Please select a daac to continue.')
-          return false;
+          event.preventDefault()
+          return false
+        } else {
+          location.href = "/daacs/selection"
         }
       }
     },
     mounted(){
-        window.headerComponent = this
+      window.headerComponent = this
     }
 }
 </script>
 <style scoped>
+  a {
+    cursor:pointer;
+  }
+  a:hover {
+    text-decoration:underline!important
+  }
   .inline {
     display:inline;
   }

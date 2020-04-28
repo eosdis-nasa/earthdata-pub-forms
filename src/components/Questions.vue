@@ -417,6 +417,9 @@
         // This is equivalent to js document.ready
         mounted() {
             this.showDaacs = window.localStorage.getItem('showDaacs')
+            if(this.showDaacs =='false'){
+                window.headerComponent.showDaacs = false
+            }
             this.daac = window.localStorage.getItem('DAAC')
             this.questions = this.fetchQuestions()
             this.setActiveNav('questions')

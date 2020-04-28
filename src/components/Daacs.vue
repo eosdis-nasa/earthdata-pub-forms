@@ -176,19 +176,17 @@
             setSaveObject(short_name) {
                 // Saves file to localStorage
                 if(this.selected !=''){
-                    /*let selected = this.getDaac(this.selected)
-                    let selected_short = selected['short_name']
-                    let default_daac = selected_short.replace(/ /g,'_').toUpperCase()
-                    if(typeof default_daac !='undefined' && default_daac !='' && default_daac !='SELECTION'){
-                        if($("label[for^='" + default_daac + "']")){
-                            $("label[for^='" + default_daac + "']").click()
-                        }
-                    }*/
                     window.localStorage.setItem('DAAC', short_name.replace(/ /g,'_').toUpperCase());
                     window.headerComponent.daac = short_name.replace(/ /g,'_').toUpperCase()
                 }
             },
+            // @vuese
+            // Gets the current daac selected and updates
             GetCurrentDaacAndUpdate(){
+                if(this.selected =='' && (typeof this.$route.params.default == 'undefined' || this.$route.params.default == '')){
+                    this.$route.params.default = 'selection'
+                    history.replaceState('updating href', window.document.title, window.location.href + 'daacs/selection')
+                }
                 if((typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != '' || window.localStorage.getItem('DAAC')!= null){
                     let default_daac;
                     let selected;

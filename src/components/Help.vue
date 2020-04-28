@@ -5,7 +5,7 @@
         <div>
             <b-form-group v-for="(help_tip, index) in help_tips" :key=index>
                 <!-- Help Card -->
-                <b-card :id=help_tip.help_id :aria-hidden="show">
+                <b-card :id=help_tip.help_id >
                     <label for:=help_tip.help>{{help_tip.label}}</label>
                     <b-card-text>{{help_tip.help}}</b-card-text>
                 </b-card>
@@ -77,8 +77,33 @@
         },
         // This is equivalent to document.ready
         mounted() {
-            var help_id = window.localStorage.getItem('help_id')
-            this.help_tips = this.fetchHelp(help_id)
+            let loc;
+            let daacStored;
+            if(window.localStorage.getItem('DAAC')!=null){
+                daacStored = window.localStorage.getItem('DAAC').toLowerCase()
+            }
+            if(daacStored !=null && this.$route.params.default != 'selection'){
+                let re = new RegExp('/' + daacStored)
+                if(window.location.href.toLowerCase().match(re,'g')){
+                    loc = window.location.href.toLowerCase()
+                    loc = loc.replace(re,'')
+                    this.$route.params.default = 'selection'
+                }
+            } else {
+                loc = window.location.href.toLowerCase()
+            }
+            if((typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != ''){
+                if(this.selected !=''){ 
+                    this.help_tips = this.fetchHelp(this.selected)
+                } else if(typeof this.$route.params.default !='undefined'){
+                    this.help_tips = this.fetchHelp(this.$route.params.default)
+                } else if(window.localStorage.getItem('help_id')!=null){
+                    this.help_tips = this.fetchHelp(window.localStorage.getItem('help_id'))
+                }
+            } else {
+                this.help_tips = this.fetchHelp()
+            }
+            history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
         },
     }
 </script>
