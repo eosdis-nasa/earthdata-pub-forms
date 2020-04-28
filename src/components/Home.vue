@@ -8,7 +8,7 @@
     // Possible:
     //
     // http://localhost:8080/daacs, http://localhost:8080/daacs/selection, http://localhost:8080/daacs/ornl_daac
-    // http://localhost:8080/questions, http://localhost:8080/daacs/selection, http://localhost:8080/questions/ornl_daac
+    // http://localhost:8080, http://localhost:8080/daacs/selection, http://localhost:8080/questions/ornl_daac
     export default {
         name: 'Home',
         data() {

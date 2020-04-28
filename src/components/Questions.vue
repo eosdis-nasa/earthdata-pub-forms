@@ -424,9 +424,8 @@
             if(!set_loc.match(/questions/g)){
                 set_loc += 'questions/'
             }
-            let links = this.setActiveLocationWithoutReload(set_loc, this.daac)
-            document.getElementById('questions_nav_link').href = links['questions_nav_link']
-            document.getElementById('daacs_nav_link').href = links['daacs_nav_link']
+            this.setActiveLocationWithoutReload(set_loc, this.daac)
+            window.headerComponent.daac = this.daac.replace(/ /g,'_').toUpperCase()
         }
     }
 </script>

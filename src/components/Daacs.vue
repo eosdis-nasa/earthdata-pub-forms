@@ -147,9 +147,8 @@
                         this.$route.params.default = short_name.replace(/ /g,'_').toLowerCase()
                     }
                 }
-                let links = this.setActiveLocationWithoutReload(location.href, short_name)
-                document.getElementById('questions_nav_link').href = links['questions_nav_link']
-                document.getElementById('daacs_nav_link').href = links['daacs_nav_link']
+                this.setActiveLocationWithoutReload(location.href, short_name)
+                window.headerComponent.daac = short_name.replace(/ /g,'_').toUpperCase()
                 this.setSaveObject(short_name)
             },
             // @vuese

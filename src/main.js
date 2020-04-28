@@ -113,11 +113,6 @@ Vue.mixin({
         let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
         let next_hash = current_href + '/' + to_href
         history.replaceState('updating daac in href', window.document.title, next_hash);
-        if(typeof window.location.pathname.split('/')[1] !='undefined' && window.location.pathname != null){
-          let daacs_nav_link = window.location.pathname.replace(/questions/g,'daacs').replace(/ /g,'_').toLowerCase()
-          let questions_nav_link = window.location.pathname.replace(/daacs/g,'questions').replace(/ /g,'_').toLowerCase()
-          return { 'daacs_nav_link': daacs_nav_link, 'questions_nav_link': questions_nav_link }
-        }
       }
     }
   },
