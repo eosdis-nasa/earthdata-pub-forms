@@ -15,6 +15,7 @@
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
+        name: 'app',
         data() {
             return {
                 formTitle: '',

@@ -2,6 +2,7 @@
   <!-- Form -->
   <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
     <b-container>
+        <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
@@ -17,7 +18,7 @@
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
                         <!--<b-col class="w-50 help">
-                            <a href="javascript:void(0);" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
+                            <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
                             <div class="hidden overlay">{{question.help}}</div>
                         </b-col>-->
                         <!-- Input -->
@@ -134,13 +135,13 @@
     </b-container>
     <!-- Button Options -->
     <div align=right v-if="!readonly" class="button_bar">
-        <b-button class="button" type="redo" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-        <b-button class="button" type="redo" v-else disabled>{{ redoLabel }}</b-button>
-        <b-button class="button" type="undo" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-        <b-button class="button" type="undo" v-else disabled>{{ undoLabel }}</b-button>
-        <b-button class="button" type="save" @click=saveFile(true)>{{ saveLabel }}</b-button>
-        <b-button class="button" type="submit" @click=submitForm>{{ submitLabel }}</b-button>
-        <b-button class="button" type="reset" v-if="showResetButton">{{ resetLabel }}</b-button>
+        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
+        <b-button class="button" type="redo" id="redo_button" v-else disabled>{{ redoLabel }}</b-button>
+        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
+        <b-button class="button" type="undo" id="undo_button" v-else disabled>{{ undoLabel }}</b-button>
+        <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
+        <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+        <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
     </div>
     <!-- End of Button Options -->
   </b-form>
@@ -151,11 +152,13 @@
     import { required } from 'vuelidate/lib/validators'
     // Jquery javascript
     import $ from 'jquery'
+    import mixin from '../mixins/mixin'
 
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
         name: 'Questions',
+        mixins: [mixin],
         data() {
             return {
                 values: {},
@@ -163,7 +166,8 @@
                 dirty:false,
                 formTitle: '',
                 saveTimeout: 0,
-                daac:''
+                daac:'',
+                warning:''
             }
         },
         props: {
@@ -416,23 +420,44 @@
         },
         // This is equivalent to js document.ready
         mounted() {
-            this.showDaacs = window.localStorage.getItem('showDaacs')
-            if(this.showDaacs =='false'){
+            if(typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined'){
+              this.daac = this.$route.params.default
+            } else if(window.localStorage.getItem('DAAC')!=null){
+              this.daac = window.localStorage.getItem('DAAC')
+            }
+            if(typeof this.$route != 'undefined' && typeof this.$route.params.showDaacs != 'undefined'){
+              this.showDaacs = this.$route.params.showDaacs
+            } else if(window.localStorage.getItem('showDaacs')!=null){
+              this.showDaacs = window.localStorage.getItem('showDaacs')
+            }
+            if(typeof window.headerComponent != 'undefined' && this.showDaacs =='false'){
                 window.headerComponent.showDaacs = false
             }
-            this.daac = window.localStorage.getItem('DAAC')
+            if(this.daac == null){
+                this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
+            }
             this.questions = this.fetchQuestions()
             this.setActiveNav('questions')
             let set_loc = location.href
             if(!set_loc.match(/questions/g)){
                 set_loc += 'questions/'
             }
+            if(set_loc.match(/selection/g)){
+                this.warning = 'No daac has been selected'
+            }
             this.setActiveLocationWithoutReload(set_loc, this.daac)
-            window.headerComponent.daac = this.daac.replace(/ /g,'_').toUpperCase()
+            if(typeof window.headerComponent != 'undefined'){
+                window.headerComponent.daac = this.daac.replace(/ /g,'_').toUpperCase()
+            }
         }
     }
 </script>
 <style scoped>
+    .warning {
+        color:red;
+        font-weight:bold;
+        text-decoration: None
+    }
     .col-form-label {
         font-weight:bold;
     }

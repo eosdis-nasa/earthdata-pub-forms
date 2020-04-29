@@ -19,11 +19,13 @@
 <script>
     // Jquery javascript
     import $ from 'jquery'
+    import mixin from '../mixins/mixin'
 
     // This help component displays all the help in the questions.json
     // It sets the above template properties and methods. Takes an optional help.id
     export default {
         name: 'Help',
+        mixins: [mixin],
         data() {
             return {
                 selected: '',
@@ -82,7 +84,7 @@
             if(window.localStorage.getItem('DAAC')!=null){
                 daacStored = window.localStorage.getItem('DAAC').toLowerCase()
             }
-            if(daacStored !=null && this.$route.params.default != 'selection'){
+            if(daacStored !=null && typeof this.$route != 'undefined' && this.$route.params.default != 'selection'){
                 let re = new RegExp('/' + daacStored)
                 if(window.location.href.toLowerCase().match(re,'g')){
                     loc = window.location.href.toLowerCase()
@@ -92,7 +94,7 @@
             } else {
                 loc = window.location.href.toLowerCase()
             }
-            if((typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != ''){
+            if((typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != ''){
                 if(this.selected !=''){ 
                     this.help_tips = this.fetchHelp(this.selected)
                 } else if(typeof this.$route.params.default !='undefined'){

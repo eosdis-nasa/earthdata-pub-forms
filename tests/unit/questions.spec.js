@@ -1,11 +1,69 @@
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import BootstrapVue from 'bootstrap-vue';
+import App from "@/App.vue"
+import VueRouter from 'vue-router'
+import { BootstrapVue } from 'bootstrap-vue'
+import Vuelidate from 'vuelidate'
+import $ from 'jquery'
+import Header from '@/components/Header.vue'
+import Home from '@/components/Home.vue'
 import Daacs from '@/components/Daacs.vue'
+import Questions from '@/components/Questions.vue'
+import Help from '@/components/Help.vue'
+import PageNotFound from '@/components/PageNotFound.vue'
+import Vuex, { mapActions } from 'vuex'
+import VuexUndoRedo from 'vuex-undo-redo';
 
 const localVue = createLocalVue();
+localVue.use(VueRouter)
 localVue.use(BootstrapVue);
+localVue.use(Vuelidate)
+localVue.use(Vuex)
+localVue.use(VuexUndoRedo)
 
-const wrapper = mount(Daacs, { localVue })
+const routes = [  { path: '/', name: 'Home', component: Home },
+                  { path: '/daacs/:default', name: 'Daacs', component: Daacs, alias: '/daacs/selection' },
+                  { path: '/questions/:default', name: 'Questions', component: Questions },
+                  { path: '/help/:default', name: 'Help', component: Help },
+                  { path: '/404*', name: '404', component: PageNotFound }
+                ]
+const router = new VueRouter({ routes })
+let actions
+let store
+describe('creating test store', () => {
+  beforeEach(() => {
+    actions = {
+      fetchDaacs: jest.fn()
+    }
+    store = new Vuex.Store({ 
+      actions,
+      // State is the default obj and value
+      state: {
+        question_answers: []
+      },
+      mutations: {
+        // push question state to save the payload to the store state question_answers
+        pushQuestionsState(state, payload){
+          state.question_answers.push(Object.assign({}, payload))
+        },
+        // .emptyState() is needed by VuexUndoRedo
+        emptyState() {
+          this.replaceState({ question_answers: [] });
+        },
+      }
+    })
+  })
+})
+const mocks = {
+  $route: {
+    params: {
+      default: ''
+    }
+  },
+  $router: {
+    replace: jest.fn()
+  }
+}
+const wrapper = mount(Daacs, { store, localVue, router })
 
 // Jest Testing Resources
 // "Testing Vue.js Applications" at https://www.manning.com/books/testing-vue-js-applications
@@ -33,6 +91,57 @@ describe('Sanity and system checks', () => {
   });  
 })
 
+/*describe("App", () => {
+  it("renders a child component via routing", async () => {
+    const router = new VueRouter({ routes })
+    const wrapper = mount(App, { 
+      localVue,
+      router
+    })
+    router.push("/nested-route")
+    await wrapper.vm.$nextTick()
+    console.log(wrapper.html())
+    //expect(wrapper.find(NestedRoute).exists()).toBe(true)
+  }),
+  describe('builds store to test state action and html5 response', () => {
+    let actions
+    let store
+  
+    beforeEach(() => {
+      actions = {
+        actionClick: jest.fn(),
+        actionInput: jest.fn()
+      }
+      store = new Vuex.Store({
+        router: routes,
+        actions
+      })
+    })
+  
+    it('dispatches "actionInput" when input event email value is "example@aol.com"', () => {
+      const wrapper = mount(App, { store, localVue })
+      const input = wrapper.find('email')
+      input.element.value = 'example@aol.com'
+      input.trigger('email')
+      expect(actions.actionInput).toHaveBeenCalled()
+    })
+  
+    it('does not dispatch "actionInput" when event value is not correct', () => {
+      const wrapper = shallowMount(Questions, { store, localVue })
+      const input = wrapper.find('email')
+      input.element.value = 'not correct'
+      input.trigger('email')
+      expect(actions.actionInput).not.toHaveBeenCalled()
+    })
+  
+    it('calls store action "actionClick" when button is clicked', () => {
+      const wrapper = shallowMount(Questions, { store, localVue })
+      wrapper.find('undo_button').trigger('click')
+      expect(actions.actionClick).toHaveBeenCalled()
+    })
+  })
+})*/
+
 /*** HEADER TESTS ***/
 describe('Header', () => {
   // Clear out instance storage
@@ -45,7 +154,40 @@ describe('Header', () => {
     localStorage.setItem.mockClear();
   });
   // UNIT TESTS
-
+  test('showDaacs turns false, it should hide the DAACS link', async () => {
+    // Default wrapper
+    const wrapper = mount(Header, { 
+      store, 
+      localVue, 
+      router,
+      data(){
+        return {
+          showDaacs: false,
+          default:'selection'
+        }
+      } 
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.html()).not.toContain('daacs_nav_link')
+  }),
+  test('showDaacs turns true, it should show the DAACS link', async () => {
+    // Default wrapper
+    const wrapper = mount(Header, { 
+      store, 
+      localVue, 
+      router,
+      data(){
+        return {
+          showDaacs: true,
+          default:'selection'
+        }
+      } 
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.html()).toContain('daacs_nav_link')
+  })
+  //daac
+  //formTitle
   // END-TO-END TESTS
   // on clicking nav after selection:
     // loads questions
@@ -64,6 +206,7 @@ describe('Header', () => {
 
 /*** DAAC SELECTION TESTS ***/
 describe('Daacs selection', () => {
+  wrapper.vm.$nextTick()
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
@@ -95,6 +238,10 @@ describe('Daacs selection', () => {
 
 /*** QUESTIONS TESTS ***/
 describe('Questions', () => {
+  const wrapper = mount(Questions, { store, localVue, router, propsData: {
+    daac: 'ornl_daac'
+  }})
+  wrapper.vm.$nextTick()
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
@@ -113,7 +260,9 @@ describe('Questions', () => {
 
 /*** HELP TESTS ***/
 describe('Help', () => {
+  const wrapper = mount(Daacs, { store, localVue, router })
   // Clear out instance storage
+  wrapper.vm.$nextTick()
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
     localStorage.clear();
@@ -130,7 +279,7 @@ describe('Help', () => {
   // 
 });
 
-
+/*
 /*** COMPONENT MARKUP / EVALUATION ***/
 /*Header and component navigation:
 	props/data:

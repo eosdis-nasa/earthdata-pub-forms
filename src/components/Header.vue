@@ -65,10 +65,14 @@
         } else {
           this.daac = 'selection'
         }
-        let parameters = this.$route.query
-        if(parameters['showDaacs']){
-          this.showDaacs = parameters['showDaacs']
-          window.localStorage.setItem('showDaacs',parameters['showDaacs'])
+        let parameters = this.$route
+        let showDaacs
+        if(typeof parameters !='undefined'){
+          showDaacs = parameters.query['showDaacs']
+        }
+        if(showDaacs){
+          this.showDaacs = showDaacs
+          window.localStorage.setItem('showDaacs',showDaacs)
         } else if (window.localStorage.getItem('showDaacs')!=null){
           this.showDaacs = Boolean(window.localStorage.getItem('showDaacs'))
         } else {
@@ -84,7 +88,7 @@
           event.preventDefault()
           return false
         } else {
-          location.href = "/daacs/selection"
+          window.location.assign("/daacs/selection")
         }
       }
     },

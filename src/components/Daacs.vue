@@ -39,12 +39,14 @@
 <script>
     // Jquery javascript
     import $ from 'jquery'
+    import mixin from '../mixins/mixin'
     
     // This Daacs component gets DAAC data and displays abbreviations as a radio selection
     // On selection displays a link to the selected DAAC website, description and a 'Next
     // Button' is displayed to allow users more info and to move on.
     export default {
         name: 'Daacs',
+        mixins: [mixin],
         data() {
             return {
                 selected: '',
@@ -141,7 +143,7 @@
             // On selected, builds dynamic text and sets html dynamically with the link
             setSelectedValues(url, short_name, long_name, description){
                 short_name = this.setCurrentDaacObjects(this.selected, url, short_name, long_name, description)
-                if(typeof this.$route.params.default != 'undefined' && this.$route.params.default !=null){
+                if(typeof this.$route!= 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default !=null){
                     if(this.$route.params.default.replace(/ /g,'_').toLowerCase() != short_name.replace(/ /g,'_').toLowerCase()){
                         short_name = this.setCurrentDaacObjects(short_name, url, short_name, long_name, description)
                         this.$route.params.default = short_name.replace(/ /g,'_').toLowerCase()
@@ -166,7 +168,7 @@
                 // Submit form (this.selected) if valid
                 this.$v.$touch()
                 if (this.selected !=''){
-                    this.$router.push({ name: 'Questions', params: { default: this.selected } })
+                    this.$router.push({ name: 'Questions', params: { default: this.data } })
                 } else {
                     this.$router.push({ name: 'Daacs', params: { default: 'selection' } })
                 }
@@ -183,11 +185,10 @@
             // @vuese
             // Gets the current daac selected and updates
             GetCurrentDaacAndUpdate(){
-                if(this.selected =='' && (typeof this.$route.params.default == 'undefined' || this.$route.params.default == '')){
-                    this.$route.params.default = 'selection'
+                if(this.selected =='' && (typeof this.$route == 'undefined' || typeof this.$route.params.default == 'undefined' || this.$route.params.default == '')){
                     history.replaceState('updating href', window.document.title, window.location.href + 'daacs/selection')
                 }
-                if((typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != '' || window.localStorage.getItem('DAAC')!= null){
+                if((typeof this.$route!= 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != '' || window.localStorage.getItem('DAAC')!= null){
                     let default_daac;
                     let selected;
                     if(this.selected !=''){ 
