@@ -38,14 +38,12 @@ const routes = [  { path: '/', name: 'Home', component: Home },
                   { path: '/help/:default', name: 'Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
-const router = new VueRouter({ routes })
+
+const router = new VueRouter({ routes, mode: 'history' })
 let actions
 let store
 describe('creating test store', () => {
   beforeEach(() => {
-    actions = {
-      fetchDaacs: jest.fn()
-    }
     store = new Vuex.Store({ 
       actions,
       // State is the default obj and value
@@ -65,16 +63,7 @@ describe('creating test store', () => {
     })
   })
 })
-const mocks = {
-  $route: {
-    params: {
-      default: ''
-    }
-  },
-  $router: {
-    replace: jest.fn()
-  }
-}
+
 const wrapper = mount(Daacs, { store, localVue, router })
 
 /*** SANITY TESTS ***/
@@ -88,20 +77,22 @@ describe('Sanity and system checks', () => {
     expect(wrapper.isVueInstance()).toBe(true)
   });  
 })
-
-/*describe("App", () => {
+//TODO Need to figure out how to examine window.location.href.  Explored expect(windows.location.pathname).toBe(blah), but it's way incorrect.  need a way to reset this, see global.window.location
+describe("App", () => {
   it("renders a child component via routing", async () => {
     const router = new VueRouter({ routes })
     const wrapper = mount(App, { 
       localVue,
       router
     })
-    router.push("/nested-route")
+    router.push("/daacs/selection")
     await wrapper.vm.$nextTick()
-    console.log(wrapper.html())
+    expect(wrapper.text().includes('Choose your DAAC:')).toBe(true)
     //expect(wrapper.find(NestedRoute).exists()).toBe(true)
-  }),
+  })
+  /*,
   describe('builds store to test state action and html5 response', () => {
+    /*
     let actions
     let store
   
@@ -115,11 +106,11 @@ describe('Sanity and system checks', () => {
         actions
       })
     })
-  
-    it('dispatches "actionInput" when input event email value is "example@aol.com"', () => {
+
+    it('dispatches "actionInput" when input event email value is "something@example.com"', () => {
       const wrapper = mount(App, { store, localVue })
       const input = wrapper.find('email')
-      input.element.value = 'example@aol.com'
+      input.element.value = 'something@example.com'
       input.trigger('email')
       expect(actions.actionInput).toHaveBeenCalled()
     })
@@ -137,8 +128,8 @@ describe('Sanity and system checks', () => {
       wrapper.find('undo_button').trigger('click')
       expect(actions.actionClick).toHaveBeenCalled()
     })
-  })
-})*/
+  })*/
+})
 
 /*** HEADER TESTS ***/
 describe('Header', () => {
@@ -184,12 +175,10 @@ describe('Header', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
   }),
-  test('daac is blank, should default to selection. Clicking questions afterwards should result in a call to the requireDaacSelection method.', async () => {
-    let store
+  test('daac is blank, should remove the href in questions not allowing a user to click.', async () => {
     jsdom.reconfigure({
       url: "http://localhost:8080/daacs/selection",
     });
-    // Default wrapper
     const wrapper = mount(Header, { 
       store, 
       localVue, 
@@ -201,20 +190,48 @@ describe('Header', () => {
         }
       } 
     })
-    wrapper.setMethods({ requireDaacSelection:jest.fn() })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions</a>')).toBe(true);
+  }),
+  test('on form title change, should update the header title.', async () => {
+    let store
+    // Default wrapper
+    const wrapper = mount(Header, {  store,  localVue, router, propsData: {
+      formTitle: 'Some Form Page'
+    }})
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text().includes('Some Form Page')).toBe(true);
+  }),
+  // END-TO-END TESTS
+  // on clicking nav after selection:
+  // loads questions
+  // sets address bar without reloading
+  // sets the hrefs in navigation
+  // sets the objects({DAAC}_questions in localStorage
+  test('on clicking questions, should render to questions if daac is selected', async () => {
+    jsdom.reconfigure({
+      url: "http://localhost:8080/daacs/selection",
+    });
+    // Default wrapper
+    const wrapper = mount(Header, { 
+      store, 
+      localVue, 
+      router,
+      data(){
+        return {
+          showDaacs: true,
+          daac:'ornl_daac'
+        }
+      } 
+    })
     await wrapper.vm.$nextTick()
     wrapper.find('questions_nav_link')
     wrapper.trigger('click')
-    expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
+    console.log(wrapper.html())
+    // TODO click event not in wrapper html to simulate click -> needs researcj
+    //expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
   })
-  //formTitle
-  // END-TO-END TESTS
-  // on clicking nav after selection:
-    // loads questions
-    // sets address bar without reloading
-    // sets the hrefs in navigation
-    // sets the objects({DAAC}_questions in localStorage
-  
+
   // on clicking nav without selection:
     // daac:
       // 
@@ -300,6 +317,9 @@ describe('Help', () => {
   // 
 });
 
+afterEach(() => {
+  wrapper.destroy();
+});
 /*
 /*** COMPONENT MARKUP / EVALUATION ***/
 /*Header and component navigation:

@@ -36,9 +36,9 @@
             }
             if(typeof parameters['default'] != 'undefined'){
                 // Expecting daac short_name here
-                redirect+='/' + parameters['default']
+                redirect+='/' + parameters['default'].toLowerCase()
             } else if(window.localStorage.getItem('DAAC')!=null){
-                redirect+='/' + window.localStorage.getItem('DAAC')
+                redirect+='/' + window.localStorage.getItem('DAAC').toLowerCase()
             } else {
                 redirect='/daacs/selection'
             }
