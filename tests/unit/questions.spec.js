@@ -75,7 +75,7 @@ const mocks = {
     replace: jest.fn()
   }
 }
-const wrapper = mount(App, { store, localVue, router })
+const wrapper = mount(Daacs, { store, localVue, router })
 
 /*** SANITY TESTS ***/
 describe('Sanity and system checks', () => {
@@ -203,11 +203,9 @@ describe('Header', () => {
     })
     wrapper.setMethods({ requireDaacSelection:jest.fn() })
     await wrapper.vm.$nextTick()
-    console.log(wrapper.html())
-    //wrapper
-    //  .find('questions_nav_link')
-    //  .trigger('click')
-    //expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
+    wrapper.find('questions_nav_link')
+    wrapper.trigger('click')
+    expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
   })
   //formTitle
   // END-TO-END TESTS
