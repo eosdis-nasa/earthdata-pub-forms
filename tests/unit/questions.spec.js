@@ -1,9 +1,21 @@
+// Jest Testing Resources
+// "Testing Vue.js Applications" at https://www.manning.com/books/testing-vue-js-applications
+// "Unit Testing in Vue" at https://vuemastery.com
+// "Vue Test Utils" at https://vue-test-utils.vuejs.org/
+// "Vue.js" at https://vuejs.org/v2/guide/
+
+// What to test -> You should test your component's public interface and side effects.
+
+// Testing the public interface
+// You want to test that, when passing specific props to your components, you get a specific output. For components, this output is the rendered markup.
+
+// Unit tests are functions that call functions in your source code in isolation and assert that they behave correctly. A good test suite has 60% unit testing, 30% snapshot tests, 10% end-to-end tests
+// This app will be 90% unit testing and 10% end-to-end testing (at least to start)
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import App from "@/App.vue"
 import VueRouter from 'vue-router'
 import { BootstrapVue } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
-import $ from 'jquery'
 import Header from '@/components/Header.vue'
 import Home from '@/components/Home.vue'
 import Daacs from '@/components/Daacs.vue'
@@ -63,21 +75,7 @@ const mocks = {
     replace: jest.fn()
   }
 }
-const wrapper = mount(Daacs, { store, localVue, router })
-
-// Jest Testing Resources
-// "Testing Vue.js Applications" at https://www.manning.com/books/testing-vue-js-applications
-// "Unit Testing in Vue" at https://vuemastery.com
-// "Vue Test Utils" at https://vue-test-utils.vuejs.org/
-// "Vue.js" at https://vuejs.org/v2/guide/
-
-// What to test -> You should test your component's public interface and side effects.
-
-// Testing the public interface
-// You want to test that, when passing specific props to your components, you get a specific output. For components, this output is the rendered markup.
-
-// Unit tests are functions that call functions in your source code in isolation and assert that they behave correctly. A good test suite has 60% unit testing, 30% snapshot tests, 10% end-to-end tests
-// This app will be 90% unit testing and 10% end-to-end testing (at least to start)
+const wrapper = mount(App, { store, localVue, router })
 
 /*** SANITY TESTS ***/
 describe('Sanity and system checks', () => {
@@ -163,7 +161,7 @@ describe('Header', () => {
       data(){
         return {
           showDaacs: false,
-          default:'selection'
+          daac:'selection'
         }
       } 
     })
@@ -179,14 +177,38 @@ describe('Header', () => {
       data(){
         return {
           showDaacs: true,
-          default:'selection'
+          daac:'selection'
         }
       } 
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
+  }),
+  test('daac is blank, should default to selection. Clicking questions afterwards should result in a call to the requireDaacSelection method.', async () => {
+    let store
+    jsdom.reconfigure({
+      url: "http://localhost:8080/daacs/selection",
+    });
+    // Default wrapper
+    const wrapper = mount(Header, { 
+      store, 
+      localVue, 
+      router,
+      data(){
+        return {
+          showDaacs: true,
+          daac:''
+        }
+      } 
+    })
+    wrapper.setMethods({ requireDaacSelection:jest.fn() })
+    await wrapper.vm.$nextTick()
+    console.log(wrapper.html())
+    //wrapper
+    //  .find('questions_nav_link')
+    //  .trigger('click')
+    //expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
   })
-  //daac
   //formTitle
   // END-TO-END TESTS
   // on clicking nav after selection:
@@ -206,7 +228,8 @@ describe('Header', () => {
 
 /*** DAAC SELECTION TESTS ***/
 describe('Daacs selection', () => {
-  wrapper.vm.$nextTick()
+  // Default wrapper
+  const wrapper = mount(Daacs, {  store, localVue, router })
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
