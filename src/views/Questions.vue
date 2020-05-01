@@ -194,6 +194,12 @@
                     this.saveTimeout = setTimeout(() => {
                         if (!this.values.fromUndo) {
                             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
+                            this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
+                            var string_logging_object = this.$log.debug('pushQuestionsState')
+                            this.$logging_object[Date(Date.now()).toString()] = {
+                                "log_string":string_logging_object, 
+                                "answers": Object.assign({}, this.values)
+                            }
                         }
                         delete this.values.fromUndo
                     }, 250);
@@ -246,7 +252,8 @@
             }
             let DAAC_SET = window.localStorage.getItem('DAAC')
             if(DAAC_SET !== null){
-                window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
+                //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
+                this.$required = JSON.stringify(val_fields.values)
             }
             return val_fields
         },
@@ -359,6 +366,8 @@
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
+                this.safeFile()
+                //this.validations()
                 if (this.$v.$invalid) {
                     //TODO
                     //var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
@@ -380,7 +389,24 @@
                 const data = JSON.stringify(this.values)
                 var DAAC = window.localStorage.getItem('DAAC')
                 if(DAAC !== null && data !== JSON.stringify({})){
-                    window.localStorage.setItem(DAAC + '_questions', data);
+                    //window.localStorage.setItem(DAAC + '_questions', data);
+                    this.$values = data
+                    this.$output_object[DAAC] =  {
+                        "values": this.$values,
+                        "log":this.$logging_object
+                    }
+                    this.$input_object[DAAC] = {
+                        "questions":this.questions[0],
+                        "required":this.$required
+                    }
+                    window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
+                    window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
+
+                    // @vuese
+                    // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
+                    // If production level set (see main.js), will be at different level automatically.  
+                    // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
+                    //this.$log.debug('this.showDaacs', 'some error')
                 }
                 if(with_msg){
                     alert('Your data has been saved.  Click submit to send the data.')
