@@ -40,7 +40,7 @@
                 this.formTitle = this.$refs.content.formTitle
             } else {
                 if(typeof this.$refs.content =='undefined' && window.localStorage.getItem('DAAC')!=null){
-                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC') })
+                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC').toLowerCase() })
                 } else {
                     this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
                 }

@@ -1,7 +1,7 @@
 <template>
   <!-- Form -->
-  <b-form v-on:submit.stop.prevent>
-    <b-container>
+  <b-form name="help_form" v-on:submit.stop.prevent>
+    <b-container name="help_container">
         <div>
             <b-form-group v-for="(help_tip, index) in help_tips" :key=index>
                 <!-- Help Card -->

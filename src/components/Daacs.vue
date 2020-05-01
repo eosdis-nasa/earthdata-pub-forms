@@ -1,6 +1,6 @@
 <template>
   <!-- Form -->
-  <b-form name="form" @submit="enterSubmitForm" id="daac-selection">
+  <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
     <b-container name="daacs-container">
         <div>
             <b-form-group name="form-group" id="form-group" label="Choose your DAAC:"><br>
@@ -131,7 +131,7 @@
                 if(typeof description == 'undefined'){
                     description = daac_specific_data['description']
                 }
-                var text = "For more information on <b>" + short_name + "</b>, visit <a href=\"" + url + "\">" + short_name + '\'s website</a>.'
+                var text = "For more information on <b>" + short_name.toUpperCase() + "</b>, visit <a href=\"" + url + "\">" + short_name.toUpperCase() + '\'s website</a>.'
                 $('#selected_url').html(text)
                 $('#selected_description').html(description)
                 this.setActiveNav('daacs')
@@ -142,7 +142,7 @@
             // @vuese
             // On selected, builds dynamic text and sets html dynamically with the link
             setSelectedValues(url, short_name, long_name, description){
-                short_name = this.setCurrentDaacObjects(this.selected, url, short_name, long_name, description)
+                short_name = this.setCurrentDaacObjects(this.selected, url, short_name, long_name, description).toLowerCase()
                 if(typeof this.$route!= 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default !=null){
                     if(this.$route.params.default.replace(/ /g,'_').toLowerCase() != short_name.replace(/ /g,'_').toLowerCase()){
                         short_name = this.setCurrentDaacObjects(short_name, url, short_name, long_name, description)
@@ -150,8 +150,9 @@
                     }
                 }
                 this.setActiveLocationWithoutReload(location.href, short_name)
-                window.headerComponent.daac = short_name.replace(/ /g,'_').toUpperCase()
+                window.headerComponent.daac = short_name.toLowerCase()
                 this.setSaveObject(short_name)
+                return short_name
             },
             // @vuese
             // @arg The event
@@ -168,7 +169,7 @@
                 // Submit form (this.selected) if valid
                 this.$v.$touch()
                 if (this.selected !=''){
-                    this.$router.push({ name: 'Questions', params: { default: this.data } })
+                    this.$router.push({ name: 'Questions', params: { default: this.data.toLowerCase() } })
                 } else {
                     this.$router.push({ name: 'Daacs', params: { default: 'selection' } })
                 }
@@ -179,14 +180,14 @@
                 // Saves file to localStorage
                 if(this.selected !=''){
                     window.localStorage.setItem('DAAC', short_name.replace(/ /g,'_').toUpperCase());
-                    window.headerComponent.daac = short_name.replace(/ /g,'_').toUpperCase()
+                    window.headerComponent.daac = short_name.replace(/ /g,'_').toLowerCase()
                 }
             },
             // @vuese
             // Gets the current daac selected and updates
             GetCurrentDaacAndUpdate(){
-                if(this.selected =='' && (typeof this.$route == 'undefined' || typeof this.$route.params.default == 'undefined' || this.$route.params.default == '')){
-                    history.replaceState('updating href', window.document.title, window.location.href + 'daacs/selection')
+                if(this.selected =='' && !window.location.href.match(/daacs\/selection/g) && (typeof this.$route == 'undefined' || typeof this.$route.params.default == 'undefined' || this.$route.params.default == '')){
+                    history.replaceState('updating href', window.document.title, window.location.href.toLowerCase() + 'daacs/selection')
                 }
                 if((typeof this.$route!= 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != '' || window.localStorage.getItem('DAAC')!= null){
                     let default_daac;

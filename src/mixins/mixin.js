@@ -8,14 +8,14 @@ export default {
         setTimeout(() => {
           for(var n in navs){
             if((!window.headerComponent.showDaacs && navs[n] == 'daacs')){ continue }
-            if(document.getElementById(activeElement + '_nav_link') != null){
+            if(window.document.getElementById(activeElement + '_nav_link') != null){
               var prevClassname
               if (navs[n] == activeElement){
-                prevClassname = document.getElementById(activeElement + '_nav_link').className
-                document.getElementById(activeElement + '_nav_link').className = activeClass
+                prevClassname = window.document.getElementById(activeElement + '_nav_link').className
+                window.document.getElementById(activeElement + '_nav_link').className = activeClass
               } else {
-                prevClassname = document.getElementById(navs[n] + '_nav_link').className
-                document.getElementById(navs[n] + '_nav_link').className = prevClassname.replace(activeClass,'') 
+                prevClassname = window.document.getElementById(navs[n] + '_nav_link').className
+                window.document.getElementById(navs[n] + '_nav_link').className = prevClassname.replace(activeClass,'') 
               }
             }
           }
@@ -50,7 +50,7 @@ export default {
       // Set / Resets active location.href value without updating state
       setActiveLocationWithoutReload(lctn = location.href, shortName){
         if(typeof shortName !='undefined' && shortName != null && (lctn.match(/questions/g) || lctn.match(/daacs/g))){
-          var current_href = lctn.substr(0, lctn.lastIndexOf("/"))
+          var current_href = lctn.substr(0, lctn.lastIndexOf("/")).toLowerCase()
           let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
           let next_hash = current_href + '/' + to_href
           history.replaceState('updating daac in href', window.document.title, next_hash);

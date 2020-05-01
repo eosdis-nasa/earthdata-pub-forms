@@ -42,7 +42,7 @@
             } else {
                 redirect='/daacs/selection'
             }
-            window.location.assign(redirect.toLowerCase())
+            window.location.href = redirect.toLowerCase()
         }
     }
 </script>

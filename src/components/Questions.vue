@@ -1,7 +1,7 @@
 <template>
   <!-- Form -->
-  <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
-    <b-container>
+  <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
+    <b-container name="questions_container">
         <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
         <section>
@@ -285,16 +285,16 @@
                     if(questions.style){
                         $('head link[data-custom="yes"]').remove()
                     }
-                    var head = document.head;
-                    var link = document.createElement("link");
+                    var head = window.document.head;
+                    var link = window.document.createElement("link");
                     link.type = "text/css";
                     link.rel = "stylesheet";
                     $(link).attr('data-eui', 'yes');
                     link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
                     head.appendChild(link);
                     if (questions.style){
-                        head = document.head;
-                        link = document.createElement("link");
+                        head = window.document.head;
+                        link = window.document.createElement("link");
                         link.type = "text/css";
                         link.rel = "stylesheet";
                         $(link).attr('data-custom', 'yes');
@@ -447,7 +447,7 @@
             }
             this.setActiveLocationWithoutReload(set_loc, this.daac)
             if(typeof window.headerComponent != 'undefined'){
-                window.headerComponent.daac = this.daac.replace(/ /g,'_').toUpperCase()
+                window.headerComponent.daac = this.daac.replace(/ /g,'_').toLowerCase()
             }
         }
     }

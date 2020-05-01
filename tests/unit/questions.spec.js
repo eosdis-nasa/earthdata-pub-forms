@@ -15,6 +15,7 @@ import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import App from "@/App.vue"
 import VueRouter from 'vue-router'
 import { BootstrapVue } from 'bootstrap-vue'
+import { LayoutPlugin } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import Header from '@/components/Header.vue'
 import Home from '@/components/Home.vue'
@@ -31,6 +32,7 @@ localVue.use(BootstrapVue);
 localVue.use(Vuelidate)
 localVue.use(Vuex)
 localVue.use(VuexUndoRedo)
+localVue.use(LayoutPlugin)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
                   { path: '/daacs/:default', name: 'Daacs', component: Daacs, alias: '/daacs/selection' },
@@ -42,8 +44,9 @@ const routes = [  { path: '/', name: 'Home', component: Home },
 const router = new VueRouter({ routes, mode: 'history' })
 let actions
 let store
+let global_default_target = 'http://localhost:8080/daacs/selection'
+
 describe('creating test store', () => {
-  beforeEach(() => {
     store = new Vuex.Store({ 
       actions,
       // State is the default obj and value
@@ -61,7 +64,6 @@ describe('creating test store', () => {
         },
       }
     })
-  })
 })
 
 const wrapper = mount(Daacs, { store, localVue, router })
@@ -77,18 +79,49 @@ describe('Sanity and system checks', () => {
     expect(wrapper.isVueInstance()).toBe(true)
   });  
 })
-//TODO Need to figure out how to examine window.location.href.  Explored expect(windows.location.pathname).toBe(blah), but it's way incorrect.  need a way to reset this, see global.window.location
+describe('location.href is accessible in this environment', () => {
+  const { location } = window;
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
+
+  test('should handle assignments to location.href correctly', () => {
+      window.location.href = global_default_target;
+      expect(window.location.href).toBe(global_default_target);
+  });
+});
 describe("App", () => {
-  it("renders a child component via routing", async () => {
+  const { location } = window;
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
+  test("tests the daac selection route", async () => {
     const router = new VueRouter({ routes })
     const wrapper = mount(App, { 
       localVue,
       router
     })
-    router.push("/daacs/selection")
+    const relative_path = "/daacs/selection"
+    router.push(relative_path)
     await wrapper.vm.$nextTick()
+    expect(window.location.href).toBe(relative_path);
     expect(wrapper.text().includes('Choose your DAAC:')).toBe(true)
-    //expect(wrapper.find(NestedRoute).exists()).toBe(true)
   })
   /*,
   describe('builds store to test state action and html5 response', () => {
@@ -142,6 +175,18 @@ describe('Header', () => {
     // or individually reset a mock used
     localStorage.setItem.mockClear();
   });
+  const { location } = window;
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
+
   // UNIT TESTS
   test('showDaacs turns false, it should hide the DAACS link', async () => {
     // Default wrapper
@@ -159,6 +204,7 @@ describe('Header', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).not.toContain('daacs_nav_link')
   }),
+
   test('showDaacs turns true, it should show the DAACS link', async () => {
     // Default wrapper
     const wrapper = mount(Header, { 
@@ -175,10 +221,8 @@ describe('Header', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
   }),
+
   test('daac is blank, should remove the href in questions not allowing a user to click.', async () => {
-    jsdom.reconfigure({
-      url: "http://localhost:8080/daacs/selection",
-    });
     const wrapper = mount(Header, { 
       store, 
       localVue, 
@@ -193,52 +237,17 @@ describe('Header', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions</a>')).toBe(true);
   }),
+
   test('on form title change, should update the header title.', async () => {
-    let store
-    // Default wrapper
     const wrapper = mount(Header, {  store,  localVue, router, propsData: {
       formTitle: 'Some Form Page'
     }})
     await wrapper.vm.$nextTick()
     expect(wrapper.text().includes('Some Form Page')).toBe(true);
-  }),
-  // END-TO-END TESTS
-  // on clicking nav after selection:
-  // loads questions
-  // sets address bar without reloading
-  // sets the hrefs in navigation
-  // sets the objects({DAAC}_questions in localStorage
-  test('on clicking questions, should render to questions if daac is selected', async () => {
-    jsdom.reconfigure({
-      url: "http://localhost:8080/daacs/selection",
-    });
-    // Default wrapper
-    const wrapper = mount(Header, { 
-      store, 
-      localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:'ornl_daac'
-        }
-      } 
-    })
-    await wrapper.vm.$nextTick()
-    wrapper.find('questions_nav_link')
-    wrapper.trigger('click')
-    console.log(wrapper.html())
-    // TODO click event not in wrapper html to simulate click -> needs researcj
-    //expect(wrapper.vm.requireDaacSelection).toHaveBeenCalledTimes(1)
   })
 
-  // on clicking nav without selection:
-    // daac:
-      // 
-    // questions:
-      // 
-    // help:
-      //
+  // Clicking the links forces re-route to other components
+
 });
 
 /*** DAAC SELECTION TESTS ***/
@@ -254,14 +263,20 @@ describe('Daacs selection', () => {
     // or individually reset a mock used
     localStorage.setItem.mockClear();
   });
+  const { location } = window;
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
   // UNIT TESTS
-  // sets address bar without reloading
-	// sets the selected value
-	// sets the long text
-	// selects the link text
-	// sets the hrefs in the navigation
-  // sets the localStorage
-  
+	
   // END-TO-END TESTS
   // You can directly manipulate the state of the component using the setData or setProps method on the wrapper:
   test('description and selection text should be blank, then should render "You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)"', async () => {
@@ -272,14 +287,24 @@ describe('Daacs selection', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')
   })
+  
 });
 
 /*** QUESTIONS TESTS ***/
 describe('Questions', () => {
-  const wrapper = mount(Questions, { store, localVue, router, propsData: {
-    daac: 'ornl_daac'
-  }})
-  wrapper.vm.$nextTick()
+  const { location } = window;
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
+
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
@@ -290,17 +315,40 @@ describe('Questions', () => {
     localStorage.setItem.mockClear();
   });
   // UNIT TESTS
-  // 
+  // This should be written better when the api call has been inserted because it will change the test entirely.
+  test('when daac is set it loads the questions"', async () => {
+    const fetchQuestions = jest.fn()
+    jest.spyOn(localStorage, 'setItem');
+    window.localStorage.__proto__.setItem = jest.fn();
+    const wrapper = mount(Questions, {localVue, methods: { fetchQuestions }})
+    const relative_path = "/questions/ornl_daac"
+    router.push(relative_path)
+    await wrapper.vm.$nextTick()
+    expect(fetchQuestions).toHaveBeenCalledTimes(1)
+    
+  })
 	
   // END-TO-END TESTS
   // 
 });
 
 /*** HELP TESTS ***/
+// This should be written better when the api call has been inserted because it should change the test.
 describe('Help', () => {
-  const wrapper = mount(Daacs, { store, localVue, router })
-  // Clear out instance storage
-  wrapper.vm.$nextTick()
+  const { location } = window;
+
+  beforeAll(() => {
+      delete window.location;
+      window.location = {
+          href: '',
+      };
+  });
+
+  afterAll(() => {
+      window.location = location;
+      wrapper.destroy();
+  });
+
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
     localStorage.clear();
@@ -309,12 +357,19 @@ describe('Help', () => {
     // or individually reset a mock used
     localStorage.setItem.mockClear();
   });
+  
   // UNIT TESTS
-  // clicking help from questions help link
-  // clicking help from menu
+  test('on going to the route help, it will go to the help page and render help data', async () => {
+    const fetchHelp = jest.fn()
+    const wrapper = mount(Help, {localVue, methods: { fetchHelp }})
+    const relative_path = "/help"
+    router.push(relative_path)
+    await wrapper.vm.$nextTick()
+    expect(fetchHelp).toHaveBeenCalledTimes(1)
+  })
 	
   // END-TO-END TESTS
-  // 
+ 
 });
 
 afterEach(() => {

@@ -13,7 +13,7 @@ module.exports = {
     "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
   },
   "snapshotSerializers": ["jest-serializer-vue"],
-  "setupFiles": ["jest-localstorage-mock"],
+  "setupFiles": ["jest-localstorage-mock","<rootDir>/__mocks__/client.js"],
   "moduleNameMapper": {
     "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
     "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js",

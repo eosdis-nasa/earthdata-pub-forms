@@ -50,9 +50,6 @@
     },
     // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
     watch: {
-        windowDaac: function(val) {
-          console.log('new daac', val)
-        },
         showDaacs: function(val){
           if(val =='false'){
             this.$router.push({ name: 'Questions', params: { default: this.daac.toLowerCase() } })
@@ -88,8 +85,9 @@
           event.preventDefault()
           return false
         } else {
-          window.location.assign("/daacs/selection")
+          window.location.href = "/daacs/selection"
         }
+        return true
       }
     },
     mounted(){
