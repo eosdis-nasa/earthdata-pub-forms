@@ -72,6 +72,19 @@ Vue.use(TablePlugin)
 library.add(fas)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+// Custom components
+import Home from '@/components/Home.vue'
+import Daacs from '@/components/Daacs.vue'
+import Questions from '@/components/Questions.vue'
+import Help from '@/components/Help.vue'
+import PageNotFound from '@/components/PageNotFound.vue'
+
+Vue.component('Daacs', Daacs);
+Vue.component('Home', Home);
+Vue.component('PageNotFound', PageNotFound);
+Vue.component('Questions', Questions);
+Vue.component('Help', Help);
+
 Vue.config.productionTip = false
 
 new Vue({

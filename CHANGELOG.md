@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file. Changes sho
 
 ## [Unreleased]
 
+## [0.0.5] - 2020-05-01
+### Added
+ - [Incorporate minimum testing](a85fb02c1d4c6b147433b9074cdf2dc1dca62258)
+
 ## [0.0.4] - 2020-04-17
 ### Added
  - [Incorporate logging into output object](bb7dd43a0b0b13118af78049509b1d702d205a32)
