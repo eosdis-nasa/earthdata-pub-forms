@@ -316,7 +316,7 @@ describe('Questions', () => {
   });
   // UNIT TESTS
   // This should be written better when the api call has been inserted because it will change the test entirely.
-  test('when daac is set it loads the questions"', async () => {
+  test('on going to the route questions/ornl_daac, it will go to the questions page then load the questions data"', async () => {
     const fetchQuestions = jest.fn()
     jest.spyOn(localStorage, 'setItem');
     window.localStorage.__proto__.setItem = jest.fn();
