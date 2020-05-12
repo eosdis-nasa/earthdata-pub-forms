@@ -12,7 +12,6 @@
 *.njsproj
 *.sln
 *.sw?
-<<<<<<< HEAD
 
 # Personal files
 notes.md
@@ -26,7 +25,6 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-=======
 notes/
 
 # Common back up files
@@ -144,4 +142,3 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
->>>>>>> master
