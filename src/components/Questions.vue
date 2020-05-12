@@ -1,7 +1,8 @@
 <template>
   <!-- Form -->
-  <b-form v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
-    <b-container>
+  <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
+    <b-container name="questions_container">
+        <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
@@ -17,7 +18,7 @@
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
                         <!--<b-col class="w-50 help">
-                            <a href="javascript:void(0);" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
+                            <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
                             <div class="hidden overlay">{{question.help}}</div>
                         </b-col>-->
                         <!-- Input -->
@@ -133,18 +134,14 @@
         <!-- End of Section -->
     </b-container>
     <!-- Button Options -->
-    <div align=right v-if="!readonly">
-        <!--<b-button class="button" type="redo" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-        <b-button class="button" type="redo" v-else disabled>{{ redoLabel }}</b-button>
-        <b-button class="button" type="undo" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-        <b-button class="button" type="undo" v-else disabled>{{ undoLabel }}</b-button>-->
-
-        <b-button class="button" type="redo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-        <b-button class="button" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-
-        <b-button class="button" type="save" @click=saveFile(true)>{{ saveLabel }}</b-button>
-        <b-button class="button" type="submit" @click=submitForm>{{ submitLabel }}</b-button>
-        <b-button class="button" type="reset" v-if="showResetButton">{{ resetLabel }}</b-button>
+    <div align=right v-if="!readonly" class="button_bar">
+        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
+        <b-button class="button" type="redo" id="redo_button" v-else disabled>{{ redoLabel }}</b-button>
+        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
+        <b-button class="button" type="undo" id="undo_button" v-else disabled>{{ undoLabel }}</b-button>
+        <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
+        <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+        <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
     </div>
     <!-- End of Button Options -->
   </b-form>
@@ -155,18 +152,22 @@
     import { required } from 'vuelidate/lib/validators'
     // Jquery javascript
     import $ from 'jquery'
+    import mixin from '../mixins/mixin'
 
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
         name: 'Questions',
+        mixins: [mixin],
         data() {
             return {
                 values: {},
                 questions: {},
                 dirty:false,
-                form_title: '',
-                saveTimeout: 0
+                formTitle: '',
+                saveTimeout: 0,
+                daac:'',
+                warning:''
             }
         },
         props: {
@@ -198,6 +199,12 @@
                     this.saveTimeout = setTimeout(() => {
                         if (!this.values.fromUndo) {
                             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
+                            this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
+                            var string_logging_object = this.$log.debug('pushQuestionsState')
+                            this.$logging_object[Date(Date.now()).toString()] = {
+                                "log_string":string_logging_object, 
+                                "answers": Object.assign({}, this.values)
+                            }
                         }
                         delete this.values.fromUndo
                     }, 250);
@@ -207,6 +214,9 @@
         },
         created () {
             
+        },
+        components: {
+
         },
         validations() {
             //console.log('Validations ...')
@@ -248,7 +258,11 @@
                     }
                 }
             }
-            window.localStorage.setItem(window.localStorage.getItem('DAAC') + '_required', JSON.stringify(val_fields.values))
+            let DAAC_SET = window.localStorage.getItem('DAAC')
+            if(DAAC_SET !== null){
+                //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
+                this.$required = JSON.stringify(val_fields.values)
+            }
             return val_fields
         },
         methods: {
@@ -264,29 +278,29 @@
             },
             // @vuese
             // Fetchs the questions data
-            fetchQuestions(DAAC){
+            fetchQuestions(){
                 // Fires on load when building the form content
                 // AJAX CALL HERE
-                console.log('DAAC being passed into fetchQuestions is ' + DAAC)
+                //console.log('DAAC being passed into fetchQuestions is ' + DAAC)
                 var question = []
                 var ignore_attributes = ['list','step','pattern','accept','autocomplete','autofocus','capture','dirname']
-                $.getJSON( "questions.json", ( questions ) => {
+                $.getJSON( "../questions.json", ( questions ) => {
                     //The below line looks for custom css and applies it to the head (eui is done first)
-                    this.form_title = questions.form_title
+                    this.formTitle = questions.form_title
                     $('head link[data-eui="yes"]').remove()
                     if(questions.style){
                         $('head link[data-custom="yes"]').remove()
                     }
-                    var head = document.head;
-                    var link = document.createElement("link");
+                    var head = window.document.head;
+                    var link = window.document.createElement("link");
                     link.type = "text/css";
                     link.rel = "stylesheet";
                     $(link).attr('data-eui', 'yes');
                     link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
                     head.appendChild(link);
                     if (questions.style){
-                        head = document.head;
-                        link = document.createElement("link");
+                        head = window.document.head;
+                        link = window.document.createElement("link");
                         link.type = "text/css";
                         link.rel = "stylesheet";
                         $(link).attr('data-custom', 'yes');
@@ -360,13 +374,16 @@
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
+                this.safeFile()
+                //this.validations()
                 if (this.$v.$invalid) {
-                    var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
-                    console.log(required_ids_to_check)
-                    for(var r in required_ids_to_check){
-                        console.log(required_ids_to_check[r])
-                    }
-                    alert('Please correct the errors on the form before saving.')
+                    //TODO
+                    //var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
+                    //console.log(required_ids_to_check)
+                    //for(var r in required_ids_to_check){
+                        //console.log(required_ids_to_check[r])
+                    //}
+                    //alert('Please correct the errors on the form before saving.')
                 } else {
                     this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
                 }
@@ -378,9 +395,28 @@
                 //console.log('Executing save file ...')
                 // Saves file to localStorage
                 const data = JSON.stringify(this.values)
-                var DAAC = window.localStorage.getItem('DAAC')
-                if(DAAC != null){
-                    window.localStorage.setItem(DAAC + '_questions', data);
+                if(this.daac == null){
+                    var DAAC = window.localStorage.getItem('DAAC')
+                }
+                if(DAAC !== null && data !== JSON.stringify({})){
+                    //window.localStorage.setItem(DAAC + '_questions', data);
+                    this.$values = data
+                    this.$output_object[DAAC] =  {
+                        "values": this.$values,
+                        "log":this.$logging_object
+                    }
+                    this.$input_object[DAAC] = {
+                        "questions":this.questions[0],
+                        "required":this.$required
+                    }
+                    window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
+                    window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
+
+                    // @vuese
+                    // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
+                    // If production level set (see main.js), will be at different level automatically.  
+                    // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
+                    //this.$log.debug('this.showDaacs', 'some error')
                 }
                 if(with_msg){
                     alert('Your data has been saved.  Click submit to send the data.')
@@ -409,12 +445,44 @@
         },
         // This is equivalent to js document.ready
         mounted() {
-            var DAAC = window.localStorage.getItem('DAAC')
-            this.questions = this.fetchQuestions(DAAC)
+            if(typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined'){
+              this.daac = this.$route.params.default
+            } else if(window.localStorage.getItem('DAAC')!=null){
+              this.daac = window.localStorage.getItem('DAAC')
+            }
+            if(typeof this.$route != 'undefined' && typeof this.$route.params.showDaacs != 'undefined'){
+              this.showDaacs = this.$route.params.showDaacs
+            } else if(window.localStorage.getItem('showDaacs')!=null){
+              this.showDaacs = window.localStorage.getItem('showDaacs')
+            }
+            if(typeof window.headerComponent != 'undefined' && this.showDaacs =='false'){
+                window.headerComponent.showDaacs = false
+            }
+            if(this.daac == null){
+                this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
+            }
+            this.questions = this.fetchQuestions()
+            this.setActiveNav('questions')
+            let set_loc = location.href
+            if(!set_loc.match(/questions/g)){
+                set_loc += 'questions/'
+            }
+            if(set_loc.match(/selection/g)){
+                this.warning = 'No daac has been selected'
+            }
+            this.setActiveLocationWithoutReload(set_loc, this.daac)
+            if(typeof window.headerComponent != 'undefined'){
+                window.headerComponent.daac = this.daac.replace(/ /g,'_').toLowerCase()
+            }
         }
     }
 </script>
 <style scoped>
+    .warning {
+        color:red;
+        font-weight:bold;
+        text-decoration: None
+    }
     .col-form-label {
         font-weight:bold;
     }
@@ -448,8 +516,7 @@
         margin-top:1rem;
     }
     button {
-       margin-right:1rem;
-       margin-bottom:1rem;
+       margin:1rem;
     }
     .help {
         text-align:right;
@@ -467,5 +534,9 @@
     }
     fieldset {
         border-left: unset
+    }
+    .button_bar {
+        background:#dedede;
+        border-top:1px solid #dfdfdf
     }
 </style>

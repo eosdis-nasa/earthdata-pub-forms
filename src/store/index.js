@@ -14,8 +14,20 @@ export const store = new Vuex.Store({
   state: {
   },
   mutations: {
+    // push question state to save the payload to the store state question_answers
+    pushQuestionsState(state, payload){
+      state.question_answers.push(Object.assign({}, payload))
+    },
+    // .emptyState() is needed by VuexUndoRedo
+    emptyState() {
+      this.replaceState({ question_answers: [] });
+    },
   },
   actions: {
+
+  },
+  getters: {
+
   },
   modules: {
   }

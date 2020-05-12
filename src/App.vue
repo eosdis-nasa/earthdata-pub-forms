@@ -1,7 +1,7 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Header :form_title="form_title"/>
+    <Header :formTitle="formTitle"/>
     <router-view ref="content"/>
   </div>
 </template>
@@ -11,28 +11,46 @@
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
     import Header from '@/components/Header'
-
+    
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
+        name: 'app',
         data() {
             return {
-                form_title: ''
+                formTitle: '',
             }
+        },
+        props:{
+            
         },
         components: {
             Header
         },
         mounted() {
-            this.$watch(
-                () => {
-                    return this.$refs.content.form_title
-                },
-                val => {
-                    this.form_title = val
+            if(typeof this.$refs.content !='undefined'){
+                this.$watch(
+                    () => {
+                        return this.$refs.content.formTitle
+                    },
+                    val => {
+                        this.formTitle = val
+                    }
+                )
+                this.formTitle = this.$refs.content.formTitle
+            } else {
+                if(typeof this.$refs.content =='undefined' && window.localStorage.getItem('DAAC')!=null){
+                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC').toLowerCase() })
+                } else {
+                    this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
                 }
-            )
-            this.form_title = this.$refs.content.form_title || ''
+            }
+        },
+        watch: {
+            
+        },
+        methods: {
+            
         }
     }
 </script>
@@ -58,11 +76,10 @@
         text-align:right;
     }
     #nav a {
-        font-weight: bold;
         color:white;
     }
     #nav a.router-link-exact-active {
-        color: #42b983;
+        font-weight: bold;
     }
     label{
         font-weight:bold;

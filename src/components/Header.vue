@@ -7,13 +7,19 @@
         <img
           alt="NASA logo"
           class="logo"
-          src="https://cdn.earthdata.nasa.gov/eui/latest/docs/assets/ed-logos/app-logo.png"
+          src="../assets/nasa-logo-circle.png"
         />
-        <h2>{{form_title}}</h2>
-        <div id="nav">
-          <router-link to="/daacs">DAACS</router-link> | 
-          <router-link to="/questions">Questions</router-link> | 
-          <router-link to="/help">Help</router-link> 
+        <h2 v-if="formTitle">{{formTitle}}</h2>
+        <h2 v-else-if="showDaacs">Earthdata Archival Interest Form</h2>
+        <h2 v-else>Earthdata Publication</h2>
+        <div id="nav" >
+          <span v-if="showDaacs">
+            <router-link id="daacs_nav_link" v-if="daac !=='selection'" :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}">DAACS</router-link><div v-if="daac !== 'selection'" class="inline"> | </div>
+            <router-link id="daacs_nav_link" v-if="daac =='selection'" :to="{ name: 'Daacs', path: '/daacs/selection' }">DAACS</router-link><div v-if="daac == 'selection'" class="inline"> | </div>
+          </span>
+          <router-link id="questions_nav_link" v-if="daac !=='selection'" :to="{ name: 'Questions', path: '/questions', params: { default: daac }}">Questions</router-link><div class="inline" v-if="daac !=='selection'"> | </div>
+          <a id="questions_nav_link" v-if="daac =='selection'" href="#" @click="requireDaacSelection($event)">Questions</a><div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
+          <router-link id="help_nav_link" :to="{ name: 'Help', path: '/help'}">Help</router-link> 
         </div>
       <!-- End of Logo and menu -->
       </div>
@@ -22,25 +28,94 @@
   <!-- end of header with eui class -->
 </template>
 <script>
+  // Jquery javascript
+  //import $ from 'jquery'
+
   // Exports the header as a component
   export default {
-  name: 'Header',
-  data() {
-      return {
-          
+    name: 'Header',
+    data() {
+        return {
+          showDaacs:true,
+          daac:'selection'
+        }
+    },
+    // The property to be set by questions.vue
+    props: {
+        // The form title parsed from questions.vue
+        formTitle: { default: '', type: String }
+    },
+    computed: {
+        
+    },
+    // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
+    watch: {
+        showDaacs: function(val){
+          if(val =='false'){
+            this.$router.push({ name: 'Questions', params: { default: this.daac.toLowerCase() } })
+          }
+        }
+    },
+    created() {
+        if(window.localStorage.getItem('DAAC')!= null){
+          this.daac = window.localStorage.getItem('DAAC')
+        } else {
+          this.daac = 'selection'
+        }
+        let parameters = this.$route
+        let showDaacs
+        if(typeof parameters !='undefined'){
+          showDaacs = parameters.query['showDaacs']
+        }
+        if(showDaacs){
+          this.showDaacs = showDaacs
+          window.localStorage.setItem('showDaacs',showDaacs)
+        } else if (window.localStorage.getItem('showDaacs')!=null){
+          this.showDaacs = Boolean(window.localStorage.getItem('showDaacs'))
+        } else {
+          window.localStorage.setItem('showDaacs',this.showDaacs)
+        }
+    },
+    methods: {
+      // @vuese
+      // Re-applies the data entry values from values from the store for on undo and redo
+      requireDaacSelection(){
+        if(!location.href.match(/help/g)){
+          alert('Please select a daac to continue.')
+          event.preventDefault()
+          return false
+        } else {
+          window.location.href = "/daacs/selection"
+        }
+        return true
       }
-  },
-  // The property to be set by questions.vue
-  props: {
-      // The form title parsed from questions.vue
-      form_title: { default: '', type: String }
-  }
+    },
+    mounted(){
+      window.headerComponent = this
+    }
 }
 </script>
 <style scoped>
+  a {
+    cursor:pointer;
+  }
+  a:hover {
+    text-decoration:underline!important
+  }
+  .inline {
+    display:inline;
+  }
+  img {
+      border: unset!important;
+  }
+  img.logo {
+    margin-top:1rem;
+  }
   h2{
-    text-align:left;
-    text-decoration: none;
+    border-bottom: 1px solid #cbcbcb;
+    padding-bottom: 0.2em;
+    font-size: 1.6em;
+    font-weight: normal;
   }
   .header {
     width: 100%;
@@ -104,9 +179,6 @@
   }
   .eui-application-logo .logo {
     padding-top:1rem;
-  }
-  img {
-      border: unset;
   }
 }
 </style>
