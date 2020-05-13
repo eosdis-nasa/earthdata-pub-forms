@@ -5,3 +5,8 @@ variable "aws_region" {
 variable "prefix" {
   type = string
 }
+
+variable "stage" {
+  type = string
+  default = "dev"
+}
