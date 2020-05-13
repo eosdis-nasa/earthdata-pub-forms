@@ -1,6 +1,24 @@
 <template>
   <!-- Form -->
   <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm" @cancel="cancelForm">
+    <!-- Console Options -->
+    <b-container v-if="!readonly" name="console_container" class="console_container">
+        <div v-if="!readonly" class="console_bar">
+            <b-button class="button" type="redo" id="redo_button" v-bind:title="redoLabel" v-if="canRedo" @click="redoToPreviousState()">
+                <font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon>
+            </b-button>
+            <b-button class="button" type="redo" id="redo_button" v-bind:title="redoLabel" v-else disabled>
+                <font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon>
+            </b-button>
+            <b-button class="button" type="undo" id="undo_button" v-bind:title="undoLabel" v-if="canUndo" @click="undoToPreviousState()">
+                <font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon>
+            </b-button>
+            <b-button class="button" type="undo" id="undo_button" v-bind:title="undoLabel" v-else disabled>
+                <font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon>
+            </b-button>
+        </div>
+    </b-container>
+    <!-- End of Concole Options -->
     <b-container name="questions_container">
         <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
@@ -140,10 +158,6 @@
             <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
             <b-button class="button" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
             <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-            <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-            <b-button class="button" type="redo" id="redo_button" v-else disabled>{{ redoLabel }}</b-button>
-            <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-            <b-button class="button" type="undo" id="undo_button" v-else disabled>{{ undoLabel }}</b-button>
             <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
         </div>
     </b-container>
@@ -184,9 +198,9 @@
             // The save label and type
             saveLabel: { default: 'Save and continue editing', type: String },
             // The undo label and type
-            undoLabel: { default: 'Undo', type: String },
+            undoLabel: { default: 'undo', type: String },
             // The redo label and type
-            redoLabel: { default: 'Redo', type: String },
+            redoLabel: { default: 'redo', type: String },
             // The submit label and type
             submitLabel: { default: 'Submit', type: String },
             // The enter submit conditional to allow for submittal
@@ -572,5 +586,11 @@
     }
     .button_bar .button:first-of-type {
         float:left
+    }
+    .console_container {
+        height: 1em;
+    }
+    .console_bar {
+        float:right
     }
 </style>
