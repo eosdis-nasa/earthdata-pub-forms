@@ -7,7 +7,7 @@
         <img
           alt="NASA logo"
           class="logo"
-          src="../assets/nasa-logo-circle.png"
+          src="../assets/nasa-logo.svg"
         />
         <h2 v-if="formTitle">{{formTitle}}</h2>
         <h2 v-else-if="showDaacs">Earthdata Archival Interest Form</h2>
@@ -179,6 +179,7 @@
   }
   .eui-application-logo .logo {
     padding-top:1rem;
+    height:100px
   }
 }
 </style>
