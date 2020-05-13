@@ -1,6 +1,6 @@
 # Daacs
 
-This Daacs component gets DAAC data and displays abbreviations as a radio selection On selection displays a link to the selected DAAC website, description and a 'Next Button' is displayed to allow users more info and to move on.
+This Daacs component gets DAAC data and displays abbreviations as a radio selection On selection displays a link to the selected DAAC website, description and a 'Select Button' is displayed to allow users more info and to move on.
 
 ## Props
 
