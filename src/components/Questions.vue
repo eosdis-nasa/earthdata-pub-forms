@@ -154,11 +154,11 @@
     <!-- Button Options -->
     <b-container v-if="!readonly" name="buttons_container">
         <div v-if="!readonly" class="button_bar">
-            <b-button class="button" type="cancel" id="cancel_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
-            <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-            <b-button class="button" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
-            <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-            <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
+            <b-button class="button eui-btn--red" type="cancel" id="cancel_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
+            <b-button class="button eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+            <b-button class="button eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
+            <b-button class="button eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
+            <b-button class="button eui-btn--red" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
         </div>
     </b-container>
     <!-- End of Button Options -->
