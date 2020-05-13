@@ -93,6 +93,21 @@ To run Jest:
 npm run test:unit questions.spec.js
 ```
 
+## Deploying to AWS with Terrafrom
+
+Earthdata Pub forms deploys to AWS using Terraform through Bamboo. To create AWS resources, run:
+
+```bash
+$ terraform plan
+$ terraform apply
+```
+
+To destroy all AWS resoureces, run:
+
+```bash
+$ terraform destroy
+```
+
 ## Open source liceneses for depenencies
 
 `fontawesome`

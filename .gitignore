@@ -12,6 +12,19 @@
 *.njsproj
 *.sln
 *.sw?
+
+# Personal files
+notes.md
+
+# Local terraform files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 notes/
 
 # Common back up files
