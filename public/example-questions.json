@@ -1,216 +1,250 @@
 {
-    "data": {
-        "version": 1,
-        "text": "This is an example form with example questions. Some of them are silly, some are not.",
-        "sections": [
+  "id": "6c544723-241c-4896-a38c-adbc0a364293",
+  "version": 1,
+  "unique_name": "FAKEDAAC",
+  "form_title": "Earthdata Archive Interest Form",
+  "text": "This is an example form with example questions. Some of them are silly, some are not.",
+  "sections": [
+    {
+      "heading": "First Section",
+      "questions": [
+        {
+          "id": "b4e35cb9-d1e5-44cf-9ffb-6ad9d3f8ae34",
+          "version": 1,
+          "unique_name": "poc_info",
+          "title": "Point of Contact",
+          "text": "A question for contact information may look like this. Name and Email are required, but for this example Organization is optional.",
+          "help": "This is a helpful tooltip with more information about the question.",
+          "inputs": [
             {
-                "questions": [
-                    {
-                        "version": 1,
-                        "unique_name": "poc_info",
-                        "text": "A question for contact information may look like this. Name and Email are required, but for this example Organization is optional.",
-                        "help": "This is a helpful tooltip with more information about the question.",
-                        "id": "b4e35cb9-d1e5-44cf-9ffb-6ad9d3f8ae34",
-                        "inputs": [
-                            {
-                                "id": "poc_info_name",
-                                "label": "Name",
-                                "type": "text",
-                                "validation_error_msg": "Please enter a name for the point of contact.",
-                                "required": true
-                            },
-                            {
-                                "id": "poc_info_organization",
-                                "label": "Organization",
-                                "type": "text",
-                                "validation_error_msg": "Please enter an organization."
-                            },
-                            {
-                                "validator": "not_null",
-                                "id": "poc_info_email",
-                                "label": "Email",
-                                "type": "email",
-                                "validation_error_msg": "Please enter an email.",
-                                "required": true
-                            }
-                        ],
-                        "title": "Point of Contact"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "dataset_restrictions",
-                        "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
-                        "help": "NASA Open Data Policy https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy",
-                        "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
-                        "inputs": [
-                            {
-                                "type": "checkbox",
-                                "id": "dataset_restrictions_public",
-                                "label": "Releasable to public"
-                            }
-                        ],
-                        "title": "Dataset Restrictions"
-                    }
-                ],
-                "heading": "First Section"
+              "type": "text",
+              "id": "poc_info_name",
+              "label": "Name",
+              "validation_error_msg": "Please enter a name for the point of contact.",
+              "required": true
             },
             {
-                "questions": [
-                    {
-                        "version": 1,
-                        "unique_name": "more_words",
-                        "text": "Can you enter some words in a single text input, and then more words in a multiline textarea?",
-                        "help": "This is a text input and a text area together. Attributes like rows and cols can be set explicitly here, or done client-side through styles.",
-                        "id": "5ae650df-548a-4a9f-80fa-920c9c48286b",
-                        "inputs": [
-                            {
-                                "id": "more_words_title",
-                                "label": "Title",
-                                "type": "text",
-                                "validation_error_msg": "Please enter a title.",
-                                "required": true
-                            },
-                            {
-                                "validator": "not_null",
-                                "attributes": {
-                                    "rows": 10,
-                                    "cols": 80
-                                },
-                                "id": "more_words_description",
-                                "label": "Description",
-                                "type": "textarea",
-                                "validation_error_msg": "Please enter a description."
-                            }
-                        ],
-                        "title": "More Words"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "radios",
-                        "text": "This is a question? Radio groups are good for when there should be exactly one choice made from predefined options.",
-                        "help": "This a number input coupled with a radio group. The positive validator checks that the input is a positive number.",
-                        "id": "72803fee-e8b2-4d5e-87f5-5900e238b75a",
-                        "inputs": [
-                            {
-                                "validator": "positive",
-                                "id": "radios_amount",
-                                "label": "Amount",
-                                "type": "number",
-                                "validation_error_msg": "You must enter a positive value.",
-                                "required": true
-                            },
-                            {
-                                "enums": [
-                                    "Choice 1",
-                                    "Choice 2",
-                                    "Choice 3",
-                                    "Choice 4"
-                                ],
-                                "id": "radios_choice",
-                                "label": "Choice",
-                                "type": "radio"
-                            }
-                        ],
-                        "title": "Radios and Numbers"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "dataset_restrictions",
-                        "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
-                        "help": "NASA Open Data Policy https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy",
-                        "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcf",
-                        "inputs": [
-                            {
-                                "type": "checkbox",
-                                "id": "dataset_restrictions_public",
-                                "label": "Releasable to public"
-                            }
-                        ],
-                        "title": "Dataset Restrictions"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "multiselect",
-                        "text": "Select the options to apply?",
-                        "help": "You can select up to 2 items",
-                        "id": "cff0d2ef-448a-4f9a-92d3-f2a8bc684dbe",
-                        "inputs": [
-                            {
-                                "enums": [
-                                    "This is the first option",
-                                    "This is the second option",
-                                    "This is the third option"
-                                ],
-                                "validation_error_msg": "At least 1 and at most 2 should be selected.",
-                                "attributes": {
-                                    "max": "2",
-                                    "min": "1"
-                                },
-                                "id": "multiselect_choice",
-                                "label": "Choose Carefully",
-                                "type": "select",
-                                "required": true
-                            }
-                        ],
-                        "title": "Multiselect Option"
-                    }
-                ],
-                "heading": "Second Section"
+              "type": "text",
+              "id": "poc_info_organization",
+              "label": "Organization",
+              "validation_error_msg": "Please enter an organization."
             },
             {
-                "questions": [
-                    {
-                        "version": 1,
-                        "unique_name": "example_file",
-                        "text": "This is an example of a file input.",
-                        "help": "This allows a user to specify a local file to upload.",
-                        "id": "dd60e9e0-a5a7-4f09-bbac-b00053041061",
-                        "inputs": [
-                            {
-                                "type": "file",
-                                "id": "example_file_upload",
-                                "label": "Upload File"
-                            }
-                        ],
-                        "title": "Example File"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "example_date",
-                        "text": "This is an example of a data input.",
-                        "help": "This allows a user to select a date. Two date inputs could be combined in a question for a start and end date.",
-                        "id": "917ffb7e-753e-483c-b499-f21864dbd52d",
-                        "inputs": [
-                            {
-                                "id": "example_date_when",
-                                "label": "When",
-                                "type": "date",
-                                "required": true
-                            }
-                        ],
-                        "title": "Example Date"
-                    },
-                    {
-                        "version": 1,
-                        "unique_name": "example_spatial",
-                        "text": "This is an example for the spatial extent widget.",
-                        "help": "This will be a graphical widget for defining the geographical spatial extent of a dataset.",
-                        "id": "f607e1a3-8f22-4d4f-9947-0d4a7651d56d",
-                        "inputs": [
-                            {
-                                "id": "example_spatial_where",
-                                "label": "Where",
-                                "type": "spatial",
-                                "required": true
-                            }
-                        ],
-                        "title": "Example Spatial Extent"
-                    }
-                ],
-                "heading": "Third Section"
+              "type": "email",
+              "id": "poc_info_email",
+              "label": "Email",
+              "validator": "not_null",
+              "validation_error_msg": "Please enter an email.",
+              "required": true
             }
-        ],
-        "id": "6c544723-241c-4896-a38c-adbc0a364293",
-        "unique_name": "FAKEDAAC"
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfa",
+          "version": 1,
+          "unique_name": "checkboxes",
+          "title": "Checkbox Example",
+          "text": "These are a lot of checkboxes. Please check them.",
+          "help": "Checkboxes can be used where 0 or more choices should be made from given options.",
+          "required": true,
+          "inputs": [
+            {
+              "type": "checkbox",
+              "id": "checkboxes",
+              "label": "Banana"
+            },
+            {
+              "type": "checkbox",
+              "id": "checkboxes",
+              "label": "Apple"
+            },
+            {
+              "type": "checkbox",
+              "id": "checkboxes",
+              "label": "Strawberry"
+            },
+            {
+              "type": "checkbox",
+              "id": "checkboxes",
+              "label": "Potato"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Second Section",
+      "questions": [
+        {
+          "id": "5ae650df-548a-4a9f-80fa-920c9c48286b",
+          "version": 1,
+          "unique_name": "more_words",
+          "title": "More Words",
+          "text": "Can you enter some words in a single text input, and then more words in a multiline textarea?",
+          "help": "This is a text input and a text area together. Attributes like rows and cols can be set explicitly here, or done client-side through styles.",
+          "inputs": [
+            {
+              "type": "text",
+              "id": "more_words_title",
+              "label": "Title",
+              "required": true,
+              "validation_error_msg": "Please enter a title."
+            },
+            {
+              "type": "textarea",
+              "id": "more_words_description",
+              "label": "Description",
+              "validator": "not_null",
+              "validation_error_msg": "Please enter a description.",
+              "attributes": {
+                "rows": "3",
+                "cols": "2"
+              }
+            }
+          ]
+        },
+        {
+          "id": "5ae650df-548a-4a9f-80fa-920c9c48286b2",
+          "version": 1,
+          "unique_name": "radios",
+          "title": "Radios and Numbers",
+          "text": "This is a question? Radio groups are good for when there should be exactly one choice made from predefined options.",
+          "help": "This a number input coupled with a radio group. The positive validator checks that the input is a positive number.",
+          "inputs": [
+            {
+              "type": "number",
+              "id": "radios_amount",
+              "label": "Amount",
+              "required": true,
+              "validator": "positive",
+              "validation_error_msg": "You must enter a positive value."
+            },
+            {
+              "type": "radio",
+              "id": "radios_choice",
+              "label": "Choice",
+              "enums": [
+                "Choice 1",
+                "Choice 2",
+                "Choice 3",
+                "Choice 4"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfc",
+          "version": 1,
+          "unique_name": "dataset_restrictions",
+          "title": "Dataset Restrictions",
+          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
+          "help": "NASA Open Data Policy https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy",
+          "required": false,
+          "inputs": [
+            {
+              "type": "checkbox",
+              "id": "dataset_restrictions_public",
+              "label": "Releasable to public"
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfd",
+          "version": 1,
+          "unique_name": "multiselect",
+          "help": "You can select up to 2 items",
+          "text": "Select the options to apply?",
+          "title": "Multiselect Option",
+          "inputs": [
+            {
+              "type": "select",
+              "id": "multiselect_choice",
+              "label": "Choose Carefully",
+              "attributes": {
+                "min": "1",
+                "max": "2"
+              },
+              "enums": [
+                "This is the first option",
+                "This is the second option",
+                "This is the third option"
+              ],
+              "validation_error_msg": "At least 1 and at most 2 should be selected."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Third Section",
+      "questions": [
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfe",
+          "version": 1,
+          "unique_name": "example_file",
+          "title": "Example File",
+          "text": "This is an example of a file input.",
+          "help": "This allows a user to specify a local file to upload.",
+          "required": false,
+          "inputs": [
+            {
+              "type": "file",
+              "id": "example_file_upload",
+              "label": "Upload File"
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcff",
+          "version": 1,
+          "unique_name": "example_date",
+          "title": "Example Date",
+          "text": "This is an example of a data input.",
+          "help": "This allows a user to select a date. Two date inputs could be combined in a question for a start and end date.",
+          "required": true,
+          "inputs": [
+            {
+              "type": "date",
+              "id": "example_date_when",
+              "label": "When"
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfg",
+          "version": 1,
+          "unique_name": "example_spatial",
+          "title": "Example Spatial Extent",
+          "text": "This is an example for the spatial extent widget.",
+          "help": "This will be a graphical widget for defining the geographical spatial extent of a dataset.",
+          "required": false,
+          "template": "spatial",
+          "inputs": [
+            {
+              "type": "spatial",
+              "id": "example_spatial_where",
+              "label": "Where"
+            }
+          ]
+        },
+        {
+          "id": "a9cdc22c-4532-47b3-863d-58f2fd07cdcfh",
+          "version": 1,
+          "unique_name": "example_table",
+          "title": "Example Table Author List",
+          "text": "This is an example for table type entries. Add to the table below",
+          "help": "Enter in the ",
+          "required": false,
+          "template": "table",
+          "inputs": [
+            {
+              "type": "spatial",
+              "id": "example_spatial_where",
+              "label": "Where"
+            }
+          ]
+        }
+      ]
     }
+  ]
 }
