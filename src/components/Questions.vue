@@ -1,6 +1,6 @@
 <template>
   <!-- Form -->
-  <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm">
+  <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm" @cancel="cancelForm">
     <b-container name="questions_container">
         <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
@@ -134,15 +134,19 @@
         <!-- End of Section -->
     </b-container>
     <!-- Button Options -->
-    <div align=right v-if="!readonly" class="button_bar">
-        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
-        <b-button class="button" type="redo" id="redo_button" v-else disabled>{{ redoLabel }}</b-button>
-        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
-        <b-button class="button" type="undo" id="undo_button" v-else disabled>{{ undoLabel }}</b-button>
-        <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-        <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-        <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
-    </div>
+    <b-container v-if="!readonly" name="buttons_container">
+        <div v-if="!readonly" class="button_bar">
+            <b-button class="button" type="cancel" id="cancel_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
+            <b-button class="button" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+            <b-button class="button" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
+            <b-button class="button" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
+            <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()">{{ redoLabel }}</b-button>
+            <b-button class="button" type="redo" id="redo_button" v-else disabled>{{ redoLabel }}</b-button>
+            <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()">{{ undoLabel }}</b-button>
+            <b-button class="button" type="undo" id="undo_button" v-else disabled>{{ undoLabel }}</b-button>
+            <b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
+        </div>
+    </b-container>
     <!-- End of Button Options -->
   </b-form>
   <!-- End of Form -->
@@ -171,10 +175,14 @@
             }
         },
         props: {
+            // The cancel label and type
+            cancelLabel: { default: 'Cancel', type: String },
             // The reset label and type
             resetLabel: { default: 'Reset', type: String },
+            // The draft label and type
+            draftLabel: { default: 'Save as draft', type: String },
             // The save label and type
-            saveLabel: { default: 'Save', type: String },
+            saveLabel: { default: 'Save and continue editing', type: String },
             // The undo label and type
             undoLabel: { default: 'Undo', type: String },
             // The redo label and type
@@ -185,8 +193,10 @@
             enterSubmit: { default: false, type: Boolean }, 
             // The readonly attribute to pass in
             readonly: { default: false, type: Boolean },
+            // The show cancel button conditional to allow for cancel
+            showCancelButton: { default: true, type: Boolean },
             // The show reset button conditional to allow for reset
-            showResetButton: { default: true, type: Boolean }
+            showResetButton: { default: false, type: Boolean }
         },
         computed: {
         },
@@ -414,13 +424,26 @@
 
                     // @vuese
                     // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
-                    // If production level set (see main.js), will be at different level automatically.  
+                    // If production level set (see main.js), will be at different level automatically. 
                     // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
                     //this.$log.debug('this.showDaacs', 'some error')
                 }
                 if(with_msg){
-                    alert('Your data has been saved.  Click submit to send the data.')
+                    alert('Your data has been saved. Click submit to send the data.')
                 }
+            },
+            // @vuese
+            // Save as draft and exit form
+            draftFile(with_msg) {
+                this.saveFile(with_msg)
+                this.exitForm()
+            },
+            // @vuese
+            // Cancel and exit form
+            cancelForm() {
+                //console.log('Canceling form ...')
+                // Cancels form and exits to home
+                this.exitForm()
             },
             // @vuese
             // Clear and reset form
@@ -428,6 +451,12 @@
                 //console.log('Resetting form ...')
                 // Resets form to blank entries
                 this.$emit('resetForm')
+            },
+            // @vuese
+            // Exit form to home page
+            exitForm(){
+                // exit form here
+                alert('Form will exit.')
             },
             // @vuese
             // Undos the form and reverts it to its previous state.
@@ -536,7 +565,12 @@
         border-left: unset
     }
     .button_bar {
-        background:#dedede;
-        border-top:1px solid #dfdfdf
+        /* float:right */
+    }
+    .button_bar .button {
+        float:right
+    }
+    .button_bar .button:first-of-type {
+        float:left
     }
 </style>

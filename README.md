@@ -28,7 +28,7 @@ $ npm run serve
 
 ## Custom styling
 
-At a base, eui styling has been applied to the form automatically.  If the questions.json has the tag "style" and then a "link" to a custom css sheet, that is appended to the end of the stylesheets as an override.
+At a base, eui styling has been applied to the form automatically. If the questions.json has the tag "style" and then a "link" to a custom css sheet, that is appended to the end of the stylesheets as an override.
 
 ## Develop using Docker
 
@@ -58,7 +58,7 @@ You can run `vue run build` or other commands.
 
 ## Auto documentation using vuese plugin
 
-Vuese auto documentation scrapes the javascript comments out of vue files and builds markdown files for them.  It creates the folder, website, and inside that, a folder named 'Components'.
+Vuese auto documentation scrapes the javascript comments out of vue files and builds markdown files for them. It creates the folder, website, and inside that, a folder named 'Components'.
 [Documentation to vuese is here](https://dev.to/berniwittmann/quick--easy-documentation-generation-for-vuejs-components-7k6)
 [API Documentation to vuese is here](https://vuese.org/)
 
@@ -74,7 +74,7 @@ To build documentation, simply type:
 $ vuese gen
 ```
 
-Once can rename the folder 'website' as long as it is renamed before this step.  At the time of this writing, it is now named 'autodocs'.  We now need to serve the files as a website.  Run the following from in the autodocs folder:
+Once can rename the folder 'website' as long as it is renamed before this step. At the time of this writing, it is now named 'autodocs'. We now need to serve the files as a website. Run the following from in the autodocs folder:
 
 ```bash
 $ npm i -g serve && serve .

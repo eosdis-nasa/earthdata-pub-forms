@@ -451,14 +451,17 @@ Questions:
 		dirty (only file uses this)
 		formTitle:
 		saveTimeout:0
-		daac
-		resetLabel
+    daac
+    cancelLabel
+    resetLabel
+    draftLabel
 		saveLabel
 		undoLabel
 		redoLabel
 		submitLabel
 		enterSubmit
-		readonly
+    readonly
+    showCancelButton
 		showResetButton
 	validations:
 		sets the daac if in localStorage
@@ -478,13 +481,21 @@ Questions:
 			appends style
 			returns question object
 		submitForm:
-			does this.$emit from localStorage question data object
+      does this.$emit from localStorage question data object
+    draftFile:
+			gets values
+			gets daac from local storage if not set in questions.vue
+			sets data storage if not empty
+      Will alert a message if is passed string
+      Will exit form
 		saveFile:
 			gets values
 			gets daac from local storage if not set in questions.vue
 			sets data storage if not empty
 			Will alert a message if is passed string
-		reset:
+    cancel:
+      Exits form without saving
+    reset:
 			Clears form
 		redo:
 			Redos last action
