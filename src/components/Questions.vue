@@ -79,7 +79,8 @@
                                 value="true"
                                 unchecked-value="false"
                                 v-else-if="input.type == 'checkbox'"
-                                input.attrib_string>
+                                input.attrib_string
+                                stacked >
                             </b-form-checkbox>
                             <!-- End of Checkbox Type of Input -->
                             <!-- Textarea Type of Input -->
@@ -108,7 +109,8 @@
                                 :disabled="readonly"
                                 v-else-if="input.type == 'radio'" 
                                 :options="input.options"
-                                input.attrib_string>
+                                input.attrib_string
+                                stacked >
                             </b-form-radio-group>
                             <!-- End of Radio Group Type of Input -->
                             <!-- Select Type of Input -->
