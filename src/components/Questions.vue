@@ -400,7 +400,7 @@
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
-                this.safeFile()
+                this.saveFile()
                 //this.validations()
                 if (this.$v.$invalid) {
                     //TODO
