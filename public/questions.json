@@ -2,7 +2,7 @@
   "id": "6c544723-241c-4896-a38c-adbc0a364293",
   "version": 1,
   "unique_name": "FAKEDAAC",
-  "form_title":"Earthdata Archival Interest Form",
+  "form_title": "Earthdata Archive Interest Form",
   "text": "This is an example form with example questions. Some of them are silly, some are not.",
   "sections": [
     {
@@ -46,7 +46,7 @@
           "title": "Checkbox Example",
           "text": "These are a lot of checkboxes. Please check them.",
           "help": "Checkboxes can be used where 0 or more choices should be made from given options.",
-          "required":true,
+          "required": true,
           "inputs": [
             {
               "type": "checkbox",
@@ -96,9 +96,9 @@
               "label": "Description",
               "validator": "not_null",
               "validation_error_msg": "Please enter a description.",
-              "attributes":{
-                "rows":"3",
-                "cols":"2"
+              "attributes": {
+                "rows": "3",
+                "cols": "2"
               }
             }
           ]
@@ -123,7 +123,12 @@
               "type": "radio",
               "id": "radios_choice",
               "label": "Choice",
-              "enums": [ "Choice 1", "Choice 2", "Choice 3", "Choice 4"]
+              "enums": [
+                "Choice 1",
+                "Choice 2",
+                "Choice 3",
+                "Choice 4"
+              ]
             }
           ]
         },
@@ -160,9 +165,9 @@
                 "max": "2"
               },
               "enums": [
-                  "This is the first option",
-                  "This is the second option",
-                  "This is the third option"
+                "This is the first option",
+                "This is the second option",
+                "This is the third option"
               ],
               "validation_error_msg": "At least 1 and at most 2 should be selected."
             }
@@ -213,7 +218,7 @@
           "text": "This is an example for the spatial extent widget.",
           "help": "This will be a graphical widget for defining the geographical spatial extent of a dataset.",
           "required": false,
-          "template":"spatial",
+          "template": "spatial",
           "inputs": [
             {
               "type": "spatial",
@@ -230,7 +235,7 @@
           "text": "This is an example for table type entries. Add to the table below",
           "help": "Enter in the ",
           "required": false,
-          "template":"table",
+          "template": "table",
           "inputs": [
             {
               "type": "spatial",
