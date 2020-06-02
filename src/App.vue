@@ -7,7 +7,7 @@
 </template>
 <!-- End of Main App -->
 <script>
-    // Imports header and footer as components.  
+    // Imports header and footer as components. 
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
     import Header from '@/components/Header'

@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file. Changes sho
 
 ## [Unreleased]
 
+## [0.0.6] - 2020-05-13
+### Added
+ - [Add cancel and draft buttons, update buttons, undo/redo icons in console bar](9521f3589e029e45fd95ef47342f642e9edbd21f)
+ - [Update NASA meatball logos, tweak header style](83eac2f44461dbfe8a90341248fa052684b70683)
+ - [Add eui button colors](75e80549dbf036a40624525cfe96a577f48187e8)
+
 ## [0.0.5] - 2020-05-01
 ### Added
  - [Incorporate minimum testing](a85fb02c1d4c6b147433b9074cdf2dc1dca62258)
