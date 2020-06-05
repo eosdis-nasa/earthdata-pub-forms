@@ -318,6 +318,7 @@
                 } else {
                     $('#' + evt.target.name + '_invalid').addClass('hidden')
                 }
+                this.hasRequiredFields(this.values, JSON.parse(this.$required), evt.target.name)
             },
             // @vuese
             // Handle html5 invalidity on form
@@ -416,11 +417,13 @@
             },
             // @vuese
             // Checks required values against required elements
-            hasRequiredFields(VALS, REQ){ 
+            hasRequiredFields(VALS, REQ, field_specified){ 
                 console.log('has required?')
                 let is_invalid = false
                 let msg = ''
-                this.errors = []
+                if(typeof field_specified == 'undefined'){
+                    this.errors = []
+                }
                 if(typeof VALS == 'string'){
                     VALS = JSON.parse(VALS)
                 }
@@ -429,47 +432,51 @@
                     let req_type = $('#' + req).attr('type')
                     // Values object is empty
                     if (Object.keys(VALS).length === 0 || typeof VALS == 'undefined'){
-                        console.log(1)
                         is_invalid = true
                         let multi_key = req.split(',')
                         if (multi_key.length > 1){
                             msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                         }
-                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                        if(typeof field_specified == 'undefined'){
+                            if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                        }
                         this.applyErrorStyle(req, req_type)
                     // Some values have been recorded in the values object
                     } else {
                         for (let val in VALS){
                             let multi_key = req.split(',')
                             if (multi_key.length > 1){
-                                console.log(2)
                                 // If key is multiple fields, then one of the fields must have a value
                                 msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                                 for (let k in multi_key){
-                                    if ((val === multi_key[k] && VALS[val] == '')){
+                                    if(typeof field_specified !='undefined' && multi_key[k] !== field_specified){ continue }
+                                    if ((val === multi_key[k] && VALS[val] == '') || !VALS[multi_key[k]]){
                                         is_invalid = true
-                                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                        if(typeof field_specified == 'undefined'){
+                                            if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                        }
                                         this.applyErrorStyle(req, req_type)
                                     } else {
                                         this.applyErrorStyle(req, req_type, true)
                                     }
                                 }
-                            } else if ((val === req && VALS[val] == '')){
-                                console.log(3)
+                            } else if ((val === req && VALS[val] == '') || !VALS[req]){
+                                if(typeof field_specified !='undefined' && req !== field_specified){ continue }
                                 is_invalid = true
-                                if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                if(typeof field_specified == 'undefined'){
+                                    if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                }
                                 this.applyErrorStyle(req, req_type)
                             } else {
-                                console.log(4)
-                                //let conditional = ''
-                                //if(req == 'archival_approval_dependencies_radios'){
-                                //    conditional = this.checkForConditional(req)
-                                //}
-                                //console.log(conditional)
+                                if(typeof field_specified !='undefined' && req !== field_specified){ continue }
                                 this.applyErrorStyle(req, req_type, true)
                             }
+                            //Todo need conditional here (checkForConditional(req){)
                         }
                     }
+                }
+                if(this.errors.length > 0 && typeof field_specified == 'undefined') {
+                    is_invalid = true
                 }
                 this.checkInvalidGroupsBorders()
                 return is_invalid
@@ -478,13 +485,16 @@
             // Verify by group, that only one red border exists
             checkInvalidGroupsBorders(){
                 let groups = $('.bv-no-focus-ring')
+                let errors_possible = ['form-checkbox-error','form-file-error','form-select-error','form-textarea-error','form-radio-group-error','form-checkbox-error','form-input-error']
                 for (let grp in groups){
                     if(typeof groups[grp].style != 'undefined'){
                         let group_style_border = groups[grp].style.border
                         if(typeof group_style_border != 'undefined' && group_style_border.match(/red/g)){
-                            let inputs = $(groups[grp]).find('.form-checkbox-error')
-                            if(inputs.length > 0){
-                                $(inputs).removeClass('form-checkbox-error')
+                            for (let i in errors_possible){
+                                let inputs = $(groups[grp]).find('.' + errors_possible[i])
+                                if(inputs.length > 0){
+                                    $(inputs).removeClass(errors_possible[i])
+                                }
                             }
                         }
                     }
@@ -623,7 +633,6 @@
                     DAAC = this.daac
                 }
                 let is_invalid = this.hasRequiredFields(data, JSON.parse(this.$required))
-                console.log(is_invalid)
                 if(!is_invalid){
                     if(typeof DAAC != 'undefined' && DAAC !== null && data !== JSON.stringify({})){
                         if (this.$refs.form.checkValidity()) {
@@ -672,7 +681,6 @@
             // @vuese
             // Cancel and exit form
             okToCancel(){
-                console.log(this.$refs.form)
                 this.$refs.form.reset()
                 setTimeout(function(){
                     $('#reset_data').focus()
