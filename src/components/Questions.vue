@@ -1,24 +1,37 @@
 <template>
   <!-- Form -->
-  <b-form name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="resetForm" @cancel="cancelForm">
-    <!-- Console Options -->
-    <b-container v-if="!readonly" name="console_container" class="console_container">
-        <div v-if="!readonly" class="console_bar">
-            <b-button class="button" type="redo" id="redo_button" v-bind:title="redoLabel" v-if="canRedo" @click="redoToPreviousState()">
-                <font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon>
-            </b-button>
-            <b-button class="button" type="redo" id="redo_button" v-bind:title="redoLabel" v-else disabled>
-                <font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon>
-            </b-button>
-            <b-button class="button" type="undo" id="undo_button" v-bind:title="undoLabel" v-if="canUndo" @click="undoToPreviousState()">
-                <font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon>
-            </b-button>
-            <b-button class="button" type="undo" id="undo_button" v-bind:title="undoLabel" v-else disabled>
-                <font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon>
-            </b-button>
-        </div>
+  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="cancelForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
+    <b-container>
+        <fixed-header :fixed.sync="isFixed" :threshold="168">
+            <div class="navbar">
+                <!-- Button Options -->
+                <div class="button_bar">
+                    <div align=left v-if="!readonly" class="left_button_bar">
+                        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="redo" id="redo_button" v-else disabled><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-else disabled><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                    </div>
+                    <div align=right v-if="!readonly" class="right_button_bar">
+                        <b-button class="eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
+                        <b-button class="eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
+                        <b-button class="button eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+                        <!--<b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>-->
+                        <b-button class="button eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
+                    </div>
+                </div>
+            </div>
+        </fixed-header>
     </b-container>
-    <!-- End of Concole Options -->
+    <b-container style="margin-top:2rem;">
+        <p v-if="errors.length" class="eui-banner--danger" id="eui-banner">
+            <b><strong>Please correct the following error(s):</strong></b>
+            <a href="javascript:void(0)" class="eui-banner__dismiss float_right" title="Dismiss banner"><i class="eui-icon eui-fa-times-circle" @click="dismiss('eui-banner');"></i></a>
+            <ul class="eui_banner__message">
+                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+            </ul>
+        </p>
+    </b-container>
     <b-container name="questions_container">
         <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
@@ -35,14 +48,14 @@
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
-                        <!--<b-col class="w-50 help">
+                        <!--<b-col class="w-50 help" :id="question.id">
                             <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
                             <div class="hidden overlay">{{question.help}}</div>
                         </b-col>-->
                         <!-- Input -->
                         <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
-                            <label :for="input.id || input + '_' + c_key">{{input.label}}: </label>
-                            <span class="required" v-if="input.required == true">* required</span>
+                            <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
+                            <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                             <!-- Text Type of Input -->
                             <b-form-input 
                                 :class="{ 'form-input-error': ($v.values[input.id] || {}).$error }"
@@ -63,9 +76,9 @@
                                 input.type == 'tel' || 
                                 input.type == 'time' || 
                                 input.type == 'color'" 
-                                input.attrib_string>
+                                input.attrib_string
+                                @input="$v.values[input.id].$touch();">
                             </b-form-input>
-                            <span id:="input.id + '.required_checkbox' + " class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                             <!-- End of Text Type of Input -->
                             <!-- Checkbox Type of Input -->
                             <b-form-checkbox 
@@ -78,10 +91,11 @@
                                 :disabled="readonly"
                                 value="true"
                                 unchecked-value="false"
-                                v-else-if="input.type == 'checkbox'"
+                                v-if="input.type == 'checkbox'" 
                                 input.attrib_string
-                                stacked >
+                                @change="$v.values[input.id].$touch()">
                             </b-form-checkbox>
+                            <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                             <!-- End of Checkbox Type of Input -->
                             <!-- Textarea Type of Input -->
                             <b-form-textarea 
@@ -93,7 +107,8 @@
                                 size="lg" lg=12
                                 :disabled="readonly"
                                 v-else-if="input.type == 'textarea'" 
-                                input.attrib_string>
+                                input.attrib_string
+                                @input="$v.values[input.id].$touch()">
                             </b-form-textarea>
                             <!-- End of Textarea Type of Input -->
                             <!-- Radio Group Type of Input -->
@@ -108,9 +123,9 @@
                                 unchecked-value="false"
                                 :disabled="readonly"
                                 v-else-if="input.type == 'radio'" 
-                                :options="input.options"
+                                :options="input.options" 
                                 input.attrib_string
-                                stacked >
+                                @change="$v.values[input.id].$touch()">
                             </b-form-radio-group>
                             <!-- End of Radio Group Type of Input -->
                             <!-- Select Type of Input -->
@@ -123,8 +138,9 @@
                                 size="lg" lg=12
                                 :disabled="readonly"
                                 v-else-if="input.type == 'select'" 
-                                :options="input.options"
-                                input.attrib_string>
+                                :options="input.options" 
+                                input.attrib_string
+                                @change="$v.values[input.id].$touch()">
                             </b-form-select>
                             <!-- End of Select Type of Input -->
                             <!-- File Type of Input -->
@@ -138,12 +154,14 @@
                                 size="lg" lg=12 
                                 :disabled="readonly" 
                                 v-else-if="input.type == 'file'" 
-                                input.attrib_string>
+                                input.attrib_string
+                                @change="$v.values[input.id].$touch()">
                             </b-form-file>
                             <!-- End of File Type of Input -->
                             <!-- Selected Input File Name -->
                             <div class="mt-3" v-else-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
                             <!-- End of Selected Input File Name -->
+                            <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
                         </b-row>
                         <!-- End of Input -->
                     </b-form-group>
@@ -152,16 +170,6 @@
             </b-row>
         </section>
         <!-- End of Section -->
-    </b-container>
-    <!-- Button Options -->
-    <b-container v-if="!readonly" name="buttons_container">
-        <div v-if="!readonly" class="button_bar">
-            <b-button class="button eui-btn--red" type="cancel" id="cancel_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
-            <b-button class="button eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-            <b-button class="button eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
-            <b-button class="button eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-            <b-button class="button eui-btn--red" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>
-        </div>
     </b-container>
     <!-- End of Button Options -->
   </b-form>
@@ -173,6 +181,7 @@
     // Jquery javascript
     import $ from 'jquery'
     import mixin from '../mixins/mixin'
+    import FixedHeader from 'vue-fixed-header'
 
     // This questions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
@@ -181,20 +190,20 @@
         mixins: [mixin],
         data() {
             return {
+                errors:[],
                 values: {},
                 questions: {},
                 dirty:false,
                 formTitle: '',
                 saveTimeout: 0,
                 daac:'',
-                warning:''
+                warning:'',
+                isFixed:true
             }
         },
         props: {
             // The cancel label and type
             cancelLabel: { default: 'Cancel', type: String },
-            // The reset label and type
-            resetLabel: { default: 'Reset', type: String },
             // The draft label and type
             draftLabel: { default: 'Save as draft', type: String },
             // The save label and type
@@ -210,9 +219,7 @@
             // The readonly attribute to pass in
             readonly: { default: false, type: Boolean },
             // The show cancel button conditional to allow for cancel
-            showCancelButton: { default: true, type: Boolean },
-            // The show reset button conditional to allow for reset
-            showResetButton: { default: false, type: Boolean }
+            showCancelButton: { default: true, type: Boolean }
         },
         computed: {
         },
@@ -233,6 +240,7 @@
                             }
                         }
                         delete this.values.fromUndo
+                        this.$v.$touch()
                     }, 250);
                 },
                 deep: true
@@ -242,10 +250,10 @@
             
         },
         components: {
-
+            FixedHeader
         },
         validations() {
-            //console.log('Validations ...')
+            console.log('Validations ...')
             // Evaluates required fields and alerts if any are empty
             let val_fields = {
                 values: {}
@@ -259,27 +267,37 @@
             // Gather required elements
             for (let group of obj) {
                 for (let question of group) {
+                    let one_of = []
                     // If the group is required, assume each input within is required
                     if (typeof question.required != 'undefined' && question.required) {
                         if (typeof question.inputs != 'undefined'){
                             for (let fld of question.inputs){
-                                val_fields.values[fld.id] = {
-                                    required
+                                if(fld.type!='checkbox'){
+                                    val_fields.values[fld.id] = {
+                                        required
+                                    }
+                                } else {
+                                    one_of.push(fld.id)
                                 }
                             }
-                        } else {
-                            val_fields.values[question.id] = {
-                                required
-                            }
-                        }
+                        } 
                     // If the required attribute is not at the group level, investigates under input level
                     } else if (typeof question.inputs != 'undefined'){
                         for (let fld of question.inputs){
                             if (typeof fld.required != 'undefined' && fld.required) {
-                                val_fields.values[fld.id] = {
-                                    required
+                                if(fld.type != 'checkbox'){
+                                    val_fields.values[fld.id] = {
+                                        required
+                                    }
+                                } else {
+                                    one_of.push(fld.id)
                                 }
                             }
+                        }
+                    }
+                    if(one_of.length > 0){
+                        val_fields.values[one_of] = {
+                            required
                         }
                     }
                 }
@@ -292,6 +310,185 @@
             return val_fields
         },
         methods: {
+            // @vuese
+            // Handle html5 invalidity on change
+            handleChange(evt) {
+                console.log('handleChange :: ', evt.target.name);
+                this.errors = {
+                    ...this.errors,
+                    [evt.target.name]: evt.target.validationMessage
+                };
+                $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+                if(evt.target.validationMessage!=''){
+                    $('#' + evt.target.name + '_invalid').removeClass('hidden')
+                } else {
+                    $('#' + evt.target.name + '_invalid').addClass('hidden')
+                }
+                this.hasRequiredFields(JSON.stringify(this.values), JSON.parse(this.$required))
+            },
+            // @vuese
+            // Handle html5 invalidity on form
+            handleInvalid(evt) {
+                console.log('handleInvalid :: ', evt.target.name);
+                this.errors = {
+                    ...this.errors,
+                    [evt.target.name]: evt.target.validationMessage
+                };
+                console.log(this.errors)
+            },
+            // @vuese
+            // Applies error styles based on input type
+            applyErrorStyle(id, type, remove = false){
+                if(type == 'radio'){
+                    if(!remove){
+                        document.getElementById(id).style.border = '1px solid red'
+                        document.getElementById(id).style.borderRadius = '5px'
+                        document.getElementById(id).style.padding = '0.6em'
+                    } else {
+                        document.getElementById(id).style.border = 'unset'
+                        document.getElementById(id).style.padding = 'unset'
+                    }
+                } else if(type == 'checkbox'){
+                    if(!remove){
+                        $('#' + id).parent().parent().parent().css('border','1px solid red')
+                        $('#' + id).parent().parent().parent().css('border-radius','5px')
+                        $('#' + id).parent().parent().parent().css('padding','0.6em')
+                    } else {
+                        $('#' + id).parent().parent().parent().css('border','unset')
+                        $('#' + id).parent().parent().parent().css('padding','unset')
+                    }
+                } else {
+                    if(!remove){
+                        $('#' + id).addClass('form-checkbox-error')
+                    } else {
+                        $('#' + id).removeClass('form-checkbox-error')
+                    }
+                }
+            },
+            // @vuese
+            // Hides errors banner
+            dismiss(id){
+                document.getElementById(id).style.display='none';
+            },
+            // @vuese
+            // Converts sentence string to title case
+            titleCase(str) {
+                str = str.toLowerCase().split(' ');
+                for (var i = 0; i < str.length; i++) {
+                    str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+                }
+                return str.join(' ');
+            },
+            // @vuese
+            // Checks for conditionally required elements from questions
+            checkForConditional(req){
+                let Qs = this.questions
+                var options = []
+                for (var q in Qs){
+                    let section = Qs[q]
+                    for (let s in section){
+                        if(typeof section[s].inputs != 'undefined'){
+                            let get_next = false
+                            for (let l in section[s].inputs){
+                                let details = section[s].inputs[l]
+                                if(get_next){
+                                    console.log(details)
+                                    console.log(options)
+                                    break
+                                }
+                                for(let d in details){
+                                    if (details[d] !== req && get_next == false){ continue }
+                                    if(typeof details[d].enums !='undefined'){
+                                        for (var e in details[d].enums){
+                                            var option = details[d].enums[e]
+                                            var text, value
+                                            if(Array.isArray(details[d].enums)){
+                                                text = option
+                                                value = option
+                                                options.push({ value: option, text: option })
+                                            } else if (typeof details[d].enums.value !='undefined' && typeof details[d].enums.text !='undefined'){
+                                                text = details[d].enums.text
+                                                value = details[d].enums.value
+                                                options.push({ value: value, text: text })
+                                            }
+                                        }
+                                    }
+                                    get_next = true
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            // @vuese
+            // Checks required values against required elements
+            hasRequiredFields(VALS, REQ){ 
+                console.log('has required?')
+                let is_invalid = false
+                let msg = ''
+                this.errors = []
+                if(typeof VALS == 'string'){
+                    VALS = JSON.parse(VALS)
+                }
+                for (let req in REQ ){
+                    msg = this.titleCase(req.replace(/_/g,' ')) + " is required."
+                    let req_type = $('#' + req).attr('type')
+                    // Values object is empty
+                    if (Object.keys(VALS).length === 0 || typeof VALS == 'undefined'){
+                        is_invalid = true
+                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                        this.applyErrorStyle(req, req_type)
+                    // Some values have been recorded in the values object
+                    } else {
+                        for (let val in VALS){
+                            let multi_key = req.split(',')
+                            if (multi_key.length > 1){
+                                // If key is multiple fields, then one of the fields must have a value
+                                msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
+                                for (let k in multi_key){
+                                    if ((val === multi_key[k] && VALS[val] == '')){
+                                        is_invalid = true
+                                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                        this.applyErrorStyle(req, req_type)
+                                    } else {
+                                        this.applyErrorStyle(req, req_type, true)
+                                    }
+                                }
+                            } else if ((val === req && VALS[val] == '')){
+                                is_invalid = true
+                                if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                this.applyErrorStyle(req, req_type)
+                            } else {
+                                let conditional = ''
+                                if(req == 'archival_approval_dependencies_radios'){
+                                    conditional = this.checkForConditional(req)
+                                }
+                                console.log(conditional)
+                                this.applyErrorStyle(req, req_type, true)
+                            }
+                        }
+                    }
+                }
+                this.checkInvalidGroupsBorders()
+                return is_invalid
+            },
+            // @vuese
+            // Verify by group, that only one red border exists
+            checkInvalidGroupsBorders(){
+                let groups = $('.bv-no-focus-ring')
+                for (let grp in groups){
+                    if(typeof groups[grp].style != 'undefined'){
+                        let group_style_border = groups[grp].style.border
+                        if(typeof group_style_border != 'undefined' && group_style_border.match(/red/g)){
+                            let inputs = $(groups[grp]).find('.form-checkbox-error')
+                            if(inputs.length > 0){
+                                $(inputs).removeClass('form-checkbox-error')
+                            }
+                        }
+                    }
+                }
+            },
             // @vuese
             // Re-applies the data entry values from values from the store for on undo and redo
             reApplyValues(){
@@ -345,11 +542,12 @@
                                         // This builds a string of attributes to apply to the input
                                         for (var attr in questions_section[q].inputs[input].attributes){
                                             if(ignore_attributes.includes(attr)==false){
-                                                attrib_string += ':' + attr + '="' + questions_section[q].inputs[input].attributes[attr] + '" '
+                                                attrib_string += attr + '="' + questions_section[q].inputs[input].attributes[attr] + '" '
                                             }
                                         }
                                     }
                                     questions_section[q]['attrib_string'] = attrib_string
+                                    // console.log("'" + attrib_string + "'")
                                     // Handles the enums options
                                     var options = []
                                     if(typeof questions_section[q].inputs[input].enums !='undefined'){
@@ -378,7 +576,7 @@
             // @vuese
             // Validation of input data
             status(validation) {
-                //console.log('Getting status ...')
+                // console.log('Getting status ...')
                 // Returns error and if dirty
                 return {
                     error: validation.$error,
@@ -400,16 +598,9 @@
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
-                this.saveFile()
-                //this.validations()
-                if (this.$v.$invalid) {
-                    //TODO
-                    //var required_ids_to_check = JSON.parse(window.localStorage.getItem(this.DAAC + '_required'))
-                    //console.log(required_ids_to_check)
-                    //for(var r in required_ids_to_check){
-                        //console.log(required_ids_to_check[r])
-                    //}
-                    //alert('Please correct the errors on the form before saving.')
+                let is_invalid = this.saveFile()
+                if (is_invalid) {
+                    console.log('INVALID')
                 } else {
                     this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
                 }
@@ -424,29 +615,43 @@
                 if(this.daac == null){
                     var DAAC = window.localStorage.getItem('DAAC')
                 }
-                if(DAAC !== null && data !== JSON.stringify({})){
-                    //window.localStorage.setItem(DAAC + '_questions', data);
-                    this.$values = data
-                    this.$output_object[DAAC] =  {
-                        "values": this.$values,
-                        "log":this.$logging_object
+                let is_invalid = this.hasRequiredFields(data, JSON.parse(this.$required))
+                if(!is_invalid){
+                    if(DAAC !== null && data !== JSON.stringify({})){
+                        if (this.$refs.form.checkValidity()) {
+                            console.log('checking validity')
+                            this.submitForm();
+                        } else {
+                            console.log('reporting validity')
+                            this.$refs.form.reportValidity();
+                        }
+                        //window.localStorage.setItem(DAAC + '_questions', data);
+                        this.$values = data
+                        this.$output_object[DAAC] =  {
+                            "values": this.$values,
+                            "log":this.$logging_object
+                        }
+                        this.$input_object[DAAC] = {
+                            "questions":this.questions[0],
+                            "required":this.$required
+                        }
+                        window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
+                        window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
+                        // @vuese
+                        // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
+                        // If production level set (see main.js), will be at different level automatically.  
+                        // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
+                        //this.$log.debug('this.showDaacs', 'some error')
                     }
-                    this.$input_object[DAAC] = {
-                        "questions":this.questions[0],
-                        "required":this.$required
+                    if(with_msg){
+                        alert('Your data has been saved.  Click submit to send the data.')
                     }
-                    window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
-                    window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
-
-                    // @vuese
-                    // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
-                    // If production level set (see main.js), will be at different level automatically. 
-                    // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
-                    //this.$log.debug('this.showDaacs', 'some error')
+                } else {
+                    if($('.vue-go-top__content').is(":visible")){
+                        $('.vue-go-top__content').click()
+                    }
                 }
-                if(with_msg){
-                    alert('Your data has been saved. Click submit to send the data.')
-                }
+                return is_invalid
             },
             // @vuese
             // Save as draft and exit form
@@ -457,13 +662,6 @@
             // @vuese
             // Cancel and exit form
             cancelForm() {
-                //console.log('Canceling form ...')
-                // Cancels form and exits to home
-                this.exitForm()
-            },
-            // @vuese
-            // Clear and reset form
-            resetForm() {
                 //console.log('Resetting form ...')
                 // Resets form to blank entries
                 this.$emit('resetForm')
@@ -479,12 +677,14 @@
             undoToPreviousState(){
                 this.undo();
                 this.reApplyValues()
+                this.hasRequiredFields(this.values, JSON.parse(this.$required))
             },
             // @vuese
             // Redo the form and to its previous state.
             redoToPreviousState(){
                 this.redo();
                 this.reApplyValues()
+                this.hasRequiredFields(this.values, JSON.parse(this.$required))
             }
             
         },
@@ -523,6 +723,19 @@
     }
 </script>
 <style scoped>
+    .eui-banner--danger {
+        text-align:left;
+        margin-bottom: 2rem;
+    }
+    .eui-banner--danger.validation {
+        margin-top: -8px;
+    }
+    .hidden {
+        display:none
+    }
+    .float_right{
+        float:right;
+    }
     .warning {
         color:red;
         font-weight:bold;
@@ -561,7 +774,15 @@
         margin-top:1rem;
     }
     button {
-       margin:1rem;
+        margin-left:1rem;
+        margin-right:1rem;
+        margin-bottom:1rem;
+    }
+    .left_button_bar button:first-child {
+       margin-left:0!important;
+    }
+    .right_button_bar button:last-child {
+       margin-right:0!important;
     }
     .help {
         text-align:right;
@@ -577,17 +798,57 @@
     .form-group-error {
         border-color: red;
     }
+    .radio_checkbox_group_error {
+        border-color: red;
+        border-radius: 5px;
+    }
     fieldset {
         border-left: unset
     }
-    .button_bar {
-        /* float:right */
+    .button_bar{
+        display:inline;
     }
-    .button_bar .button {
-        float:right
+    .left_button_bar {
+        border-bottom:1px solid #dfdfdf;
+        width:25%;
+        display:inline;
+        float:left;
+        margin-top:0px;
+        height:55px;
     }
-    .button_bar .button:first-of-type {
-        float:left
+    .right_button_bar {
+        border-bottom:1px solid #dfdfdf;
+        width:75%;
+        display:inline;
+        float:right;
+        margin-top:0px;
+        height:55px;
+    }
+    div.container{
+        padding-top:0px;
+    }
+    .navbar{
+        position: relative;
+        display: -ms-flexbox;
+        /* display: -webkit-box; */
+        /* display: flex; */
+        display:flow-root!important;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        -webkit-box-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 0rem 0rem;
+        padding-top:1rem;
+    }
+    .navbar.vue-fixed-header--isFixed {
+        position: fixed;
+        left: 20;
+        top: 1rem;
+        width: 85vw;
     }
     .console_container {
         height: 1em;

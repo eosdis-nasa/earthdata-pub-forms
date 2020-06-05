@@ -147,7 +147,7 @@
           "inputs": [
             {
               "type": "textarea",
-              "id": "data_product_description",
+              "id": "data_product_description_textarea",
               "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
@@ -225,16 +225,20 @@
           "text": "Do you have any dependencies related to this data product being approved for archival at the DAAC? If Yes, please provide a brief explanation.",
           "help": "For example, are you hoping to have this data product approved for archival at the DAAC prior publishing a paper or presenting at a conference? Does your project have a defined timeline in which this data product needs to be published?",
           "inputs": [
-            {
-              "type": "checkbox",
-              "id": "archival_approval_dependencies",
+            { 
+              "type": "radio",
+              "id": "archival_approval_dependencies_radios",
               "label": "Has Dependencies",
+              "enums": [
+                "Yes",
+                "No"
+              ],
               "required": true
             },
             {
               "type": "text",
               "id": "archival_approval_dependencies_explanation",
-              "label": "If there are dependencies, provide explanation"
+              "label": "If Yes, provide explanation"
             }
           ],
           "id": "f40956c3-9af8-400e-8dd8-c5e2965dcb8a",
@@ -246,16 +250,20 @@
           "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy? If No, please provide a brief explanation.",
           "help": "For a description policy, please refer to the NASA Earthdata Data and Information Policy web page (https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy).",
           "inputs": [
-            {
-              "type": "checkbox",
+            { 
+              "type": "radio",
               "id": "data_product_restrictions_public",
               "label": "Releasable to public",
+              "enums": [
+                "Yes",
+                "No"
+              ],
               "required": true
             },
             {
               "type": "text",
               "id": "data_product_restrictions_explanation",
-              "label": "If not releasable, provide explanation"
+              "label": "If No, provide explanation"
             }
           ],
           "id": "2dd6c8b1-22a8-4866-91c3-da9b4ce849dc",
@@ -312,17 +320,18 @@
           "title": "Data Product Temporal Coverage",
           "text": "What period of time is covered by the entire data product?",
           "help": "The temporal coverage should encompass the beginning date of the first data file and the ending date of the last data file, even if there are time gaps.",
-          "required": true,
           "inputs": [
             {
               "type": "date",
               "id": "data_product_temporal_coverage_start",
-              "label": "Start"
+              "label": "Start",
+              "required": true
             },
             {
               "type": "date",
               "id": "data_product_temporal_coverage_end",
-              "label": "End"
+              "label": "End",
+              "required": true
             }
           ],
           "id": "4f2dd369-d865-47ba-8504-8694493f128f",
@@ -336,7 +345,7 @@
           "inputs": [
             {
               "type": "radio",
-              "id": "data_product_volume_units",
+              "id": "data_product_volume_units1",
               "label": "Unit",
               "enums": [
                 "No Updates",
@@ -446,7 +455,7 @@
             },
             {
               "type": "radio",
-              "id": "data_product_volume_units",
+              "id": "data_product_volume_units2",
               "label": "Unit",
               "enums": [
                 "KB",
