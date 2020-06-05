@@ -15,9 +15,8 @@
                     <div align=right v-if="!readonly" class="right_button_bar">
                         <b-button class="eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
                         <b-button class="eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-                        <b-button class="button eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-                        <!--<b-button class="button" type="reset" id="reset_data" v-if="showResetButton">{{ resetLabel }}</b-button>-->
-                        <b-button class="button eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
+                        <b-button class="eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
+                        <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
                     </div>
                 </div>
             </div>
@@ -32,7 +31,7 @@
             </ul>
         </p>
     </b-container>
-    <b-container name="questions_container">
+    <b-container name="questions_container" id="questions_container">
         <h3 v-if="warning" class="warning">{{warning}}</h3>
         <!-- Section -->
         <section>
@@ -76,8 +75,7 @@
                                 input.type == 'tel' || 
                                 input.type == 'time' || 
                                 input.type == 'color'" 
-                                input.attrib_string
-                                @input="$v.values[input.id].$touch();">
+                                input.attrib_string>
                             </b-form-input>
                             <!-- End of Text Type of Input -->
                             <!-- Checkbox Type of Input -->
@@ -92,8 +90,7 @@
                                 value="true"
                                 unchecked-value="false"
                                 v-if="input.type == 'checkbox'" 
-                                input.attrib_string
-                                @change="$v.values[input.id].$touch()">
+                                input.attrib_string>
                             </b-form-checkbox>
                             <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                             <!-- End of Checkbox Type of Input -->
@@ -107,8 +104,7 @@
                                 size="lg" lg=12
                                 :disabled="readonly"
                                 v-else-if="input.type == 'textarea'" 
-                                input.attrib_string
-                                @input="$v.values[input.id].$touch()">
+                                input.attrib_string>
                             </b-form-textarea>
                             <!-- End of Textarea Type of Input -->
                             <!-- Radio Group Type of Input -->
@@ -124,8 +120,7 @@
                                 :disabled="readonly"
                                 v-else-if="input.type == 'radio'" 
                                 :options="input.options" 
-                                input.attrib_string
-                                @change="$v.values[input.id].$touch()">
+                                input.attrib_string>
                             </b-form-radio-group>
                             <!-- End of Radio Group Type of Input -->
                             <!-- Select Type of Input -->
@@ -139,8 +134,7 @@
                                 :disabled="readonly"
                                 v-else-if="input.type == 'select'" 
                                 :options="input.options" 
-                                input.attrib_string
-                                @change="$v.values[input.id].$touch()">
+                                input.attrib_string>
                             </b-form-select>
                             <!-- End of Select Type of Input -->
                             <!-- File Type of Input -->
@@ -154,8 +148,7 @@
                                 size="lg" lg=12 
                                 :disabled="readonly" 
                                 v-else-if="input.type == 'file'" 
-                                input.attrib_string
-                                @change="$v.values[input.id].$touch()">
+                                input.attrib_string>
                             </b-form-file>
                             <!-- End of File Type of Input -->
                             <!-- Selected Input File Name -->
@@ -198,7 +191,8 @@
                 saveTimeout: 0,
                 daac:'',
                 warning:'',
-                isFixed:true
+                isFixed:true,
+                confirm:false
             }
         },
         props: {
@@ -324,7 +318,6 @@
                 } else {
                     $('#' + evt.target.name + '_invalid').addClass('hidden')
                 }
-                this.hasRequiredFields(JSON.stringify(this.values), JSON.parse(this.$required))
             },
             // @vuese
             // Handle html5 invalidity on form
@@ -436,7 +429,12 @@
                     let req_type = $('#' + req).attr('type')
                     // Values object is empty
                     if (Object.keys(VALS).length === 0 || typeof VALS == 'undefined'){
+                        console.log(1)
                         is_invalid = true
+                        let multi_key = req.split(',')
+                        if (multi_key.length > 1){
+                            msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
+                        }
                         if(this.errors.includes(msg) == false){this.errors.push(msg);}
                         this.applyErrorStyle(req, req_type)
                     // Some values have been recorded in the values object
@@ -444,6 +442,7 @@
                         for (let val in VALS){
                             let multi_key = req.split(',')
                             if (multi_key.length > 1){
+                                console.log(2)
                                 // If key is multiple fields, then one of the fields must have a value
                                 msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                                 for (let k in multi_key){
@@ -456,15 +455,17 @@
                                     }
                                 }
                             } else if ((val === req && VALS[val] == '')){
+                                console.log(3)
                                 is_invalid = true
                                 if(this.errors.includes(msg) == false){this.errors.push(msg);}
                                 this.applyErrorStyle(req, req_type)
                             } else {
-                                let conditional = ''
-                                if(req == 'archival_approval_dependencies_radios'){
-                                    conditional = this.checkForConditional(req)
-                                }
-                                console.log(conditional)
+                                console.log(4)
+                                //let conditional = ''
+                                //if(req == 'archival_approval_dependencies_radios'){
+                                //    conditional = this.checkForConditional(req)
+                                //}
+                                //console.log(conditional)
                                 this.applyErrorStyle(req, req_type, true)
                             }
                         }
@@ -594,14 +595,17 @@
             },
             // @vuese
             // Used to submit the form data if valid
-            submitForm() {
+            submitForm(str) {
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
                 this.$v.$touch()
-                let is_invalid = this.saveFile()
-                if (is_invalid) {
-                    console.log('INVALID')
-                } else {
+                if(!str.match(/from save/g)){
+                    let is_invalid = this.saveFile()
+                    if (is_invalid) {
+                        console.log('INVALID')
+                    }
+                }
+                 else {
                     this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
                 }
             },
@@ -612,15 +616,19 @@
                 //console.log('Executing save file ...')
                 // Saves file to localStorage
                 const data = JSON.stringify(this.values)
+                var DAAC
                 if(this.daac == null){
-                    var DAAC = window.localStorage.getItem('DAAC')
+                    DAAC = window.localStorage.getItem('DAAC')
+                } else {
+                    DAAC = this.daac
                 }
                 let is_invalid = this.hasRequiredFields(data, JSON.parse(this.$required))
+                console.log(is_invalid)
                 if(!is_invalid){
-                    if(DAAC !== null && data !== JSON.stringify({})){
+                    if(typeof DAAC != 'undefined' && DAAC !== null && data !== JSON.stringify({})){
                         if (this.$refs.form.checkValidity()) {
                             console.log('checking validity')
-                            this.submitForm();
+                            this.submitForm('from save');
                         } else {
                             console.log('reporting validity')
                             this.$refs.form.reportValidity();
@@ -642,9 +650,9 @@
                         // If production level set (see main.js), will be at different level automatically.  
                         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
                         //this.$log.debug('this.showDaacs', 'some error')
-                    }
-                    if(with_msg){
-                        alert('Your data has been saved.  Click submit to send the data.')
+                        if(with_msg){
+                            alert('Your data has been saved.  Click submit to send the data.')
+                        }
                     }
                 } else {
                     if($('.vue-go-top__content').is(":visible")){
@@ -656,15 +664,106 @@
             // @vuese
             // Save as draft and exit form
             draftFile(with_msg) {
-                this.saveFile(with_msg)
-                this.exitForm()
+                let is_invalid = this.saveFile(with_msg)
+                if(!is_invalid){
+                    this.exitForm()
+                }
             },
             // @vuese
             // Cancel and exit form
-            cancelForm() {
+            okToCancel(){
+                console.log(this.$refs.form)
+                this.$refs.form.reset()
+                setTimeout(function(){
+                    $('#reset_data').focus()
+                    let errors_possible = ['form-checkbox-error','form-file-error','form-select-error','form-textarea-error','form-radio-group-error','form-checkbox-error','form-input-error']
+                    let inputs = $('#questions_container input')
+                    let textareas = $('#questions_container textarea')
+                    let groups = $('.bv-no-focus-ring')
+                    for (let i in inputs){
+                        if (typeof inputs[i] == 'object'){
+                            for (let k in errors_possible){
+                                if ($(inputs[i]).hasClass(errors_possible[k])){
+                                    $(inputs[i]).removeClass(errors_possible[k])
+                                }
+                            }
+                        }
+                    }
+                    for (let i in textareas){
+                        if (typeof textareas[i] == 'object'){
+                            for (let k in errors_possible){
+                                if ($(textareas[i]).hasClass(errors_possible[k])){
+                                    $(textareas[i]).removeClass(errors_possible[k])
+                                }
+                            }
+                        }
+                    }
+                    for (let i in groups){
+                        if (typeof groups[i] == 'object'){
+                            for (let k in errors_possible){
+                                if ($(groups[i]).hasClass(errors_possible[k])){
+                                    $(groups[i]).removeClass(errors_possible[k])
+                                }
+                            }
+                            try{
+                                $(groups[i]).css('border','unset')
+                                $(groups[i]).css('padding','unset')
+                            } catch(e) {
+                                console.error(e)
+                            }
+                        }
+                    }
+                    if(document.getElementById('eui-banner') != null){
+                        document.getElementById('eui-banner').style.display='none';
+                    }
+                    this.$form_outputs = ''
+                    this.$form_inputs = ''
+                    window.localStorage.removeItem('form_outputs')
+                    window.localStorage.removeItem('form_inputs')
+                    this.errors =[]
+                    this.values =  {}
+                    this.dirty = false
+                    this.saveTimeout = 0
+                    this.warning = ''
+                }, 1000)
+            },
+            // @vuese
+            // Cancel and exit form
+            cancelForm(evt) {
+                if(!this.confirm){
+                    evt.preventDefault()
+                }
                 //console.log('Resetting form ...')
                 // Resets form to blank entries
-                this.$emit('resetForm')
+                if(Object.keys(this.values).length > 0){
+                    if(this.confirm == false){
+                        this.confirm = ''
+                        this.$bvModal.msgBoxConfirm('Are you sure?',{
+                            title: 'Please Confirm',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'danger',
+                            okTitle: 'YES',
+                            cancelTitle: 'NO',
+                            footerClass: 'p-2',
+                            hideHeaderClose: false,
+                            centered: true
+                        })
+                        .then(value => {
+                            this.confirm = value
+                            this.okToCancel()
+                        })
+                        .catch(err => {
+                            console.log(err)// An error occurred
+                        })
+                    } else {
+                        this.confirm = false;
+                        this.okToCancel()
+                    }
+                } else {
+                    this.confirm = true
+                    this.okToCancel()
+                }
             },
             // @vuese
             // Exit form to home page
@@ -677,14 +776,12 @@
             undoToPreviousState(){
                 this.undo();
                 this.reApplyValues()
-                this.hasRequiredFields(this.values, JSON.parse(this.$required))
             },
             // @vuese
             // Redo the form and to its previous state.
             redoToPreviousState(){
                 this.redo();
                 this.reApplyValues()
-                this.hasRequiredFields(this.values, JSON.parse(this.$required))
             }
             
         },
@@ -855,5 +952,17 @@
     }
     .console_bar {
         float:right
+    }
+    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+        background-color: #d62c1a;
+    }
+    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
+        background-color: #1a5981;
+    }
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
+        background-color: #1baf5e;
+    }
+    .default_background {
+        background-color: #ebebeb;
     }
 </style>

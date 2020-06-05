@@ -118,7 +118,4 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
-    .row:first-child h3:first-child{
-        /*padding-top:5rem!important;*/
-    }
 </style>
