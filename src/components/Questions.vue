@@ -724,6 +724,14 @@
                     if(document.getElementById('eui-banner') != null){
                         document.getElementById('eui-banner').style.display='none';
                     }
+                    let validation_messages = $('.eui-banner--danger')
+                    for (let i in validation_messages){
+                        if (typeof validation_messages[i] == 'object'){
+                            if (!$(validation_messages[i]).hasClass('hidden')){
+                                $(validation_messages[i]).addClass('hidden')
+                            }
+                        }
+                    }
                     this.$form_outputs = ''
                     this.$form_inputs = ''
                     window.localStorage.removeItem('form_outputs')
