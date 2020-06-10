@@ -118,4 +118,16 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
+    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+        background-color: #d62c1a;
+    }
+    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
+        background-color: #1a5981;
+    }
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
+        background-color: #1baf5e;
+    }
+    .default_background {
+        background-color: #ebebeb;
+    }
 </style>

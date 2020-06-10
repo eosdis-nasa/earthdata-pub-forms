@@ -192,7 +192,9 @@
                 daac:'',
                 warning:'',
                 isFixed:true,
-                confirm:false
+                confirm:false,
+                conditionals:[],
+                one_ofs:[]
             }
         },
         props: {
@@ -248,7 +250,6 @@
         },
         validations() {
             console.log('Validations ...')
-            // Evaluates required fields and alerts if any are empty
             let val_fields = {
                 values: {}
             }
@@ -263,6 +264,24 @@
                 for (let question of group) {
                     let one_of = []
                     // If the group is required, assume each input within is required
+                    if (typeof question.inputs != 'undefined'){
+                        for (let fld of question.inputs){
+                            let get_enums = this.checkEnums(obj, fld.id)
+                            let has_yes_no = get_enums[0]
+                            let has_enums = get_enums[1]
+                            if(has_yes_no){
+                                let is_conditional = this.checkForEnumConditional(fld.id, true)
+                                if(is_conditional){
+                                    this.conditionals.push(fld.id)
+                                }
+                            } else if(!has_enums){
+                                let is_conditional = this.checkForIfOtherConditional(fld.id, true)
+                                if(is_conditional){
+                                    this.conditionals.push(fld.id)
+                                }
+                            } 
+                        }
+                    }
                     if (typeof question.required != 'undefined' && question.required) {
                         if (typeof question.inputs != 'undefined'){
                             for (let fld of question.inputs){
@@ -293,9 +312,12 @@
                         val_fields.values[one_of] = {
                             required
                         }
+                        this.one_ofs.push(one_of)
                     }
                 }
             }
+            this.$conditionals = this.conditionals
+            this.$one_ofs = this.one_ofs
             let DAAC_SET = window.localStorage.getItem('DAAC')
             if(DAAC_SET !== null){
                 //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
@@ -308,27 +330,75 @@
             // Handle html5 invalidity on change
             handleChange(evt) {
                 console.log('handleChange :: ', evt.target.name);
-                this.errors = {
-                    ...this.errors,
-                    [evt.target.name]: evt.target.validationMessage
-                };
                 $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
                 if(evt.target.validationMessage!=''){
+                    this.errors = {
+                        ...this.errors,
+                        [evt.target.name]: evt.target.validationMessage
+                    }
                     $('#' + evt.target.name + '_invalid').removeClass('hidden')
                 } else {
+                    var index = this.errors.indexOf(evt.target.name);
+                    if (index > -1) {
+                       this.errors.splice(index, 1);
+                    }
                     $('#' + evt.target.name + '_invalid').addClass('hidden')
                 }
-                this.hasRequiredFields(this.values, JSON.parse(this.$required), evt.target.name)
+                this.hasRequiredFields(this.values, JSON.parse(this.$required))
+                console.log(JSON.parse(this.$required))
             },
             // @vuese
             // Handle html5 invalidity on form
             handleInvalid(evt) {
                 console.log('handleInvalid :: ', evt.target.name);
-                this.errors = {
-                    ...this.errors,
-                    [evt.target.name]: evt.target.validationMessage
-                };
-                console.log(this.errors)
+                $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+                if(evt.target.validationMessage!=''){
+                    this.errors = {
+                        ...this.errors,
+                        [evt.target.name]: evt.target.validationMessage
+                    }
+                    $('#' + evt.target.name + '_invalid').removeClass('hidden')
+                } else {
+                    var index = this.errors.indexOf(evt.target.name);
+                    if (index > -1) {
+                       this.errors.splice(index, 1);
+                    }
+                    $('#' + evt.target.name + '_invalid').addClass('hidden')
+                }
+            },
+            // @vuese
+            // Checks and evaluates enums for conditional requirements
+            checkEnums(obj, req){
+                if(typeof obj == 'undefined'){
+                    obj = this.$questions
+                }
+                let has_yes_no = false
+                let has_enums = false
+                let idx = 0
+                for (let group of obj) {
+                    for (let question of group) {
+                        if (typeof question.inputs != 'undefined'){
+                            for (let fld of question.inputs){
+                                if(fld.id == req){
+                                    has_enums = false
+                                    if(fld['enums']){
+                                        has_enums = true
+                                        let enums = fld['enums']
+                                        for(let e in enums){
+                                            if(enums[e].toLowerCase().match(/yes/g) || enums[e].toLowerCase().match(/no/g)){
+                                                has_yes_no = true
+                                            } else {
+                                                has_yes_no = false
+                                            }
+                                        }
+                                    }
+                                    idx = question.inputs.indexOf(fld)
+                                }
+                            }
+                        }
+                    }
+                }
+                return [has_yes_no, has_enums, idx]
             },
             // @vuese
             // Applies error styles based on input type
@@ -375,52 +445,145 @@
             },
             // @vuese
             // Checks for conditionally required elements from questions
-            checkForConditional(req){
+            checkForEnumConditional(req, check_only){
+                //console.log('conditional check for ' + req)
                 let Qs = this.questions
                 var options = []
+                let conditional_found = false
+                let id_added = ''
+                let id_removed = ''
+                let val_fields = { values: {} }
+                if(typeof check_only == 'undefined'){
+                    val_fields.values = JSON.parse(this.$required)
+                }
                 for (var q in Qs){
                     let section = Qs[q]
                     for (let s in section){
                         if(typeof section[s].inputs != 'undefined'){
                             let get_next = false
                             for (let l in section[s].inputs){
+                                let enums = section[s].inputs[0]['enums']
                                 let details = section[s].inputs[l]
-                                if(get_next){
-                                    console.log(details)
-                                    console.log(options)
-                                    break
-                                }
-                                for(let d in details){
-                                    if (details[d] !== req && get_next == false){ continue }
-                                    if(typeof details[d].enums !='undefined'){
-                                        for (var e in details[d].enums){
-                                            var option = details[d].enums[e]
-                                            var text, value
-                                            if(Array.isArray(details[d].enums)){
-                                                text = option
-                                                value = option
-                                                options.push({ value: option, text: option })
-                                            } else if (typeof details[d].enums.value !='undefined' && typeof details[d].enums.text !='undefined'){
-                                                text = details[d].enums.text
-                                                value = details[d].enums.value
-                                                options.push({ value: value, text: text })
+                                if (details['id'] !== req && get_next == false){ continue }
+                                if(get_next && (details['label'].toLowerCase().match(/if yes/g) || details['label'].toLowerCase().match(/if no/g)) && details['type']=='text'){
+                                    if(req in this.values){
+                                        if  (
+                                                (details['label'].toLowerCase().match(/if yes/g) && this.values[req].toLowerCase() == 'yes') || 
+                                                (details['label'].toLowerCase().match(/if no/g) && this.values[req].toLowerCase() == 'no')
+                                            ){
+                                            if(typeof check_only == 'undefined'){
+                                                id_added = details['id']
+                                                val_fields.values[details['id']] = { required }
+                                                this.$required = JSON.stringify(val_fields.values)
+                                                //console.log(val_fields.values)
+                                                this.applyErrorStyle(details['id'], 'text')
+                                                this.applyErrorStyle(req, 'text', true)
+                                                let msg = this.titleCase(details['id'].replace(/_/g,' ')) + " is required."
+                                                if(this.errors.includes(msg) == false){this.errors.push(msg);}
                                             }
+                                            conditional_found = true
+                                            break
+                                        } else {
+                                            id_removed = details['id']
+                                        }
+                                    } else {
+                                        id_removed = details['id']
+                                    }
+                                }
+                                if(typeof enums !='undefined'){
+                                    for (var e in enums){
+                                        var option = enums[e]
+                                        var text, value
+                                        if(typeof enums[e] == 'string'){
+                                            text = option
+                                            value = option
+                                            options.push({ value: option, text: option })
+                                        } else if (typeof enums[e].value !='undefined' && typeof enums[e].text !='undefined'){
+                                            text = enums[e].text
+                                            value = enums[e].value
+                                            options.push({ value: value, text: text })
                                         }
                                     }
                                     get_next = true
+                                }
+                            }
+                        }
+                        if(conditional_found){
+                            break
+                        }
+                    }
+                }
+                if(this.conditionals.includes(req) && !conditional_found && req in val_fields.values && typeof check_only == 'undefined'){
+                    delete val_fields.values[req]
+                    this.$required = JSON.stringify(val_fields.values)
+                    this.applyErrorStyle(id_removed, 'text', true)
+                    this.applyErrorStyle(req, 'text')
+                }
+                if(this.conditionals.includes(req) && conditional_found && typeof check_only == 'undefined'){
+                    this.hasRequiredFields(this.values, JSON.parse(this.$required), id_added, true)
+                }
+                return conditional_found
+            },
+            // @vuese
+            // Checks for 'if other' conditionally required elements from questions
+            checkForIfOtherConditional(req, check_only){
+                let Qs = this.questions
+                let conditional_found = false
+                let id_added = ''
+                let val_fields = { values: {} }
+                if(typeof check_only == 'undefined'){
+                    val_fields.values = JSON.parse(this.$required)
+                }
+                for (var q in Qs){
+                    let section = Qs[q]
+                    for (let s in section){
+                        if(typeof section[s].inputs != 'undefined'){
+                            for (let l in section[s].inputs){
+                                let details = section[s].inputs[l]
+                                if (details['id'] !== req){ continue }
+                                if(id_added === '' && details['label'].toLowerCase().match(/if other/g) && details['type']=='text'){
+                                    if(typeof check_only == 'undefined'){
+                                        let id_info = details['id'].split('_')
+                                        id_added = id_info[0] + '_' + id_info[1] + '_' + id_info[2]
+                                        val_fields.values[id_added] = { required }
+                                        this.$required = JSON.stringify(val_fields.values)
+                                        //console.log(id_added)
+                                        this.applyErrorStyle(id_added, 'text')
+                                        this.applyErrorStyle(req, 'text', true)
+                                        let msg = this.titleCase(id_added.replace(/_/g,' ')) + " is required."
+                                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                    }
+                                    conditional_found = true
                                     break
                                 }
                             }
                         }
+                        if(conditional_found){
+                            break
+                        }
+                    }
+                    if(conditional_found){
+                        break
                     }
                 }
+                if(this.conditionals.includes(req) && !conditional_found && req in val_fields.values && typeof check_only == 'undefined'){
+                    delete val_fields.values[req]
+                    this.$required = JSON.stringify(val_fields.values)
+                    this.applyErrorStyle(req, 'text')
+                    this.applyErrorStyle(id_added, 'text', true)
+                }
+                if(this.conditionals.includes(req) && conditional_found && typeof check_only == 'undefined'){
+                    this.hasRequiredFields(this.values, JSON.parse(this.$required), id_added)
+                }
+                return conditional_found
             },
             // @vuese
             // Checks required values against required elements
-            hasRequiredFields(VALS, REQ, field_specified){ 
+            hasRequiredFields(VALS, REQ, field_specified, skip_rebuild){ 
                 console.log('has required?')
                 let is_invalid = false
                 let msg = ''
+                //let is_conditional = false
                 if(typeof field_specified == 'undefined'){
                     this.errors = []
                 }
@@ -432,6 +595,7 @@
                     let req_type = $('#' + req).attr('type')
                     // Values object is empty
                     if (Object.keys(VALS).length === 0 || typeof VALS == 'undefined'){
+                        //console.log(1,req)
                         is_invalid = true
                         let multi_key = req.split(',')
                         if (multi_key.length > 1){
@@ -445,38 +609,79 @@
                     } else {
                         for (let val in VALS){
                             let multi_key = req.split(',')
+                            let get_enums = this.checkEnums(this.questions, req)
+                            let has_yes_no = get_enums[0]
+                            let has_enums = get_enums[1]
                             if (multi_key.length > 1){
                                 // If key is multiple fields, then one of the fields must have a value
                                 msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                                 for (let k in multi_key){
                                     if(typeof field_specified !='undefined' && multi_key[k] !== field_specified){ continue }
+                                    //console.log(2,req)
+                                    if(typeof skip_rebuild == 'undefined'){
+                                        get_enums = this.checkEnums(this.questions, multi_key[k])
+                                        has_yes_no = get_enums[0]
+                                        has_enums = get_enums[1]
+                                        if(has_yes_no){
+                                            this.checkForEnumConditional(multi_key[k])
+                                        } else if(!has_enums){
+                                            this.checkForIfOtherConditional(multi_key[k])
+                                        }
+                                    }
                                     if ((val === multi_key[k] && VALS[val] == '') || !VALS[multi_key[k]]){
                                         is_invalid = true
                                         if(typeof field_specified == 'undefined'){
                                             if(this.errors.includes(msg) == false){this.errors.push(msg);}
                                         }
-                                        this.applyErrorStyle(req, req_type)
+                                        if(typeof skip_rebuild == 'undefined'){
+                                            this.applyErrorStyle(req, req_type)
+                                        }
                                     } else {
-                                        this.applyErrorStyle(req, req_type, true)
+                                        if(typeof skip_rebuild == 'undefined'){
+                                            this.applyErrorStyle(req, req_type, true)
+                                        }
                                     }
                                 }
                             } else if ((val === req && VALS[val] == '') || !VALS[req]){
                                 if(typeof field_specified !='undefined' && req !== field_specified){ continue }
+                                //console.log(3,req)
+                                if(typeof skip_rebuild == 'undefined'){
+                                    if(has_yes_no){
+                                        this.checkForEnumConditional(req)
+                                    } else if(!has_enums){
+                                        this.checkForIfOtherConditional(req)
+                                    }
+                                }
                                 is_invalid = true
                                 if(typeof field_specified == 'undefined'){
                                     if(this.errors.includes(msg) == false){this.errors.push(msg);}
                                 }
-                                this.applyErrorStyle(req, req_type)
+                                if(typeof skip_rebuild == 'undefined'){
+                                    this.applyErrorStyle(req, req_type)
+                                }
                             } else {
                                 if(typeof field_specified !='undefined' && req !== field_specified){ continue }
-                                this.applyErrorStyle(req, req_type, true)
+                                //console.log(4,req,skip_rebuild) //here for radios
+                                if(typeof skip_rebuild == 'undefined'){
+                                    if(has_yes_no){
+                                        this.checkForEnumConditional(req)
+                                    } else if(!has_enums){
+                                        this.checkForIfOtherConditional(req)
+                                    }
+                                }
+                                //console.log(is_conditional,req)
+                                if(typeof skip_rebuild == 'undefined'){
+                                    this.applyErrorStyle(req, req_type, true)
+                                }
                             }
-                            //Todo need conditional here (checkForConditional(req){)
                         }
                     }
                 }
                 if(this.errors.length > 0 && typeof field_specified == 'undefined') {
                     is_invalid = true
+                    if($('#eui-banner').hasClass('hidden')){
+                        $('#eui-banner').removeClass('hidden')
+                    }
                 }
                 this.checkInvalidGroupsBorders()
                 return is_invalid
@@ -608,14 +813,8 @@
             submitForm(str) {
                 // Submit form (this.data) if valid
                 //console.log('Executing Submit ...')
-                this.$v.$touch()
-                if(!str.match(/from save/g)){
-                    let is_invalid = this.saveFile()
-                    if (is_invalid) {
-                        console.log('INVALID')
-                    }
-                }
-                 else {
+                let is_invalid = this.saveFile(str)
+                if (!is_invalid) {
                     this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
                 }
             },
@@ -682,66 +881,56 @@
             // Cancel and exit form
             okToCancel(){
                 this.$refs.form.reset()
-                setTimeout(function(){
-                    $('#reset_data').focus()
-                    let errors_possible = ['form-checkbox-error','form-file-error','form-select-error','form-textarea-error','form-radio-group-error','form-checkbox-error','form-input-error']
-                    let inputs = $('#questions_container input')
-                    let textareas = $('#questions_container textarea')
-                    let groups = $('.bv-no-focus-ring')
-                    for (let i in inputs){
-                        if (typeof inputs[i] == 'object'){
-                            for (let k in errors_possible){
-                                if ($(inputs[i]).hasClass(errors_possible[k])){
-                                    $(inputs[i]).removeClass(errors_possible[k])
-                                }
+                $('#reset_data').focus()
+                let errors_possible = ['form-checkbox-error','form-file-error','form-select-error','form-textarea-error','form-radio-group-error','form-checkbox-error','form-input-error']
+                let inputs = $('#questions_container input')
+                let textareas = $('#questions_container textarea')
+                let groups = $('.bv-no-focus-ring')
+                for (let i in inputs){
+                    if (typeof inputs[i] == 'object'){
+                        for (let k in errors_possible){
+                            if ($(inputs[i]).hasClass(errors_possible[k])){
+                                $(inputs[i]).removeClass(errors_possible[k])
                             }
                         }
                     }
-                    for (let i in textareas){
-                        if (typeof textareas[i] == 'object'){
-                            for (let k in errors_possible){
-                                if ($(textareas[i]).hasClass(errors_possible[k])){
-                                    $(textareas[i]).removeClass(errors_possible[k])
-                                }
+                }
+                for (let i in textareas){
+                    if (typeof textareas[i] == 'object'){
+                        for (let k in errors_possible){
+                            if ($(textareas[i]).hasClass(errors_possible[k])){
+                                $(textareas[i]).removeClass(errors_possible[k])
                             }
                         }
                     }
-                    for (let i in groups){
-                        if (typeof groups[i] == 'object'){
-                            for (let k in errors_possible){
-                                if ($(groups[i]).hasClass(errors_possible[k])){
-                                    $(groups[i]).removeClass(errors_possible[k])
-                                }
-                            }
-                            try{
-                                $(groups[i]).css('border','unset')
-                                $(groups[i]).css('padding','unset')
-                            } catch(e) {
-                                console.error(e)
+                }
+                for (let i in groups){
+                    if (typeof groups[i] == 'object'){
+                        for (let k in errors_possible){
+                            if ($(groups[i]).hasClass(errors_possible[k])){
+                                $(groups[i]).removeClass(errors_possible[k])
                             }
                         }
-                    }
-                    if(document.getElementById('eui-banner') != null){
-                        document.getElementById('eui-banner').style.display='none';
-                    }
-                    let validation_messages = $('.eui-banner--danger')
-                    for (let i in validation_messages){
-                        if (typeof validation_messages[i] == 'object'){
-                            if (!$(validation_messages[i]).hasClass('hidden')){
-                                $(validation_messages[i]).addClass('hidden')
-                            }
+                        try{
+                            $(groups[i]).css('border','unset')
+                            $(groups[i]).css('padding','unset')
+                        } catch(e) {
+                            console.error(e)
                         }
                     }
-                    this.$form_outputs = ''
-                    this.$form_inputs = ''
-                    window.localStorage.removeItem('form_outputs')
-                    window.localStorage.removeItem('form_inputs')
-                    this.errors =[]
-                    this.values =  {}
-                    this.dirty = false
-                    this.saveTimeout = 0
-                    this.warning = ''
-                }, 1000)
+                }
+                $('#eui-banner').addClass('hidden')
+                let validation_messages = $('.validation')
+                for (let i in validation_messages){
+                    if (typeof validation_messages[i] == 'object'){
+                        if (!$(validation_messages[i]).hasClass('hidden')){
+                            $(validation_messages[i]).addClass('hidden')
+                        }
+                    }
+                }
+                window.localStorage.removeItem('form_outputs')
+                window.localStorage.removeItem('form_inputs')
+                this.$values = {}
             },
             // @vuese
             // Cancel and exit form
@@ -968,17 +1157,5 @@
     }
     .console_bar {
         float:right
-    }
-    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
-        background-color: #d62c1a;
-    }
-    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
-        background-color: #1a5981;
-    }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
-        background-color: #1baf5e;
-    }
-    .default_background {
-        background-color: #ebebeb;
     }
 </style>
