@@ -194,7 +194,8 @@
                 isFixed:true,
                 confirm:false,
                 conditionals:[],
-                one_ofs:[]
+                one_ofs:[],
+                validation_errors:{}
             }
         },
         props: {
@@ -262,7 +263,7 @@
             // Gather required elements
             for (let group of obj) {
                 for (let question of group) {
-                    let one_of = []
+                    let one_of = ''
                     // If the group is required, assume each input within is required
                     if (typeof question.inputs != 'undefined'){
                         for (let fld of question.inputs){
@@ -290,7 +291,7 @@
                                         required
                                     }
                                 } else {
-                                    one_of.push(fld.id)
+                                    one_of+= fld.id + ','
                                 }
                             }
                         } 
@@ -303,16 +304,19 @@
                                         required
                                     }
                                 } else {
-                                    one_of.push(fld.id)
+                                    one_of+= fld.id + ','
                                 }
                             }
                         }
                     }
-                    if(one_of.length > 0){
+                    if(one_of.split(',').length > 1){
+                        one_of = one_of.substring(0, one_of.length - 1);
                         val_fields.values[one_of] = {
                             required
                         }
-                        this.one_ofs.push(one_of)
+                        if(this.one_ofs.includes(one_of)==false){
+                            this.one_ofs.push(one_of)
+                        }
                     }
                 }
             }
@@ -332,36 +336,42 @@
                 console.log('handleChange :: ', evt.target.name);
                 $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
                 if(evt.target.validationMessage!=''){
-                    this.errors = {
-                        ...this.errors,
+                    console.log('errors being set to []')
+                    this.validation_errors = {
+                        ...this.validation_errors,
                         [evt.target.name]: evt.target.validationMessage
                     }
                     $('#' + evt.target.name + '_invalid').removeClass('hidden')
                 } else {
-                    var index = this.errors.indexOf(evt.target.name);
-                    if (index > -1) {
-                       this.errors.splice(index, 1);
+                    if(evt.target.name in this.validation_errors){
+                        delete this.validation_errors[evt.target.name]
                     }
                     $('#' + evt.target.name + '_invalid').addClass('hidden')
                 }
                 this.hasRequiredFields(this.values, JSON.parse(this.$required))
-                console.log(JSON.parse(this.$required))
             },
+            //TODO: if other still not working properly -> highlights right and adds another message but:
+            //At the end, 'Data Format Other Info is required.' is still in messages and shouldn't be.
+            //At the end, the one of sentence is there and shouldn't be
+            //Dont know if the objects have them right or not 
+            //-> suspect it's correct right after but re-added later
+            //also, not removing messages once filled out for YES/NOs
+            //styling on textboxes not always working (turning off)
             // @vuese
             // Handle html5 invalidity on form
             handleInvalid(evt) {
                 console.log('handleInvalid :: ', evt.target.name);
                 $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
                 if(evt.target.validationMessage!=''){
-                    this.errors = {
-                        ...this.errors,
+                    console.log('errors being set to []')
+                    this.validation_errors = {
+                        ...this.validation_errors,
                         [evt.target.name]: evt.target.validationMessage
                     }
                     $('#' + evt.target.name + '_invalid').removeClass('hidden')
                 } else {
-                    var index = this.errors.indexOf(evt.target.name);
-                    if (index > -1) {
-                       this.errors.splice(index, 1);
+                    if(evt.target.name in this.validation_errors){
+                        delete this.validation_errors[evt.target.name]
                     }
                     $('#' + evt.target.name + '_invalid').addClass('hidden')
                 }
@@ -475,11 +485,11 @@
                                                 id_added = details['id']
                                                 val_fields.values[details['id']] = { required }
                                                 this.$required = JSON.stringify(val_fields.values)
-                                                //console.log(val_fields.values)
                                                 this.applyErrorStyle(details['id'], 'text')
                                                 this.applyErrorStyle(req, 'text', true)
-                                                let msg = this.titleCase(details['id'].replace(/_/g,' ')) + " is required."
-                                                if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                                let conditional_spelled_out = this.titleCase(req.replace(/_/g,' '))
+                                                let msg = this.titleCase(details['id'].replace(/_/g,' ')) + " is required because " + conditional_spelled_out + ' is "' + this.titleCase(this.values[req]) + '".'
+                                                if(this.errors.includes(msg) == false){console.log('pushing error 1 ',msg);this.errors.push(msg);}
                                             }
                                             conditional_found = true
                                             break
@@ -513,14 +523,21 @@
                         }
                     }
                 }
-                if(this.conditionals.includes(req) && !conditional_found && req in val_fields.values && typeof check_only == 'undefined'){
-                    delete val_fields.values[req]
-                    this.$required = JSON.stringify(val_fields.values)
-                    this.applyErrorStyle(id_removed, 'text', true)
-                    this.applyErrorStyle(req, 'text')
-                }
-                if(this.conditionals.includes(req) && conditional_found && typeof check_only == 'undefined'){
-                    this.hasRequiredFields(this.values, JSON.parse(this.$required), id_added, true)
+                if (this.conditionals.includes(req) && typeof check_only == 'undefined'){
+                    if(!conditional_found){
+                        if(req in val_fields.values[req]){
+                            delete val_fields.values[req]
+                        }
+                        this.$required = JSON.stringify(val_fields.values)
+                        this.applyErrorStyle(id_removed, 'text', true)
+                        this.applyErrorStyle(req, 'text')
+                    } else {
+                        if(req in val_fields.values[req]){
+                            delete val_fields.values[req]
+                        }
+                        this.$required = JSON.stringify(val_fields.values)
+                        this.hasRequiredFields(this.values, JSON.parse(this.$required), id_added, true)
+                    }
                 }
                 return conditional_found
             },
@@ -530,10 +547,12 @@
                 let Qs = this.questions
                 let conditional_found = false
                 let id_added = ''
+                let multi_msg = ''
                 let val_fields = { values: {} }
                 if(typeof check_only == 'undefined'){
                     val_fields.values = JSON.parse(this.$required)
                 }
+                //if it is an array you splice, if it is an object you delete
                 for (var q in Qs){
                     let section = Qs[q]
                     for (let s in section){
@@ -541,20 +560,51 @@
                             for (let l in section[s].inputs){
                                 let details = section[s].inputs[l]
                                 if (details['id'] !== req){ continue }
+                                let id_info = details['id'].split('_')
+                                let other_check_id = id_info[0] + '_' + id_info[1] + '_' + id_info[2]
                                 if(id_added === '' && details['label'].toLowerCase().match(/if other/g) && details['type']=='text'){
                                     if(typeof check_only == 'undefined'){
-                                        let id_info = details['id'].split('_')
-                                        id_added = id_info[0] + '_' + id_info[1] + '_' + id_info[2]
-                                        val_fields.values[id_added] = { required }
-                                        this.$required = JSON.stringify(val_fields.values)
-                                        //console.log(id_added)
-                                        this.applyErrorStyle(id_added, 'text')
-                                        this.applyErrorStyle(req, 'text', true)
-                                        let msg = this.titleCase(id_added.replace(/_/g,' ')) + " is required."
-                                        if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                        if(other_check_id in this.values){
+                                            if(details['label'].toLowerCase().match(/if other/g) && Boolean(this.values[other_check_id]) == true && (this.values[req] == '' || typeof this.values[req] == 'undefined')){
+                                                if(typeof check_only == 'undefined'){
+                                                    if(other_check_id in val_fields.values){
+                                                        delete val_fields.values[other_check_id]
+                                                    }
+                                                    val_fields.values[req] = { required };
+                                                    this.applyErrorStyle(req, 'text')
+                                                    this.applyErrorStyle(other_check_id, 'checkbox', true)
+                                                    for(let e in this.one_ofs){
+                                                        let re = new RegExp(other_check_id, 'g')
+                                                        if (this.one_ofs[e].match(re)){
+                                                            let multi_key = this.one_ofs[e].split(',')
+                                                            if (multi_key.length > 1){
+                                                                multi_msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(this.one_ofs[e].replace(/_/g,' ').replace(/,/g,', ')) + ')'
+                                                            }
+                                                            let index = this.errors.indexOf(multi_msg);
+                                                            if (index > -1) {
+                                                                console.log('splicing out of errors 3',multi_msg)
+                                                                this.errors.splice(index, 1);
+                                                            }
+                                                            delete val_fields.values[this.one_ofs[e]]
+                                                        }
+                                                    }
+                                                    let msg = this.titleCase(req.replace(/_/g,' ')) + " is required."
+                                                    if(this.errors.includes(msg) == true){
+                                                        let index = this.errors.indexOf(msg);
+                                                        if (index > -1) {
+                                                            console.log('splicing out of errors 4',msg)
+                                                            this.errors.splice(index, 1);
+                                                        }
+                                                    }
+                                                    let conditional_spelled_out = this.titleCase(other_check_id.replace(/_/g,' '))
+                                                    msg = this.titleCase(req.replace(/_/g,' ')) + " is required because " + conditional_spelled_out + ' is checked.'
+                                                    if(this.errors.includes(msg) == false){console.log('pushing error 2 ',msg);this.errors.push(msg);}
+                                                }
+                                                conditional_found = true
+                                                break
+                                            }
+                                        }
                                     }
-                                    conditional_found = true
-                                    break
                                 }
                             }
                         }
@@ -566,14 +616,10 @@
                         break
                     }
                 }
-                if(this.conditionals.includes(req) && !conditional_found && req in val_fields.values && typeof check_only == 'undefined'){
-                    delete val_fields.values[req]
+                if (this.conditionals.includes(req) && typeof check_only == 'undefined'){
                     this.$required = JSON.stringify(val_fields.values)
-                    this.applyErrorStyle(req, 'text')
-                    this.applyErrorStyle(id_added, 'text', true)
-                }
-                if(this.conditionals.includes(req) && conditional_found && typeof check_only == 'undefined'){
-                    this.hasRequiredFields(this.values, JSON.parse(this.$required), id_added)
+                    console.log('has required from if other conditionals')
+                    this.hasRequiredFields(this.values, JSON.parse(this.$required))
                 }
                 return conditional_found
             },
@@ -585,6 +631,7 @@
                 let msg = ''
                 //let is_conditional = false
                 if(typeof field_specified == 'undefined'){
+                    console.log('errors being set to []')
                     this.errors = []
                 }
                 if(typeof VALS == 'string'){
@@ -602,7 +649,9 @@
                             msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                         }
                         if(typeof field_specified == 'undefined'){
-                            if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                            if(this.errors.includes(msg) == false){
+                                console.log('pushing error 3 ',msg)
+                                this.errors.push(msg);}
                         }
                         this.applyErrorStyle(req, req_type)
                     // Some values have been recorded in the values object
@@ -617,7 +666,6 @@
                                 msg = 'One of the following fields must be checked or filled out:\n(' + this.titleCase(req.replace(/_/g,' ').replace(/,/g,', ')) + ')'
                                 for (let k in multi_key){
                                     if(typeof field_specified !='undefined' && multi_key[k] !== field_specified){ continue }
-                                    //console.log(2,req)
                                     if(typeof skip_rebuild == 'undefined'){
                                         get_enums = this.checkEnums(this.questions, multi_key[k])
                                         has_yes_no = get_enums[0]
@@ -628,10 +676,12 @@
                                             this.checkForIfOtherConditional(multi_key[k])
                                         }
                                     }
-                                    if ((val === multi_key[k] && VALS[val] == '') || !VALS[multi_key[k]]){
+                                    if ((val === multi_key[k] && VALS[val] == '') || !VALS[val] || !VALS[multi_key[k]]){
                                         is_invalid = true
                                         if(typeof field_specified == 'undefined'){
-                                            if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                            if(this.errors.includes(msg) == false){
+                                                console.log('pushing error 4 ',msg)
+                                                this.errors.push(msg);}
                                         }
                                         if(typeof skip_rebuild == 'undefined'){
                                             this.applyErrorStyle(req, req_type)
@@ -654,7 +704,9 @@
                                 }
                                 is_invalid = true
                                 if(typeof field_specified == 'undefined'){
-                                    if(this.errors.includes(msg) == false){this.errors.push(msg);}
+                                    if(this.errors.includes(msg) == false){
+                                        console.log('pushing error 5 ',msg)
+                                        this.errors.push(msg);}
                                 }
                                 if(typeof skip_rebuild == 'undefined'){
                                     this.applyErrorStyle(req, req_type)
@@ -1111,16 +1163,12 @@
         display:inline;
     }
     .left_button_bar {
-        border-bottom:1px solid #dfdfdf;
-        width:25%;
         display:inline;
         float:left;
         margin-top:0px;
         height:55px;
     }
     .right_button_bar {
-        border-bottom:1px solid #dfdfdf;
-        width:75%;
         display:inline;
         float:right;
         margin-top:0px;
@@ -1146,16 +1194,104 @@
         padding: 0rem 0rem;
         padding-top:1rem;
     }
-    .navbar.vue-fixed-header--isFixed {
-        position: fixed;
-        left: 20;
-        top: 1rem;
-        width: 85vw;
-    }
     .console_container {
         height: 1em;
     }
     .console_bar {
         float:right
     }
+    
+    @media (min-width: 1200px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            left: 20;
+            top: 1rem;
+            min-width: 1110px;
+            max-width: 1110px;
+        }
+    }
+    @media (max-width: 1200px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            left: 20;
+            top: 1rem;
+            min-width: 929px;
+            max-width: 929px;
+        }
+    }
+    @media (max-width: 992px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            left: 20;
+            top: 1rem;
+            min-width: 929px;
+            max-width: 929px;
+        }
+    }
+    @media (max-width: 768px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            left: 20;
+            top: 1rem;
+            min-width: 690px;
+            max-width: 690px;
+        }
+    }
+    @media (max-width: 576px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 509px;
+            min-width: 509px;
+        }
+    }
+    @media (max-width: 441px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 380px;
+            min-width: 380px;
+        }
+    }
+    @media (max-width: 414px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 385px;
+            min-width: 385px;
+        }
+    }
+    @media (max-width: 411px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 380px;
+            min-width: 380px;
+        }
+    }
+    @media (max-width: 375px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 345px;
+            min-width: 345px;
+        }
+    }
+    @media (max-width: 360px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 330px;
+            min-width: 330px;
+        }
+    }
+    @media (max-width: 320px){
+        .navbar.vue-fixed-header--isFixed {
+            position: fixed;
+            top: 1rem;
+            max-width: 290px;
+            min-width: 290px;
+        }
+    }
+    /*@media screen and (max-width: 900px) and (min-width: 600px) {*/
 </style>
