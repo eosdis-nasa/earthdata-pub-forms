@@ -250,7 +250,7 @@
             FixedHeader
         },
         validations() {
-            console.log('Validations ...')
+            //console.log('Validations ...')
             let val_fields = {
                 values: {}
             }
@@ -333,10 +333,10 @@
             // @vuese
             // Handle html5 invalidity on change
             handleChange(evt) {
-                console.log('handleChange :: ', evt.target.name);
+                //console.log('handleChange :: ', evt.target.name);
                 $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
                 if(evt.target.validationMessage!=''){
-                    console.log('errors being set to []')
+                    //console.log('errors being set to []')
                     this.validation_errors = {
                         ...this.validation_errors,
                         [evt.target.name]: evt.target.validationMessage
@@ -360,10 +360,10 @@
             // @vuese
             // Handle html5 invalidity on form
             handleInvalid(evt) {
-                console.log('handleInvalid :: ', evt.target.name);
+                //console.log('handleInvalid :: ', evt.target.name);
                 $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
                 if(evt.target.validationMessage!=''){
-                    console.log('errors being set to []')
+                    //console.log('errors being set to []')
                     this.validation_errors = {
                         ...this.validation_errors,
                         [evt.target.name]: evt.target.validationMessage
@@ -489,7 +489,10 @@
                                                 this.applyErrorStyle(req, 'text', true)
                                                 let conditional_spelled_out = this.titleCase(req.replace(/_/g,' '))
                                                 let msg = this.titleCase(details['id'].replace(/_/g,' ')) + " is required because " + conditional_spelled_out + ' is "' + this.titleCase(this.values[req]) + '".'
-                                                if(this.errors.includes(msg) == false){console.log('pushing error 1 ',msg);this.errors.push(msg);}
+                                                if(this.errors.includes(msg) == false){
+                                                    // console.log('pushing error 1 ',msg);
+                                                    this.errors.push(msg);
+                                                }
                                             }
                                             conditional_found = true
                                             break
@@ -582,7 +585,7 @@
                                                             }
                                                             let index = this.errors.indexOf(multi_msg);
                                                             if (index > -1) {
-                                                                console.log('splicing out of errors 3',multi_msg)
+                                                                //console.log('splicing out of errors 3',multi_msg)
                                                                 this.errors.splice(index, 1);
                                                             }
                                                             delete val_fields.values[this.one_ofs[e]]
@@ -592,13 +595,16 @@
                                                     if(this.errors.includes(msg) == true){
                                                         let index = this.errors.indexOf(msg);
                                                         if (index > -1) {
-                                                            console.log('splicing out of errors 4',msg)
+                                                            //console.log('splicing out of errors 4',msg)
                                                             this.errors.splice(index, 1);
                                                         }
                                                     }
                                                     let conditional_spelled_out = this.titleCase(other_check_id.replace(/_/g,' '))
                                                     msg = this.titleCase(req.replace(/_/g,' ')) + " is required because " + conditional_spelled_out + ' is checked.'
-                                                    if(this.errors.includes(msg) == false){console.log('pushing error 2 ',msg);this.errors.push(msg);}
+                                                    if(this.errors.includes(msg) == false){
+                                                        // console.log('pushing error 2 ',msg);
+                                                        this.errors.push(msg);
+                                                    }
                                                 }
                                                 conditional_found = true
                                                 break
@@ -618,7 +624,7 @@
                 }
                 if (this.conditionals.includes(req) && typeof check_only == 'undefined'){
                     this.$required = JSON.stringify(val_fields.values)
-                    console.log('has required from if other conditionals')
+                    //console.log('has required from if other conditionals')
                     this.hasRequiredFields(this.values, JSON.parse(this.$required))
                 }
                 return conditional_found
@@ -626,12 +632,12 @@
             // @vuese
             // Checks required values against required elements
             hasRequiredFields(VALS, REQ, field_specified, skip_rebuild){ 
-                console.log('has required?')
+                //console.log('has required?')
                 let is_invalid = false
                 let msg = ''
                 //let is_conditional = false
                 if(typeof field_specified == 'undefined'){
-                    console.log('errors being set to []')
+                    //console.log('errors being set to []')
                     this.errors = []
                 }
                 if(typeof VALS == 'string'){
@@ -650,7 +656,7 @@
                         }
                         if(typeof field_specified == 'undefined'){
                             if(this.errors.includes(msg) == false){
-                                console.log('pushing error 3 ',msg)
+                                //console.log('pushing error 3 ',msg)
                                 this.errors.push(msg);}
                         }
                         this.applyErrorStyle(req, req_type)
@@ -680,7 +686,7 @@
                                         is_invalid = true
                                         if(typeof field_specified == 'undefined'){
                                             if(this.errors.includes(msg) == false){
-                                                console.log('pushing error 4 ',msg)
+                                                //console.log('pushing error 4 ',msg)
                                                 this.errors.push(msg);}
                                         }
                                         if(typeof skip_rebuild == 'undefined'){
@@ -705,7 +711,7 @@
                                 is_invalid = true
                                 if(typeof field_specified == 'undefined'){
                                     if(this.errors.includes(msg) == false){
-                                        console.log('pushing error 5 ',msg)
+                                        //console.log('pushing error 5 ',msg)
                                         this.errors.push(msg);}
                                 }
                                 if(typeof skip_rebuild == 'undefined'){
@@ -887,10 +893,10 @@
                 if(!is_invalid){
                     if(typeof DAAC != 'undefined' && DAAC !== null && data !== JSON.stringify({})){
                         if (this.$refs.form.checkValidity()) {
-                            console.log('checking validity')
+                            //console.log('checking validity')
                             this.submitForm('from save');
                         } else {
-                            console.log('reporting validity')
+                            //console.log('reporting validity')
                             this.$refs.form.reportValidity();
                         }
                         //window.localStorage.setItem(DAAC + '_questions', data);
@@ -967,7 +973,7 @@
                             $(groups[i]).css('border','unset')
                             $(groups[i]).css('padding','unset')
                         } catch(e) {
-                            console.error(e)
+                            // console.error(e)
                         }
                     }
                 }
@@ -1011,7 +1017,8 @@
                             this.okToCancel()
                         })
                         .catch(err => {
-                            console.log(err)// An error occurred
+                            // console.log(err) // An error occurred
+                            alert(err)
                         })
                     } else {
                         this.confirm = false;
