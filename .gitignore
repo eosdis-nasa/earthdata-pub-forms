@@ -143,3 +143,6 @@ dist
 .yarn/build-state.yml
 .pnp.*
 .history*
+
+# Local documentation website
+website
