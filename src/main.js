@@ -8,6 +8,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
 import VueLogger from 'vuejs-logger';
+import GoTop from '@inotom/vue-go-top';
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 const logOptions = {
@@ -42,7 +44,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
-
+Vue.use(GoTop);
 //Vue.use(OverlayPlugin)
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -90,9 +92,12 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+
   created(){
   },
+
   mounted(){
   },
+
   render: h => h(App)
 }).$mount('#app')

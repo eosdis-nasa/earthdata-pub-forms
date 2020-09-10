@@ -12,6 +12,7 @@ Vue.use(VuexUndoRedo);
 export const store = new Vuex.Store({
   // State is the default obj and value
   state: {
+    question_answers: []
   },
   mutations: {
     // push question state to save the payload to the store state question_answers
