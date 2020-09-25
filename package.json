@@ -6,7 +6,9 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit --env=jsdom",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "link-api": "npm link ../api",
+    "link-repos": "npm run link-api && cd ../dashboard && npm run link-api"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
