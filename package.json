@@ -8,7 +8,9 @@
     "test:unit": "vue-cli-service test:unit --env=jsdom",
     "lint": "vue-cli-service lint",
     "link-api": "npm link ../api",
-    "link-repos": "npm run link-api && cd ../dashboard && npm run link-api"
+    "link-repos": "npm run link-api && cd ../dashboard && npm run link-api",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
@@ -50,5 +52,6 @@
     "sass": "^1.26.10",
     "sass-loader": "^10.0.2",
     "vue-template-compiler": "^2.6.12"
-  }
+  },
+  "snyk": true
 }
