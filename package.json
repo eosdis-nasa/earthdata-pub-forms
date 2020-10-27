@@ -1,6 +1,6 @@
 {
   "name": "forms",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": true,
   "scripts": {
     "serve": "API_ROOT=http://localhost:8080 vue-cli-service serve",

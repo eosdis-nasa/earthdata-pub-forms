@@ -6,8 +6,9 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.9] - 2020-10-27
 
+- [Add markdown linting](56a82e3c4841d07828435ddc931c15c4ce337407)
 - [Updated NPM packages using Snyk](7aabc06c01b11d4cb60b518fefee96bf108fabdb)
 
 ## [0.0.8]- 2020-08-20
