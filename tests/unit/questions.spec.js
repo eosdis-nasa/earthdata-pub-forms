@@ -11,7 +11,7 @@
 
 // Unit tests are functions that call functions in your source code in isolation and assert that they behave correctly. A good test suite has 60% unit testing, 30% snapshot tests, 10% end-to-end tests
 // This app will be 90% unit testing and 10% end-to-end testing (at least to start)
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import App from "@/App.vue"
 import VueRouter from 'vue-router'
 import { BootstrapVue } from 'bootstrap-vue'
@@ -23,7 +23,7 @@ import Daacs from '@/components/Daacs.vue'
 import Questions from '@/components/Questions.vue'
 import Help from '@/components/Help.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
-import Vuex, { mapActions } from 'vuex'
+import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
 
 const localVue = createLocalVue();
