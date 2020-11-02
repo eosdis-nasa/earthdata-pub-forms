@@ -22,7 +22,7 @@ Earthdata Pub Forms uses [Vue.js](https://vuejs.org/), the progressive JavaScrip
 To deploy vue app, simply:
 
 ```bash
-$ npm build
+$ npm run build
 $ npm run serve
 ```
 

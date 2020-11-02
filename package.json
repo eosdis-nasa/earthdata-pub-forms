@@ -3,7 +3,7 @@
   "version": "0.0.8",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "API_ROOT=http://localhost:8080 vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit --env=jsdom",
     "lint": "vue-cli-service lint",
@@ -24,6 +24,7 @@
     "js-logger": "^1.6.0",
     "node-sass": "^4.14.1",
     "popper.js": "^1.16.1",
+    "snyk": "^1.419.1",
     "vue": "^2.6.12",
     "vue-fixed-header": "^3.2.14",
     "vue-router": "^3.4.3",
