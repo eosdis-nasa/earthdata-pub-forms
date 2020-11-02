@@ -1,4 +1,5 @@
 <template>
+<div role="main">
   <!-- Form -->
   <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="cancelForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
     <b-container>
@@ -7,16 +8,16 @@
                 <!-- Button Options -->
                 <div class="button_bar">
                     <div align=left v-if="!readonly" class="left_button_bar">
-                        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-                        <b-button class="button" type="redo" id="redo_button" v-else disabled><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-                        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
-                        <b-button class="button" type="undo" id="undo_button" v-else disabled><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="redo" id="redo_button" v-else disabled aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-else disabled aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
                     </div>
                     <div align=right v-if="!readonly" class="right_button_bar">
-                        <b-button class="eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
-                        <b-button class="eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-                        <b-button class="eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-                        <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
+                        <b-button class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile(true)" aria-label="draft button">{{ draftLabel }}</b-button>
+                        <b-button class="eui-btn--blue" type="save" id="save_data" @click="saveFile(true)" aria-label="save button">{{ saveLabel }}</b-button>
+                        <b-button class="eui-btn--green" type="submit" id="submit_data" @click="submitForm" aria-label="submit button">{{ submitLabel }}</b-button>
+                        <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton" aria-label="cancel button">{{ cancelLabel }}</b-button>
                     </div>
                 </div>
             </div>
@@ -32,12 +33,12 @@
         </p>
     </b-container>
     <b-container name="questions_container" id="questions_container">
-        <h3 v-if="warning" class="warning">{{warning}}</h3>
+        <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
-                <h3>{{heading.heading}}</h3>
-                <div id=questions>
+                <h2>{{heading.heading}}</h2>
+                <div :id="a_key">
                     <!-- Question -->
                     <b-form-group v-for="(question, b_key) in heading" 
                     :class="{ 'form-group-error': ($v.values[question.id] || {}).$error }"
@@ -167,6 +168,7 @@
     <!-- End of Button Options -->
   </b-form>
   <!-- End of Form -->
+</div>
 </template>
 <script>
     // Basic html5 validation 
@@ -1084,6 +1086,24 @@
     }
 </script>
 <style scoped>
+    .eui-btn--green {
+        background-color: #158749;
+    }
+    .eui-btn--green:hover {
+        background-color: #12713d;
+    }
+    .eui-btn--blue {
+        background-color: #2275AA;
+    }
+    .eui-btn--blue:hover {
+        background-color: #2c3e50;
+    }
+    .eui-btn--red, #reset_data{
+        background-color: #DB1400;
+    }
+    .eui-btn--red:hover {
+        background-color: #c21200!important;
+    }
     .eui-banner--danger {
         text-align:left;
         margin-bottom: 2rem;
@@ -1113,13 +1133,16 @@
         width:75%;
         float:right;
     }
-    h3{
+    h2{
         display:block;
         width:100%;
         text-decoration:underline;
+        border-bottom: none;
+        margin-top:0;
+        margin-bottom:0;
     }
     .required{
-        color:red!important;
+        color:#DB1400;
         padding-top:7px
     }
     .help{
@@ -1130,9 +1153,6 @@
     }
     p{
         margin-bottom:unset;
-    }
-    h3{
-        margin-top:1rem;
     }
     button {
         margin-left:1rem;
@@ -1155,7 +1175,7 @@
     .form-radio-group-error,
     .form-textarea-error,
     .form-checkbox-error,
-    .form-input-error,
+    .form--error,
     .form-group-error {
         border-color: red;
     }

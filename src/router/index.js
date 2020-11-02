@@ -1,14 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import Daacs from '../views/Daacs.vue'
 import Daacs from '@/components/Daacs'
-//import Questions from '../views/Questions.vue'
 import Questions from '@/components/Questions'
-//import Help from '../views/Help.vue'
 import Help from '@/components/Help'
-//import Home from '../views/Home.vue'
 import Home from '@/components/Home'
-//import PageNotFound from '../views/PageNotFound.vue'
 import PageNotFound from '@/components/PageNotFound'
 
 Vue.use(VueRouter)

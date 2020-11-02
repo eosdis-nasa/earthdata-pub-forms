@@ -1,4 +1,5 @@
 <template>
+<div role="main">
   <!-- Form -->
   <b-form name="help_form" v-on:submit.stop.prevent>
     <b-container name="help_container">
@@ -15,6 +16,7 @@
     </b-container>
   </b-form>
   <!-- End of Form -->
+</div>
 </template>
 <script>
     // Jquery javascript
