@@ -1,4 +1,5 @@
 <template>
+<div role="main">
   <!-- Form -->
   <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
     <b-container name="daacs-container">
@@ -36,8 +37,8 @@
               </a>
             </div>
             <!-- Submit Button -->
-            <div v-if="selected" class="button_div mt-3">
-              <b-button class="button eui-btn--green" @click="submitForm()">Select</b-button>
+            <div v-if="selected">
+              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button">Select</b-button>
             </div>
             <!-- End of Submit Button -->
           </div>
@@ -47,6 +48,7 @@
     </b-container>
   </b-form>
   <!-- End of Form -->
+  </div>
 </template>
 <script>
 // Jquery javascript
@@ -294,6 +296,12 @@ export default {
 };
 </script>
 <style scoped>
+#selected_daac, .external-link-alt, #selected_daac_link {
+  color: #2275AA;
+}
+.eui-btn--green {
+  background-color: #158749;
+}
 .radio_div {
   width: 25%;
   float: left;

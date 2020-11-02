@@ -1,6 +1,6 @@
 <template>
   <!-- header with eui class -->
-  <header class="doc-mast header">
+  <header class="doc-mast header" role="banner">
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
@@ -17,27 +17,27 @@
               v-if="daac !=='selection'"
               :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}"
             >DAACS</router-link>
-            <div v-if="daac !== 'selection'" class="inline">|</div>
+            <div v-if="daac !== 'selection'" class="inline"> | </div>
             <router-link
               id="daacs_nav_link"
               v-if="daac =='selection'"
               :to="{ name: 'Daacs', path: '/daacs/selection' }"
             >DAACS</router-link>
-            <div v-if="daac == 'selection'" class="inline">|</div>
+            <div v-if="daac == 'selection'" class="inline"> | </div>
           </span>
           <router-link
             id="questions_nav_link"
             v-if="daac !=='selection'"
             :to="{ name: 'Questions', path: '/questions', params: { default: daac }}"
           >Questions</router-link>
-          <div class="inline" v-if="daac !=='selection'">|</div>
+          <div class="inline" v-if="daac !=='selection'"> | </div>
           <a
             id="questions_nav_link"
             v-if="daac =='selection'"
             href="#"
             @click="requireDaacSelection($event)"
           >Questions</a>
-          <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()">|</div>
+          <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
           <router-link id="help_nav_link" :to="{ name: 'Help', path: '/help'}">Help</router-link>
         </div>
         <!-- End of Logo and menu -->
