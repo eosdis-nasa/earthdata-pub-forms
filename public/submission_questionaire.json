@@ -77,7 +77,7 @@
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
             }
           ],
-          "id": "f3e2eab9-6375-4e53-9cc2-3d16f318d332",
+          "id": "f3e2eab9-6375-4e53-9cc2-3d16f318d333",
           "version": 1
         },
         {
@@ -123,7 +123,7 @@
       "heading": "Data Product Citation",
       "questions": [
         {
-          "unique_name": "list_of_data_producers",
+          "unique_name": "list_of_data_producers_and_groups",
           "title": "List of Data Producers",
           "text": "Please list the people or organizations that were involved in the creation of this data product in the order that they should be credited in the data product citation.",
           "help": "This the organization that funded the creation of the data product.",
@@ -146,7 +146,7 @@
               "required":true
             }
           ],
-          "id": "8a364184-42ac-48fe-b831-acb2eb08c728",
+          "id": "8a364184-42ac-48fe-b831-acb2eb08c729",
           "version": 1
         }
       ]
@@ -196,7 +196,7 @@
               "required": true
             }
           ],
-          "id": "4ecc885f-daf8-4bc6-a8cd-d30c2a54d085",
+          "id": "4ecc885f-daf8-4bc6-a8cd-d30c2a54d086",
           "version": 1
         },
         {
@@ -247,31 +247,6 @@
           "id": "f74c6c20-7483-40f9-a63e-58cc20ae8c8f",
           "version": 1
         },
-
-
-WWE ARE HERE
-
-        {
-          "unique_name": "data_product_description",
-          "title": "Data Product Description",
-          "text": "Please provide a brief description of this data product following the guidance in the help text.",
-          "help": "The description should mimic a journal abstract and should provide a reader with the information needed to quickly understand the relevance and usefulness of the data.",
-          "inputs": [
-            {
-              "type": "textarea",
-              "id": "data_product_description_textarea",
-              "label": "Description",
-              "validation_error_msg": "Please enter a description.",
-              "attributes": {
-                "rows": 10,
-                "cols": 80
-              },
-              "required": true
-            }
-          ],
-          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6f",
-          "version": 1
-        },
         {
           "unique_name": "publication",
           "title": "Publication Describing Data Product",
@@ -286,74 +261,70 @@ WWE ARE HERE
               "required": true
             }
           ],
+          "id": "ab57f5e8-9ec5-46c9-978e-d06125346d37",
+          "version": 1
+        },
+        {
+          "unique_name": "platform_and_instrument",
+          "title": "Platform and Instrument",
+          "text": "What platform(s) and instrument(s) were used to collect the data within this data product?",
+          "help": "Please be as specific as possible when including the platforms and instruments. For example, include tail numbers for aircraft or uniquely identify instruments when multiple instances exist on the same platform.",
+          "inputs": [
+            {
+              "type": "text",
+              "id": "platform_instrument",
+              "label": "Platform - instrument",
+              "validation_error_msg": "Please enter platform - instrument.",
+              "required": true
+            }
+          ],
+          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6f",
+          "version": 1
+        },
+        {
+          "unique_name": "model",
+          "title": "Model Data Product",
+          "text": "What is the name and version of the model used to produce this data product?",
+          "help": "What is the name and version of the model used to produce this data product?",
+          "inputs": [
+            {
+              "type": "text",
+              "id": "model_data_product",
+              "label": "Model Name and Version",
+              "validation_error_msg": "Please enter name and version of model.",
+              "required": true
+            }
+          ],
           "id": "ab57f5e8-9ec5-46c9-978e-d06125346d36",
           "version": 1
         },
         {
-          "unique_name": "science_value",
-          "title": "Science Value of Data Product",
-          "text": "Please describe the science value of this data product.",
-          "help": "For example, how will this data product benefit the science community? What are the strengths and the limitations of this data product? What other data products does it compliment?",
+          "unique_name": "data_processing_level",
+          "title": "Data Processing Level",
+          "text": "What is the processing level of this data product?",
+          "help": "For descriptions of the processing levels, please refer to NASA Processing Level page (https://science.nasa.gov/earth-science/earth-science-data/data-processing-levels-for-eosdis-data-products).",
           "inputs": [
             {
-              "type": "textarea",
-              "id": "science_value_description",
-              "label": "Description",
-              "validation_error_msg": "Please enter a description.",
-              "attributes": {
-                "rows": 10,
-                "cols": 80
-              },
-              "required": true
-            }
-          ],
-          "id": "7fd7bccf-5065-4033-9956-9e80bc99c205",
-          "version": 1
-        },
-        {
-          "unique_name": "archival_reason",
-          "title": "Reason for Submitting Data Product",
-          "text": "Please briefly explain your reasons for requesting archival of this data product at the DAAC.",
-          "help": "For example, are you attempting to publish a paper which requires data to be archived in a trusted repository? Have you been instructed by a NASA program manager to submit your data to the DAAC? Do you want this data product archived with related data?",
-          "inputs": [
-            {
-              "type": "textarea",
-              "id": "archival_reason_description",
-              "label": "Description",
-              "validation_error_msg": "Please enter a description.",
-              "attributes": {
-                "rows": 10,
-                "cols": 80
-              },
-              "required": true
-            }
-          ],
-          "id": "bd00dbb7-1d3c-46fa-82a4-734236f4e06c",
-          "version": 1
-        },
-        {
-          "unique_name": "archival_approval_dependencies",
-          "title": "Dependencies for Archival Approval",
-          "text": "Do you have any dependencies related to this data product being approved for archival at the DAAC? If Yes, please provide a brief explanation.",
-          "help": "For example, are you hoping to have this data product approved for archival at the DAAC prior publishing a paper or presenting at a conference? Does your project have a defined timeline in which this data product needs to be published?",
-          "inputs": [
-            { 
               "type": "radio",
-              "id": "archival_approval_dependencies_radios",
-              "label": "Has Dependencies",
+              "id": "processing_level",
+              "label": "Processing Level",
               "enums": [
-                "Yes",
-                "No"
-              ],
-              "required": true
+                "Level 0",
+                "Level 1A",
+                "Level 1B",
+                "Level 2",
+                "Level 3",
+                "Level 4",
+                "Other"
+              ]
             },
             {
               "type": "text",
-              "id": "archival_approval_dependencies_explanation",
-              "label": "If Yes, provide explanation"
+              "id": "processing_level_other",
+              "label": "Other"
             }
           ],
-          "id": "f40956c3-9af8-400e-8dd8-c5e2965dcb8a",
+          "id": "7fd7bccf-5065-4033-9956-9e80bc99c205",
           "version": 1
         },
         {
@@ -379,26 +350,6 @@ WWE ARE HERE
             }
           ],
           "id": "2dd6c8b1-22a8-4866-91c3-da9b4ce849dc",
-          "version": 1
-        },
-        {
-          "unique_name": "data_product_documentation",
-          "title": "Data Product Additional Documentation",
-          "text": "Please upload additional documents that describe this data product or provide URLs to additional documents.",
-          "help": "For example, these documents may include descriptions of the variables, filename conventions, processing steps, and/or data quality.",
-          "inputs": [
-            {
-              "type": "file",
-              "id": "data_product_documentation_upload",
-              "label": "Upload Additional Documentation"
-            },
-            {
-              "type": "text",
-              "id": "data_product_documentation_url",
-              "label": "Additional Documentation URL"
-            }
-          ],
-          "id": "ad568b2f-89fe-4afd-a0bf-9e5832b71ce9",
           "version": 1
         },
         {
@@ -500,7 +451,7 @@ WWE ARE HERE
           "unique_name": "data_format",
           "title": "Data Format",
           "text": "What is the format(s) of the files within this data product? If selecting Other, please upload code to read the data or provide a URL to code to read the data.",
-          "help": "NASA Open Data Policy https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy",
+          "help": "For a list of NASA approved data formats, please refer to the NASA Earthdata Standards and Practicies web page (https://earthdata.nasa.gov/esdis/eso/standards-and-references#data-formats). Providing code to read non-standard data formats will assist the DAAC in understanding the structure and content of this data product.",
           "required": true,
           "inputs": [
             {
@@ -577,6 +528,23 @@ WWE ARE HERE
                 "PB"
               ],
               "required": true
+            }
+          ],
+          "id": "40672516-2220-4edc-8c1b-fd9f7e0b978f",
+          "version": 1
+        },
+        {
+          "unique_name": "data_product_files",
+          "title": "Number of files",
+          "text": "What is the estimated or actual total number of files in this data product?",
+          "help": "If the final data product is not complete, please provide your best estimate.",
+          "inputs": [
+            {
+              "type": "number",
+              "id": "data_product_number_of_files",
+              "label": "File Number",
+              "required": true,
+              "validation_error_msg": "You must enter a positive value."
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b978e",

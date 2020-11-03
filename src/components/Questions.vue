@@ -789,7 +789,9 @@ export default {
       //console.log('DAAC being passed into fetchQuestions is ' + DAAC)
       var question = []
       var ignore_attributes = ['list','step','pattern','accept','autocomplete','autofocus','capture','dirname']
-      $.getJSON(`${process.env.VUE_APP_API_ROOT}/data/form/6c544723-241c-4896-a38c-adbc0a364293`, ( questions ) => {
+      // TODO switch out with active api
+      // $.getJSON(`${process.env.VUE_APP_API_ROOT}/data/form/6c544723-241c-4896-a38c-adbc0a364293`, ( questions ) => {
+      $.getJSON( "../archival_interest.json", ( questions ) => {
         //The below line looks for custom css and applies it to the head (eui is done first)
         this.formTitle = questions.form_title
         $('head link[data-eui="yes"]').remove()
