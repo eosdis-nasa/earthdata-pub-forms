@@ -116,6 +116,9 @@ export default {
 };
 </script>
 <style scoped>
+#nav {
+  margin-bottom:.75rem;
+}
 a {
   cursor: pointer;
 }

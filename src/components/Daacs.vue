@@ -24,12 +24,12 @@
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               You have selected:
               <br />
               <strong>{{ selected }}</strong>
             </div>
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
@@ -296,11 +296,18 @@ export default {
 };
 </script>
 <style scoped>
+.form-group {
+  margin-top:2rem;
+}
 #selected_daac, .external-link-alt, #selected_daac_link {
   color: #2275AA;
 }
 .eui-btn--green {
+  margin-top:2rem;
   background-color: #158749;
+}
+.eui-btn--green:hover {
+  background-color: #12713d;
 }
 .radio_div {
   width: 25%;
