@@ -873,7 +873,7 @@ export default {
       //console.log('Executing Submit ...')
       let is_invalid = this.saveFile(str)
       if (!is_invalid) {
-        this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
+        this.$emit('submit-form', window.localStorage.getItem(this.DAAC + '_questions'))
       }
     },
     // @vuese
