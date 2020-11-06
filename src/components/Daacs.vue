@@ -53,14 +53,12 @@
 <script>
 // Jquery javascript
 import $ from "jquery";
-import mixin from "../mixins/mixin";
 
 // This Daacs component gets DAAC data and displays abbreviations as a radio selection
 // On selection displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users more info and to move on.
 export default {
   name: "Daacs",
-  mixins: [mixin],
   data() {
     return {
       selected: "",
@@ -86,6 +84,9 @@ export default {
     }
   },
   mounted() {
+    console.log('DAACS MOUNTED')
+    window.daacsComponent = this;
+    this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();
     this.GetCurrentDaacAndUpdate();
   },
@@ -219,11 +220,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Questions",
+          name: "Archival Interest - Questions",
           params: { default: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Archival Interest - Daacs", params: { default: "selection" } });
       }
     },
     // @vuese

@@ -15,30 +15,39 @@
             <router-link
               id="daacs_nav_link"
               v-if="daac !=='selection'"
-              :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}"
+              :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs', params: { default: daac }}"
             >DAACS</router-link>
-            <div v-if="daac !== 'selection'" class="inline"> | </div>
+            <div v-if="daac !== 'selection'" class="inline">  |  </div>
             <router-link
               id="daacs_nav_link"
               v-if="daac =='selection'"
-              :to="{ name: 'Daacs', path: '/daacs/selection' }"
+              :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs/selection' }"
             >DAACS</router-link>
-            <div v-if="daac == 'selection'" class="inline"> | </div>
+            <div v-if="daac == 'selection'" class="inline">  |  </div>
+            <router-link
+              id="questions_nav_link"
+              v-if="daac !=='selection'"
+              :to="{ name: 'Archival Interest - Questions', path: '/interest/questions', params: { default: daac }}"
+            >Questions</router-link>
+            <div class="inline" v-if="daac !=='selection'">  |  </div>
+            <a
+              id="questions_nav_link"
+              v-if="daac =='selection'"
+              href="#"
+              @click="requireDaacSelection($event)"
+            >Questions</a>
+            <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()">  |  </div>
+            <router-link id="help_nav_link" :to="{ name: 'Archival Interest - Help', path: '/interest/help', params: { default: ' ' }}">Help</router-link>
           </span>
-          <router-link
-            id="questions_nav_link"
-            v-if="daac !=='selection'"
-            :to="{ name: 'Questions', path: '/questions', params: { default: daac }}"
-          >Questions</router-link>
-          <div class="inline" v-if="daac !=='selection'"> | </div>
-          <a
-            id="questions_nav_link"
-            v-if="daac =='selection'"
-            href="#"
-            @click="requireDaacSelection($event)"
-          >Questions</a>
-          <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
-          <router-link id="help_nav_link" :to="{ name: 'Help', path: '/help'}">Help</router-link>
+          <span v-else>
+            <router-link
+              id="questions_nav_link"
+              v-if="daac =='selection'"
+              :to="{ name: 'Questionaire - Questions', path: '/questionaire/questions', params: { default: daac }}"
+            >Questions</router-link>
+            <div class="inline" v-if="daac =='selection'">  |  </div>
+            <router-link id="help_nav_link" :to="{ name: 'Questionaire - Help', path: '/questionaire/help', params: { default: ' ' }}">Help</router-link>
+          </span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -55,20 +64,22 @@ export default {
   name: "Header",
   data() {
     return {
-      showDaacs: true,
-      daac: "selection"
+      daac: "selection",
+      showDaacs: false
     };
   },
   // The property to be set by questions.vue
   props: {
     // The form title parsed from questions.vue
-    formTitle: { default: "", type: String }
+    formTitle: { default: "", type: String },
   },
-  computed: {},
+  computed: {
+    
+  },
   // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
   watch: {
     showDaacs: function(val) {
-      if (val == "false") {
+      if (val == "false" || val == false) {
         this.$router.push({
           name: "Questions",
           params: { default: this.daac.toLowerCase() }
@@ -77,24 +88,7 @@ export default {
     }
   },
   created() {
-    if (window.localStorage.getItem("DAAC") != null) {
-      this.daac = window.localStorage.getItem("DAAC");
-    } else {
-      this.daac = "selection";
-    }
-    let parameters = this.$route;
-    let showDaacs;
-    if (typeof parameters != "undefined") {
-      showDaacs = parameters.query["showDaacs"];
-    }
-    if (showDaacs) {
-      this.showDaacs = showDaacs;
-      window.localStorage.setItem("showDaacs", showDaacs);
-    } else if (window.localStorage.getItem("showDaacs") != null) {
-      this.showDaacs = Boolean(window.localStorage.getItem("showDaacs"));
-    } else {
-      window.localStorage.setItem("showDaacs", this.showDaacs);
-    }
+   
   },
   methods: {
     // @vuese
@@ -105,19 +99,31 @@ export default {
         event.preventDefault();
         return false;
       } else {
+        console.log('CHANGING HREF TO DAACS SELECTION')
         window.location.href = "/daacs/selection";
       }
       return true;
     }
   },
   mounted() {
+    console.log('HEADER MOUNTED')
     window.headerComponent = this;
+    this.setShowDaacs()
+    let form_components = this.getPath()
+    let form = form_components[0] 
+    let form_name_prefix = form_components[1]
+    this.daac = this.setDaacs()
+    if (form.toLowerCase().match(/interest/g) && !window.location.href.toLowerCase().match(/interest/g)){
+      this.$router.push({ name: form_name_prefix + "Daacs", params: { default: this.daac } });
+    } else if (form.toLowerCase().match(/questionaire/g) && !window.location.href.toLowerCase().match(/questionaire/g)){
+      this.$router.push({ name: form_name_prefix + "Questions", params: { default: this.daac } });
+    }
   }
 };
 </script>
 <style scoped>
-#nav {
-  margin-bottom:.75rem;
+h1 {
+  margin: 0.67em 0;
 }
 a {
   cursor: pointer;

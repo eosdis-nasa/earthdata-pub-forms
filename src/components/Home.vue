@@ -7,8 +7,10 @@
     //
     // Possible:
     //
-    // http://localhost:8080/daacs, http://localhost:8080/daacs/selection, http://localhost:8080/daacs/ornl_daac
-    // http://localhost:8080, http://localhost:8080/daacs/selection, http://localhost:8080/questions/ornl_daac
+    // http://localhost:8080/interest/daacs, http://localhost:8080/interest/daacs/selection, http://localhost:8080/interest/daacs/ornl_daac
+    // http://localhost:8080/interest/, http://localhost:8080/interest/daacs/selection, http://localhost:8080/interest/questions/ornl_daac
+    // http://localhost:8080/questionaire/daacs, http://localhost:8080/questionaire/daacs/selection, http://localhost:8080/questionaire/daacs/ornl_daac
+    // http://localhost:8080/questionaire/, http://localhost:8080/questionaire/daacs/selection, http://localhost:8080/questionaire/questions/ornl_daac
     export default {
         name: 'Home',
         data() {
@@ -20,28 +22,37 @@
             
         },
         props: {
-            // Based on the below property will load with/without Daacs form
-            showDaacs: {default: true, type: Boolean}
+            
         },
         // This is equivalent to document.ready
         mounted() {
+            console.log('HOME MOUNTED')
+            window.homeComponent = this;
+            this.setShowDaacs()
+            let redirect = '';
+            let form = this.getPath()[0]
             let parameters = this.$route.query
-            var redirect = ''
-            if(parameters['showDaacs']==true || this.showDaacs || window.localStorage.getItem('showDaacs')){
-                window.localStorage.setItem('showDaacs',true)
-                redirect="/daacs"
+            
+            // Set form path
+            if(window.headerComponent.showDaacs){
+                redirect="/" + form + "/daacs"
             } else {
-                window.localStorage.setItem('showDaacs',false)
-                redirect="/questions"  
+                redirect="/" + form + "/questions"
             }
+
+            // Append daac to path if applicable
             if(typeof parameters['default'] != 'undefined'){
                 // Expecting daac short_name here
                 redirect+='/' + parameters['default'].toLowerCase()
             } else if(window.localStorage.getItem('DAAC')!=null){
                 redirect+='/' + window.localStorage.getItem('DAAC').toLowerCase()
+            } else if (!form.toLowerCase().match(/questionaire/g)){
+                redirect='/' + form + '/daacs/selection'
             } else {
-                redirect='/daacs/selection'
+                redirect='/' + form + '/questions'
             }
+            
+            console.log('CHANGING HREF TO ' + redirect)
             window.location.href = redirect.toLowerCase()
         }
     }

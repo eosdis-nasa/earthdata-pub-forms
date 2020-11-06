@@ -1,7 +1,7 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Header :formTitle="formTitle"/>
+    <Header :formTitle="showFormTitle"/>
     <router-view ref="content"/>
      <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius=3% aria-label="go to top button"></go-top>
   </div>
@@ -32,13 +32,12 @@
                 { name: 'viewport', content: 'width=device-width, initial-scale=1' }
             ]
         },
-        data() {
-            return {
-                formTitle: '',
+        computed:{
+            showFormTitle: function(){
+                return window.formTitle
             }
         },
         props:{
-            
 
         },
         components: {
@@ -52,16 +51,10 @@
                         return this.$refs.content.formTitle
                     },
                     val => {
-                        this.formTitle = val
+                        window.formTitle = val
                     }
                 )
-                this.formTitle = this.$refs.content.formTitle
-            } else {
-                if(typeof this.$refs.content =='undefined' && window.localStorage.getItem('DAAC')!=null){
-                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC').toLowerCase() })
-                } else {
-                    this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
-                }
+                window.formTitle = this.$refs.content.formTitle
             }
         },
         watch: {
@@ -94,11 +87,14 @@
     }
     .form-group {
         margin-top:.5rem;
-        margin-bottom: 1.75rem!important;
+    }
+    h1 {
+        margin: 0.67em 0;
     }
     #nav {
         padding: 5px;
         text-align:right;
+        padding-bottom: 1.75rem;
     }
     #nav a {
         color:white;
@@ -137,7 +133,7 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
-    /*.btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
         background-color: #d62c1a;
     }
     .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
@@ -145,7 +141,7 @@
     }
     .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
         background-color: #1baf5e;
-    }*/
+    }
     .default_background {
         background-color: #ebebeb;
     }

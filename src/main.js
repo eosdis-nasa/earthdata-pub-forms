@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
 import VueLogger from 'vuejs-logger';
 import GoTop from '@inotom/vue-go-top';
+import mixin from "./mixins/mixin";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -88,6 +89,8 @@ Vue.component('Questions', Questions);
 Vue.component('Help', Help);
 
 Vue.config.productionTip = false
+
+Vue.mixin(mixin)
 
 new Vue({
   router,

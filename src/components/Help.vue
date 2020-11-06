@@ -21,13 +21,10 @@
 <script>
     // Jquery javascript
     import $ from 'jquery'
-    import mixin from '../mixins/mixin'
-
     // This help component displays all the help in the questions.json
     // It sets the above template properties and methods. Takes an optional help.id
     export default {
         name: 'Help',
-        mixins: [mixin],
         data() {
             return {
                 selected: '',
@@ -53,7 +50,18 @@
             fetchHelp(help_id){
                 //console.log('fetching help...')
                 var help_tips = []
-                $.getJSON( "../questions.json", ( questions ) => {
+
+                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+                let form = this.getPath()[0]
+                let json_name = ''
+                if(form.match(/interest/g)){
+                    json_name = 'archival_interest_conditionals' 
+                } else {
+                    json_name = 'submission_questionaire' 
+                }
+                $.getJSON( "../" + json_name + ".json", ( questions ) => {
+                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+
                     for(var section in questions['sections']) {
                         var questions_section = questions['sections'][section]['questions']
                         for(var q in questions_section){
@@ -81,10 +89,16 @@
         },
         // This is equivalent to document.ready
         mounted() {
+            console.log('HELP MOUNTED')
+            window.helpComponent = this;
+            this.setActiveNav("help");
             let loc;
             let daacStored;
             if(window.localStorage.getItem('DAAC')!=null){
                 daacStored = window.localStorage.getItem('DAAC').toLowerCase()
+            }
+            if (this.$route.params['default'] == ' '){
+                this.$route.params['default'] = ''
             }
             if(daacStored !=null && typeof this.$route != 'undefined' && this.$route.params.default != 'selection'){
                 let re = new RegExp('/' + daacStored)
@@ -107,8 +121,10 @@
             } else {
                 this.help_tips = this.fetchHelp()
             }
-            history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
-        },
+            if (typeof loc != 'undefined'){
+                history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
+            }
+        }
     }
 </script>
 <style scoped>
@@ -118,8 +134,15 @@
     .card{
         border-radius:unset;
         width:unset;
+        margin-bottom:1rem;
     }
     .card-body {
         display:unset
+    }
+    div.card-body:nth-of-type(odd) {
+        background: rgb(235, 235, 235);
+    }
+    .form-group:first-of-type{
+        margin-top:2rem;
     }
 </style>
