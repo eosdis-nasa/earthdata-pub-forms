@@ -54,10 +54,12 @@
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
-                        <!--<b-col class="w-50 help" :id="question.id">
-                            <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
-                            <div class="hidden overlay">{{question.help}}</div>
-                        </b-col>-->
+                        <b-col class="w-50 help">
+                          <a href="#" @click.prevent="" :id="'help_' + question.id" v-if="question.help != ''" v-b-modal="'modal_' + question.id"><font-awesome-icon icon="info-circle"/>  Help</a>
+                          <b-modal :id="'modal_' + question.id" :title="question.title + ' - Help'" ok-only centered>
+                            <p class="my-4">{{question.help}}</p>
+                          </b-modal>
+                        </b-col>
                         <!-- Input -->
                         <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                             <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
@@ -1903,238 +1905,241 @@ export default {
 }
 </script>
 <style scoped>
-.question_section {
-  margin-bottom: 2rem;
-}
-h2 {
-  text-decoration: underline;
-  border-bottom:unset;
-}
-.eui-btn--green {
-  background-color: #158749;
-}
-.eui-btn--green:hover {
-  background-color: #12713d;
-}
-.eui-btn--blue {
-  background-color: #2275AA;
-}
-.eui-btn--blue:hover {
-  background-color: #2c3e50;
-}
-.eui-btn--red, #reset_data{
-  background-color: #DB1400;
-}
-.eui-btn--red:hover {
-  background-color: #c21200!important;
-}
-.eui-banner--danger {
-  text-align:left;
-  margin-bottom: 2rem;
-}
-.eui-banner--danger.validation {
-  margin-top: -8px;
-}
-.hidden {
-  display:none
-}
-.float_right{
-  float:right;
-}
-.warning {
-  color:red;
-  font-weight:bold;
-  text-decoration: None
-}
-.col-form-label {
-  font-weight:bold;
-}
-.radio_div{
-  width:25%;
-  float:left;
-}
-.desc_div{
-  width:75%;
-  float:right;
-}
-.required{
-  color:red!important;
-  padding-top:7px
-}
-.help{
-  padding-top:7px
-}
-label{
-  margin-right: 1rem;
-}
-p{
-  margin-bottom:unset;
-}
-button {
-  margin-left:1rem;
-  margin-right:1rem;
-  margin-bottom:1rem;
-}
-.left_button_bar button:first-child {
-  margin-left:0!important;
-}
-.right_button_bar button:last-child {
-  margin-right:0!important;
-}
-.help {
-  text-align:right;
-  float:right;
-  padding-right:0px
-}
-.form-file-error,
-.form-select-error,
-.form-radio-group-error,
-.form-textarea-error,
-.form-checkbox-error,
-.form-input-error,
-.form-group-error {
-  border-color: red;
-}
-.radio_checkbox_group_error {
-  border-color: red;
-  border-radius: 5px;
-}
-fieldset {
-  border-left: unset
-}
-.button_bar{
-  display:inline;
-}
-.left_button_bar {
-  display:inline;
-  float:left;
-  margin-top:0px;
-  height:55px;
-}
-.right_button_bar {
-  display:inline;
-  float:right;
-  margin-top:0px;
-  height:55px;
-}
-div.container{
-  padding-top:0px;
-}
-.navbar{
-  position: relative;
-  display: -ms-flexbox;
-  /* display: -webkit-box; */
-  /* display: flex; */
-  display:flow-root!important;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -ms-flex-align: center;
-  -webkit-box-align: center;
-  align-items: center;
-  -ms-flex-pack: justify;
-  -webkit-box-pack: justify;
-  justify-content: space-between;
-  padding: 0rem 0rem;
-  padding-top:1rem;
-}
-.console_container {
-  height: 1em;
-}
-.console_bar {
-  float:right
-}
+  .eui-btn--green:hover {
+    background-color: #12713d;
+  }
+  .question_section {
+    margin-bottom: 2rem;
+  }
+  h2 {
+    text-decoration: underline;
+    border-bottom:unset;
+  }
+  .eui-btn--green {
+    background-color: #158749;
+  }
+  .eui-btn--green:hover {
+    background-color: #12713d;
+  }
+  .eui-btn--blue {
+    background-color: #2275AA;
+  }
+  .eui-btn--blue:hover {
+    background-color: #2c3e50;
+  }
+  .eui-btn--red, #reset_data{
+    background-color: #DB1400;
+  }
+  .eui-btn--red:hover {
+    background-color: #c21200!important;
+  }
+  .eui-banner--danger {
+    text-align:left;
+    margin-bottom: 2rem;
+  }
+  .eui-banner--danger.validation {
+    margin-top: -8px;
+  }
+  .hidden {
+    display:none
+  }
+  .float_right{
+    float:right;
+  }
+  .warning {
+    color:red;
+    font-weight:bold;
+    text-decoration: None
+  }
+  .col-form-label {
+    font-weight:bold;
+  }
+  .radio_div{
+    width:25%;
+    float:left;
+  }
+  .desc_div{
+    width:75%;
+    float:right;
+  }
+  .required{
+    color:red!important;
+    padding-top:7px
+  }
+  .help{
+    padding-top:7px
+  }
+  label{
+    margin-right: 1rem;
+  }
+  p{
+    margin-bottom:unset;
+  }
+  button {
+    margin-left:1rem;
+    margin-right:1rem;
+    margin-bottom:1rem;
+  }
+  .left_button_bar button:first-child {
+    margin-left:0!important;
+  }
+  .right_button_bar button:last-child {
+    margin-right:0!important;
+  }
+  .help {
+    text-align:right;
+    float:right;
+    padding-right:0px
+  }
+  .form-file-error,
+  .form-select-error,
+  .form-radio-group-error,
+  .form-textarea-error,
+  .form-checkbox-error,
+  .form-input-error,
+  .form-group-error {
+    border-color: red;
+  }
+  .radio_checkbox_group_error {
+    border-color: red;
+    border-radius: 5px;
+  }
+  fieldset {
+    border-left: unset
+  }
+  .button_bar{
+    display:inline;
+  }
+  .left_button_bar {
+    display:inline;
+    float:left;
+    margin-top:0px;
+    height:55px;
+  }
+  .right_button_bar {
+    display:inline;
+    float:right;
+    margin-top:0px;
+    height:55px;
+  }
+  div.container{
+    padding-top:0px;
+  }
+  .navbar{
+    position: relative;
+    display: -ms-flexbox;
+    /* display: -webkit-box; */
+    /* display: flex; */
+    display:flow-root!important;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-align: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 0rem 0rem;
+    padding-top:1rem;
+  }
+  .console_container {
+    height: 1em;
+  }
+  .console_bar {
+    float:right
+  }
 
-@media (min-width: 1200px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 1110px;
-    max-width: 1110px;
+  @media (min-width: 1200px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      left: 20;
+      top: 1rem;
+      min-width: 1110px;
+      max-width: 1110px;
+    }
   }
-}
-@media (max-width: 1200px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 929px;
-    max-width: 929px;
+  @media (max-width: 1200px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      left: 20;
+      top: 1rem;
+      min-width: 929px;
+      max-width: 929px;
+    }
   }
-}
-@media (max-width: 992px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 929px;
-    max-width: 929px;
+  @media (max-width: 992px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      left: 20;
+      top: 1rem;
+      min-width: 929px;
+      max-width: 929px;
+    }
   }
-}
-@media (max-width: 768px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 690px;
-    max-width: 690px;
+  @media (max-width: 768px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      left: 20;
+      top: 1rem;
+      min-width: 690px;
+      max-width: 690px;
+    }
   }
-}
-@media (max-width: 576px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 509px;
-    min-width: 509px;
+  @media (max-width: 576px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 509px;
+      min-width: 509px;
+    }
   }
-}
-@media (max-width: 441px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 380px;
-    min-width: 380px;
+  @media (max-width: 441px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 380px;
+      min-width: 380px;
+    }
   }
-}
-@media (max-width: 414px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 385px;
-    min-width: 385px;
+  @media (max-width: 414px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 385px;
+      min-width: 385px;
+    }
   }
-}
-@media (max-width: 411px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 380px;
-    min-width: 380px;
+  @media (max-width: 411px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 380px;
+      min-width: 380px;
+    }
   }
-}
-@media (max-width: 375px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 345px;
-    min-width: 345px;
+  @media (max-width: 375px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 345px;
+      min-width: 345px;
+    }
   }
-}
-@media (max-width: 360px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 330px;
-    min-width: 330px;
+  @media (max-width: 360px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 330px;
+      min-width: 330px;
+    }
   }
-}
-@media (max-width: 320px){
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 290px;
-    min-width: 290px;
+  @media (max-width: 320px){
+    .navbar.vue-fixed-header--isFixed {
+      position: fixed;
+      top: 1rem;
+      max-width: 290px;
+      min-width: 290px;
+    }
   }
-}
-/*@media screen and (max-width: 900px) and (min-width: 600px) {*/
+  /*@media screen and (max-width: 900px) and (min-width: 600px) {*/
 </style>

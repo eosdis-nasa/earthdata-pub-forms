@@ -3,7 +3,7 @@
   <div id="app">
     <Header :formTitle="showFormTitle"/>
     <router-view ref="content"/>
-     <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius=3% aria-label="go to top button"></go-top>
+    <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
   </div>
 </template>
 <!-- End of Main App -->
@@ -66,6 +66,16 @@
     }
 </script>
 <style>
+    .modal-footer {
+        background-color: #ebebeb!important;
+    }
+    footer button.btn-primary:hover, .eui-btn--green:hover {
+        background-color: #12713d;
+    }
+    footer button.btn-primary {
+        background-color:#158749;
+        color:white;
+    }
     body{
         background:unset!important;
     }

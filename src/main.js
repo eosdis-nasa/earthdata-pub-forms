@@ -46,7 +46,6 @@ Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
 Vue.use(GoTop);
-//Vue.use(OverlayPlugin)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
