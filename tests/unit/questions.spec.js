@@ -26,7 +26,10 @@ import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex, { mapActions } from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
 import mixin from "@/mixins/mixin.js";
-import { config } from '@vue/test-utils'
+import { config } from '@vue/test-utils';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
 
 config.showDeprecationWarnings = false
 
@@ -38,6 +41,10 @@ localVue.use(Vuex)
 localVue.use(VuexUndoRedo)
 localVue.use(LayoutPlugin)
 localVue.mixin(mixin)
+library.add(fas)
+localVue.component('font-awesome-icon', FontAwesomeIcon)
+localVue.component('font-awesome-layers', FontAwesomeLayers)
+localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
                   { path: '/interest/daacs/:default', name: 'Archival Interest - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
