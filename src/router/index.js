@@ -26,7 +26,7 @@ const routes = [
     component: Questions
   },
   {
-    path: '/interest/help/:default',
+    path: '/interest/help',
     name: 'Archival Interest - Help',
     component: Help
   },
@@ -36,7 +36,7 @@ const routes = [
     component: Questions
   },
   {
-    path: '/questionaire/help/:default',
+    path: '/questionaire/help',
     name: 'Questionaire - Help',
     component: Help
   },

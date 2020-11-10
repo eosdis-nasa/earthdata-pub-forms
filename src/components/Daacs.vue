@@ -33,7 +33,7 @@
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
-                <font-awesome-icon icon="external-link-alt">external link</font-awesome-icon>
+                <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
               </a>
             </div>
             <!-- Submit Button -->
@@ -84,7 +84,6 @@ export default {
     }
   },
   mounted() {
-    console.log('DAACS MOUNTED')
     window.daacsComponent = this;
     this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();

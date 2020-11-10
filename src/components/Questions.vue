@@ -8,10 +8,22 @@
               <!-- Button Options -->
               <div class="button_bar">
                   <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-                      <b-button class="button" type="redo" id="redo_button" v-else disabled aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-else disabled aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                      <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button">
+                        <font-awesome-icon v-bind:icon="redoLabel"/>
+                        {{ redoLabel }}
+                      </b-button>
+                      <b-button class="button" type="redo" id="redo_button" v-else disabled aria-label="redo button">
+                        <font-awesome-icon v-bind:icon="redoLabel"/>
+                        {{ redoLabel }}
+                      </b-button>
+                      <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button">
+                        <font-awesome-icon v-bind:icon="undoLabel"/>
+                        {{ undoLabel }}
+                      </b-button>
+                      <b-button class="button" type="undo" id="undo_button" v-else disabled aria-label="undo button">
+                        <font-awesome-icon v-bind:icon="undoLabel"/>
+                        {{ undoLabel }}
+                      </b-button>
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
                       <b-button class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile(true)" aria-label="draft button">{{ draftLabel }}</b-button>
@@ -55,7 +67,9 @@
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
                         <b-col class="w-50 help">
-                          <a href="#" @click.prevent="" :id="'help_' + question.id" v-if="question.help != ''" v-b-modal="'modal_' + question.id"><font-awesome-icon icon="info-circle"/>  Help</a>
+                          <a href="#" @click.prevent="" :id="'help_' + question.id" v-if="question.help != ''" v-b-modal="'modal_' + question.id">
+                          <font-awesome-icon icon="info-circle" name="info icon"/>
+                            Help</a>
                           <b-modal :id="'modal_' + question.id" :title="question.title + ' - Help'" ok-only centered>
                             <p class="my-4">{{question.help}}</p>
                           </b-modal>
@@ -1868,7 +1882,6 @@ export default {
   },
   // This is equivalent to js document.ready
   mounted() {
-    console.log('QUESTIONS MOUNTED')
     window.questionsComponent = this;
     this.setActiveNav("questions");
     let form_components = this.getPath()
@@ -1966,9 +1979,6 @@ export default {
     color:red!important;
     padding-top:7px
   }
-  .help{
-    padding-top:7px
-  }
   label{
     margin-right: 1rem;
   }
@@ -1989,7 +1999,8 @@ export default {
   .help {
     text-align:right;
     float:right;
-    padding-right:0px
+    padding-right:0px;
+    padding-top:7px;
   }
   .form-file-error,
   .form-select-error,

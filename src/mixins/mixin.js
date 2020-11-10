@@ -24,17 +24,16 @@ export default {
       // get Path via parameters, form title, then property 
       getPath(){
         let form = ''
-        let parameters = this.$route.query
-        if(typeof parameters['form'] != 'undefined'){
-            form = parameters['form']
+        if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
+          form = this.$route.query.form
         } else if (typeof window.formTitle != 'undefined' && window.formTitle != ''){
-            if (window.formTitle.toLowerCase().match(/interest/g)){
-              form = 'interest'
-            } else {
-              form = 'questionaire'
-            }   
+          if (window.formTitle.toLowerCase().match(/interest/g)){
+            form = 'interest'
+          } else {
+            form = 'questionaire'
+          }   
         } else if (this.form != ''){
-            form = this.form
+          form = this.form
         }
         let component_name_prefix = ''
         if(form.match(/questionaire/g)){
@@ -48,11 +47,10 @@ export default {
       // get Path via parameters, form title, then property 
       setShowDaacs(){
         let form = this.getPath()[0]
-        let parameters = this.$route.query
-        if(typeof parameters['showDaacs']!='undefined' && Boolean(parameters['showDaacs'])){
+        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined' && Boolean(this.$route.query.parameters.default)){
           window.headerComponent.showDaacs = true
           window.localStorage.setItem("showDaacs", true);
-        } else if(typeof parameters['showDaacs']!='undefined' && Boolean(parameters['showDaacs'])==false){
+        } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined' && Boolean(this.$route.query.parameters.default)==false){
           window.headerComponent.showDaacs = false
           window.localStorage.setItem("showDaacs", false);
         } else if (form.match(/questionaire/g)){
@@ -61,7 +59,7 @@ export default {
         } else if (form.match(/interest/g)){
           window.headerComponent.showDaacs = true
           window.localStorage.setItem("showDaacs", true);
-        } 
+        }
       },
       // @vuese
       // Set Daacs daac via parameters or windows storage 

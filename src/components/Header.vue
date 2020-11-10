@@ -11,42 +11,66 @@
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
+          <!-- if show daacs -->
           <span v-if="showDaacs">
+            <!-------------------- DAACS ---------------------->
+            <!-- if daac is set -->
             <router-link
               id="daacs_nav_link"
-              v-if="daac !=='selection'"
+              v-if="daac !=='selection' && daac !== ''"
               :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs', params: { default: daac }}"
             >DAACS</router-link>
-            <div v-if="daac !== 'selection'" class="inline">  |  </div>
+            <!-- if daac is not set and not 'selection' -->
             <router-link
               id="daacs_nav_link"
-              v-if="daac =='selection'"
-              :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs/selection' }"
+              v-else-if="daac !=='selection'"
+              :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs', params: { default: 'selection' }}"
             >DAACS</router-link>
-            <div v-if="daac == 'selection'" class="inline">  |  </div>
+            <!-- if daac is 'selection' -->
+            <router-link
+              id="daacs_nav_link"
+              v-else
+              :to="{ name: 'Archival Interest - Daacs', path: '/interest/daacs/selection', params: { default: 'selection' } }"
+            >DAACS</router-link>
+            <!-- daac divider -->
+            <div class="inline">  |  </div>
+            <!-------------------- QUESTIONS ---------------------->
+            <!-- if daac is set -->
             <router-link
               id="questions_nav_link"
-              v-if="daac !=='selection'"
+              v-if="daac !=='selection' && daac !== ''"
               :to="{ name: 'Archival Interest - Questions', path: '/interest/questions', params: { default: daac }}"
             >Questions</router-link>
-            <div class="inline" v-if="daac !=='selection'">  |  </div>
+            <!-- if daac is not set -->
             <a
               id="questions_nav_link"
-              v-if="daac =='selection'"
+              v-else-if="daac =='selection' || daac == ''"
               href="#"
               @click="requireDaacSelection($event)"
             >Questions</a>
-            <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()">  |  </div>
-            <router-link id="help_nav_link" :to="{ name: 'Archival Interest - Help', path: '/interest/help', params: { default: ' ' }}">Help</router-link>
+            <div class="inline" v-if="daac =='selection' || daac ==''" @click="requireDaacSelection()">  |  </div>
+            <!-- question divider divider -->
+            <div class="inline" v-else>  |  </div>
+            <!-------------------- HELP ---------------------->
+            <router-link id="help_nav_link" :to="{ name: 'Archival Interest - Help', path: '/interest/help' }">Help</router-link>
           </span>
+          <!-- if daacs hidden -->
           <span v-else>
+            <!-- if questionaire and daac known -->
             <router-link
               id="questions_nav_link"
-              v-if="daac =='selection'"
+              v-if="daac !== ''"
               :to="{ name: 'Questionaire - Questions', path: '/questionaire/questions', params: { default: daac }}"
             >Questions</router-link>
-            <div class="inline" v-if="daac =='selection'">  |  </div>
-            <router-link id="help_nav_link" :to="{ name: 'Questionaire - Help', path: '/questionaire/help', params: { default: ' ' }}">Help</router-link>
+            <!-- if questionaire and daac unknown --> 
+            <router-link
+              id="questions_nav_link"
+              v-else-if="daac =='selection' || daac == ''"
+              :to="{ name: 'Questionaire - Questions', path: '/questionaire/questions'}"
+            >Questions</router-link>
+            <div class="inline" >  |  </div>
+            <!-- from questionaire help -->
+            <router-link id="help_nav_link" :to="{ name: 'Questionaire - Help', path: '/questionaire/help' }">Help</router-link>
           </span>
         </div>
         <!-- End of Logo and menu -->
@@ -65,7 +89,7 @@ export default {
   data() {
     return {
       daac: "selection",
-      showDaacs: false
+      showDaacs: ''
     };
   },
   // The property to be set by questions.vue
@@ -80,8 +104,10 @@ export default {
   watch: {
     showDaacs: function(val) {
       if (val == "false" || val == false) {
+        let form_components = this.getPath()
+        let form_name_prefix = form_components[1]
         this.$router.push({
-          name: "Questions",
+          name: form_name_prefix + "Questions",
           params: { default: this.daac.toLowerCase() }
         });
       }
@@ -99,25 +125,18 @@ export default {
         event.preventDefault();
         return false;
       } else {
+        let form_components = this.getPath()
+        let form = form_components[0] 
         console.log('CHANGING HREF TO DAACS SELECTION')
-        window.location.href = "/daacs/selection";
+        window.location.href = "/" + form + "/daacs/selection";
       }
       return true;
     }
   },
   mounted() {
-    console.log('HEADER MOUNTED')
     window.headerComponent = this;
     this.setShowDaacs()
-    let form_components = this.getPath()
-    let form = form_components[0] 
-    let form_name_prefix = form_components[1]
     this.daac = this.setDaacs()
-    if (form.toLowerCase().match(/interest/g) && !window.location.href.toLowerCase().match(/interest/g)){
-      this.$router.push({ name: form_name_prefix + "Daacs", params: { default: this.daac } });
-    } else if (form.toLowerCase().match(/questionaire/g) && !window.location.href.toLowerCase().match(/questionaire/g)){
-      this.$router.push({ name: form_name_prefix + "Questions", params: { default: this.daac } });
-    }
   }
 };
 </script>

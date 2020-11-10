@@ -46,11 +46,9 @@
         },
         methods: {
             // Loops through the questions.json and builds a help object from that.
-            // If a id is passed in, it just displays 'Help Tip'
+            // If a id is passed in, it just displays single 'Help Tip'
             fetchHelp(help_id){
-                //console.log('fetching help...')
                 var help_tips = []
-
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
                 let form = this.getPath()[0]
                 let json_name = ''
@@ -59,9 +57,8 @@
                 } else {
                     json_name = 'submission_questionaire' 
                 }
-                $.getJSON( "../" + json_name + ".json", ( questions ) => {
+                $.getJSON( "../" + form + "/" + json_name + ".json", ( questions ) => {
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-
                     for(var section in questions['sections']) {
                         var questions_section = questions['sections'][section]['questions']
                         for(var q in questions_section){
@@ -89,7 +86,6 @@
         },
         // This is equivalent to document.ready
         mounted() {
-            console.log('HELP MOUNTED')
             window.helpComponent = this;
             this.setActiveNav("help");
             let loc;
@@ -97,30 +93,16 @@
             if(window.localStorage.getItem('DAAC')!=null){
                 daacStored = window.localStorage.getItem('DAAC').toLowerCase()
             }
-            if (this.$route.params['default'] == ' '){
-                this.$route.params['default'] = ''
-            }
-            if(daacStored !=null && typeof this.$route != 'undefined' && this.$route.params.default != 'selection'){
+            if(daacStored !=null && typeof this.$route != 'undefined'){
                 let re = new RegExp('/' + daacStored)
                 if(window.location.href.toLowerCase().match(re,'g')){
                     loc = window.location.href.toLowerCase()
                     loc = loc.replace(re,'')
-                    this.$route.params.default = 'selection'
                 }
             } else {
                 loc = window.location.href.toLowerCase()
             }
-            if((typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != ''){
-                if(this.selected !=''){ 
-                    this.help_tips = this.fetchHelp(this.selected)
-                } else if(typeof this.$route.params.default !='undefined'){
-                    this.help_tips = this.fetchHelp(this.$route.params.default)
-                } else if(window.localStorage.getItem('help_id')!=null){
-                    this.help_tips = this.fetchHelp(window.localStorage.getItem('help_id'))
-                }
-            } else {
-                this.help_tips = this.fetchHelp()
-            }
+            this.help_tips = this.fetchHelp()
             if (typeof loc != 'undefined'){
                 history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
             }

@@ -13,6 +13,7 @@
     "prepare": "npm run snyk-protect"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/vue-fontawesome": "^2.0.0",
@@ -39,7 +40,7 @@
     "@vue/cli-plugin-eslint": "~4.5.6",
     "@vue/cli-plugin-unit-jest": "~4.5.6",
     "@vue/cli-service": "~4.5.6",
-    "@vue/test-utils": "1.1.0",
+    "@vue/test-utils": "^1.1.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.3.0",
