@@ -55,7 +55,7 @@
                 if(form.match(/interest/g)){
                     json_name = 'archival_interest_conditionals' 
                 } else {
-                    json_name = 'submission_questionaire' 
+                    json_name = 'data_product_questionaire' 
                 }
                 $.getJSON( "../" + form + "/" + json_name + ".json", ( questions ) => {
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////

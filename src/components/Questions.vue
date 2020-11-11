@@ -1606,7 +1606,7 @@ export default {
       if(form.match(/interest/g)){
         json_name = 'archival_interest_conditionals' 
       } else {
-        json_name = form + '/submission_questionaire' 
+        json_name = form + '/data_product_questionaire' 
       }
       $.getJSON( "../" + json_name + ".json", ( questions ) => {
       // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////

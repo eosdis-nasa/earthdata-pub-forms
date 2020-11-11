@@ -2,7 +2,7 @@
 import $ from 'jquery'
 export default {
     props:{
-      form: {default: 'interest', type: String}
+      form: {default: 'questionaire', type: String}
     },
     computed: {
     },
