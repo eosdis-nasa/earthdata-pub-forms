@@ -753,12 +753,12 @@
           "title": "Data Product Volume",
           "text": "What is the estimated or actual total volume of this data product?",
           "help": "The DAAC uses the total volume of the final data product to plan data storage requirements. If the final data product is not complete, please provide your best estimate for the total data volume.",
+          "required": true,
           "inputs": [
             {
               "type": "number",
               "id": "data_product_volume_amount",
               "label": "Amount",
-              "required": true,
               "validation_error_msg": "You must enter a positive value."
             },
             {
@@ -771,8 +771,7 @@
                 "GB",
                 "TB",
                 "PB"
-              ],
-              "required": true
+              ]
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b978f",
