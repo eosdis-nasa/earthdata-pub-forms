@@ -1,6 +1,6 @@
 # Earthdata Pub Forms
 
-This is the forms code repository for Earthdata Pub.
+This is the Forms code repository for Earthdata Pub (EDPUB).
 
 ## Table of Contents
 
@@ -15,6 +15,36 @@ This is the forms code repository for Earthdata Pub.
 
 The [`CONTRIBUTING.md`](./CONTRIBUTING.md) has instruction for contributing to
 the Earthata Pub project. Be sure to read that before submitting pull requests.
+
+## Building and Quickstarts
+
+EDPUB Forms use node v12.18.0. To build/run the Forms on your local
+machine, install nvm following the [nvm Install & Update Script](https://github.com/nvm-sh/nvm#install--update-script)
+instructions.
+
+We use npm for local package management, to install the requirements:
+
+```bash
+nvm install v12.18.0
+nvm use
+npm install
+```
+
+### Running locally
+
+```bash
+npm run start
+```
+
+The Dashboard will available at <http://localhost:8081/>
+
+The API Swagger will available at <http://localhost:8080/docs/>
+
+To view logs from the Docker container:
+
+```bash
+npm run view-logs
+```
 
 ## Framework: vue.js
 
@@ -76,12 +106,6 @@ named 'Components'.
 - Documentation to vuese - [Quick & easy documentation generation for Vue.js components](https://dev.to/berniwittmann/quick--easy-documentation-generation-for-vuejs-components-7k6)
 - API Documentation for [vuese](https://vuese.org/)
 
-Install the plugin by running:
-
-```bash
-npm install -g @vuese/cli --save
-```
-
 To build documentation, simply type:
 
 ```bash
@@ -93,7 +117,8 @@ At the time of this writing, it is now named 'autodocs'. We now need to serve th
 files as a website. Run the following from in the autodocs folder:
 
 ```bash
-npm i -g serve && serve .
+cd website
+npm serve .
 ```
 
 You should now be able to view the files on your [localhost](http://localhost:5000).
@@ -112,7 +137,7 @@ npm run test:unit questions.spec.js
 
 ## Deploying to AWS with Terrafrom
 
-Earthdata Pub forms deploys to AWS using Terraform through Bamboo. To create AWS
+Earthdata Pub Forms deploys to AWS using Terraform through Bamboo. To create AWS
 resources, run:
 
 ```bash
