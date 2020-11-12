@@ -18,7 +18,16 @@
               "id": "data_producer_info_name",
               "label": "Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
-              "required": true
+              "required": true,
+              "attributes": {
+                "pattern":"[0-9]{3}-[0-9]{3}-[0-9]{4}",
+                "maxlength":12,
+                "max":5,
+                "minlength":7,
+                "min":4,
+                "wrap":"soft",
+                "placeholder":"example placeholder"
+              }
             },
             {
               "type": "text",
@@ -94,7 +103,19 @@
             {
               "type": "text",
               "id": "funding_organization_other",
-              "label": "University or Other"
+              "label": "If University or Other",
+              "required_if": [
+                {
+                  "field": "funding_organization_name",
+                  "value": "University",
+                  "message":"Please provide a University or other text value for the funding organization."
+                },
+                {
+                  "field": "funding_organization_name",
+                  "value": "Other",
+                  "message":"Please provide a University or other text value for the funding organization."
+                }
+              ]
             }
           ],
           "id": "8a364184-42ac-48fe-b831-acb2eb08c728",
@@ -151,8 +172,8 @@
               "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
-                "rows": 10,
-                "cols": 80
+                "rows": 3,
+                "cols": 20
               },
               "required": true
             }
@@ -189,8 +210,8 @@
               "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
-                "rows": 10,
-                "cols": 80
+                "rows": 3,
+                "cols": 20
               },
               "required": true
             }
@@ -210,8 +231,12 @@
               "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
-                "rows": 10,
-                "cols": 80
+                "rows": 5,
+                "cols": 20,
+                "maxlength":1000,
+                "readonly":false,
+                "wrap":"soft",
+                "placeholder":"This is a placeholder"
               },
               "required": true
             }
@@ -238,7 +263,14 @@
             {
               "type": "text",
               "id": "archival_approval_dependencies_explanation",
-              "label": "If Yes, provide explanation"
+              "label": "If Yes, provide explanation",
+              "required_if": [
+                {
+                  "field": "archival_approval_dependencies_radios",
+                  "value": "Yes",
+                  "message":"Please provide an explanation of the data product's dependencies."
+                }
+              ]
             }
           ],
           "id": "f40956c3-9af8-400e-8dd8-c5e2965dcb8a",
@@ -263,7 +295,14 @@
             {
               "type": "text",
               "id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation"
+              "label": "If No, provide explanation",
+              "required_if": [
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "No",
+                  "message":"Please provide an explanation of the data product's restrictions."
+                }
+              ]
             }
           ],
           "id": "2dd6c8b1-22a8-4866-91c3-da9b4ce849dc",
@@ -434,7 +473,14 @@
             {
               "type": "text",
               "id": "data_format_other_info",
-              "label": "If Other"
+              "label": "If Other",
+              "required_if": [
+                {
+                  "field": "data_format_other",
+                  "value": "true",
+                  "message":"Please provide the data product's other data format."
+                }
+              ]
             }
           ],
           "id": "50e8d566-b9ab-4bd9-9adc-92a3c8fb5d27",

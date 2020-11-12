@@ -66,7 +66,7 @@
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
-                        <b-col class="w-50 help">
+                        <b-col class="w-25 help">
                           <a href="#" @click.prevent="" :id="'help_' + question.id" v-if="question.help != ''" v-b-modal="'modal_' + question.id">
                           <font-awesome-icon icon="info-circle" name="info icon"/>
                             Help</a>
@@ -75,109 +75,138 @@
                           </b-modal>
                         </b-col>
                         <!-- Input -->
-                        <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
-                            <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
-                            <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
-                            <!-- Text Type of Input -->
-                            <b-form-input 
-                                :class="{ 'form-input-error': ($v.values[input.id] || {}).$error }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :name="input.id" 
-                                v-model="values[input.id]"
-                                size="lg" lg=12
-                                :disabled="readonly"
-                                v-if="input.type == 'text' || 
-                                input.type == 'password' || 
-                                input.type == 'number' || 
-                                input.type == 'url' || 
-                                input.type == 'email' || 
-                                input.type == 'search' || 
-                                input.type == 'range' || 
-                                input.type == 'date' || 
-                                input.type == 'tel' || 
-                                input.type == 'time' || 
-                                input.type == 'color'" 
-                                input.attrib_string>
-                            </b-form-input>
-                            <!-- End of Text Type of Input -->
-                            <!-- Checkbox Type of Input -->
-                            <b-form-checkbox 
-                                :class="{ 'form-checkbox-error': ($v.values[input.id] || {}).$error, 'checkboxes':true }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :name="input.id" 
-                                v-model="values[input.id]"
-                                size="lg" lg=12
-                                :disabled="readonly"
-                                value="true"
-                                unchecked-value="false"
-                                v-if="input.type == 'checkbox'" 
-                                input.attrib_string>
-                            </b-form-checkbox>
-                            <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
-                            <!-- End of Checkbox Type of Input -->
-                            <!-- Textarea Type of Input -->
-                            <b-form-textarea 
-                                :class="{ 'form-textarea-error': ($v.values[input.id] || {}).$error }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :name="input.id" 
-                                v-model="values[input.id]"
-                                size="lg" lg=12
-                                :disabled="readonly"
-                                v-else-if="input.type == 'textarea'" 
-                                input.attrib_string>
-                            </b-form-textarea>
-                            <!-- End of Textarea Type of Input -->
-                            <!-- Radio Group Type of Input -->
-                            <b-form-radio-group
-                                :class="{ 'form-radio-group-error': ($v.values[input.id] || {}).$error }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :name="input.id" 
-                                v-model="values[input.id]"
-                                size="lg" lg=12
-                                value="true"
-                                unchecked-value="false"
-                                :disabled="readonly"
-                                v-else-if="input.type == 'radio'" 
-                                :options="input.options" 
-                                input.attrib_string>
-                            </b-form-radio-group>
-                            <!-- End of Radio Group Type of Input -->
-                            <!-- Select Type of Input -->
-                            <b-form-select
-                                :class="{ 'form-select-error': ($v.values[input.id] || {}).$error }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :name="input.id" 
-                                v-model="values[input.id]"
-                                size="lg" lg=12
-                                :disabled="readonly"
-                                v-else-if="input.type == 'select'" 
-                                :options="input.options" 
-                                input.attrib_string>
-                            </b-form-select>
-                            <!-- End of Select Type of Input -->
-                            <!-- File Type of Input -->
-                            <b-form-file
-                                :class="{ 'form-file-error': ($v.values[input.id] || {}).$error }"
-                                :type="input.type" 
-                                :id="input.id" 
-                                :scope="Boolean(values[input.id])"
-                                :name="input.id" 
-                                v-model="values[input.id]" 
-                                size="lg" lg=12 
-                                :disabled="readonly" 
-                                v-else-if="input.type == 'file'" 
-                                input.attrib_string>
-                            </b-form-file>
-                            <!-- End of File Type of Input -->
-                            <!-- Selected Input File Name -->
-                            <div class="mt-3" v-else-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
-                            <!-- End of Selected Input File Name -->
-                            <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
+                        <b-row>
+                          <b-col :lg="question.size || 12" class="question_size">
+                            <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
+                                <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
+                                <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
+                                <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
+                                  {{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
+                                </span>
+                                <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
+                                  ({{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
+                                </span>
+                                <!-- Text Type of Input -->
+                                <b-form-input 
+                                    :class="{ 'form-input-error': ($v.values[input.id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg" 
+                                    v-if="input.type == 'text' || 
+                                    input.type == 'password' || 
+                                    input.type == 'number' || 
+                                    input.type == 'url' || 
+                                    input.type == 'email' || 
+                                    input.type == 'search' || 
+                                    input.type == 'range' || 
+                                    input.type == 'date' || 
+                                    input.type == 'tel' || 
+                                    input.type == 'time' || 
+                                    input.type == 'color'"
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :pattern="getAttribute('pattern', question.inputs[c_key])"
+                                    :maxlength="getAttribute('maxlength', question.inputs[c_key])"
+                                    :max="getAttribute('max', question.inputs[c_key])"
+                                    :minlength="getAttribute('minlength', question.inputs[c_key])"
+                                    :min="getAttribute('min', question.inputs[c_key])"
+                                    :wrap="getAttribute('wrap', question.inputs[c_key])"
+                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                    >
+                                </b-form-input>
+                                <!-- End of Text Type of Input -->
+                                <!-- Textarea Type of Input -->
+                                <b-form-textarea 
+                                    :class="{ 'form-textarea-error': ($v.values[input.id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg" 
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :cols="getAttribute('cols', question.inputs[c_key])"
+                                    :rows="getAttribute('rows', question.inputs[c_key])"
+                                    :maxlength="getAttribute('maxlength', question.inputs[c_key])"
+                                    :wrap="getAttribute('wrap', question.inputs[c_key])"
+                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                    v-if="input.type == 'textarea'">
+                                </b-form-textarea>
+                                <!-- End of Textarea Type of Input -->
+                                <!-- Radio Group Type of Input -->
+                                <b-form-radio-group
+                                    :class="{ 'form-radio-group-error': ($v.values[input.id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg" 
+                                    value="true"
+                                    unchecked-value="false"
+                                    v-if="input.type == 'radio'" 
+                                    :options="input.options"
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :checked="getAttribute('checked', question.inputs[c_key])">
+                                </b-form-radio-group>
+                                <!-- End of Radio Group Type of Input -->
+                                <!-- Checkbox Type of Input -->
+                                <b-form-checkbox 
+                                    :class="{ 'form-checkbox-error': ($v.values[input.id] || {}).$error, 'checkboxes':true }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg" 
+                                    value="true"
+                                    unchecked-value="false"
+                                    v-if="input.type == 'checkbox'"
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :checked="getAttribute('checked', question.inputs[c_key])">
+                                </b-form-checkbox>
+                                <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
+                                <!-- End of Checkbox Type of Input -->
+                                <!-- Select Type of Input -->
+                                <b-form-select
+                                    :class="{ 'form-select-error': ($v.values[input.id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg" 
+                                    v-if="input.type == 'select'" 
+                                    :options="input.options"
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])" 
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])" 
+                                    :multiple="getAttribute('multiple', question.inputs[c_key])">
+                                </b-form-select>
+                                <!-- End of Select Type of Input -->
+                                <!-- File Type of Input -->
+                                <b-form-file
+                                    :class="{ 'form-file-error': ($v.values[input.id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.id" 
+                                    :scope="Boolean(values[input.id])"
+                                    :name="input.id" 
+                                    v-model="values[input.id]" 
+                                    size="lg" 
+                                    v-if="input.type == 'file'"
+                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])" 
+                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :multiple="getAttribute('multiple', question.inputs[c_key])"
+                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])">
+                                    >
+                                </b-form-file>
+                                <!-- End of File Type of Input -->
+                                <!-- Selected Input File Name -->
+                                <div class="mt-3" v-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
+                                <!-- End of Selected Input File Name -->
+                                <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
+                            </b-row>
+                          </b-col>
                         </b-row>
                         <!-- End of Input -->
                     </b-form-group>
@@ -237,10 +266,13 @@ export default {
     enterSubmit: { default: false, type: Boolean },
     // The readonly attribute to pass in
     readonly: { default: false, type: Boolean },
+    // The disabled attribute to pass in
+    disabled: { default: false, type: Boolean },
     // The show cancel button conditional to allow for cancel
     showCancelButton: { default: true, type: Boolean }
   },
   computed: {
+    
   },
   watch: {
     values: {
@@ -393,88 +425,35 @@ export default {
         }
     }
     return val_fields
-},
-  validations2() {
-    //console.log('Validations ...')
-    let val_fields = {
-      values: {}
-    }
-    var obj
-    if(typeof this.questions.inputs !='undefined'){
-      obj = this.questions.inputs
-    } else if (typeof this.questions !='undefined'){
-      obj = this.questions
-    }
-    // Gather required elements
-    for (let group of obj) {
-      for (let question of group) {
-        let one_of = ''
-        // If the group is required, assume each input within is required
-        if (typeof question.inputs != 'undefined'){
-          for (let fld of question.inputs){
-            let get_enums = this.checkEnums(obj, fld.id)
-            let has_yes_no = get_enums[0]
-            let has_enums = get_enums[1]
-            if(has_yes_no){
-              let is_conditional = this.checkForEnumConditional(fld.id, true)
-              if(is_conditional){
-                this.conditionals.push(fld.id)
-              }
-            } else if(!has_enums){
-              let is_conditional = this.checkForIfOtherConditional(fld.id, true)
-              if(is_conditional){
-                this.conditionals.push(fld.id)
-              }
-            }
-          }
-        }
-        if (typeof question.required != 'undefined' && question.required) {
-          if (typeof question.inputs != 'undefined'){
-            for (let fld of question.inputs){
-              if(fld.type!='checkbox'){
-                val_fields.values[fld.id] = {
-                  required
-                }
-              } else {
-                one_of+= fld.id + ','
-              }
-            }
-          }
-          // If the required attribute is not at the group level, investigates under input level
-        } else if (typeof question.inputs != 'undefined'){
-          for (let fld of question.inputs){
-            if (typeof fld.required != 'undefined' && fld.required) {
-              if(fld.type != 'checkbox'){
-                val_fields.values[fld.id] = {
-                  required
-                }
-              } else {
-                one_of+= fld.id + ','
-              }
-            }
-          }
-        }
-        if(one_of.split(',').length > 1){
-          one_of = one_of.substring(0, one_of.length - 1);
-          val_fields.values[one_of] = {
-            required
-          }
-          if(this.one_ofs.includes(one_of)==false){
-            this.one_ofs.push(one_of)
-          }
-        }
-      }
-    }
-    this.$conditionals = this.conditionals
-    this.$one_ofs = this.one_ofs
-    let DAAC_SET = window.localStorage.getItem('DAAC')
-    if(DAAC_SET !== null){
-      //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
-      this.$required = JSON.stringify(val_fields.values)
-    }
-    return val_fields
   },
   methods: {
+    // @vuese
+    // Gets characters remaining from textarea
+    charactersRemaining: function (value, maxlength) {
+      let left = maxlength
+      let chars = 0
+      if (typeof value == 'string' && value != ''){
+        chars = value.length
+      } 
+      if (typeof maxlength != 'undefined' && parseInt(maxlength) > 0){
+        left = parseInt(maxlength - chars)
+      }
+      return left
+    },
+    // @vuese
+    // Gets attributes or returns false if none
+    getAttribute(attr, input){
+      // mitchell says to just send input.attributes[attr]
+      let attribute_value = ''
+      let attributes_that_need_false_if_none = ['readonly', 'disabled', 'multiple']
+      if(typeof input.attributes != 'undefined' && typeof input.attributes[attr] !='undefined'){
+        attribute_value = input.attributes[attr]
+      }
+      if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
+        return false
+      }
+      return attribute_value
+    },
     // @vuese
     // Handle html5 invalidity on change
     handleChange(evt) {
@@ -1604,7 +1583,7 @@ export default {
       let form = this.getPath()[0]
       let json_name = ''
       if(form.match(/interest/g)){
-        json_name = 'archival_interest_conditionals' 
+        json_name = 'archival_interest' 
       } else {
         json_name = form + '/data_product_questionaire' 
       }
@@ -1641,16 +1620,16 @@ export default {
           for (var q in questions_section){
             if(typeof questions_section[q].inputs != 'undefined'){
               for(var input in questions_section[q].inputs){
-                var attrib_string = ' '
-                if(typeof questions_section[q].inputs[input].attributes !='undefined'){
+                //var attrib_string = ' '
+                //if(typeof questions_section[q].inputs[input].attributes !='undefined'){
                   // This builds a string of attributes to apply to the input
-                  for (var attr in questions_section[q].inputs[input].attributes){
-                    if(ignore_attributes.includes(attr)==false){
-                      attrib_string += attr + '="' + questions_section[q].inputs[input].attributes[attr] + '" '
-                    }
-                  }
-                }
-                questions_section[q]['attrib_string'] = attrib_string
+                  //for (var attr in questions_section[q].inputs[input].attributes){
+                    //if(ignore_attributes.includes(attr)==false){
+                      //attrib_string += attr + '="' + questions_section[q].inputs[input].attributes[attr] + '" '
+                    //}
+                  //}
+                //}
+                //questions_section[q]['attrib_string'] = attrib_string
                 //console.log("'" + attrib_string + "'")
                 // Handles the enums options
                 var options = []
@@ -1918,6 +1897,10 @@ export default {
 }
 </script>
 <style scoped>
+  .question_size {
+    padding-left:0px;
+    padding-right:0px;
+  }
   .eui-btn--green:hover {
     background-color: #12713d;
   }

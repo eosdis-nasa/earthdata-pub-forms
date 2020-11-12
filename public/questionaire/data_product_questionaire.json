@@ -145,7 +145,19 @@
             {
               "type": "text",
               "id": "funding_organization_other",
-              "label": "If Other"
+              "label": "If University or Other",
+              "required_if": [
+                {
+                  "field": "funding_organization_name",
+                  "value": "University",
+                  "message":"Please provide a University or other text value for the funding organization."
+                },
+                {
+                  "field": "funding_organization_name",
+                  "value": "Other",
+                  "message":"Please provide a University or other text value for the funding organization."
+                }
+              ]
             }
           ],
           "id": "8a364184-42ac-48fe-b831-acb2eb08c728",
@@ -197,20 +209,122 @@
           "inputs": [
             {
               "type": "text",
-              "id": "list_of_data_producers",
-              "label": "List of Data Producers",
-              "enums": [
-                "Organization",
-                "First Name",
-                "Last Name",
-                "Organization 2",
-                "First Name 2",
-                "Last Name 2",
-                "Organization 3",
-                "First Name 3",
-                "Last Name 3"
-              ],
-              "required":true
+              "id": "producer_group_org_row1",
+              "label": "Organization",
+              "required":true,
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_fname_row1",
+              "label": "First Name",
+              "required": true,
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_lname_row1",
+              "label": "Last Name",
+              "required": true,
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            },
+            {
+              "type": "text",
+              "id": "producer_group_org_row2",
+              "label": "Organization",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_fname_row2",
+              "label": "First Name",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_lname_row2",
+              "label": "Last Name",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }{
+              "type": "text",
+              "id": "producer_group_org_row3",
+              "label": "Organization",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_fname_row3",
+              "label": "First Name",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
+            }, 
+            {
+              "type": "text",
+              "id": "producer_group_lname_row3",
+              "label": "Last Name",
+              "enums":[
+                "First First Name, Last Name",
+                "First Organization",
+                "Second First Name, Last Name",
+                "Second Organization",
+                "Third First Name, Last Name",
+                "Third Organization"
+              ]
             }
           ],
           "id": "8a364184-42ac-48fe-b831-acb2eb08c729",
@@ -300,13 +414,18 @@
           "title": "Platform and Instrument",
           "text": "What platform(s) and instrument(s) were used to collect the data within this data product?",
           "help": "Please be as specific as possible when including the platforms and instruments. For example, include tail numbers for aircraft or uniquely identify instruments when multiple instances exist on the same platform.",
+          "show_if": [
+            {
+              "field": "data_product_type_observational",
+              "value": "Observational"
+            }
+          ],
           "inputs": [
             {
               "type": "text",
               "id": "platform_instrument",
               "label": "Platform - instrument",
-              "validation_error_msg": "Please enter platform - instrument.",
-              "required": true
+              "validation_error_msg": "Please enter platform - instrument."
             }
           ],
           "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6f",
@@ -316,13 +435,18 @@
           "unique_name": "model",
           "title": "Model Data Product",
           "text": "What is the name and version of the model used to produce this data product?",
+          "show_if": [
+            {
+              "field": "data_product_type_observational",
+              "value": "Model"
+            }
+          ],
           "inputs": [
             {
               "type": "text",
               "id": "model_data_product",
               "label": "Model Name and Version",
-              "validation_error_msg": "Please enter name and version of model.",
-              "required": true
+              "validation_error_msg": "Please enter name and version of model."
             }
           ],
           "id": "ab57f5e8-9ec5-46c9-978e-d06125346d36",
@@ -352,7 +476,13 @@
             {
               "type": "text",
               "id": "data_processing_other_info",
-              "label": "If Other"
+              "label": "If Other",
+              "required_if": [
+                {
+                  "field": "data_processing_level",
+                  "value": "Other"
+                }
+              ]
             }
           ],
           "id": "7fd7bccf-5065-4033-9956-9e80bc99c205",
@@ -585,6 +715,12 @@
           "title": "Vertical Details",
           "text": "What are the upper and lower limits of the vertical space covered by the data product?",
           "help":"Please provide any additional details needed to understand what these numbers mean in the Spatial Coverage Notes. For example, the point of reference for the values given in the vertical spatial coverage.",
+          "show_if": [
+            {
+              "field": "spatial_vertical_answer",
+              "value": "Yes"
+            }
+          ],
           "inputs": [
             {
               "type": "number",
@@ -742,7 +878,13 @@
             {
               "type": "text",
               "id": "data_format_other_info",
-              "label": "If Other"
+              "label": "If Other",
+              "required_if": [
+                {
+                  "field": "data_format_other",
+                  "value": "true"
+                }
+              ]
             }
           ],
           "id": "50e8d566-b9ab-4bd9-9adc-92a3c8fb5d27",
@@ -753,13 +895,13 @@
           "title": "Data Product Volume",
           "text": "What is the estimated or actual total volume of this data product?",
           "help": "The DAAC uses the total volume of the final data product to plan data storage requirements. If the final data product is not complete, please provide your best estimate for the total data volume.",
-          "required": true,
           "inputs": [
             {
               "type": "number",
               "id": "data_product_volume_amount",
               "label": "Amount",
-              "validation_error_msg": "You must enter a positive value."
+              "validation_error_msg": "You must enter a positive value.",
+              "required": true
             },
             {
               "type": "radio",
@@ -771,7 +913,8 @@
                 "GB",
                 "TB",
                 "PB"
-              ]
+              ],
+              "required": true
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b978f",
@@ -862,6 +1005,12 @@
           "unique_name": "data_delivery_frequency (if data product status is yes)",
           "title": "Data Delivery Frequency",
           "text": "What is the anticipated frequency of additional data deliveries to the DAAC?",
+          "show_if": [
+            {
+              "field": "data_product_status",
+              "value": "Yes"
+            }
+          ],
           "inputs": [
             {
               "type": "radio",
@@ -885,6 +1034,12 @@
           "unique_name": "data_production_latency (if data product status is yes)",
           "title": "Data Production Latency",
           "text": "What is the average time between the observation of the data and the creation of the data product?",
+          "show_if": [
+            {
+              "field": "data_product_status",
+              "value": "Yes"
+            }
+          ],
           "inputs": [
             {
               "type": "number",
@@ -929,7 +1084,13 @@
             {
               "type": "text",
               "id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation"
+              "label": "If No, provide explanation",
+              "required_if": [
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "No"
+                }
+              ]
             }
           ],
           "id": "2dd6c8b1-22a8-4866-91c3-da9b4ce849dc",
