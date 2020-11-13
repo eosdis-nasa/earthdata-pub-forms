@@ -291,7 +291,7 @@ export default {
             }
           }
           delete this.values.fromUndo
-          this.$v.$touch()
+          //this.$v.$touch()
         }, 250);
       },
       deep: true
