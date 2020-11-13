@@ -1,6 +1,7 @@
 <template>
   <!-- header with eui class -->
   <header class="doc-mast header" role="banner">
+  <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
