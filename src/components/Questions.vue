@@ -299,7 +299,6 @@ export default {
       warning:'',
       isFixed:true,
       confirm:false,
-      conditionals:[],
       validation_errors:{}
     }
   },
@@ -346,7 +345,7 @@ export default {
             }
           }
           delete this.values.fromUndo
-          if (this.$v.$anyError > 0) {
+          if (this.$v.$anyError) {
             this.$v.$touch()
           }
         }, 250);
@@ -452,8 +451,6 @@ export default {
             }
         }
     }
-    //this.$conditionals = this.conditionals
-    //this.$one_ofs = this.one_ofs
     let DAAC_SET = window.localStorage.getItem('DAAC')
     if(DAAC_SET !== null){
         //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
@@ -733,8 +730,8 @@ export default {
     submitForm(str) {
       // Submit form (this.data) if valid
       //console.log('Executing Submit ...')
-      let is_invalid = this.saveFile(str)
-      if (!is_invalid) {
+      this.saveFile(str)
+      if (!this.$v.$anyError) {
         this.$emit('submit-form', window.localStorage.getItem(this.DAAC + '_questions'))
       }
     },
@@ -792,7 +789,7 @@ export default {
     // Save as draft and exit form
     draftFile(with_msg) {
       this.saveFile(with_msg)
-      if (this.$v.$anyError === 0) {
+      if (!this.$v.$anyError) {
         this.exitForm()
       }
     },
@@ -801,52 +798,7 @@ export default {
     okToCancel(){
       this.$refs.form.reset()
       $('#reset_data').focus()
-      let errors_possible = ['form-checkbox-error','form-file-error','form-select-error','form-textarea-error','form-radio-group-error','form-checkbox-error','form-input-error']
-      let inputs = $('#questions_container input')
-      let textareas = $('#questions_container textarea')
-      let groups = $('.bv-no-focus-ring')
-      for (let i in inputs){
-        if (typeof inputs[i] == 'object'){
-          for (let k in errors_possible){
-            if ($(inputs[i]).hasClass(errors_possible[k])){
-              $(inputs[i]).removeClass(errors_possible[k])
-            }
-          }
-        }
-      }
-      for (let i in textareas){
-        if (typeof textareas[i] == 'object'){
-          for (let k in errors_possible){
-            if ($(textareas[i]).hasClass(errors_possible[k])){
-              $(textareas[i]).removeClass(errors_possible[k])
-            }
-          }
-        }
-      }
-      for (let i in groups){
-        if (typeof groups[i] == 'object'){
-          for (let k in errors_possible){
-            if ($(groups[i]).hasClass(errors_possible[k])){
-              $(groups[i]).removeClass(errors_possible[k])
-            }
-          }
-          try{
-            $(groups[i]).css('border','unset')
-            $(groups[i]).css('padding','unset')
-          } catch(e) {
-            // console.error(e)
-          }
-        }
-      }
       $('#eui-banner').addClass('hidden')
-      let validation_messages = $('.validation')
-      for (let i in validation_messages){
-        if (typeof validation_messages[i] == 'object'){
-          if (!$(validation_messages[i]).hasClass('hidden')){
-            $(validation_messages[i]).addClass('hidden')
-          }
-        }
-      }
       window.localStorage.removeItem('form_outputs')
       window.localStorage.removeItem('form_inputs')
       this.$values = {}
@@ -900,13 +852,11 @@ export default {
     // Undos the form and reverts it to its previous state.
     undoToPreviousState(){
       this.undo();
-      this.reApplyValues()
     },
     // @vuese
     // Redo the form and to its previous state.
     redoToPreviousState(){
       this.redo();
-      this.reApplyValues()
     }
 
   },
@@ -922,24 +872,24 @@ export default {
         this.daac = null
     } else {
         if(typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined'){
-            this.daac = this.$route.params.default
+          this.daac = this.$route.params.default
         } else if(window.localStorage.getItem('DAAC')!=null){
-            this.daac = window.localStorage.getItem('DAAC')
+          this.daac = window.localStorage.getItem('DAAC')
         }
         if(this.daac == null){
-            this.$router.push({ name: form_name_prefix + 'Daacs', path: '/selection', default: 'selection' })
+          this.$router.push({ name: form_name_prefix + 'Daacs', path: '/selection', default: 'selection' })
         }
 
         let set_loc = location.href
         let re = '/' + form + '/questions/'
         if(!set_loc.match(re, 'g')){
-            set_loc += '/' + form + '/questions/'
+          set_loc += '/' + form + '/questions/'
         }
         if(set_loc.match(/selection/g)){
-            this.warning = 'No daac has been selected'
+          this.warning = 'No daac has been selected'
         }
         if(typeof window.headerComponent != 'undefined'){
-            window.headerComponent.daac = this.daac.replace(/ /g,'_').toLowerCase()
+          window.headerComponent.daac = this.daac.replace(/ /g,'_').toLowerCase()
         }
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
