@@ -288,7 +288,6 @@ export default {
   name: 'Questions',
   data() {
     return {
-      errors:[],
       values: {},
       questions: [],
       contacts: [],
@@ -557,7 +556,6 @@ export default {
     // @vuese
     // Gets attributes or returns false if none
     getAttribute(attr, input){
-      // mitchell says to just send input.attributes[attr]
       let attribute_value = ''
       let attributes_that_need_false_if_none = ['readonly', 'disabled', 'multiple']
       if(typeof input.attributes != 'undefined' && typeof input.attributes[attr] !='undefined'){
@@ -585,10 +583,8 @@ export default {
             }
             $('#' + evt.target.name + '_invalid').addClass('hidden')
         }
-        if(this.errors.length > 0){
-            // TODO after mitchells requiredif switched out
+        if (this.$v.$anyError) {
             this.$v.$touch()
-            // this.hasRequiredFields(this.values, JSON.parse(this.$required))
         }
     },
     // @vuese
