@@ -18,16 +18,7 @@
               "id": "data_producer_info_name",
               "label": "Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
-              "required": true,
-              "attributes": {
-                "pattern":"[0-9]{3}-[0-9]{3}-[0-9]{4}",
-                "maxlength":12,
-                "max":5,
-                "minlength":7,
-                "min":4,
-                "wrap":"soft",
-                "placeholder":"example placeholder"
-              }
+              "required": true
             },
             {
               "type": "text",
@@ -333,6 +324,7 @@
           "title": "Publication Describing Data Product",
           "text": "If a Digital Object Identifier (DOI) already exists for this data product, please provide it.",
           "help": "This would be a DOI for this data product and not for a publication related to this data product.",
+          "size":8,
           "inputs": [
             {
               "type": "checkbox",
@@ -343,7 +335,14 @@
               "type": "text",
               "id": "data_product_doi_value",
               "label": "If yes, provide DOI",
-              "validation_error_msg": "Please enter Digital Object Identifiers."
+              "validation_error_msg": "Please enter Digital Object Identifiers.",
+              "required_if":[
+                {
+                  "field":"data_product_doi_exists",
+                  "value":"checked",
+                  "message":"You checked that this data product has a DOI, please provide it in the textbox provided."
+                }
+              ]
             }
           ],
           "id": "c9c73e88-837a-42d2-aa1a-50874a333607",

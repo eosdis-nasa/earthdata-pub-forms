@@ -54,7 +54,7 @@
               <li v-bind:key="a_key + '_' + b_key + '_' + c_key" v-if="($v.values[input.id] || {}).$error">
                 <template v-if="typeof input.required_if != 'undefined'">
                   <template v-for="(req_if, d_key) in input.required_if">
-                    <span v-bind:key="a_key + '_' + b_key + '_' + c_key + '_' + d_key" v-if="values[req_if.field] = req_if.value">
+                    <span v-bind:key="a_key + '_' + b_key + '_' + c_key + '_' + d_key" v-if="values[req_if.field] == req_if.value">
                       <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}</template>
                       <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                       <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
@@ -92,7 +92,8 @@
                     :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
                     :key="b_key" 
                     size="lg" lg=12
-                    :disabled="readonly">
+                    :disabled="disabled"
+                    :readonly="readonly">
                       <div v-if="showIf(question.show_if)">
                         <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
@@ -119,7 +120,7 @@
                                 <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
                                   ({{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                                 </span>
-                                <span v-for="(contact,contact_key) in contacts" :key="contact_key" style="nowrap">
+                                <span v-for="(contact,contact_key) in contacts" :key="contact_key">
                                   <span v-if="contact != values[input.id]">
                                     <label 
                                       :id="'same_as_' + input.id + '_label'"
@@ -134,7 +135,8 @@
                                         :id="'same_as_' + input.id"
                                         value="true"
                                         unchecked-value="false"
-                                        @click="setContact(input.id, contact)">
+                                        @click="setContact(input.id, contact)"
+                                        @keyup.space.native="setContact(input.id, contact)">
                                       </b-form-checkbox>
                                   </span>
                                 </span>
@@ -157,13 +159,13 @@
                                     input.type == 'tel' || 
                                     input.type == 'time' || 
                                     input.type == 'color'"
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                    :pattern="getAttribute('pattern', question.inputs[c_key])"
                                     :maxLength="getAttribute('maxlength', question.inputs[c_key])"
                                     :minLength="getAttribute('minlength', question.inputs[c_key])"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
-                                    :wrap="getAttribute('wrap', question.inputs[c_key])"
                                     :placeholder="getAttribute('placeholder', question.inputs[c_key])"
                                     >
                                 </b-form-input>
@@ -176,12 +178,11 @@
                                     :name="input.id" 
                                     v-model="values[input.id]"
                                     size="lg" 
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :cols="getAttribute('cols', question.inputs[c_key])"
                                     :rows="getAttribute('rows', question.inputs[c_key])"
                                     :maxlength="getAttribute('maxlength', question.inputs[c_key])"
-                                    :wrap="getAttribute('wrap', question.inputs[c_key])"
                                     :placeholder="getAttribute('placeholder', question.inputs[c_key])"
                                     v-if="input.type == 'textarea'">
                                 </b-form-textarea>
@@ -198,9 +199,7 @@
                                     unchecked-value="false"
                                     v-if="input.type == 'radio'" 
                                     :options="input.options"
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
-                                    :checked="getAttribute('checked', question.inputs[c_key])">
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                 </b-form-radio-group>
                                 <!-- End of Radio Group Type of Input -->
                                 <!-- Checkbox Type of Input -->
@@ -214,8 +213,7 @@
                                     value="true"
                                     unchecked-value="false"
                                     v-if="input.type == 'checkbox'"
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])"
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :checked="getAttribute('checked', question.inputs[c_key])">
                                 </b-form-checkbox>
                                 <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
@@ -230,8 +228,8 @@
                                     size="lg" 
                                     v-if="input.type == 'select'" 
                                     :options="input.options"
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])" 
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])" 
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))" 
                                     :multiple="getAttribute('multiple', question.inputs[c_key])">
                                 </b-form-select>
                                 <!-- End of Select Type of Input -->
@@ -245,8 +243,8 @@
                                     v-model="values[input.id]" 
                                     size="lg" 
                                     v-if="input.type == 'file'"
-                                    :disabled="disabled || getAttribute('disabled', question.inputs[c_key])" 
-                                    :readonly="readonly || getAttribute('readonly', question.inputs[c_key])"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :multiple="getAttribute('multiple', question.inputs[c_key])"
                                     :placeholder="getAttribute('placeholder', question.inputs[c_key])">
                                     >
@@ -345,6 +343,7 @@ export default {
           }
           delete this.values.fromUndo
           if (this.$v.$anyError) {
+            console.log('touch348')
             this.$v.$touch()
           }
         }, 250);
@@ -359,7 +358,6 @@ export default {
     FixedHeader
   },
   validations() {
-    console.log('Validations ...')
     let val_fields = {
         values: {}
     }
@@ -415,11 +413,11 @@ export default {
                         required: requiredIf(() => {
                           for (let req_fld of fld.required_if) {
                             try {
-                              if (this.values[req_fld.field].toString() == req_fld.value.toString()) {
+                              if (typeof this.values[req_fld.field] != 'undefined' && this.values[req_fld.field].toString() === req_fld.value.toString()) {
                                 return true
                               }
                             } catch(e) {
-                              //test
+                              // test
                             }
                           }
                           return false
@@ -517,23 +515,40 @@ export default {
                 $('#' + to_orcid_id).val(this.values[from_orcid_id])
               }
             }
+            if (this.$v.$anyError) {
+              this.$v.$touch()
+            }
+
           }
         }
       }
     },
     // @vuese
     // Gets contacts and builds options for checkbox
-    setContacts: function (values) {
+   setContacts: function (values) {
       this.contacts = []
-      let inputs = $('#questions_container input')
-      for (let ea in values){
-        if (ea.toLowerCase().match(/name/g)){
+      let questions = this.questions[0]
+      for (var ea in values){
+        if (!ea.toLowerCase().match(/name/g)){continue}
+        for(let section of questions) {
+          let inputs = section['inputs']
+          let text = section['text']
+          let title =section['title']
+          let help = section['help']
           for (let i in inputs){
-            if(typeof inputs[i].id != 'undefined'){
-              if (typeof $('#same_as_' + inputs[i].id + '_label') != 'undefined'){
-                if(inputs[i].id === ea){
-                  this.contacts.push(values[ea])  
-                }
+            let inp = inputs[i]
+            let label = inp['label']
+            if(ea === inp['id']){
+              if(
+                  ((typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
+                  (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
+                  (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
+                  (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                  (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
+                  (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))) &&
+                  label.toLowerCase().match(/name/g)
+                ) {
+                this.contacts.push(this.values[inputs[i]['id']])
               }
             }
           }
@@ -554,14 +569,16 @@ export default {
       return left
     },
     // @vuese
-    // Gets attributes or returns false if none
+    // Gets input attributes or returns false if none or if pattern *
     getAttribute(attr, input){
       let attribute_value = ''
-      let attributes_that_need_false_if_none = ['readonly', 'disabled', 'multiple']
+      let attributes_that_need_false_if_none = ['readonly', 'disabled']
       if(typeof input.attributes != 'undefined' && typeof input.attributes[attr] !='undefined'){
         attribute_value = input.attributes[attr]
       }
-      if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
+      if (attr.match(/pattern/g) && attribute_value == ''){
+        return '.*'
+      } else if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
         return false
       }
       return attribute_value
@@ -576,15 +593,12 @@ export default {
                 ...this.validation_errors,
                 [evt.target.name]: evt.target.validationMessage
             }
-            $('#' + evt.target.name + '_invalid').removeClass('hidden')
+            //$('#' + evt.target.name + '_invalid').removeClass('hidden')
         } else {
             if(evt.target.name in this.validation_errors){
                 delete this.validation_errors[evt.target.name]
             }
-            $('#' + evt.target.name + '_invalid').addClass('hidden')
-        }
-        if (this.$v.$anyError) {
-            this.$v.$touch()
+            //$('#' + evt.target.name + '_invalid').addClass('hidden')
         }
     },
     // @vuese
@@ -593,17 +607,16 @@ export default {
         console.log('handleInvalid :: ', evt.target.name);
         $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
         if(evt.target.validationMessage!=''){
-            console.log('errors being set to []')
             this.validation_errors = {
                 ...this.validation_errors,
                 [evt.target.name]: evt.target.validationMessage
             }
-            $('#' + evt.target.name + '_invalid').removeClass('hidden')
+            //$('#' + evt.target.name + '_invalid').removeClass('hidden')
         } else {
             if(evt.target.name in this.validation_errors){
                 delete this.validation_errors[evt.target.name]
             }
-            $('#' + evt.target.name + '_invalid').addClass('hidden')
+            //$('#' + evt.target.name + '_invalid').addClass('hidden')
         }
     },
     // @vuese
@@ -663,12 +676,17 @@ export default {
           questions_section['heading_show_if'] = heading_show_if
           for (var q in questions_section){
             if (typeof questions_section[q].title != 'undefined'){
-              if(questions_section[q].text.toLowerCase().match(/person/g) || 
-                questions_section[q].text.toLowerCase().match(/contact/g) || 
-                questions_section[q].title.toLowerCase().match(/person/g) ||
-                questions_section[q].title.toLowerCase().match(/contact/g) || 
-                questions_section[q].help.toLowerCase().match(/person/g) || 
-                questions_section[q].help.toLowerCase().match(/contact/g)){
+              let text = questions_section[q].text
+              let title = questions_section[q].title
+              let help = questions_section[q].help
+              if(
+                (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
+                (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
+                (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
+                (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
+                (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
+              ) {
                 contact = true
               }
             }
@@ -728,12 +746,14 @@ export default {
       //console.log('Executing Submit ...')
       this.saveFile(str)
       if (!this.$v.$anyError) {
+        console.log(this.daac)
         this.$emit('submit-form', window.localStorage.getItem(this.DAAC + '_questions'))
       }
     },
     // @vuese
     // Used to save file
     // TODO - API call will go here
+    /* eslint-disable */
     saveFile(with_msg) {
       //console.log('Executing save file ...')
       // Saves file to localStorage
@@ -744,6 +764,7 @@ export default {
       } else {
         DAAC = this.daac
       }
+      console.log('touch756')
       this.$v.$touch()
       //let is_invalid = this.hasRequiredFields(data, JSON.parse(this.$required))
       if (!this.$v.$anyError) {
@@ -780,6 +801,7 @@ export default {
           $('.vue-go-top__content').click()
         }
       }
+      /* eslint-enable */
     },
     // @vuese
     // Save as draft and exit form
