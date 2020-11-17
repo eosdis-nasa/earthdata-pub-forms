@@ -213,8 +213,7 @@
                                     value="true"
                                     unchecked-value="false"
                                     v-if="input.type == 'checkbox'"
-                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :checked="getAttribute('checked', question.inputs[c_key])">
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                 </b-form-checkbox>
                                 <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                                 <!-- End of Checkbox Type of Input -->

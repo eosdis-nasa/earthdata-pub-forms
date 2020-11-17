@@ -226,7 +226,6 @@
                 "cols": 20,
                 "maxlength":1000,
                 "readonly":false,
-                "wrap":"soft",
                 "placeholder":"This is a placeholder"
               },
               "required": true
@@ -249,7 +248,10 @@
                 "Yes",
                 "No"
               ],
-              "required": true
+              "required": true,
+              "attributes": {
+                "readonly": true
+              }
             },
             {
               "type": "text",
@@ -324,12 +326,14 @@
           "title": "Publication Describing Data Product",
           "text": "If a Digital Object Identifier (DOI) already exists for this data product, please provide it.",
           "help": "This would be a DOI for this data product and not for a publication related to this data product.",
-          "size":8,
           "inputs": [
             {
               "type": "checkbox",
               "id": "data_product_doi_exists",
-              "label": "Has DOI"
+              "label": "Has DOI",
+              "attributes": {
+                "defaultChecked":true
+              }
             },
             {
               "type": "text",
