@@ -370,6 +370,16 @@
               "id": "data_product_temporal_coverage_end",
               "label": "End",
               "required": true
+            },
+            {
+              "type": "radio",
+              "id": "data_product_temporal_coverage_ongoing",
+              "label": "Ongoing",
+              "enums":[
+                "Yes",
+                "No"
+              ],
+              "required": true
             }
           ],
           "id": "4f2dd369-d865-47ba-8504-8694493f128f",

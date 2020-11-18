@@ -8,7 +8,7 @@
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
           <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs">Earthdata Archive Interest Form</span>
+          <span id="title" v-else-if="showDaacs">Earthdata Submission Request Form</span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">

@@ -24,7 +24,8 @@
               "type": "text",
               "id": "data_producer_info_organization",
               "label": "Organization",
-              "validation_error_msg": "Please enter an organization."
+              "validation_error_msg": "Please enter an organization.",
+              "required": true
             },
             {
               "type": "email",
