@@ -49,7 +49,7 @@
         <template v-for="(heading, a_key) in questions">
           <li v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
           <template v-for="(question, b_key) in heading">
-            <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} question is required</li>
+            <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} section is required</li>
             <template v-for="(input, c_key) in question.inputs">
               <li v-bind:key="`${a_key}_${b_key}_${c_key}`" v-if="($v.values[input.id] || {}).$error">
                 <template v-if="typeof input.required_if != 'undefined'">
@@ -983,6 +983,7 @@ export default {
   }
   label{
     margin-right: 1rem;
+    cursor:hand;
   }
   p{
     margin-bottom:unset;
@@ -1020,8 +1021,10 @@ export default {
     border-radius: 5px;
     border-style: solid;
     border-width: 1px;
-    padding: 5px;
-    margin: -5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 5px;
   }
   .radio_checkbox_group_error {
     border-color: red;

@@ -85,7 +85,7 @@ presidence. After those, default vuelidate validator messages.  Any html5 messag
 should appear near the input itself.
 
 - "Section {{ heading }} is required"
-- "{{ heading }} - {{ question.title }} question is required"
+- "{{ heading }} - {{ question.title }} section is required"
 - "{{ heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}"
 - "{{ heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_
 error_msg }}"
