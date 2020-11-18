@@ -31,13 +31,13 @@ const routes = [
     component: Help
   },
   {
-    path: '/questionaire/questions',
-    name: 'Questionaire - Questions',
+    path: '/questionnaire/questions',
+    name: 'Questionnaire - Questions',
     component: Questions
   },
   {
-    path: '/questionaire/help',
-    name: 'Questionaire - Help',
+    path: '/questionnaire/help',
+    name: 'Questionnaire - Help',
     component: Help
   },
   {

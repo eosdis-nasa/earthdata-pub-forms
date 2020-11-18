@@ -30,14 +30,14 @@ export default {
           if (window.formTitle.toLowerCase().match(/interest/g)){
             form = 'interest'
           } else {
-            form = 'questionaire'
+            form = 'questionnaire'
           }   
         } else if (this.form != ''){
           form = this.form
         }
         let component_name_prefix = ''
-        if(form.match(/questionaire/g)){
-          component_name_prefix = 'Questionaire - '
+        if(form.match(/questionnaire/g)){
+          component_name_prefix = 'Questionnaire - '
         } else {
           component_name_prefix = 'Submission Request - '
         }
@@ -53,7 +53,7 @@ export default {
         } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined' && Boolean(this.$route.query.parameters.default)==false){
           window.headerComponent.showDaacs = false
           window.localStorage.setItem("showDaacs", false);
-        } else if (form.match(/questionaire/g)){
+        } else if (form.match(/questionnaire/g)){
           window.headerComponent.showDaacs = false
           window.localStorage.setItem("showDaacs", false);
         } else if (form.match(/interest/g)){

@@ -9,8 +9,8 @@
     //
     // http://localhost:8080/interest/daacs, http://localhost:8080/interest/daacs/selection, http://localhost:8080/interest/daacs/ornl_daac
     // http://localhost:8080/interest/, http://localhost:8080/interest/daacs/selection, http://localhost:8080/interest/questions/ornl_daac
-    // http://localhost:8080/questionaire/daacs, http://localhost:8080/questionaire/daacs/selection, http://localhost:8080/questionaire/daacs/ornl_daac
-    // http://localhost:8080/questionaire/, http://localhost:8080/questionaire/daacs/selection, http://localhost:8080/questionaire/questions/ornl_daac
+    // http://localhost:8080/questionnaire/daacs, http://localhost:8080/questionnaire/daacs/selection, http://localhost:8080/questionnaire/daacs/ornl_daac
+    // http://localhost:8080/questionnaire/, http://localhost:8080/questionnaire/daacs/selection, http://localhost:8080/questionnaire/questions/ornl_daac
     export default {
         name: 'Home',
         data() {
@@ -44,7 +44,7 @@
                 redirect+=`/${this.$route.query.parameters.default.toLowerCase()}`
             } else if(window.localStorage.getItem('DAAC')!=null){
                 redirect+=`/${window.localStorage.getItem('DAAC').toLowerCase()}`
-            } else if (!form.toLowerCase().match(/questionaire/g)){
+            } else if (!form.toLowerCase().match(/questionnaire/g)){
                 redirect=`/${form}/daacs/selection`
             } else {
                 redirect=`/${form}/questions`

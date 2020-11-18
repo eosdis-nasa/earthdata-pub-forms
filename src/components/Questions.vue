@@ -99,17 +99,17 @@
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
-                        <b-col class="w-25 help">
-                          <a href="#" @click.prevent="" :id="`help_${question.id}`" v-if="question.help != ''" v-b-modal="`modal_${question.id}`">
-                          <font-awesome-icon icon="info-circle" name="info icon"/>
-                            Help</a>
-                          <b-modal :id="`modal_${question.id}`" :title="`${question.title} - Help`" ok-only centered>
-                            <p class="my-4">{{question.help}}</p>
-                          </b-modal>
-                        </b-col>
                         <!-- Input -->
                         <b-row>
                           <b-col :lg="question.size || 12" class="question_size">
+                            <b-col class="w-25 help">
+                              <a href="#" @click.prevent="" :id="`help_${question.id}`" v-if="question.help != ''" v-b-modal="`modal_${question.id}`">
+                              <font-awesome-icon icon="info-circle" name="info icon"/>
+                                Help</a>
+                              <b-modal :id="`modal_${question.id}`" :title="`${question.title} - Help`" ok-only centered>
+                                <p class="my-4">{{question.help}}</p>
+                              </b-modal>
+                            </b-col>
                             <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                               <span v-if="showIf(input.show_if)">
                                 <label :for="input.id || `${input}_${c_key}`" class="eui-label">{{input.label}}: </label>
@@ -512,10 +512,7 @@ export default {
                 $(`#${to_orcid_id}`).val(this.values[from_orcid_id])
               }
             }
-            if (this.$v.$anyError) {
-              this.$v.$touch()
-            }
-
+            this.$v.$touch()
           }
         }
       }
@@ -631,7 +628,7 @@ export default {
       if(form.match(/interest/g)){
         json_name = 'submission_request' 
       } else {
-        json_name = `${form}/data_product_questionaire`
+        json_name = `${form}/data_product_questionnaire`
       }
       $.getJSON( `../${json_name}.json`, ( questions ) => {
       // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
@@ -738,9 +735,11 @@ export default {
       // Submit form (this.data) if valid
       //console.log('Executing Submit ...')
       this.saveFile(str)
+      let form_components = this.getPath()
+      let form = form_components[0] 
+      console.log(this.$v.$anyError)
       if (!this.$v.$anyError) {
-        console.log(this.daac)
-        this.$emit('submit-form', window.localStorage.getItem(`${this.DAAC}_questions`))
+        this.$emit('submit-form', window.localStorage.getItem(`${form}_questions`))
       }
     },
     // @vuese
@@ -757,11 +756,12 @@ export default {
       } else {
         DAAC = this.daac
       }
-      console.log('touch756')
       this.$v.$touch()
-      //let is_invalid = this.hasRequiredFields(data, JSON.parse(this.$required))
+      console.log(this.$v.$anyError)
       if (!this.$v.$anyError) {
+        console.log('HERE')
         if(typeof DAAC != 'undefined' && DAAC !== null && data !== JSON.stringify({})){
+          console.log('THERE')
           if (this.$refs.form.checkValidity()) {
             //console.log('checking validity')
             this.submitForm('from save');
@@ -841,8 +841,7 @@ export default {
               this.okToCancel()
             })
             .catch(err => {
-              // console.log(err) // An error occurred
-              alert(err)
+              console.log(err) // An error occurred
             })
         } else {
           this.confirm = false;
@@ -857,7 +856,7 @@ export default {
     // Exit form to home page
     exitForm(){
       // exit form here
-      alert('Form will exit.')
+      //alert('Form will exit.')
     },
     // @vuese
     // Undos the form and reverts it to its previous state.
@@ -879,7 +878,7 @@ export default {
     let form = form_components[0] 
     let form_name_prefix = form_components[1]
     this.setShowDaacs()
-    if(form.toLowerCase().match(/questionaire/g)){
+    if(form.toLowerCase().match(/questionnaire/g)){
         this.daac = null
     } else {
         if(typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined'){
@@ -983,7 +982,7 @@ export default {
   }
   label{
     margin-right: 1rem;
-    cursor:hand;
+    cursor:pointer;
   }
   p{
     margin-bottom:unset;

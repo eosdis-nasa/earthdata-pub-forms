@@ -57,21 +57,21 @@
           </span>
           <!-- if daacs hidden -->
           <span v-else>
-            <!-- if questionaire and daac known -->
+            <!-- if questionnaire and daac known -->
             <router-link
               id="questions_nav_link"
               v-if="daac !== ''"
-              :to="{ name: 'Questionaire - Questions', path: '/questionaire/questions', params: { default: daac }}"
+              :to="{ name: 'Questionnaire - Questions', path: '/questionnaire/questions', params: { default: daac }}"
             >Questions</router-link>
-            <!-- if questionaire and daac unknown --> 
+            <!-- if questionnaire and daac unknown --> 
             <router-link
               id="questions_nav_link"
               v-else-if="daac =='selection' || daac == ''"
-              :to="{ name: 'Questionaire - Questions', path: '/questionaire/questions'}"
+              :to="{ name: 'Questionnaire - Questions', path: '/questionnaire/questions'}"
             >Questions</router-link>
             <div class="inline" >  |  </div>
-            <!-- from questionaire help -->
-            <router-link id="help_nav_link" :to="{ name: 'Questionaire - Help', path: '/questionaire/help' }">Help</router-link>
+            <!-- from questionnaire help -->
+            <router-link id="help_nav_link" :to="{ name: 'Questionnaire - Help', path: '/questionnaire/help' }">Help</router-link>
           </span>
         </div>
         <!-- End of Logo and menu -->

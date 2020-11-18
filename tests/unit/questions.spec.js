@@ -50,8 +50,8 @@ const routes = [  { path: '/', name: 'Home', component: Home },
                   { path: '/interest/daacs/:default', name: 'Submission Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
                   { path: '/interest/questions/:default', name: 'Submission Request - Questions', component: Questions },
                   { path: '/interest/help', name: 'Submission Request - Help', component: Help },
-                  { path: '/questionaire/questions', name: 'Questionaire - Questions', component: Questions },
-                  { path: '/questionaire/help', name: 'Questionaire - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Questionnaire - Questions', component: Questions },
+                  { path: '/questionnaire/help', name: 'Questionnaire - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
