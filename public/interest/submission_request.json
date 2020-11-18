@@ -24,7 +24,8 @@
               "type": "text",
               "id": "data_producer_info_organization",
               "label": "Organization",
-              "validation_error_msg": "Please enter an organization."
+              "validation_error_msg": "Please enter an organization.",
+              "required": true
             },
             {
               "type": "email",
@@ -54,7 +55,8 @@
               "type": "text",
               "id": "submission_request_poc_organization",
               "label": "Organization",
-              "validation_error_msg": "Please enter an organization."
+              "validation_error_msg": "Please enter an organization.",
+              "required": true
             },
             {
               "type": "email",
@@ -89,7 +91,8 @@
                 "USGS",
                 "University",
                 "Other"
-              ]
+              ],
+              "required": true
             },
             {
               "type": "text",
@@ -225,7 +228,6 @@
                 "rows": 5,
                 "cols": 20,
                 "maxlength":1000,
-                "readonly":false,
                 "placeholder":"This is a placeholder"
               },
               "required": true
@@ -327,10 +329,7 @@
             {
               "type": "checkbox",
               "id": "data_product_doi_exists",
-              "label": "Has DOI",
-              "attributes": {
-                "defaultChecked":true
-              }
+              "label": "Has DOI"
             },
             {
               "type": "text",
@@ -544,6 +543,7 @@
           "title": "Sample Data File(s)",
           "text": "Please upload a sample data file(s) or provide a URL to sample file(s).",
           "help": "Providing data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
+          "required":true,
           "inputs": [
             {
               "type": "file",
