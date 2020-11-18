@@ -447,8 +447,7 @@ export default {
     }
     let DAAC_SET = window.localStorage.getItem('DAAC')
     if(DAAC_SET !== null){
-        //window.localStorage.setItem(`${DAAC_SET}_questions`, JSON.stringify(val_fields.values))
-        this.$required = JSON.stringify(val_fields.values)
+      this.$required = JSON.stringify(val_fields.values)
     }
     return val_fields
   },
@@ -737,19 +736,20 @@ export default {
       this.saveFile(str)
       let form_components = this.getPath()
       let form = form_components[0] 
-      console.log(this.$v.$anyError)
       if (!this.$v.$anyError) {
         this.$emit('submit-form', window.localStorage.getItem(`${form}_questions`))
+      } else {
+        if($('.vue-go-top__content').is(":visible")){
+          $('.vue-go-top__content').click()
+        }
       }
     },
     // @vuese
     // Used to save file
     // TODO - API call will go here
-    /* eslint-disable */
     saveFile(with_msg) {
       //console.log('Executing save file ...')
       // Saves file to localStorage
-      const data = JSON.stringify(this.values)
       var DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
@@ -757,44 +757,35 @@ export default {
         DAAC = this.daac
       }
       this.$v.$touch()
-      console.log(this.$v.$anyError)
-      if (!this.$v.$anyError) {
-        console.log('HERE')
-        if(typeof DAAC != 'undefined' && DAAC !== null && data !== JSON.stringify({})){
-          console.log('THERE')
-          if (this.$refs.form.checkValidity()) {
-            //console.log('checking validity')
-            this.submitForm('from save');
-          } else {
-            //console.log('reporting validity')
-            this.$refs.form.reportValidity();
-          }
-          //window.localStorage.setItem(`${this.DAAC}_questions`, data);
-          this.$values = data
-          this.$output_object[DAAC] =  {
-            "values": this.$values,
-            "log":this.$logging_object
-          }
-          this.$input_object[DAAC] = {
-            "questions":this.questions[0],
-            "required":this.$required
-          }
-          window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
-          window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
-          // @vuese
-          // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
-          // If production level set (see main.js), will be at different level automatically.
-          // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
-          if(with_msg){
-            alert('Your data has been saved.  Click submit to send the data.')
-          }
+      const data = JSON.stringify(this.values)
+      let form_components = this.getPath()
+      let form = form_components[0] 
+      // must have data to execute
+      if((typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)) && data !== JSON.stringify({})){
+        window.localStorage.setItem(`${form}_questions`, data);
+        this.$output_object[DAAC] =  {
+          "values": this.values,
+          "log":this.$logging_object
         }
-      } else {
-        if($('.vue-go-top__content').is(":visible")){
-          $('.vue-go-top__content').click()
+        this.$input_object[DAAC] = {
+          "questions":this.questions[0],
+          "required":this.$required
+        }
+        window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
+        window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
+        // @vuese
+        // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
+        // If production level set (see main.js), will be at different level automatically.
+        // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
+        if(with_msg){
+          if (!this.$v.$anyError) {
+            alert('Your data has been saved.  Click submit to send the data.')
+          } else {
+            // TODO disable/enable submit on anyError
+            alert('Your data has been saved.  You have errors to correct before you can submit the data.')
+          }
         }
       }
-      /* eslint-enable */
     },
     // @vuese
     // Save as draft and exit form
@@ -856,7 +847,6 @@ export default {
     // Exit form to home page
     exitForm(){
       // exit form here
-      //alert('Form will exit.')
     },
     // @vuese
     // Undos the form and reverts it to its previous state.
