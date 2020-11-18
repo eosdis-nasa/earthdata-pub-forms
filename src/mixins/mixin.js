@@ -76,14 +76,14 @@ export default {
         setTimeout(() => {
           for(var n in navs){
             if((!window.headerComponent.showDaacs && navs[n] == 'daacs')){ continue }
-            if(window.document.getElementById(activeElement + '_nav_link') != null){
+            if(window.document.getElementById(`${activeElement}_nav_link`) != null){
               var prevClassname
               if (navs[n] == activeElement){
-                prevClassname = window.document.getElementById(activeElement + '_nav_link').className
-                window.document.getElementById(activeElement + '_nav_link').className = activeClass
+                prevClassname = window.document.getElementById(`${activeElement}_nav_link`).className
+                window.document.getElementById(`${activeElement}_nav_link`).className = activeClass
               } else {
-                prevClassname = window.document.getElementById(navs[n] + '_nav_link').className
-                window.document.getElementById(navs[n] + '_nav_link').className = prevClassname.replace(activeClass,'') 
+                prevClassname = window.document.getElementById(`${navs[n]}_nav_link`).className
+                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'') 
               }
             }
           }
@@ -94,7 +94,7 @@ export default {
       getActiveNavViaClass(navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active.router-link-active'){
         for(var n in navs){
           if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
-          if ($('#' + navs[n] + '_nav_link').hasClass(activeClass)){
+          if ($(`#${navs[n]}_nav_link`).hasClass(activeClass)){
             return navs[n]
           }
         }
@@ -105,7 +105,7 @@ export default {
           var match_found = false
           for(var n in navs){
             if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
-            var reg = '/' + navs[n] + '/'
+            var reg = `/${navs[n]}/`
             var re = new RegExp(reg, "g")
             if(location.href.match(re)){
               this.setActiveNav(navs[n])
@@ -120,7 +120,7 @@ export default {
         if(typeof shortName !='undefined' && shortName != null && (lctn.match(/questions/g) || lctn.match(/daacs/g))){
           var current_href = lctn.substr(0, lctn.lastIndexOf("/")).toLowerCase()
           let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
-          let next_hash = current_href + '/' + to_href
+          let next_hash = `${current_href}/${to_href}`
           history.replaceState('updating daac in href', window.document.title, next_hash);
         }
       }

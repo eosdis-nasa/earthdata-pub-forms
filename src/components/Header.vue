@@ -108,7 +108,7 @@ export default {
         let form_components = this.getPath()
         let form_name_prefix = form_components[1]
         this.$router.push({
-          name: form_name_prefix + "Questions",
+          name: `${form_name_prefix}Questions`,
           params: { default: this.daac.toLowerCase() }
         });
       }
@@ -129,7 +129,7 @@ export default {
         let form_components = this.getPath()
         let form = form_components[0] 
         console.log('CHANGING HREF TO DAACS SELECTION')
-        window.location.href = "/" + form + "/daacs/selection";
+        window.location.href = `/${form}/daacs/selection`;
       }
       return true;
     }

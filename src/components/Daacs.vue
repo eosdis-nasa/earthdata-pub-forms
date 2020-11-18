@@ -14,7 +14,7 @@
                 v-for="(item, index) in daacs"
                 :key="index"
                 :name="item.short_name.replace(' ', '_')"
-                :id="item.short_name.replace(' ', '_') + '_' + index"
+                :id="`${item.short_name.replace(' ', '_')}_${index}`"
                 :value="item.long_name"
                 @click="setSelectedValues(item.url, item.short_name, item.long_name, item.description)"
                 v-model="selected"
@@ -253,7 +253,7 @@ export default {
         history.replaceState(
           "updating href",
           window.document.title,
-          window.location.href.toLowerCase() + "daacs/selection"
+          `${window.location.href.toLowerCase()}daacs/selection`
         );
       }
       if (
@@ -284,8 +284,8 @@ export default {
             default_daac != "" &&
             default_daac != "SELECTION"
           ) {
-            if ($("label[for^='" + default_daac + "']")) {
-              $("label[for^='" + default_daac + "']").click();
+            if ($(`label[for^='${default_daac}']`)) {
+              $(`label[for^='${default_daac}']`).click();
             }
           }
         }

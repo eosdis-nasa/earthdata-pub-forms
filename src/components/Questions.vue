@@ -54,7 +54,7 @@
               <li v-bind:key="`${a_key}_${b_key}_${c_key}`" v-if="($v.values[input.id] || {}).$error">
                 <template v-if="typeof input.required_if != 'undefined'">
                   <template v-for="(req_if, d_key) in input.required_if">
-                    <span v-bind:key="a_key + '_' + b_key + '_' + c_key + '_' + d_key" v-if="values[req_if.field] == req_if.value">
+                    <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
                       <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}</template>
                       <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                       <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
@@ -100,10 +100,10 @@
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.id || a_key">{{question.text}}</p>
                         <b-col class="w-25 help">
-                          <a href="#" @click.prevent="" :id="'help_' + question.id" v-if="question.help != ''" v-b-modal="'modal_' + question.id">
+                          <a href="#" @click.prevent="" :id="`help_${question.id}`" v-if="question.help != ''" v-b-modal="`modal_${question.id}`">
                           <font-awesome-icon icon="info-circle" name="info icon"/>
                             Help</a>
-                          <b-modal :id="'modal_' + question.id" :title="question.title + ' - Help'" ok-only centered>
+                          <b-modal :id="`modal_${question.id}`" :title="`${question.title} - Help`" ok-only centered>
                             <p class="my-4">{{question.help}}</p>
                           </b-modal>
                         </b-col>
@@ -112,7 +112,7 @@
                           <b-col :lg="question.size || 12" class="question_size">
                             <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                               <span v-if="showIf(input.show_if)">
-                                <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
+                                <label :for="input.id || `${input}_${c_key}`" class="eui-label">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                   {{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -123,8 +123,8 @@
                                 <span v-for="(contact,contact_key) in contacts" :key="contact_key">
                                   <span v-if="contact != values[input.id]">
                                     <label 
-                                      :id="'same_as_' + input.id + '_label'"
-                                      :for="'same_as_' + input.id" 
+                                      :id="`same_as_${input.id}_label`"
+                                      :for="`same_as_${input.id}`" 
                                       v-if="input.contact == true" 
                                       @click="setContact(input.id, contact)"
                                       class="eui-label">
@@ -132,7 +132,7 @@
                                       <b-form-checkbox 
                                         class="eui-checkbox"
                                         v-if="input.contact == true"
-                                        :id="'same_as_' + input.id"
+                                        :id="`same_as_${input.id}`"
                                         value="true"
                                         unchecked-value="false"
                                         @click="setContact(input.id, contact)"
@@ -250,7 +250,7 @@
                                 <!-- Selected Input File Name -->
                                 <div class="mt-3" v-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
                                 <!-- End of Selected Input File Name -->
-                                <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
+                                <p :id="`${input.id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
                               </span>
                             </b-row>
                           </b-col>
@@ -447,7 +447,7 @@ export default {
     }
     let DAAC_SET = window.localStorage.getItem('DAAC')
     if(DAAC_SET !== null){
-        //window.localStorage.setItem(DAAC_SET + '_questions', JSON.stringify(val_fields.values))
+        //window.localStorage.setItem(`${DAAC_SET}_questions`, JSON.stringify(val_fields.values))
         this.$required = JSON.stringify(val_fields.values)
     }
     return val_fields
@@ -474,8 +474,8 @@ export default {
       let inputs = $('#questions_container input')
       for (let i in inputs){
         if(typeof inputs[i].id != 'undefined' && inputs[i].id.toLowerCase().match(/name/g)){
-          if (typeof $('#same_as_' + inputs[i].id + '_label') != 'undefined' && this.values[inputs[i].id]=== contact){
-            let unchecked = $('#same_as_' + id_to).is(":checked")
+          if (typeof $(`#same_as_${inputs[i].id}_label`) != 'undefined' && this.values[inputs[i].id]=== contact){
+            let unchecked = $(`#same_as_${id_to}`).is(":checked")
             let get_id_from = inputs[i].id
             let from_name = get_id_from.toLowerCase()
             let to_name = id_to.toLowerCase()
@@ -486,30 +486,30 @@ export default {
             let from_orcid_id = get_id_from.toLowerCase().replace(/name/g,"orcid")
             let to_orcid_id = id_to.toLowerCase().replace(/name/g,"orcid")
             if(unchecked){
-              if (typeof $('#' + to_name) != 'undefined'){
-                $('#' + to_name).val('')
+              if (typeof $(`#${to_name}`) != 'undefined'){
+                $(`#${to_name}`).val('')
               }
-              if (typeof $('#' + to_org_id) != 'undefined'){
-                $('#' + to_org_id).val('')
+              if (typeof $(`#${to_org_id}`) != 'undefined'){
+                $(`#${to_org_id}`).val('')
               }
-              if (typeof $('#' + to_email_id) != 'undefined'){
-                $('#' + to_email_id).val('')
+              if (typeof $(`#${to_email_id}`) != 'undefined'){
+                $(`#${to_email_id}`).val('')
               }
-              if (typeof $('#' + to_orcid_id) != 'undefined'){
-                $('#' + to_orcid_id).val('')
+              if (typeof $(`#${to_orcid_id}`) != 'undefined'){
+                $(`#${to_orcid_id}`).val('')
               }
             } else {
-              if (typeof $('#' + from_name) != 'undefined' && typeof $('#' + to_name) != 'undefined'){
-                $('#' + to_name).val(this.values[from_name])
+              if (typeof $(`#${from_name}`) != 'undefined' && typeof $(`#${to_name}`) != 'undefined'){
+                $(`#${to_name}`).val(this.values[from_name])
               }
-              if (typeof $('#' + from_org_id) != 'undefined' && typeof $('#' + to_org_id) != 'undefined'){
-                $('#' + to_org_id).val(this.values[from_org_id])
+              if (typeof $(`#${from_org_id}`) != 'undefined' && typeof $(`#${to_org_id}`) != 'undefined'){
+                $(`#${to_org_id}`).val(this.values[from_org_id])
               }
-              if (typeof $('#' + from_email_id) != 'undefined' && typeof $('#' + to_email_id) != 'undefined'){
-                $('#' + to_email_id).val(this.values[from_email_id])
+              if (typeof $(`#${from_email_id}`) != 'undefined' && typeof $(`#${to_email_id}`) != 'undefined'){
+                $(`#${to_email_id}`).val(this.values[from_email_id])
               }
-              if (typeof $('#' + from_orcid_id) != 'undefined' && typeof $('#' + to_orcid_id) != 'undefined'){
-                $('#' + to_orcid_id).val(this.values[from_orcid_id])
+              if (typeof $(`#${from_orcid_id}`) != 'undefined' && typeof $(`#${to_orcid_id}`) != 'undefined'){
+                $(`#${to_orcid_id}`).val(this.values[from_orcid_id])
               }
             }
             if (this.$v.$anyError) {
@@ -584,36 +584,32 @@ export default {
     // Handle html5 invalidity on change
     handleChange(evt) {
         console.log('handleChange :: ', evt.target.name);
-        $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+        $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
         if(evt.target.validationMessage!=''){
             this.validation_errors = {
                 ...this.validation_errors,
                 [evt.target.name]: evt.target.validationMessage
             }
-            //$('#' + evt.target.name + '_invalid').removeClass('hidden')
         } else {
             if(evt.target.name in this.validation_errors){
                 delete this.validation_errors[evt.target.name]
             }
-            //$('#' + evt.target.name + '_invalid').addClass('hidden')
         }
     },
     // @vuese
     // Handle html5 invalidity on form
     handleInvalid(evt) {
         console.log('handleInvalid :: ', evt.target.name);
-        $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+        $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
         if(evt.target.validationMessage!=''){
             this.validation_errors = {
                 ...this.validation_errors,
                 [evt.target.name]: evt.target.validationMessage
             }
-            //$('#' + evt.target.name + '_invalid').removeClass('hidden')
         } else {
             if(evt.target.name in this.validation_errors){
                 delete this.validation_errors[evt.target.name]
             }
-            //$('#' + evt.target.name + '_invalid').addClass('hidden')
         }
     },
     // @vuese
@@ -635,9 +631,9 @@ export default {
       if(form.match(/interest/g)){
         json_name = 'archival_interest' 
       } else {
-        json_name = form + '/data_product_questionaire' 
+        json_name = `${form}/data_product_questionaire`
       }
-      $.getJSON( "../" + json_name + ".json", ( questions ) => {
+      $.getJSON( `../${json_name}.json`, ( questions ) => {
       // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
 
       // $.getJSON(`${process.env.VUE_APP_API_ROOT}/data/form/6c544723-241c-4896-a38c-adbc0a364293`, ( questions ) => {
@@ -744,7 +740,7 @@ export default {
       this.saveFile(str)
       if (!this.$v.$anyError) {
         console.log(this.daac)
-        this.$emit('submit-form', window.localStorage.getItem(this.DAAC + '_questions'))
+        this.$emit('submit-form', window.localStorage.getItem(`${this.DAAC}_questions`))
       }
     },
     // @vuese
@@ -773,7 +769,7 @@ export default {
             //console.log('reporting validity')
             this.$refs.form.reportValidity();
           }
-          //window.localStorage.setItem(DAAC + '_questions', data);
+          //window.localStorage.setItem(`${this.DAAC}_questions`, data);
           this.$values = data
           this.$output_object[DAAC] =  {
             "values": this.$values,
@@ -892,13 +888,13 @@ export default {
           this.daac = window.localStorage.getItem('DAAC')
         }
         if(this.daac == null){
-          this.$router.push({ name: form_name_prefix + 'Daacs', path: '/selection', default: 'selection' })
+          this.$router.push({ name: `${form_name_prefix}Daacs`, path: '/selection', default: 'selection' })
         }
 
         let set_loc = location.href
-        let re = '/' + form + '/questions/'
+        let re = `/${form}/questions/`
         if(!set_loc.match(re, 'g')){
-          set_loc += '/' + form + '/questions/'
+          set_loc += `/${form}/questions/`
         }
         if(set_loc.match(/selection/g)){
           this.warning = 'No daac has been selected'

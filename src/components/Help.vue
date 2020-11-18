@@ -57,7 +57,7 @@
                 } else {
                     json_name = 'data_product_questionaire' 
                 }
-                $.getJSON( "../" + form + "/" + json_name + ".json", ( questions ) => {
+                $.getJSON( `../${form}/${json_name}.json`, ( questions ) => {
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
                     for(var section in questions['sections']) {
                         var questions_section = questions['sections'][section]['questions']
@@ -94,7 +94,7 @@
                 daacStored = window.localStorage.getItem('DAAC').toLowerCase()
             }
             if(daacStored !=null && typeof this.$route != 'undefined'){
-                let re = new RegExp('/' + daacStored)
+                let re = new RegExp(`/${daacStored}`)
                 if(window.location.href.toLowerCase().match(re,'g')){
                     loc = window.location.href.toLowerCase()
                     loc = loc.replace(re,'')

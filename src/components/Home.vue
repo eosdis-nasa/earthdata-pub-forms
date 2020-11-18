@@ -33,24 +33,24 @@
             
             // Set form path
             if(window.headerComponent.showDaacs){
-                redirect="/" + form + "/daacs"
+                redirect=`/${form}/daacs`
             } else {
-                redirect="/" + form + "/questions"
+                redirect=`/${form}/questions`
             }
 
             // Append daac to path if applicable
             if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined'){
                 // Expecting daac short_name here
-                redirect+='/' + this.$route.query.parameters.default.toLowerCase()
+                redirect+=`/${this.$route.query.parameters.default.toLowerCase()}`
             } else if(window.localStorage.getItem('DAAC')!=null){
-                redirect+='/' + window.localStorage.getItem('DAAC').toLowerCase()
+                redirect+=`/${window.localStorage.getItem('DAAC').toLowerCase()}`
             } else if (!form.toLowerCase().match(/questionaire/g)){
-                redirect='/' + form + '/daacs/selection'
+                redirect=`/${form}/daacs/selection`
             } else {
-                redirect='/' + form + '/questions'
+                redirect=`/${form}/questions`
             }
             
-            //console.log('CHANGING HREF TO ' + redirect)
+            //console.log(`CHANGING HREF TO ${redirect}`)
             window.location.href = redirect.toLowerCase()
         }
     }
