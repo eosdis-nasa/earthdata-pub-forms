@@ -16,18 +16,18 @@ const routes = [
   },
   {
     path: '/interest/daacs/:default',
-    name: 'Archival Interest - Daacs',
+    name: 'Submission Request - Daacs',
     component: Daacs,
     alias: '/interest/daacs/selection'
   },
   {
     path: '/interest/questions/:default',
-    name: 'Archival Interest - Questions',
+    name: 'Submission Request - Questions',
     component: Questions
   },
   {
     path: '/interest/help',
-    name: 'Archival Interest - Help',
+    name: 'Submission Request - Help',
     component: Help
   },
   {

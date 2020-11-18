@@ -1003,7 +1003,7 @@
           "version": 1
         },
         {
-          "unique_name": "data_delivery_frequency (if data product status is yes)",
+          "unique_name": "data_delivery_frequency",
           "title": "Data Delivery Frequency",
           "text": "What is the anticipated frequency of additional data deliveries to the DAAC?",
           "show_if": [

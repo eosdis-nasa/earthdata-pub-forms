@@ -219,11 +219,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Archival Interest - Questions",
+          name: "Submission Request - Questions",
           params: { default: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Archival Interest - Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Submission Request - Daacs", params: { default: "selection" } });
       }
     },
     // @vuese

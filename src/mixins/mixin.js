@@ -39,7 +39,7 @@ export default {
         if(form.match(/questionaire/g)){
           component_name_prefix = 'Questionaire - '
         } else {
-          component_name_prefix = 'Archival Interest - '
+          component_name_prefix = 'Submission Request - '
         }
         return [form, component_name_prefix]
       },

@@ -629,7 +629,7 @@ export default {
       let form = this.getPath()[0]
       let json_name = ''
       if(form.match(/interest/g)){
-        json_name = 'archival_interest' 
+        json_name = 'submission_request' 
       } else {
         json_name = `${form}/data_product_questionaire`
       }
