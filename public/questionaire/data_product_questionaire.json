@@ -287,7 +287,8 @@
                 "Third First Name, Last Name",
                 "Third Organization"
               ]
-            }{
+            },
+            {
               "type": "text",
               "id": "producer_group_org_row3",
               "label": "Organization",

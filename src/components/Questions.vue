@@ -49,9 +49,9 @@
         <template v-for="(heading, a_key) in questions">
           <li v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
           <template v-for="(question, b_key) in heading">
-            <li v-bind:key="a_key + '_' + b_key" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} question is required</li>
+            <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} question is required</li>
             <template v-for="(input, c_key) in question.inputs">
-              <li v-bind:key="a_key + '_' + b_key + '_' + c_key" v-if="($v.values[input.id] || {}).$error">
+              <li v-bind:key="`${a_key}_${b_key}_${c_key}`" v-if="($v.values[input.id] || {}).$error">
                 <template v-if="typeof input.required_if != 'undefined'">
                   <template v-for="(req_if, d_key) in input.required_if">
                     <span v-bind:key="a_key + '_' + b_key + '_' + c_key + '_' + d_key" v-if="values[req_if.field] == req_if.value">
@@ -157,8 +157,7 @@
                                     input.type == 'range' || 
                                     input.type == 'date' || 
                                     input.type == 'tel' || 
-                                    input.type == 'time' || 
-                                    input.type == 'color'"
+                                    input.type == 'time'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :pattern="getAttribute('pattern', question.inputs[c_key])"
@@ -183,6 +182,7 @@
                                     :cols="getAttribute('cols', question.inputs[c_key])"
                                     :rows="getAttribute('rows', question.inputs[c_key])"
                                     :maxlength="getAttribute('maxlength', question.inputs[c_key])"
+                                    :minlength="getAttribute('minlength', question.inputs[c_key])"
                                     :placeholder="getAttribute('placeholder', question.inputs[c_key])"
                                     v-if="input.type == 'textarea'">
                                 </b-form-textarea>
@@ -228,8 +228,8 @@
                                     v-if="input.type == 'select'" 
                                     :options="input.options"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))" 
-                                    :multiple="getAttribute('multiple', question.inputs[c_key])">
+                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                    :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                                 </b-form-select>
                                 <!-- End of Select Type of Input -->
                                 <!-- File Type of Input -->
@@ -243,10 +243,8 @@
                                     size="lg" 
                                     v-if="input.type == 'file'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                    :multiple="getAttribute('multiple', question.inputs[c_key])"
-                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])">
-                                    >
+                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                    :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                                 </b-form-file>
                                 <!-- End of File Type of Input -->
                                 <!-- Selected Input File Name -->
