@@ -86,6 +86,7 @@
         },
         // This is equivalent to document.ready
         mounted() {
+            console.log('HELP MOUNTED')
             window.helpComponent = this;
             this.setActiveNav("help");
             let loc;

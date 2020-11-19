@@ -106,11 +106,14 @@ export default {
     showDaacs: function(val) {
       if (val == "false" || val == false) {
         let form_components = this.getPath()
+        let form = form_components[0]
         let form_name_prefix = form_components[1]
-        this.$router.push({
-          name: `${form_name_prefix}Questions`,
-          params: { default: this.daac.toLowerCase() }
-        });
+        if (form.toLowerCase().match(/interest/g)){
+          this.$router.push({
+            name: `${form_name_prefix}Questions`,
+            params: { default: this.daac.toLowerCase() }
+          });
+        }
       }
     }
   },
@@ -144,6 +147,7 @@ export default {
     }
   },
   mounted() {
+    console.log('HEADER MOUNTED')
     window.headerComponent = this;
     this.setShowDaacs()
     this.daac = this.setDaacs()

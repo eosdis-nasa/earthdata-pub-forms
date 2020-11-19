@@ -35,7 +35,7 @@
               "required": true
             },
             {
-              "type": "orcid",
+              "type": "text",
               "id": "data_producer_info_orcid",
               "label": "Orcid",
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
@@ -72,7 +72,7 @@
               "required": true
             },
             {
-              "type": "orcid",
+              "type": "text",
               "id": "publication_poc_orcid",
               "label": "Orcid",
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
@@ -109,7 +109,7 @@
               "required": true
             },
             {
-              "type": "orcid",
+              "type": "text",
               "id": "long_term_support_poc_orcid",
               "label": "Orcid",
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
@@ -372,7 +372,7 @@
               "required": true
             }
           ],
-          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6f",
+          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6ef",
           "version": 1
         },
         {
@@ -408,7 +408,7 @@
               "label": "Model"
             }
           ],
-          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b6f",
+          "id": "9767336b-a9a9-41d2-8d2d-4fc2858c9b63f",
           "version": 1
         },
         {
@@ -524,13 +524,14 @@
               "required": true
             }
           ],
-          "id": "4f2dd369-d865-47ba-8504-8694493f128f",
+          "id": "4f2dd369-d865-47ba-8504-8694493f129f",
           "version": 1
         },
         {
           "unique_name": "data_file_temporal_coverage",
           "title": "Data File",
           "text": "On average, how much time is covered by an individual data file?",
+          "help":"Some help on data file temporal coverage",
           "inputs": [
             {
               "type": "number",
@@ -555,7 +556,7 @@
               "required": true
             }
           ],
-          "id": "4f2dd369-d865-47ba-8504-8694493f128f",
+          "id": "4f2dd369-d865-47ba-8504-8694493f123",
           "version": 1
         },
         {
@@ -587,7 +588,7 @@
               "required": true
             }
           ],
-          "id": "4f2dd369-d865-47ba-8504-8694493f128f",
+          "id": "4f2dd369-d865-47ba-8504-8694493f139f",
           "version": 1
         },
         {
@@ -628,7 +629,7 @@
               "required": true
             }
           ],
-          "id": "ebeab400-b3d7-4943-8d09-d1236afc5de0",
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5de01",
           "version": 1
         },
         {
@@ -702,7 +703,7 @@
               "label": "W"
             }
           ],
-          "id": "ebeab400-b3d7-4943-8d09-d1236afc5de0",
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5deww",
           "version": 1
         },
         {
@@ -720,7 +721,9 @@
               ],
               "required":true
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5dewx",
+          "version": 1
         },
         {
           "unique_name": "spatial_vertical_details",
@@ -776,13 +779,15 @@
                 "Varies"
               ]
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5dexx",
+          "version": 1
         },
         {
           "unique_name": "spatial_data_file",
           "title": "Data File",
           "text": "In general, how much geographical area is covered by an individual data file?",
-          "help": "Please describe the general nature of the geographic area. For example: one file covers a swath of 25 km across track for a single orbit; one covers data for  a single glacier; one file covers a 5 x 5m tile; one file represents one flight over the campaign study region; one file covers the entire globe.",
+          "help": "Please describe the general nature of the geographic area. For example: one file covers a swath of 25 km across track for a single orbit. one covers data for a single glacier. One file covers a 5 x 5m tile; one file represents one flight over the campaign study region; one file covers the entire globe.",
           "inputs": [
             {
               "type": "text",
@@ -790,7 +795,9 @@
               "label": "Geographical Area by data file",
               "required": true
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5ddxx",
+          "version": 1
         },
         {
           "unique_name": "spatial_resolution",
@@ -804,7 +811,9 @@
               "label": "Spatial Resolution",
               "required": true
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5edxx",
+          "version": 1
         },
         {
           "unique_name": "spatial_notes",
@@ -820,7 +829,9 @@
                 "cols": 80
               }
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236afc5sss",
+          "version": 1
         }
       ]
     },
@@ -838,7 +849,9 @@
               "label": "Variables",
               "required": true
             }
-          ]
+          ],
+          "id": "ebeab400-b3d7-4943-8d09-d1236af3dsss",
+          "version": 1
         },
         {
           "unique_name": "data_format",
@@ -946,7 +959,7 @@
               "validation_error_msg": "You must enter a positive value."
             }
           ],
-          "id": "40672516-2220-4edc-8c1b-fd9f7e0b978e",
+          "id": "40672516-2220-4edc-8c1b-fd9f7e0b979e",
           "version": 1
         },
         {
@@ -966,7 +979,7 @@
               "required": true
             }
           ],
-          "id": "f4d8ab9d-0959-41b8-8449-430986ddfe84",
+          "id": "f1d8ab9d-0959-41b8-8449-430986ddfe84",
           "version": 1
         },
         {
@@ -991,7 +1004,7 @@
               "label": "Any Other Information"
             }
           ],
-          "id": "f4d8ab9d-0959-41b8-8449-430986ddfe84",
+          "id": "f2d8ab9d-0959-41b8-8449-430986ddfe84",
           "version": 1
         },
         {
@@ -1010,7 +1023,7 @@
               "required": true
             }
           ],
-          "id": "f4d8ab9d-0959-41b8-8449-430986ddfe84",
+          "id": "f6d8ab9d-0959-41b8-8449-430986ddfe84",
           "version": 1
         },
         {
@@ -1039,7 +1052,7 @@
               ]
             }
           ],
-          "id": "f4d8ab9d-0959-41b8-8449-430986ddfe84",
+          "id": "f4d8ab9d-0959-41b8-8449-430986ddfe85",
           "version": 1
         },
         {
