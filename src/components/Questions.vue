@@ -602,9 +602,8 @@ export default {
         }
         $('#' + evt.target.name + '_invalid').addClass('hidden')
       }
-      if(this.errors.length > 0){
-        //this.$v.$touch()
-        this.hasRequiredFields(this.values, JSON.parse(this.$required))
+      if(this.$v.$anyError){
+        this.$v.$touch()
       }
     },
     // @vuese
