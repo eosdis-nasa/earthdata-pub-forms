@@ -48,6 +48,7 @@
             } else {
                 redirect=`/${form}/questions`
             }
+            console.log(window.location.href,redirect)
             window.location.href = redirect.toLowerCase()
         }
     }

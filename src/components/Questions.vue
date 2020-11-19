@@ -150,7 +150,7 @@
                                     :name="input.id" 
                                     v-model="values[input.id]"
                                     size="lg" 
-                                    v-if="input.type == 'text' || 
+                                    v-if="(input.type == 'text' || 
                                     input.type == 'password' || 
                                     input.type == 'number' || 
                                     input.type == 'url' || 
@@ -159,7 +159,8 @@
                                     input.type == 'range' || 
                                     input.type == 'date' || 
                                     input.type == 'tel' || 
-                                    input.type == 'time'"
+                                    input.type == 'time') && 
+                                    input.type != 'bbox'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :pattern="getAttribute('pattern', question.inputs[c_key])"
@@ -167,7 +168,22 @@
                                     :minLength="getAttribute('minlength', question.inputs[c_key])"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
-                                    :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                    >
+                                </b-form-input>
+                                <!-- End of Text Type of Input -->
+                                <!-- BBOX Type of Input -->
+                                <b-form-input 
+                                    :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    type="text" 
+                                    :id="input.id" 
+                                    :name="input.id" 
+                                    v-model="values[input.id]"
+                                    size="lg"
+                                    v-if="input.type == 'bbox'"
+                                    placeholder="Enter in a bbox value"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                    class="bbox"
                                     >
                                 </b-form-input>
                                 <!-- End of Text Type of Input -->
@@ -253,6 +269,7 @@
                                 <div class="mt-3" v-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
                                 <!-- End of Selected Input File Name -->
                                 <p :id="`${input.id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
+                                <span v-if="input.type == 'bbox' && input.label == 'W'"><br></span>
                               </span>
                             </b-row>
                           </b-col>
@@ -365,6 +382,7 @@ export default {
     } else if (typeof this.questions !='undefined'){
         obj = this.questions
     }
+    //let custom_input_types = ['bbox']
     // Gather required elements
     for (let [group_index, group] of obj.entries()) {
         if (typeof group.heading_required != 'undefined' && group.heading_required) {
@@ -574,16 +592,12 @@ export default {
       return left
     },
     // @vuese
-    // Gets input attributes or returns false if none or if pattern *
+    // Gets input attributes or undefined
     getAttribute(attr, input){
       let attribute_value = undefined
-      //let attributes_that_need_false_if_none = ['readonly', 'disabled']
       if(typeof input.attributes != 'undefined' && typeof input.attributes[attr] !='undefined'){
         attribute_value = input.attributes[attr]
       }
-      /*if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
-        return false
-      }*/
       return attribute_value
     },
     // @vuese
@@ -976,6 +990,15 @@ export default {
 }
 </script>
 <style scoped>
+  .bbox {
+    min-width:100px;
+    max-width:100px;
+  }
+  .bbox.form-control {
+    display:inline-flex;
+    margin-left:30px;
+    margin-right:30px;
+  }
   .eui-checkbox {
     display:inherit;
   }

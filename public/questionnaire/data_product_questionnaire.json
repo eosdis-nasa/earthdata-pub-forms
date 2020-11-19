@@ -18,10 +18,7 @@
               "id": "data_producer_info_name",
               "label": "Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
-              "required": true,
-              "attributes": {
-                "disabled": true
-              }
+              "required": true
             },
             {
               "type": "text",
@@ -640,68 +637,65 @@
           "title": "Horizontal",
           "text": "What are the coordinates for the geographic area(s) covered by the entire data product?",
           "help": "If more than three distinct spatial coverage bounding boxes exist for this data product, please add a comment to the Spatial Coverage Notes.",
+          "required": true,
           "inputs": [
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_north1",
-              "label": "N",
-              "required": true
+              "label": "N"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_east1",
-              "label": "E",
-              "required": true
+              "label": "E"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_south1",
-              "label": "S",
-              "required": true
+              "label": "S"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_west1",
-              "label": "W",
-              "required": true
+              "label": "W"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_north2",
               "label": "N"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_east2",
               "label": "E"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_south2",
               "label": "S"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_west2",
               "label": "W"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_north3",
               "label": "N"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_east3",
               "label": "E"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_south3",
               "label": "S"
             },
             {
-              "type": "number",
+              "type": "bbox",
               "id": "spatial_horizontal_west3",
               "label": "W"
             }
