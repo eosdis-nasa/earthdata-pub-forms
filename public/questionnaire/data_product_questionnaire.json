@@ -18,7 +18,10 @@
               "id": "data_producer_info_name",
               "label": "Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
-              "required": true
+              "required": true,
+              "attributes": {
+                "disabled": true
+              }
             },
             {
               "type": "text",

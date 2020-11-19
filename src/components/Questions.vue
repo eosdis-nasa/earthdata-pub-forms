@@ -36,8 +36,8 @@
                       <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
                       <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
-                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
-                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm">{{ cancelLabel }}</b-button>
+                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm" disabled>{{ cancelLabel }}</b-button>
                   </div>
               </div>
           </div>
@@ -589,32 +589,41 @@ export default {
     // @vuese
     // Handle html5 invalidity on change
     handleChange(evt) {
-        $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
-        if(evt.target.validationMessage!=''){
-            this.validation_errors = {
-                ...this.validation_errors,
-                [evt.target.name]: evt.target.validationMessage
-            }
-        } else {
-            if(evt.target.name in this.validation_errors){
-                delete this.validation_errors[evt.target.name]
-            }
+      $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+      if(evt.target.validationMessage!=''){
+        this.validation_errors = {
+          ...this.validation_errors,
+          [evt.target.name]: evt.target.validationMessage
         }
+        $('#' + evt.target.name + '_invalid').removeClass('hidden')
+      } else {
+        if(evt.target.name in this.validation_errors){
+          delete this.validation_errors[evt.target.name]
+        }
+        $('#' + evt.target.name + '_invalid').addClass('hidden')
+      }
+      if(this.errors.length > 0){
+        //this.$v.$touch()
+        this.hasRequiredFields(this.values, JSON.parse(this.$required))
+      }
     },
     // @vuese
     // Handle html5 invalidity on form
     handleInvalid(evt) {
-        $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
-        if(evt.target.validationMessage!=''){
-            this.validation_errors = {
-                ...this.validation_errors,
-                [evt.target.name]: evt.target.validationMessage
-            }
-        } else {
-            if(evt.target.name in this.validation_errors){
-                delete this.validation_errors[evt.target.name]
-            }
+      console.log('handleInvalid :: ', evt.target.name);
+      $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
+      if(evt.target.validationMessage!=''){
+        this.validation_errors = {
+          ...this.validation_errors,
+          [evt.target.name]: evt.target.validationMessage
         }
+        $('#' + evt.target.name + '_invalid').removeClass('hidden')
+      } else {
+        if(evt.target.name in this.validation_errors){
+          delete this.validation_errors[evt.target.name]
+        }
+        $('#' + evt.target.name + '_invalid').addClass('hidden')
+      }
     },
     // @vuese
     // Hides errors banner
@@ -718,6 +727,7 @@ export default {
     // @vuese
     // Validation of input data returns error and if dirty
     status(validation) {
+      console.log('DOES THIS DO ANYTHING?')
       // Returns error and if dirty
       return {
         error: validation.$error,
@@ -726,8 +736,8 @@ export default {
     },
     // @vuese
     // @arg The event
-    enterSubmitForm() {
-      event.preventDefault()
+    enterSubmitForm(evt) {
+      evt.preventDefault()
       if (this.enterSubmit) {
         this.submitForm()
       }
@@ -763,9 +773,17 @@ export default {
       let form = form_components[0] 
       // must have data to execute
       if((typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)) && data !== JSON.stringify({})){
+        if (this.$refs.form.checkValidity()) {
+          console.log('checking validity')
+          this.submitForm('from save');
+        } else {
+          console.log('reporting validity')
+          this.$refs.form.reportValidity();
+        }
+        this.$values = data
         window.localStorage.setItem(`${form}_questions`, data);
         this.$output_object[DAAC] =  {
-          "values": this.values,
+          "values": this.$values,
           "log":this.$logging_object
         }
         this.$input_object[DAAC] = {
@@ -843,12 +861,13 @@ export default {
       window.localStorage.removeItem(`${form}_questions`);
       this.$values = {}
       this.$v.$touch()
+      this.confirm = false
     },
     // @vuese
     // Resets form and local storage to empty entries
-    cancelForm() {
+    cancelForm(evt) {
       if(!this.confirm){
-        event.preventDefault()
+        evt.preventDefault()
       }
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
@@ -892,15 +911,15 @@ export default {
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
     reApplyValues(){
-        let vals = this.$store.state.question_answers[this.$store.state.question_answers.length - 1]
-        if (!vals) {
-            vals = {}
-        }
-        vals.fromUndo = true
-        this.values = vals
-        if(this.$v.$anyError){
-          this.$v.$touch()
-        }
+      let vals = this.$store.state.question_answers[this.$store.state.question_answers.length - 1]
+      if (!vals) {
+        vals = {}
+      }
+      vals.fromUndo = true
+      this.values = vals
+      if(this.$v.$anyError){
+        this.$v.$touch()
+      }
     },
     // @vuese
     // Undos the form and reverts it to its previous state.
