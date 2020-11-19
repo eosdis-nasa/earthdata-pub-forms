@@ -69,8 +69,30 @@
     .modal-footer {
         background-color: #ebebeb!important;
     }
-    footer button.btn-primary:hover, .eui-btn--green:hover {
-        background-color: #12713d;
+    .eui-btn--green,
+    .eui-btn--green:disabled:hover {
+        background-color: #158749!important;
+    }
+    .eui-btn--green:hover,
+    footer button.btn-primary:hover {
+        background-color:#12713d!important;
+    }
+    .eui-btn--red,
+    .eui-btn--red:disabled:hover{
+        background-color: #DB1400;
+    }
+    .eui-btn--red:hover {
+        background-color: #c21200!important;
+    }
+    .btn:disabled, .btn.disabled {
+        cursor:not-allowed;
+    }
+    .eui-btn--blue,
+    .eui-btn--blue.disabled:hover {
+        background-color: #2275AA;
+    }
+    .eui-btn--blue:hover {
+        background-color: #2c3e50;
     }
     footer button.btn-primary {
         background-color:#158749;
@@ -143,13 +165,18 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
-    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+    /* undo_button */
+    #undo_button.disabled,
+    #redo_button.disabled {
+        background-color: #6c757d;
+    }
+    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited, .eui-btn--red.btn-secondary:disabled {
         background-color: #d62c1a;
     }
-    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
+    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, ..eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
     }
     .default_background {

@@ -122,13 +122,22 @@ export default {
     // Re-applies the data entry values from values from the store for on undo and redo
     requireDaacSelection() {
       if (!location.href.match(/help/g)) {
-        alert("Please select a daac to continue.");
+        if(Object.keys(this.values).length > 0){
+          this.$bvModal.msgBoxOk('Please select a daac to continue.', {
+            title: 'No DAAC',
+            size: 'sm',
+            buttonSize: 'sm',
+            okTitle: 'OK',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true
+          })
+        }
         event.preventDefault();
         return false;
       } else {
         let form_components = this.getPath()
         let form = form_components[0] 
-        console.log('CHANGING HREF TO DAACS SELECTION')
         window.location.href = `/${form}/daacs/selection`;
       }
       return true;
@@ -142,6 +151,10 @@ export default {
 };
 </script>
 <style scoped>
+body {
+  border-top: unset;
+  padding: 0 0 0 0;
+}
 h1 {
   margin: 0.67em 0;
 }

@@ -1,7 +1,7 @@
 <template>
 <div role="main">
   <!-- Form -->
-  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="cancelForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
+  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
     <b-container>
         <fixed-header :fixed.sync="isFixed" :threshold="168" style="z-index:2">
           <div class="navbar">
@@ -26,18 +26,20 @@
                       </b-button>
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
-                      <b-button class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile(true)" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button class="eui-btn--blue" type="save" id="save_data" @click="saveFile(true)" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button class="eui-btn--green" type="submit" id="submit_data" @click="submitForm" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton" aria-label="cancel button">{{ cancelLabel }}</b-button>
+                      <!-- draft button -->
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <!-- save button -->
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
+                      <!-- submit button -->
+                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <!-- cancel button -->
+                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
                   </div>
               </div>
-          </div>
-          <div align=right v-if="!readonly" class="right_button_bar">
-            <b-button class="eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
-            <b-button class="eui-btn--blue" type="save" id="save_data" @click=saveFile(true)>{{ saveLabel }}</b-button>
-            <b-button class="eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
-            <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
           </div>
       </fixed-header>
     </b-container>
@@ -121,7 +123,7 @@
                                   ({{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                                 </span>
                                 <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                  <span v-if="contact != values[input.id]">
+                                  <span v-if="contact != values[input.id] && contact != ''">
                                     <label 
                                       :id="`same_as_${input.id}_label`"
                                       :for="`same_as_${input.id}`" 
@@ -340,7 +342,6 @@ export default {
           }
           delete this.values.fromUndo
           if (this.$v.$anyError) {
-            console.log('touch348')
             this.$v.$touch()
           }
         }, 250);
@@ -511,7 +512,16 @@ export default {
                 $(`#${to_orcid_id}`).val(this.values[from_orcid_id])
               }
             }
-            this.$v.$touch()
+            if (typeof $(`#${to_name}`) != 'undefined' && $(`#${to_name}`).val() ==''){
+              $(`#${to_name}`).focus()
+            } else if (typeof $(`#${to_org_id}`) != 'undefined' && $(`#${to_org_id}`).val() ==''){
+              $(`#${to_org_id}`).focus()
+            } else if (typeof $(`#${to_email_id}`) != 'undefined' && $(`#${to_email_id}`).val() ==''){
+              (`#${to_email_id}`).focus()
+            } else if (typeof $(`#${to_orcid_id}`) != 'undefined' && $(`#${to_orcid_id}`).val() ==''){
+              $(`#${to_orcid_id}`).focus()
+            }
+            this.setContacts(this.values)
           }
         }
       }
@@ -533,14 +543,16 @@ export default {
             let label = inp['label']
             if(ea === inp['id']){
               if(
-                  ((typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
-                  (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
-                  (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
-                  (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
-                  (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
-                  (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))) &&
-                  label.toLowerCase().match(/name/g)
-                ) {
+                ((typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
+                (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
+                (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
+                (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
+                (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))) &&
+                label.toLowerCase().match(/name/g) &&
+                this.contacts.includes(this.values[inputs[i]['id']]) == false &&
+                this.values[inputs[i]['id']]!=''
+              ) {
                 this.contacts.push(this.values[inputs[i]['id']])
               }
             }
@@ -579,7 +591,6 @@ export default {
     // @vuese
     // Handle html5 invalidity on change
     handleChange(evt) {
-        console.log('handleChange :: ', evt.target.name);
         $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
         if(evt.target.validationMessage!=''){
             this.validation_errors = {
@@ -595,7 +606,6 @@ export default {
     // @vuese
     // Handle html5 invalidity on form
     handleInvalid(evt) {
-        console.log('handleInvalid :: ', evt.target.name);
         $(`#${evt.target.name}_invalid`).text(evt.target.validationMessage)
         if(evt.target.validationMessage!=''){
             this.validation_errors = {
@@ -616,8 +626,6 @@ export default {
     // @vuese
     // Fetchs the questions data
     fetchQuestions(){
-      // Fires on load when building the form content
-      console.log('FETCH QUESTIONS')
       var question = []
       this.contacts = []
       let contact = false
@@ -710,9 +718,8 @@ export default {
       return question
     },
     // @vuese
-    // Validation of input data
+    // Validation of input data returns error and if dirty
     status(validation) {
-      // console.log('Getting status ...')
       // Returns error and if dirty
       return {
         error: validation.$error,
@@ -721,19 +728,17 @@ export default {
     },
     // @vuese
     // @arg The event
-    enterSubmitForm(evt) {
-      //console.log('Entering submit ...')
-      evt.preventDefault()
+    enterSubmitForm() {
+      event.preventDefault()
       if (this.enterSubmit) {
         this.submitForm()
       }
     },
     // @vuese
     // Used to submit the form data if valid
-    submitForm(str) {
+    submitForm(from) {
       // Submit form (this.data) if valid
-      //console.log('Executing Submit ...')
-      this.saveFile(str)
+      this.saveFile(from)
       let form_components = this.getPath()
       let form = form_components[0] 
       if (!this.$v.$anyError) {
@@ -746,10 +751,8 @@ export default {
     },
     // @vuese
     // Used to save file
-    // TODO - API call will go here
-    saveFile(with_msg) {
-      //console.log('Executing save file ...')
-      // Saves file to localStorage
+    saveFile(from) {
+      // Currently sSaves file to localStorage
       var DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
@@ -777,46 +780,83 @@ export default {
         // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
-        if(with_msg){
-          if (!this.$v.$anyError) {
-            alert('Your data has been saved.  Click submit to send the data.')
+        if (!this.$v.$anyError) {
+          if (!from.toLowerCase().match('submit')) {
+            // Resets form to blank entries
+            if(Object.keys(this.values).length > 0){
+              this.$bvModal.msgBoxOk('Click submit to send the data.', {
+                title: 'Your data has been saved',
+                size: 'sm',
+                buttonSize: 'sm',
+                okTitle: 'OK',
+                footerClass: 'p-2',
+                hideHeaderClose: false,
+                centered: true
+              })
+            }
+          } else if (!this.$v.$anyError && from.toLowerCase().match('submit')) {
+            if(Object.keys(this.values).length > 0){
+              this.$bvModal.msgBoxOk('Your data has been submitted.', {
+                title: 'Success!',
+                size: 'sm',
+                buttonSize: 'sm',
+                okTitle: 'OK',
+                footerClass: 'p-2',
+                hideHeaderClose: false,
+                centered: true
+              })
+            }
           } else {
-            // TODO disable/enable submit on anyError
-            alert('Your data has been saved.  You have errors to correct before you can submit the data.')
+            if(Object.keys(this.values).length > 0){
+              this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
+                title: 'Your data has been saved',
+                size: 'sm',
+                buttonSize: 'sm',
+                okTitle: 'OK',
+                footerClass: 'p-2',
+                hideHeaderClose: false,
+                centered: true
+              })
+            }
+          }
+        } else {
+          if($('.vue-go-top__content').is(":visible")){
+            $('.vue-go-top__content').click()
           }
         }
       }
     },
     // @vuese
     // Save as draft and exit form
-    draftFile(with_msg) {
-      this.saveFile(with_msg)
-      if (!this.$v.$anyError) {
-        this.exitForm()
-      }
+    draftFile(from) {
+      this.saveFile(from)
+      this.exitForm()
     },
     // @vuese
     // Cancel and exit form
     okToCancel(){
       this.$refs.form.reset()
+      let form_components = this.getPath()
+      let form = form_components[0] 
       $('#reset_data').focus()
       $('#eui-banner').addClass('hidden')
       window.localStorage.removeItem('form_outputs')
       window.localStorage.removeItem('form_inputs')
+      window.localStorage.removeItem(`${form}_questions`);
       this.$values = {}
+      this.$v.$touch()
     },
     // @vuese
-    // Cancel and exit form
-    cancelForm(evt) {
+    // Resets form and local storage to empty entries
+    cancelForm() {
       if(!this.confirm){
-        evt.preventDefault()
+        event.preventDefault()
       }
-      //console.log('Resetting form ...')
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
         if(this.confirm == false){
           this.confirm = ''
-          this.$bvModal.msgBoxConfirm('Are you sure?',{
+          this.$bvModal.msgBoxConfirm('This will clear any data.  Are you sure?',{
             title: 'Please Confirm',
             size: 'sm',
             buttonSize: 'sm',
@@ -829,7 +869,9 @@ export default {
           })
             .then(value => {
               this.confirm = value
-              this.okToCancel()
+              if(value){
+                this.okToCancel()
+              } else { return }
             })
             .catch(err => {
               console.log(err) // An error occurred
@@ -847,6 +889,7 @@ export default {
     // Exit form to home page
     exitForm(){
       // exit form here
+      window.location.href = process.env.VUE_APP_DASHBOARD_URL
     },
     // @vuese
     // Undos the form and reverts it to its previous state.
@@ -858,7 +901,6 @@ export default {
     redoToPreviousState(){
       this.redo();
     }
-
   },
   // This is equivalent to js document.ready
   mounted() {
@@ -894,6 +936,11 @@ export default {
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
     this.questions = this.fetchQuestions()
+    // TODO replace with load from api
+    if (window.localStorage.getItem(`${form}_questions`) != null) {
+      this.values = JSON.parse(window.localStorage.getItem(`${form}_questions`))
+      this.$v.$touch()
+    }
   }
 }
 </script>
@@ -909,9 +956,6 @@ export default {
     padding-left:0px;
     padding-right:0px;
   }
-  .eui-btn--green:hover {
-    background-color: #12713d;
-  }
   .question_section {
     margin-bottom: 2rem;
   }
@@ -919,23 +963,8 @@ export default {
     text-decoration: underline;
     border-bottom:unset;
   }
-  .eui-btn--green {
-    background-color: #158749;
-  }
-  .eui-btn--green:hover {
-    background-color: #12713d;
-  }
-  .eui-btn--blue {
-    background-color: #2275AA;
-  }
-  .eui-btn--blue:hover {
-    background-color: #2c3e50;
-  }
-  .eui-btn--red, #reset_data{
+  #reset_data{
     background-color: #DB1400;
-  }
-  .eui-btn--red:hover {
-    background-color: #c21200!important;
   }
   .eui-banner--danger {
     text-align:left;

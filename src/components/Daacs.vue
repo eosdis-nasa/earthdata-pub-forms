@@ -38,7 +38,7 @@
             </div>
             <!-- Submit Button -->
             <div v-if="selected">
-              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button">Select</b-button>
+              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
             </div>
             <!-- End of Submit Button -->
           </div>
@@ -137,7 +137,6 @@ export default {
       long_name,
       description
     ) {
-      //console.log('set current daac objects')
       var daac_specific_data;
       if (
         typeof url == "undefined" ||
@@ -296,39 +295,35 @@ export default {
 };
 </script>
 <style scoped>
-.form-group {
-  margin-top:2rem;
-}
-#selected_daac, .external-link-alt, #selected_daac_link {
-  color: #2275AA;
-}
-.eui-btn--green {
-  margin-top:2rem;
-  background-color: #158749;
-}
-.eui-btn--green:hover {
-  background-color: #12713d;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-  margin-bottom: 1rem;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
-.button_div {
-  margin-top: 1rem;
-  text-align: left;
-  float: left;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
+  #daac_select_button {
+    margin-top:2rem;
+  }
+  .form-group {
+    margin-top:2rem;
+  }
+  #selected_daac, .external-link-alt, #selected_daac_link {
+    color: #2275AA;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+    margin-bottom: 1rem;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
+  .button_div {
+    margin-top: 1rem;
+    text-align: left;
+    float: left;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
 </style>

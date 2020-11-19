@@ -53,7 +53,7 @@
                 let form = this.getPath()[0]
                 let json_name = ''
                 if(form.match(/interest/g)){
-                    json_name = 'submission_request_conditionals' 
+                    json_name = 'submission_request' 
                 } else {
                     json_name = 'data_product_questionnaire' 
                 }
