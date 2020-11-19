@@ -90,13 +90,13 @@
                 <h2>{{heading.heading}}</h2>
                 <div :id="a_key" class="question_section">
                     <!-- Question -->
-                    <b-form-group v-for="(question, b_key) in heading" 
+                    <template v-for="(question, b_key) in heading"  >
+                      <b-form-group v-if="showIf(question.show_if)"
                     :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
-                    :key="b_key" 
                     size="lg" lg=12
                     :disabled="disabled"
-                    :readonly="readonly">
-                      <div v-if="showIf(question.show_if)">
+                    :readonly="readonly"
+                    :key="b_key">
                         <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
                         <label :for="question.id" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
@@ -258,8 +258,8 @@
                           </b-col>
                         </b-row>
                         <!-- End of Input -->
-                        </div>
-                    </b-form-group>
+                        </b-form-group>
+                    </template>
                     <!-- End of Question -->
                 </div>
                 </div>
@@ -487,29 +487,29 @@ export default {
             let to_orcid_id = id_to.toLowerCase().replace(/name/g,"orcid")
             if(unchecked){
               if (typeof $(`#${to_name}`) != 'undefined'){
-                $(`#${to_name}`).val('')
+                this.values[to_name] = ''
               }
               if (typeof $(`#${to_org_id}`) != 'undefined'){
-                $(`#${to_org_id}`).val('')
+                this.values[to_org_id] = ''
               }
               if (typeof $(`#${to_email_id}`) != 'undefined'){
-                $(`#${to_email_id}`).val('')
+                this.values[to_email_id] = ''
               }
               if (typeof $(`#${to_orcid_id}`) != 'undefined'){
-                $(`#${to_orcid_id}`).val('')
+                this.values[to_orcid_id] = ''
               }
             } else {
               if (typeof $(`#${from_name}`) != 'undefined' && typeof $(`#${to_name}`) != 'undefined'){
-                $(`#${to_name}`).val(this.values[from_name])
+                this.values[to_name] = this.values[from_name]
               }
               if (typeof $(`#${from_org_id}`) != 'undefined' && typeof $(`#${to_org_id}`) != 'undefined'){
-                $(`#${to_org_id}`).val(this.values[from_org_id])
+                this.values[to_org_id] = this.values[from_org_id]
               }
               if (typeof $(`#${from_email_id}`) != 'undefined' && typeof $(`#${to_email_id}`) != 'undefined'){
-                $(`#${to_email_id}`).val(this.values[from_email_id])
+                this.values[to_email_id] = this.values[from_email_id]
               }
               if (typeof $(`#${from_orcid_id}`) != 'undefined' && typeof $(`#${to_orcid_id}`) != 'undefined'){
-                $(`#${to_orcid_id}`).val(this.values[from_orcid_id])
+                this.values[to_orcid_id] = this.values[from_orcid_id]
               }
             }
             if (typeof $(`#${to_name}`) != 'undefined' && $(`#${to_name}`).val() ==''){
@@ -576,16 +576,14 @@ export default {
     // @vuese
     // Gets input attributes or returns false if none or if pattern *
     getAttribute(attr, input){
-      let attribute_value = ''
-      let attributes_that_need_false_if_none = ['readonly', 'disabled']
+      let attribute_value = undefined
+      //let attributes_that_need_false_if_none = ['readonly', 'disabled']
       if(typeof input.attributes != 'undefined' && typeof input.attributes[attr] !='undefined'){
         attribute_value = input.attributes[attr]
       }
-      if (attr.match(/pattern/g) && attribute_value == ''){
-        return '.*'
-      } else if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
+      /*if (attributes_that_need_false_if_none.includes(attr) && attribute_value == ''){
         return false
-      }
+      }*/
       return attribute_value
     },
     // @vuese
@@ -892,14 +890,29 @@ export default {
       window.location.href = process.env.VUE_APP_DASHBOARD_URL
     },
     // @vuese
+    // Re-applies the data entry values from values from the store for on undo and redo
+    reApplyValues(){
+        let vals = this.$store.state.question_answers[this.$store.state.question_answers.length - 1]
+        if (!vals) {
+            vals = {}
+        }
+        vals.fromUndo = true
+        this.values = vals
+        if(this.$v.$anyError){
+          this.$v.$touch()
+        }
+    },
+    // @vuese
     // Undos the form and reverts it to its previous state.
     undoToPreviousState(){
       this.undo();
+      this.reApplyValues()
     },
     // @vuese
     // Redo the form and to its previous state.
     redoToPreviousState(){
       this.redo();
+      this.reApplyValues()
     }
   },
   // This is equivalent to js document.ready

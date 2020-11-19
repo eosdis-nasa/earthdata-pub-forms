@@ -9,6 +9,7 @@
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
           <span id="title" v-if="formTitle">{{formTitle}}</span>
           <span id="title" v-else-if="showDaacs">Earthdata Submission Request Form</span>
+          <span id="title" v-if="getTitleFromLocation().toLowerCase().match(/questionnaire/g)">Data Product Questionnaire</span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
@@ -121,6 +122,13 @@ export default {
    
   },
   methods: {
+    // @vuese
+    // Get title of form from address bar location
+    getTitleFromLocation(){
+      let form_components = this.getPath()
+      let form = form_components[0]
+      return form
+    },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
     requireDaacSelection() {

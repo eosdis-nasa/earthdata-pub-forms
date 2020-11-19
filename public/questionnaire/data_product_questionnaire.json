@@ -419,7 +419,7 @@
           "show_if": [
             {
               "field": "data_product_type_observational",
-              "value": "Observational"
+              "value": "true"
             }
           ],
           "inputs": [
@@ -439,8 +439,8 @@
           "text": "What is the name and version of the model used to produce this data product?",
           "show_if": [
             {
-              "field": "data_product_type_observational",
-              "value": "Model"
+              "field": "data_product_type_model",
+              "value": "true"
             }
           ],
           "inputs": [
