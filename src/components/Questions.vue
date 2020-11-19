@@ -180,7 +180,6 @@
                                     v-model="values[input.id]"
                                     size="lg"
                                     v-if="input.type == 'bbox'"
-                                    placeholder="Enter in a bbox value"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     class="bbox"
@@ -996,8 +995,8 @@ export default {
   }
   .bbox.form-control {
     display:inline-flex;
-    margin-left:30px;
     margin-right:30px;
+    margin-left:10px
   }
   .eui-checkbox {
     display:inherit;
