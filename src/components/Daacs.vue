@@ -84,7 +84,6 @@ export default {
     }
   },
   mounted() {
-    console.log('DAACS MOUNTED')
     window.daacsComponent = this;
     this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();
