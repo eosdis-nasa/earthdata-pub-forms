@@ -34,6 +34,10 @@ The following text input types are accepted and should validate via html5:
 - tel
 - time
 
+The following custom text input types are accepted and should validate:
+
+- bbox
+
 The following input attributes are accepted and are evaluated in forms:
 
 - size (question sections only)

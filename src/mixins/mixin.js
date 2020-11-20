@@ -2,7 +2,7 @@
 import $ from 'jquery'
 export default {
     props:{
-      form: {default: 'questionnaire', type: String}
+      
     },
     computed: {
     },
@@ -21,7 +21,45 @@ export default {
         return str.join(' ');
       },
       // @vuese
-      // get Path via parameters, form title, then property 
+      // Re-evaluates the route and changes it if applicable
+      resetRoute(){
+        this.setShowDaacs()
+        let redirect = '';
+        let form = this.getPath()[0]
+        let address = window.location.href.split("/")
+        var host = address[0] + address[1] + address[2];
+        host = host.replace('http:','http://')
+        // Get form set path start
+        if(window.headerComponent.showDaacs){
+            redirect=`/${form}/daacs`
+        } else {
+            redirect=`/${form}/questions`
+        }
+        // Append daac if parameter available
+        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined'){
+            redirect+=`/${this.$route.query.parameters.default.toLowerCase()}`
+        // Automatically redirect to questions if daac selected
+        } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
+            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC').toLowerCase()}`
+        // Set path to form and default daac (selection) for interest form
+        } else if (form != '' && form.toLowerCase().match(/interest/g)){
+            redirect=`/${form}/daacs/selection`
+        // Set path to form and questions for questionnaire
+        } else if (form != ''){
+            redirect=`/${form}/questions`
+        // Set path from localhost to interest form with default daac (selection)
+        } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
+            redirect = `${window.location.href}interest/daacs/selection`
+        // Set path from localhost to questionnaire questions
+        } else if (!window.localStorage.getItem("showDaacs")){
+            redirect = `${window.location.href}questionaire/questions`
+        }
+        if(window.location.href != `${host}${redirect}`){
+            window.location.href = redirect.toLowerCase()
+        }
+      },
+      // @vuese
+      // get Path via parameters, form title (json), then route path 
       getPath(){
         let form = ''
         if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
@@ -32,8 +70,14 @@ export default {
           } else {
             form = 'questionnaire'
           }   
-        } else if (this.form != ''){
-          form = this.form
+        } else if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
+          if(this.$route.path.toLowerCase().match(/interest/g)){
+            form = 'interest'
+          } else if (this.$route.path.toLowerCase().match(/questionnaire/g)){
+            form = 'questionnaire'
+          } else {
+            form = 'interest'
+          }
         }
         let component_name_prefix = ''
         if(form.match(/questionnaire/g)){

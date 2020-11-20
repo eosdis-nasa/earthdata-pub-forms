@@ -602,7 +602,6 @@ export default {
     // @vuese
     // Handle html5 invalidity on change
     handleChange(evt) {
-      $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
       if(evt.target.validationMessage!=''){
         this.validation_errors = {
           ...this.validation_errors,
@@ -622,7 +621,6 @@ export default {
     // @vuese
     // Handle html5 invalidity on form
     handleInvalid(evt) {
-      console.log('handleInvalid :: ', evt.target.name);
       $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
       if(evt.target.validationMessage!=''){
         this.validation_errors = {
@@ -739,7 +737,6 @@ export default {
     // @vuese
     // Validation of input data returns error and if dirty
     status(validation) {
-      console.log('DOES THIS DO ANYTHING?')
       // Returns error and if dirty
       return {
         error: validation.$error,
@@ -772,8 +769,8 @@ export default {
     // @vuese
     // Used to save file
     saveFile(from) {
-      // Currently sSaves file to localStorage
-      var DAAC
+      // Currently Saves file to localStorage
+      let DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
       } else {
@@ -783,69 +780,65 @@ export default {
       const data = JSON.stringify(this.values)
       let form_components = this.getPath()
       let form = form_components[0] 
-      // must have data to execute
-      if((typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)) && data !== JSON.stringify({})){
-        if (this.$refs.form.checkValidity()) {
-          console.log('checking validity')
-          this.submitForm('from save');
-        } else {
-          console.log('reporting validity')
-          this.$refs.form.reportValidity();
-        }
+      if(data !== JSON.stringify({})){
         this.$values = data
         window.localStorage.setItem(`${form}_questions`, data);
-        this.$output_object[DAAC] =  {
-          "values": this.$values,
-          "log":this.$logging_object
+        if(typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)){
+          this.$output_object[DAAC] =  {
+            "values": this.$values,
+            "log":this.$logging_object
+          }
+          this.$input_object[DAAC] = {
+            "questions":this.questions[0],
+            "required":this.$required
+          }
+        } else {
+          this.$output_object['NoDaac'] =  {
+            "values": this.$values,
+            "log":this.$logging_object
+          }
+          this.$input_object['NoDaac'] = {
+            "questions":this.questions[0],
+            "required":this.$required
+          }
         }
-        this.$input_object[DAAC] = {
-          "questions":this.questions[0],
-          "required":this.$required
-        }
-        window.localStorage.setItem('form_inputs', JSON.stringify(this.$input_object))
-        window.localStorage.setItem('form_outputs', JSON.stringify(this.$output_object))
+        window.localStorage.setItem(`${form}_inputs`, JSON.stringify(this.$input_object))
+        window.localStorage.setItem(`${form}_outputs`, JSON.stringify(this.$output_object))
         // @vuese
         // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
           if (!from.toLowerCase().match('submit')) {
-            // Resets form to blank entries
-            if(Object.keys(this.values).length > 0){
-              this.$bvModal.msgBoxOk('Click submit to send the data.', {
-                title: 'Your data has been saved',
-                size: 'sm',
-                buttonSize: 'sm',
-                okTitle: 'OK',
-                footerClass: 'p-2',
-                hideHeaderClose: false,
-                centered: true
-              })
-            }
-          } else if (!this.$v.$anyError && from.toLowerCase().match('submit')) {
-            if(Object.keys(this.values).length > 0){
-              this.$bvModal.msgBoxOk('Your data has been submitted.', {
-                title: 'Success!',
-                size: 'sm',
-                buttonSize: 'sm',
-                okTitle: 'OK',
-                footerClass: 'p-2',
-                hideHeaderClose: false,
-                centered: true
-              })
-            }
+            this.$bvModal.msgBoxOk('Click submit to send the data.', {
+              title: 'Your data has been saved',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+            })
+          } else if (from.toLowerCase().match('submit')) {
+            this.$bvModal.msgBoxOk('Your data has been submitted.', {
+              title: 'Success!',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+            })
           } else {
-            if(Object.keys(this.values).length > 0){
-              this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
-                title: 'Your data has been saved',
-                size: 'sm',
-                buttonSize: 'sm',
-                okTitle: 'OK',
-                footerClass: 'p-2',
-                hideHeaderClose: false,
-                centered: true
-              })
-            }
+            this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
+              title: 'Your data has been saved',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+            })
           }
         } else {
           if($('.vue-go-top__content').is(":visible")){
@@ -868,8 +861,8 @@ export default {
       let form = form_components[0] 
       $('#reset_data').focus()
       $('#eui-banner').addClass('hidden')
-      window.localStorage.removeItem('form_outputs')
-      window.localStorage.removeItem('form_inputs')
+      window.localStorage.removeItem(`${form}_outputs`)
+      window.localStorage.removeItem(`${form}_inputs`)
       window.localStorage.removeItem(`${form}_questions`);
       this.$values = {}
       this.$v.$touch()
@@ -896,15 +889,12 @@ export default {
             hideHeaderClose: false,
             centered: true
           })
-            .then(value => {
-              this.confirm = value
-              if(value){
-                this.okToCancel()
-              } else { return }
-            })
-            .catch(err => {
-              console.log(err) // An error occurred
-            })
+          .then(value => {
+            this.confirm = value
+            if(value){
+              this.okToCancel()
+            } else { return }
+          })
         } else {
           this.confirm = false;
           this.okToCancel()
@@ -918,7 +908,7 @@ export default {
     // Exit form to home page
     exitForm(){
       // exit form here
-      window.location.href = process.env.VUE_APP_DASHBOARD_URL
+      window.location.href = encodeURIComponent(process.env.VUE_APP_DASHBOARD_URL)
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo

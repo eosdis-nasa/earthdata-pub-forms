@@ -159,6 +159,7 @@ export default {
     window.headerComponent = this;
     this.setShowDaacs()
     this.daac = this.setDaacs()
+    this.resetRoute()
   }
 };
 </script>
