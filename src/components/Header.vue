@@ -155,7 +155,6 @@ export default {
     }
   },
   mounted() {
-    console.log('HEADER MOUNTED')
     window.headerComponent = this;
     this.setShowDaacs()
     this.daac = this.setDaacs()
