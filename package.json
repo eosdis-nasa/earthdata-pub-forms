@@ -8,7 +8,8 @@
     "test:unit": "vue-cli-service test:unit --env=jsdom",
     "lint": "vue-cli-service lint",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
+    "synk-test": "snyk test",
+    "synk-prepare": "npm run snyk-protect",
     "link-api": "npm link ../api",
     "link-repos": "npm run link-api && cd ../dashboard && npm run link-api",
     "start-api": "npm run link-api; docker-compose -f ./node_modules/earthdata-pub-modules/docker-compose.yml up -d; ",
@@ -20,6 +21,7 @@
     "view-logs": "npm run start-api; docker-compose -f docker-compose.yml up"
   },
   "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/vue-fontawesome": "^2.0.0",
@@ -38,6 +40,7 @@
     "vuex-undo-redo": "^1.1.4"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "@vue/cli-plugin-babel": "^4.5.8",
     "@vue/cli-plugin-eslint": "^4.5.8",
     "@vue/cli-plugin-unit-jest": "^4.5.8",

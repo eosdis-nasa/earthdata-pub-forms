@@ -5,10 +5,11 @@ import { store } from './store'
 import { BootstrapVue, BootstrapVueIcons, IconsPlugin } from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
 import VueLogger from 'vuejs-logger';
 import GoTop from '@inotom/vue-go-top';
+import mixin from "./mixins/mixin";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -45,7 +46,6 @@ Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
 Vue.use(GoTop);
-//Vue.use(OverlayPlugin)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -73,6 +73,8 @@ Vue.use(TablePlugin)
 
 library.add(fas)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-layers', FontAwesomeLayers)
+Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 // Custom components
 import Home from '@/components/Home.vue'
@@ -88,6 +90,8 @@ Vue.component('Questions', Questions);
 Vue.component('Help', Help);
 
 Vue.config.productionTip = false
+
+Vue.mixin(mixin)
 
 new Vue({
   router,

@@ -8,7 +8,7 @@ This is the Forms code repository for Earthdata Pub (EDPUB).
 - **[Framework: vue.js](#framework-vuejs)**
 - **[Styling](#Custom-styling)**
 - **[Develop using Docker](#develop-using-docker)**
-- **[Auto documentaiton using vuese plugin](#Auto-documentation-using-vuese-plugin)**
+- **[Auto documentation using vuese plugin](#Auto-documentation-using-vuese-plugin)**
 - **[Testing with Jest](#testing-with-jest)**
 
 ## Contributing
@@ -121,7 +121,7 @@ cd website
 npm serve .
 ```
 
-You should now be able to view the files on your [localhost](http://localhost:5000).
+You should now be able to view the files on your [localhost](http://localhost:8081).
 [More documentation as well as an example, can be found here](https://docute.org/)
 
 ## Testing with Jest

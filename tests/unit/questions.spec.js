@@ -25,6 +25,13 @@ import Help from '@/components/Help.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
+import mixin from "@/mixins/mixin.js";
+import { config } from '@vue/test-utils';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
+
+config.showDeprecationWarnings = false
 
 const localVue = createLocalVue();
 localVue.use(VueRouter)
@@ -33,11 +40,18 @@ localVue.use(Vuelidate)
 localVue.use(Vuex)
 localVue.use(VuexUndoRedo)
 localVue.use(LayoutPlugin)
+localVue.mixin(mixin)
+library.add(fas)
+localVue.component('font-awesome-icon', FontAwesomeIcon)
+localVue.component('font-awesome-layers', FontAwesomeLayers)
+localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
-                  { path: '/daacs/:default', name: 'Daacs', component: Daacs, alias: '/daacs/selection' },
-                  { path: '/questions/:default', name: 'Questions', component: Questions },
-                  { path: '/help/:default', name: 'Help', component: Help },
+                  { path: '/interest/daacs/:default', name: 'Submission Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:default', name: 'Submission Request - Questions', component: Questions },
+                  { path: '/interest/help', name: 'Submission Request - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Questionnaire - Questions', component: Questions },
+                  { path: '/questionnaire/help', name: 'Questionnaire - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
@@ -86,6 +100,19 @@ describe('location.href is accessible in this environment', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -105,6 +132,19 @@ describe("App", () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -117,7 +157,7 @@ describe("App", () => {
       localVue,
       router
     })
-    const relative_path = "/daacs/selection"
+    const relative_path = "/interest/daacs/selection"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(window.location.href).toBe(relative_path);
@@ -181,6 +221,19 @@ describe('Header', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
   afterAll(() => {
       window.location = location;
@@ -193,14 +246,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: false,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: false
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).not.toContain('daacs_nav_link')
   }),
@@ -210,14 +260,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
   }),
@@ -226,14 +273,12 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:''
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true,
+      daac: ''
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions</a>')).toBe(true);
   }),
@@ -269,6 +314,19 @@ describe('Daacs selection', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -285,7 +343,7 @@ describe('Daacs selection', () => {
       selected: 'Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)'
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')
+    expect(wrapper.text().includes('Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')).toBe(true)
   })
   
 });
@@ -298,6 +356,19 @@ describe('Questions', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -342,6 +413,19 @@ describe('Help', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
