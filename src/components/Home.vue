@@ -7,8 +7,9 @@
     //
     // Possible:
     //
-    // http://localhost:8080/daacs, http://localhost:8080/daacs/selection, http://localhost:8080/daacs/ornl_daac
-    // http://localhost:8080, http://localhost:8080/daacs/selection, http://localhost:8080/questions/ornl_daac
+    // http://localhost:8080/interest/daacs, http://localhost:8080/interest/daacs/selection, http://localhost:8080/interest/daacs/ornl_daac
+    // http://localhost:8080/interest/questions/ornl_daac, http://localhost:8080/interest/help
+    // http://localhost:8080/questionnaire/questions, http://localhost:8080/questionnaire/help
     export default {
         name: 'Home',
         data() {
@@ -20,29 +21,12 @@
             
         },
         props: {
-            // Based on the below property will load with/without Daacs form
-            showDaacs: {default: true, type: Boolean}
+            
         },
         // This is equivalent to document.ready
         mounted() {
-            let parameters = this.$route.query
-            var redirect = ''
-            if(parameters['showDaacs']==true || this.showDaacs || window.localStorage.getItem('showDaacs')){
-                window.localStorage.setItem('showDaacs',true)
-                redirect="/daacs"
-            } else {
-                window.localStorage.setItem('showDaacs',false)
-                redirect="/questions"  
-            }
-            if(typeof parameters['default'] != 'undefined'){
-                // Expecting daac short_name here
-                redirect+='/' + parameters['default'].toLowerCase()
-            } else if(window.localStorage.getItem('DAAC')!=null){
-                redirect+='/' + window.localStorage.getItem('DAAC').toLowerCase()
-            } else {
-                redirect='/daacs/selection'
-            }
-            window.location.href = redirect.toLowerCase()
+            window.homeComponent = this;
+            this.resetRoute()
         }
     }
 </script>

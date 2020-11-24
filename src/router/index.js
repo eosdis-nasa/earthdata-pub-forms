@@ -15,19 +15,29 @@ const routes = [
     component: Home
   },
   {
-    path: '/daacs/:default',
-    name: 'Daacs',
+    path: '/interest/daacs/:default',
+    name: 'Submission Request - Daacs',
     component: Daacs,
-    alias: '/daacs/selection'
+    alias: '/interest/daacs/selection'
   },
   {
-    path: '/questions/:default',
-    name: 'Questions',
+    path: '/interest/questions/:default',
+    name: 'Submission Request - Questions',
     component: Questions
   },
   {
-    path: '/help/:default',
-    name: 'Help',
+    path: '/interest/help',
+    name: 'Submission Request - Help',
+    component: Help
+  },
+  {
+    path: '/questionnaire/questions',
+    name: 'Questionnaire - Questions',
+    component: Questions
+  },
+  {
+    path: '/questionnaire/help',
+    name: 'Questionnaire - Help',
     component: Help
   },
   {

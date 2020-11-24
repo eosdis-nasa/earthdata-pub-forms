@@ -14,7 +14,7 @@
                 v-for="(item, index) in daacs"
                 :key="index"
                 :name="item.short_name.replace(' ', '_')"
-                :id="item.short_name.replace(' ', '_') + '_' + index"
+                :id="`${item.short_name.replace(' ', '_')}_${index}`"
                 :value="item.long_name"
                 @click="setSelectedValues(item.url, item.short_name, item.long_name, item.description)"
                 v-model="selected"
@@ -24,21 +24,21 @@
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               You have selected:
               <br />
               <strong>{{ selected }}</strong>
             </div>
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
-                <font-awesome-icon icon="external-link-alt">external link</font-awesome-icon>
+                <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
               </a>
             </div>
             <!-- Submit Button -->
             <div v-if="selected">
-              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button">Select</b-button>
+              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
             </div>
             <!-- End of Submit Button -->
           </div>
@@ -53,14 +53,12 @@
 <script>
 // Jquery javascript
 import $ from "jquery";
-import mixin from "../mixins/mixin";
 
 // This Daacs component gets DAAC data and displays abbreviations as a radio selection
 // On selection displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users more info and to move on.
 export default {
   name: "Daacs",
-  mixins: [mixin],
   data() {
     return {
       selected: "",
@@ -86,6 +84,8 @@ export default {
     }
   },
   mounted() {
+    window.daacsComponent = this;
+    this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();
     this.GetCurrentDaacAndUpdate();
   },
@@ -137,7 +137,6 @@ export default {
       long_name,
       description
     ) {
-      //console.log('set current daac objects')
       var daac_specific_data;
       if (
         typeof url == "undefined" ||
@@ -219,11 +218,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Questions",
+          name: "Submission Request - Questions",
           params: { default: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Submission Request - Daacs", params: { default: "selection" } });
       }
     },
     // @vuese
@@ -253,7 +252,7 @@ export default {
         history.replaceState(
           "updating href",
           window.document.title,
-          window.location.href.toLowerCase() + "daacs/selection"
+          `${window.location.href.toLowerCase()}daacs/selection`
         );
       }
       if (
@@ -284,8 +283,8 @@ export default {
             default_daac != "" &&
             default_daac != "SELECTION"
           ) {
-            if ($("label[for^='" + default_daac + "']")) {
-              $("label[for^='" + default_daac + "']").click();
+            if ($(`label[for^='${default_daac}']`)) {
+              $(`label[for^='${default_daac}']`).click();
             }
           }
         }
@@ -296,32 +295,35 @@ export default {
 };
 </script>
 <style scoped>
-#selected_daac, .external-link-alt, #selected_daac_link {
-  color: #2275AA;
-}
-.eui-btn--green {
-  background-color: #158749;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-  margin-bottom: 1rem;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
-.button_div {
-  margin-top: 1rem;
-  text-align: left;
-  float: left;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
+  #daac_select_button {
+    margin-top:2rem;
+  }
+  .form-group {
+    margin-top:2rem;
+  }
+  #selected_daac, .external-link-alt, #selected_daac_link {
+    color: #2275AA;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+    margin-bottom: 1rem;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
+  .button_div {
+    margin-top: 1rem;
+    text-align: left;
+    float: left;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
 </style>
