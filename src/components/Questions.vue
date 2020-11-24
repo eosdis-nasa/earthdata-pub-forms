@@ -137,7 +137,8 @@
                                         :id="`same_as_${input.id}`"
                                         value="true"
                                         unchecked-value="false"
-                                        @click="setContact(input.id, contact)"
+                                        @change.native="setContact(input.id, contact)"
+                                        @click.native="setContact(input.id, contact)"
                                         @keyup.space.native="setContact(input.id, contact)">
                                       </b-form-checkbox>
                                   </span>
@@ -539,6 +540,7 @@ export default {
               $(`#${to_orcid_id}`).focus()
             }
             this.setContacts(this.values)
+            //TODO - check how to execute handleChange for html5 without having to save first
           }
         }
       }
@@ -650,9 +652,9 @@ export default {
       let form = this.getPath()[0]
       let json_name = ''
       if(form.match(/interest/g)){
-        json_name = 'submission_request' 
+        json_name = 'data_publication_request' 
       } else {
-        json_name = `${form}/data_product_questionnaire`
+        json_name = `${form}/data_product_information`
       }
       $.getJSON( `../${json_name}.json`, ( questions ) => {
       // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////

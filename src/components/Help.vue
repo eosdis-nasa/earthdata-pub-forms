@@ -53,9 +53,9 @@
                 let form = this.getPath()[0]
                 let json_name = ''
                 if(form.match(/interest/g)){
-                    json_name = 'submission_request' 
+                    json_name = 'data_publication_request' 
                 } else {
-                    json_name = 'data_product_questionnaire' 
+                    json_name = 'data_product_information' 
                 }
                 $.getJSON( `../${form}/${json_name}.json`, ( questions ) => {
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////

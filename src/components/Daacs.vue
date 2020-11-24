@@ -218,11 +218,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Submission Request - Questions",
+          name: "Data Publication Request - Questions",
           params: { default: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Submission Request - Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Data Publication Request - Daacs", params: { default: "selection" } });
       }
     },
     // @vuese

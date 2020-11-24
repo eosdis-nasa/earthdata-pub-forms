@@ -47,9 +47,9 @@ localVue.component('font-awesome-layers', FontAwesomeLayers)
 localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
-                  { path: '/interest/daacs/:default', name: 'Submission Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
-                  { path: '/interest/questions/:default', name: 'Submission Request - Questions', component: Questions },
-                  { path: '/interest/help', name: 'Submission Request - Help', component: Help },
+                  { path: '/interest/daacs/:default', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:default', name: 'Data Publication Request - Questions', component: Questions },
+                  { path: '/interest/help', name: 'Data Publication Request - Help', component: Help },
                   { path: '/questionnaire/questions', name: 'Questionnaire - Questions', component: Questions },
                   { path: '/questionnaire/help', name: 'Questionnaire - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }

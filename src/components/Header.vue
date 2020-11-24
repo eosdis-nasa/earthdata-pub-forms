@@ -8,8 +8,8 @@
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
           <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getTitleFromLocation().toLowerCase().match(/interest/g)">Earthdata Submission Request Form</span>
-          <span id="title" v-else-if="getTitleFromLocation().toLowerCase().match(/questionnaire/g)">Data Product Questionnaire</span>
+          <span id="title" v-else-if="showDaacs && getTitleFromLocation().toLowerCase().match(/interest/g)">Data Publication Request Form</span>
+          <span id="title" v-else-if="getTitleFromLocation().toLowerCase().match(/questionnaire/g)">Data Product Information</span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
@@ -20,19 +20,19 @@
             <router-link
               id="daacs_nav_link"
               v-if="daac !=='selection' && daac !== ''"
-              :to="{ name: 'Submission Request - Daacs', path: '/interest/daacs', params: { default: daac }}"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { default: daac }}"
             >DAACS</router-link>
             <!-- if daac is not set and not 'selection' -->
             <router-link
               id="daacs_nav_link"
               v-else-if="daac !=='selection'"
-              :to="{ name: 'Submission Request - Daacs', path: '/interest/daacs', params: { default: 'selection' }}"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { default: 'selection' }}"
             >DAACS</router-link>
             <!-- if daac is 'selection' -->
             <router-link
               id="daacs_nav_link"
               v-else
-              :to="{ name: 'Submission Request - Daacs', path: '/interest/daacs/selection', params: { default: 'selection' } }"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs/selection', params: { default: 'selection' } }"
             >DAACS</router-link>
             <!-- daac divider -->
             <div class="inline">  |  </div>
@@ -41,7 +41,7 @@
             <router-link
               id="questions_nav_link"
               v-if="daac !=='selection' && daac !== ''"
-              :to="{ name: 'Submission Request - Questions', path: '/interest/questions', params: { default: daac }}"
+              :to="{ name: 'Data Publication Request - Questions', path: '/interest/questions', params: { default: daac }}"
             >Questions</router-link>
             <!-- if daac is not set -->
             <a
@@ -54,7 +54,7 @@
             <!-- question divider divider -->
             <div class="inline" v-else>  |  </div>
             <!-------------------- HELP ---------------------->
-            <router-link id="help_nav_link" :to="{ name: 'Submission Request - Help', path: '/interest/help' }">Help</router-link>
+            <router-link id="help_nav_link" :to="{ name: 'Data Publication Request - Help', path: '/interest/help' }">Help</router-link>
           </span>
           <!-- if daacs hidden -->
           <span v-else>
