@@ -1,16 +1,25 @@
 <template>
+<div role="main">
   <!-- Form -->
   <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @reset="cancelForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
     <b-container>
-      <fixed-header :fixed.sync="isFixed" :threshold="168">
-        <div class="navbar">
-          <!-- Button Options -->
-          <div class="button_bar">
-            <div align=left v-if="!readonly" class="left_button_bar">
-              <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-              <b-button class="button" type="redo" id="redo_button" v-else disabled><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
-              <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
-              <b-button class="button" type="undo" id="undo_button" v-else disabled><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+        <fixed-header :fixed.sync="isFixed" :threshold="168">
+            <div class="navbar">
+                <!-- Button Options -->
+                <div class="button_bar">
+                    <div align=left v-if="!readonly" class="left_button_bar">
+                        <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="redo" id="redo_button" v-else disabled aria-label="redo button"><font-awesome-icon v-bind:icon="redoLabel">{{ redoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                        <b-button class="button" type="undo" id="undo_button" v-else disabled aria-label="undo button"><font-awesome-icon v-bind:icon="undoLabel">{{ undoLabel }}</font-awesome-icon></b-button>
+                    </div>
+                    <div align=right v-if="!readonly" class="right_button_bar">
+                        <b-button class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile(true)" aria-label="draft button">{{ draftLabel }}</b-button>
+                        <b-button class="eui-btn--blue" type="save" id="save_data" @click="saveFile(true)" aria-label="save button">{{ saveLabel }}</b-button>
+                        <b-button class="eui-btn--green" type="submit" id="submit_data" @click="submitForm" aria-label="submit button">{{ submitLabel }}</b-button>
+                        <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton" aria-label="cancel button">{{ cancelLabel }}</b-button>
+                    </div>
+                </div>
             </div>
             <div align=right v-if="!readonly" class="right_button_bar">
               <b-button class="eui-btn--blue" type="draft" id="draft_data" @click=draftFile(true)>{{ draftLabel }}</b-button>
@@ -18,8 +27,6 @@
               <b-button class="eui-btn--green" type="submit" id="submit_data" @click=submitForm>{{ submitLabel }}</b-button>
               <b-button class="eui-btn--red" type="reset" id="reset_data" v-if="showCancelButton">{{ cancelLabel }}</b-button>
             </div>
-          </div>
-        </div>
       </fixed-header>
     </b-container>
     <b-container style="margin-top:2rem;">
@@ -32,141 +39,142 @@
       </p>
     </b-container>
     <b-container name="questions_container" id="questions_container">
-      <h3 v-if="warning" class="warning">{{warning}}</h3>
-      <!-- Section -->
-      <section>
-        <b-row v-for="(heading, a_key) in questions" :key="a_key">
-          <h3>{{heading.heading}}</h3>
-          <div id=questions>
-            <!-- Question -->
-            <b-form-group v-for="(question, b_key) in heading"
-                          :class="{ 'form-group-error': ($v.values[question.id] || {}).$error }"
-                          :key="b_key"
-                          size="lg" lg=12
-                          :disabled="readonly">
-              <label :for="question.id" class="eui-label">{{question.title}}:</label>
-              <span class="required" v-if="question.required == true">* required</span>
-              <p :id="question.id || a_key">{{question.text}}</p>
-              <!--<b-col class="w-50 help" :id="question.id">
-                  <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
-                  <div class="hidden overlay">{{question.help}}</div>
-              </b-col>-->
-              <!-- Input -->
-              <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
-                <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
-                <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
-                <!-- Text Type of Input -->
-                <b-form-input
-                  :class="{ 'form-input-error': ($v.values[input.id] || {}).$error }"
-                  :type="input.type"
-                  :id="input.id"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  :disabled="readonly"
-                  v-if="input.type == 'text' ||
-                                input.type == 'password' ||
-                                input.type == 'number' ||
-                                input.type == 'url' ||
-                                input.type == 'email' ||
-                                input.type == 'search' ||
-                                input.type == 'range' ||
-                                input.type == 'date' ||
-                                input.type == 'tel' ||
-                                input.type == 'time' ||
-                                input.type == 'color'"
-                  input.attrib_string>
-                </b-form-input>
-                <!-- End of Text Type of Input -->
-                <!-- Checkbox Type of Input -->
-                <b-form-checkbox
-                  :class="{ 'form-checkbox-error': ($v.values[input.id] || {}).$error, 'checkboxes':true }"
-                  :type="input.type"
-                  :id="input.id"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  :disabled="readonly"
-                  value="true"
-                  unchecked-value="false"
-                  v-if="input.type == 'checkbox'"
-                  input.attrib_string>
-                </b-form-checkbox>
-                <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
-                <!-- End of Checkbox Type of Input -->
-                <!-- Textarea Type of Input -->
-                <b-form-textarea
-                  :class="{ 'form-textarea-error': ($v.values[input.id] || {}).$error }"
-                  :type="input.type"
-                  :id="input.id"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  :disabled="readonly"
-                  v-else-if="input.type == 'textarea'"
-                  input.attrib_string>
-                </b-form-textarea>
-                <!-- End of Textarea Type of Input -->
-                <!-- Radio Group Type of Input -->
-                <b-form-radio-group
-                  :class="{ 'form-radio-group-error': ($v.values[input.id] || {}).$error }"
-                  :type="input.type"
-                  :id="input.id"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  value="true"
-                  unchecked-value="false"
-                  :disabled="readonly"
-                  v-else-if="input.type == 'radio'"
-                  :options="input.options"
-                  input.attrib_string>
-                </b-form-radio-group>
-                <!-- End of Radio Group Type of Input -->
-                <!-- Select Type of Input -->
-                <b-form-select
-                  :class="{ 'form-select-error': ($v.values[input.id] || {}).$error }"
-                  :type="input.type"
-                  :id="input.id"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  :disabled="readonly"
-                  v-else-if="input.type == 'select'"
-                  :options="input.options"
-                  input.attrib_string>
-                </b-form-select>
-                <!-- End of Select Type of Input -->
-                <!-- File Type of Input -->
-                <b-form-file
-                  :class="{ 'form-file-error': ($v.values[input.id] || {}).$error }"
-                  :type="input.type"
-                  :id="input.id"
-                  :scope="Boolean(values[input.id])"
-                  :name="input.id"
-                  v-model="values[input.id]"
-                  size="lg" lg=12
-                  :disabled="readonly"
-                  v-else-if="input.type == 'file'"
-                  input.attrib_string>
-                </b-form-file>
-                <!-- End of File Type of Input -->
-                <!-- Selected Input File Name -->
-                <div class="mt-3" v-else-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
-                <!-- End of Selected Input File Name -->
-                <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
-              </b-row>
-              <!-- End of Input -->
-            </b-form-group>
-            <!-- End of Question -->
-          </div>
-        </b-row>
-      </section>
-      <!-- End of Section -->
+        <h2 v-if="warning" class="warning">{{warning}}</h2>
+        <!-- Section -->
+        <section>
+            <b-row v-for="(heading, a_key) in questions" :key="a_key">
+                <h2>{{heading.heading}}</h2>
+                <div :id="a_key">
+                    <!-- Question -->
+                    <b-form-group v-for="(question, b_key) in heading" 
+                    :class="{ 'form-group-error': ($v.values[question.id] || {}).$error }"
+                    :key="b_key" 
+                    size="lg" lg=12
+                    :disabled="readonly">
+                        <label :for="question.id" class="eui-label">{{question.title}}:</label>
+                        <span class="required" v-if="question.required == true">* required</span>
+                        <p :id="question.id || a_key">{{question.text}}</p>
+                        <!--<b-col class="w-50 help" :id="question.id">
+                            <a href="#" v-if="question.help != ''" @click:=getHelp(question.id)>Help</a>
+                            <div class="hidden overlay">{{question.help}}</div>
+                        </b-col>-->
+                        <!-- Input -->
+                        <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
+                            <label :for="input.id || input + '_' + c_key" class="eui-label">{{input.label}}: </label>
+                            <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
+                            <!-- Text Type of Input -->
+                            <b-form-input 
+                                :class="{ 'form-input-error': ($v.values[input.id] || {}).$error }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :name="input.id" 
+                                v-model="values[input.id]"
+                                size="lg" lg=12
+                                :disabled="readonly"
+                                v-if="input.type == 'text' || 
+                                input.type == 'password' || 
+                                input.type == 'number' || 
+                                input.type == 'url' || 
+                                input.type == 'email' || 
+                                input.type == 'search' || 
+                                input.type == 'range' || 
+                                input.type == 'date' || 
+                                input.type == 'tel' || 
+                                input.type == 'time' || 
+                                input.type == 'color'" 
+                                input.attrib_string>
+                            </b-form-input>
+                            <!-- End of Text Type of Input -->
+                            <!-- Checkbox Type of Input -->
+                            <b-form-checkbox 
+                                :class="{ 'form-checkbox-error': ($v.values[input.id] || {}).$error, 'checkboxes':true }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :name="input.id" 
+                                v-model="values[input.id]"
+                                size="lg" lg=12
+                                :disabled="readonly"
+                                value="true"
+                                unchecked-value="false"
+                                v-if="input.type == 'checkbox'" 
+                                input.attrib_string>
+                            </b-form-checkbox>
+                            <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
+                            <!-- End of Checkbox Type of Input -->
+                            <!-- Textarea Type of Input -->
+                            <b-form-textarea 
+                                :class="{ 'form-textarea-error': ($v.values[input.id] || {}).$error }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :name="input.id" 
+                                v-model="values[input.id]"
+                                size="lg" lg=12
+                                :disabled="readonly"
+                                v-else-if="input.type == 'textarea'" 
+                                input.attrib_string>
+                            </b-form-textarea>
+                            <!-- End of Textarea Type of Input -->
+                            <!-- Radio Group Type of Input -->
+                            <b-form-radio-group
+                                :class="{ 'form-radio-group-error': ($v.values[input.id] || {}).$error }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :name="input.id" 
+                                v-model="values[input.id]"
+                                size="lg" lg=12
+                                value="true"
+                                unchecked-value="false"
+                                :disabled="readonly"
+                                v-else-if="input.type == 'radio'" 
+                                :options="input.options" 
+                                input.attrib_string>
+                            </b-form-radio-group>
+                            <!-- End of Radio Group Type of Input -->
+                            <!-- Select Type of Input -->
+                            <b-form-select
+                                :class="{ 'form-select-error': ($v.values[input.id] || {}).$error }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :name="input.id" 
+                                v-model="values[input.id]"
+                                size="lg" lg=12
+                                :disabled="readonly"
+                                v-else-if="input.type == 'select'" 
+                                :options="input.options" 
+                                input.attrib_string>
+                            </b-form-select>
+                            <!-- End of Select Type of Input -->
+                            <!-- File Type of Input -->
+                            <b-form-file
+                                :class="{ 'form-file-error': ($v.values[input.id] || {}).$error }"
+                                :type="input.type" 
+                                :id="input.id" 
+                                :scope="Boolean(values[input.id])"
+                                :name="input.id" 
+                                v-model="values[input.id]" 
+                                size="lg" lg=12 
+                                :disabled="readonly" 
+                                v-else-if="input.type == 'file'" 
+                                input.attrib_string>
+                            </b-form-file>
+                            <!-- End of File Type of Input -->
+                            <!-- Selected Input File Name -->
+                            <div class="mt-3" v-else-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
+                            <!-- End of Selected Input File Name -->
+                            <p :id="input.id + '_invalid'" class="eui-banner eui-banner--danger hidden validation"></p>
+                        </b-row>
+                        <!-- End of Input -->
+                    </b-form-group>
+                    <!-- End of Question -->
+                </div>
+            </b-row>
+        </section>
+        <!-- End of Section -->
     </b-container>
     <!-- End of Button Options -->
   </b-form>
   <!-- End of Form -->
+</div>
 </template>
 <script>
 // Basic html5 validation
@@ -873,7 +881,7 @@ export default {
       //console.log('Executing Submit ...')
       let is_invalid = this.saveFile(str)
       if (!is_invalid) {
-        this.$emit('submitForm', window.localStorage.getItem(this.DAAC + '_questions'))
+        this.$emit('submit-form', window.localStorage.getItem(this.DAAC + '_questions'))
       }
     },
     // @vuese
@@ -1084,6 +1092,24 @@ export default {
 }
 </script>
 <style scoped>
+.eui-btn--green {
+  background-color: #158749;
+  }
+.eui-btn--green:hover {
+  background-color: #12713d;
+}
+.eui-btn--blue {
+  background-color: #2275AA;
+}
+.eui-btn--blue:hover {
+  background-color: #2c3e50;
+}
+.eui-btn--red, #reset_data{
+  background-color: #DB1400;
+}
+.eui-btn--red:hover {
+  background-color: #c21200!important;
+}
 .eui-banner--danger {
   text-align:left;
   margin-bottom: 2rem;

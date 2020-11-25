@@ -3,7 +3,7 @@
   <div id="app">
     <Header :formTitle="formTitle"/>
     <router-view ref="content"/>
-     <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius=3%></go-top>
+     <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius=3% aria-label="go to top button"></go-top>
   </div>
 </template>
 <!-- End of Main App -->
@@ -83,6 +83,9 @@
         text-align: left;
         color: #2c3e50;
     }
+    a, a:visited, a span {
+        color:#2275AA;
+    }
     .selector-for-some-widget {
         box-sizing: content-box;
     }
@@ -90,7 +93,7 @@
         margin-top:calc(1.5em + 1rem + 2px) + 1rem;
     }
     .form-group {
-        margin-top:2rem;
+        margin-top:.5rem;
         margin-bottom: 1.75rem!important;
     }
     #nav {
@@ -102,6 +105,7 @@
     }
     #nav a.router-link-exact-active {
         font-weight: bold;
+        text-decoration:underline;
     }
     label{
         font-weight:bold;
@@ -133,7 +137,7 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
-    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+    /*.btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
         background-color: #d62c1a;
     }
     .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
@@ -141,7 +145,7 @@
     }
     .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
         background-color: #1baf5e;
-    }
+    }*/
     .default_background {
         background-color: #ebebeb;
     }
