@@ -95,9 +95,11 @@ export default {
     fetchDaacs() {
       // Gets DAAC data for template
       var items = [];
-      $.getJSON("../daacs.json", daacs => {
-        for (var dict in daacs["data"]) {
-          items.push(daacs["data"][dict]);
+      // TESTING ONLY
+      //$.getJSON("../daacs.json", daacs => {
+      $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
+        for (var dict in daacs) {
+          items.push(daacs[dict]);
         }
         this.loaded = true;
       });
@@ -178,11 +180,11 @@ export default {
       ).toLowerCase();
       if (
         typeof this.$route != "undefined" &&
-        typeof this.$route.params.default != "undefined" &&
-        this.$route.params.default != null
+        typeof this.$route.params.group != "undefined" &&
+        this.$route.params.group != null
       ) {
         if (
-          this.$route.params.default.replace(/ /g, "_").toLowerCase() !=
+          this.$route.params.group.replace(/ /g, "_").toLowerCase() !=
           short_name.replace(/ /g, "_").toLowerCase()
         ) {
           short_name = this.setCurrentDaacObjects(
@@ -192,7 +194,7 @@ export default {
             long_name,
             description
           );
-          this.$route.params.default = short_name
+          this.$route.params.group = short_name
             .replace(/ /g, "_")
             .toLowerCase();
         }

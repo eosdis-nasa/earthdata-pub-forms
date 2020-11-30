@@ -312,7 +312,8 @@ export default {
       warning:'',
       isFixed:true,
       confirm:false,
-      validation_errors:{}
+      validation_errors:{},
+      formId:''
     }
   },
   props: {
@@ -377,7 +378,7 @@ export default {
         values: {}
     }
     var obj = []
-    if(typeof this.questions.inputs !='undefined'){
+    if(typeof this.questions != 'undefined' && typeof this.questions.inputs !='undefined'){
         obj = this.questions.inputs
     } else if (typeof this.questions !='undefined'){
         obj = this.questions
@@ -547,7 +548,7 @@ export default {
     },
     // @vuese
     // Gets contacts and builds options for checkbox
-   setContacts: function (values) {
+    setContacts: function (values) {
       this.contacts = []
       let questions = this.questions[0]
       for (var ea in values){
@@ -644,97 +645,120 @@ export default {
     },
     // @vuese
     // Fetchs the questions data
-    fetchQuestions(){
-      var question = []
-      this.contacts = []
-      let contact = false
-      // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-      let form = this.getPath()[0]
-      let json_name = ''
-      if(form.match(/interest/g)){
-        json_name = 'data_publication_request' 
-      } else {
-        json_name = `${form}/data_product_information`
-      }
-      $.getJSON( `../${json_name}.json`, ( questions ) => {
-      // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-
-      // $.getJSON(`${process.env.VUE_APP_API_ROOT}/data/form/6c544723-241c-4896-a38c-adbc0a364293`, ( questions ) => {
-        //The below line looks for custom css and applies it to the head (eui is done first)
-        this.formTitle = questions.form_title
-        $('head link[data-eui="yes"]').remove()
-        if(questions.style){
-          $('head link[data-custom="yes"]').remove()
-        }
-        var head = window.document.head;
-        var link = window.document.createElement("link");
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        $(link).attr('data-eui', 'yes');
-        link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
-        head.appendChild(link);
-        if (questions.style){
-          head = window.document.head;
-          link = window.document.createElement("link");
-          link.type = "text/css";
-          link.rel = "stylesheet";
-          $(link).attr('data-custom', 'yes');
-          link.href = questions.style
-          head.appendChild(link);
-        }
-        for(var section in questions['sections']) {
-          var heading = questions['sections'][section]['heading']
-          var heading_required = questions['sections'][section]['required'] || false
-          var heading_show_if = questions['sections'][section]['show_if'] || []
-          var questions_section = questions['sections'][section]['questions']
-          questions_section['heading'] = heading
-          questions_section['heading_required'] = heading_required
-          questions_section['heading_show_if'] = heading_show_if
-          for (var q in questions_section){
-            if (typeof questions_section[q].title != 'undefined'){
-              let text = questions_section[q].text
-              let title = questions_section[q].title
-              let help = questions_section[q].help
-              if(
-                (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
-                (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
-                (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
-                (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
-                (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
-                (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
-              ) {
-                contact = true
+    async fetchQuestions(){
+      // TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+      // let form = this.getPath()[0]
+      // let json_name = ''
+      // if(form.match(/interest/g)){
+      //   json_name = 'data_publication_request' 
+      // } else {
+      //   json_name = `${form}/data_product_information`
+      //}
+      //$.getJSON( `../${json_name}.json`, ( questions ) => {
+      // END OF TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+      if (this.formId == '' && (this.daac !=='selection' || this.daac != '')){
+          $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`, ( forms ) => {
+            var question = []
+            this.contacts = []
+            let contact = false
+            for (let form in forms){
+              if (forms[form].form_name.toLowerCase().match(/archival_interest/g)){
+                this.formId = forms[form]['id']
+                this.formTitle = forms[form]['title']
+                break
               }
             }
-            if(typeof questions_section[q].inputs != 'undefined'){
-              for(var input in questions_section[q].inputs){
-                var options = []
-                if(contact && questions_section[q].inputs[input].label.toLowerCase()=='name'){
-                  questions_section[q].inputs[input].contact = true
-                  contact = false
-                }
-                if(typeof questions_section[q].inputs[input].enums !='undefined'){
-                  for (var e in questions_section[q].inputs[input].enums){
-                    var option = questions_section[q].inputs[input].enums[e]
-                    if(Array.isArray(questions_section[q].inputs[input].enums)){
-                      options.push({ value: option, text: option })
-                    } else if (typeof questions_section[q].inputs[input].enums.value !='undefined' && typeof questions_section[q].inputs[input].enums.text !='undefined'){
-                      var text = questions_section[q].inputs[input].enums.text
-                      var value = questions_section[q].inputs[input].enums.value
-                      options.push({ value: value, text: text })
+            if(this.formId == ''){
+              this.$bvModal.msgBoxOk('Please report this error to your dev team indicating formId was blank.', {
+                title: 'Something has gone wrong',
+                size: 'sm',
+                buttonSize: 'sm',
+                okTitle: 'OK',
+                footerClass: 'p-2',
+                hideHeaderClose: false,
+                centered: true
+              })
+            }
+            $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.formId}`, ( questions ) => {
+              if (this.formTitle == '' && questions['title']!= ''){
+                this.formTitle = questions['title']
+              }
+              //The below line looks for custom css and applies it to the head (eui is done first)
+              $('head link[data-eui="yes"]').remove()
+              if(questions.style){
+                $('head link[data-custom="yes"]').remove()
+              }
+              var head = window.document.head;
+              var link = window.document.createElement("link");
+              link.type = "text/css";
+              link.rel = "stylesheet";
+              $(link).attr('data-eui', 'yes');
+              link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
+              head.appendChild(link);
+              if (questions.style){
+                head = window.document.head;
+                link = window.document.createElement("link");
+                link.type = "text/css";
+                link.rel = "stylesheet";
+                $(link).attr('data-custom', 'yes');
+                link.href = questions.style
+                head.appendChild(link);
+              }
+              for(var section in questions['sections']) {
+                var heading = questions['sections'][section]['heading']
+                var heading_required = questions['sections'][section]['required'] || false
+                var heading_show_if = questions['sections'][section]['show_if'] || []
+                var questions_section = questions['sections'][section]['questions']
+                questions_section['heading'] = heading
+                questions_section['heading_required'] = heading_required
+                questions_section['heading_show_if'] = heading_show_if
+                for (var q in questions_section){
+                  if (typeof questions_section[q].title != 'undefined'){
+                    let text = questions_section[q].text
+                    let title = questions_section[q].title
+                    let help = questions_section[q].help
+                    if(
+                      (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
+                      (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
+                      (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
+                      (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                      (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
+                      (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
+                    ) {
+                      contact = true
+                    }
+                  }
+                  if(typeof questions_section[q].inputs != 'undefined'){
+                    for(var input in questions_section[q].inputs){
+                      var options = []
+                      if(contact && questions_section[q].inputs[input].label.toLowerCase()=='name'){
+                        questions_section[q].inputs[input].contact = true
+                        contact = false
+                      }
+                      if(typeof questions_section[q].inputs[input].enums !='undefined'){
+                        for (var e in questions_section[q].inputs[input].enums){
+                          var option = questions_section[q].inputs[input].enums[e]
+                          if(Array.isArray(questions_section[q].inputs[input].enums)){
+                            options.push({ value: option, text: option })
+                          } else if (typeof questions_section[q].inputs[input].enums.value !='undefined' && typeof questions_section[q].inputs[input].enums.text !='undefined'){
+                            var text = questions_section[q].inputs[input].enums.text
+                            var value = questions_section[q].inputs[input].enums.value
+                            options.push({ value: value, text: text })
+                          }
+                        }
+                      }
+                      if(options.length>0){
+                        questions_section[q].inputs[input]['options'] = options
+                      }
                     }
                   }
                 }
-                if(options.length>0){
-                  questions_section[q].inputs[input]['options'] = options
-                }
+                question.push(questions_section)
               }
-            }
-          }
-          question.push(questions_section)
-        }
-      })
-      return question
+              this.questions = question
+            })
+          })
+      }
     },
     // @vuese
     // Validation of input data returns error and if dirty
@@ -971,8 +995,7 @@ export default {
         }
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
-    this.questions = this.fetchQuestions()
-    // TODO replace with load from api
+    this.fetchQuestions()
     if (window.localStorage.getItem(`${form}_questions`) != null) {
       this.values = JSON.parse(window.localStorage.getItem(`${form}_questions`))
       this.$v.$touch()

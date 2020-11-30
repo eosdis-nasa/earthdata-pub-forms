@@ -36,18 +36,18 @@ export default {
             redirect=`/${form}/questions`
         }
         // Append daac if parameter available
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined'){
-            redirect+=`/${this.$route.query.parameters.default.toLowerCase()}`
+        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined'){
+            redirect+=`/${this.$route.query.parameters.group.toLowerCase()}`
         // Automatically redirect to questions if daac selected
         } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
             redirect=`/${form}/questions/${window.localStorage.getItem('DAAC').toLowerCase()}`
-        // Set path to form and default daac (selection) for interest form
+        // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
             redirect=`/${form}/daacs/selection`
         // Set path to form and questions for questionnaire
         } else if (form != ''){
             redirect=`/${form}/questions`
-        // Set path from localhost to interest form with default daac (selection)
+        // Set path from localhost to interest form with group daac (selection)
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
             redirect = `${window.location.href}interest/daacs/selection`
         // Set path from localhost to questionnaire questions
@@ -81,7 +81,7 @@ export default {
         }
         let component_name_prefix = ''
         if(form.match(/questionnaire/g)){
-          component_name_prefix = 'Questionnaire - '
+          component_name_prefix = 'Data Product Information - '
         } else {
           component_name_prefix = 'Data Publication Request - '
         }

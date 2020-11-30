@@ -47,11 +47,12 @@ localVue.component('font-awesome-layers', FontAwesomeLayers)
 localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
-                  { path: '/interest/daacs/:default', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
-                  { path: '/interest/questions/:default', name: 'Data Publication Request - Questions', component: Questions },
+                  { path: '/interest/daacs/:group', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:group/:formId', name: 'Data Publication Request - Questions', component: Questions },
                   { path: '/interest/help', name: 'Data Publication Request - Help', component: Help },
-                  { path: '/questionnaire/questions', name: 'Questionnaire - Questions', component: Questions },
-                  { path: '/questionnaire/help', name: 'Questionnaire - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Data Product Information - Questions', component: Questions },
+                  { path: '/questionnaire/questions:formId', name: 'Data Product Information - Questions with FormId', component: Questions },
+                  { path: '/questionnaire/help', name: 'Data Product Information - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
@@ -468,7 +469,7 @@ afterEach(() => {
 		formTitle
 		functions:
 			showdaacs:
-				if !showdaacs, opens questions with default = the daac
+				if !showdaacs, opens questions with group = the daac
 			on created:
 				get parameters sent in and sets this.showDaacs and localStorage
 				else get daac from localStorage if its set and sets this.showdaacs
@@ -512,7 +513,7 @@ Daacs:
 		unique functions:
 			fetchsDaacs
 			GetCurrentDaacAndUpdate:
-				On load, looks for this.selected, param default or localStorage for autoselection then clicks daac radio object (executes the setSelectedValues)
+				On load, looks for this.selected, param group or localStorage for autoselection then clicks daac radio object (executes the setSelectedValues)
 			setSelectedValues:
 				Receives the selected daac data ({ 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }), 
 				then sets the current daac objects (setCurrentDaacObjects). 
@@ -526,7 +527,7 @@ Daacs:
 			save:
 				if something was selected, saves to localStorage and updates the header
 			submit:
-				if seomthing was selected, pushes through the router to Questions with the default as the selected or reroutes to daacs
+				if seomthing was selected, pushes through the router to Questions with the group as the selected or reroutes to daacs
 
 Questions:
 	props/data:
