@@ -967,7 +967,6 @@ export default {
               centered: true
             })
           }
-          this.sendDataToApi()
         } else {
           if($('.vue-go-top__content').is(":visible")){
             $('.vue-go-top__content').click()
