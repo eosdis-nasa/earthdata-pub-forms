@@ -26,6 +26,11 @@ const routes = [
     component: Questions
   },
   {
+    path: '/interest/questions/:group/:formId/:submissionId',
+    name: 'Data Publication Request - Questions with formId and submissionId',
+    component: Questions
+  },
+  {
     path: '/interest/questions/:group',
     name: 'Data Publication Request - Questions',
     component: Questions
@@ -41,8 +46,13 @@ const routes = [
     component: Questions
   },
   {
-    path: '/questionnaire/questions:formId',
+    path: '/questionnaire/questions/:formId',
     name: 'Data Product Information - Questions with FormId',
+    component: Questions
+  },
+  {
+    path: '/questionnaire/questions/:formId/:submissionId',
+    name: 'Data Product Information - Questions with formId and submissionId',
     component: Questions
   },
   {
