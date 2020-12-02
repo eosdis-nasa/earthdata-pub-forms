@@ -982,7 +982,7 @@ export default {
     },
     // @vuese
     // Cancel and exit form
-    okToCancel(){
+    okToCancel(place_to_redirect){
       this.$refs.form.reset()
       let form_components = this.getPath()
       let form = form_components[0] 
@@ -994,6 +994,9 @@ export default {
       this.$values = {}
       this.$v.$touch()
       this.confirm = false
+      if(typeof place_to_redirect != 'undefined'){
+        window.location.href = place_to_redirect
+      }
     },
     // @vuese
     // Resets form and local storage to empty entries
@@ -1025,16 +1028,16 @@ export default {
           .then(value => {
             this.confirm = value
             if(value){
-              this.okToCancel()
+              this.okToCancel(place)
             } else { return }
           })
         } else {
           this.confirm = false;
-          this.okToCancel()
+          this.okToCancel(place)
         }
       } else {
         this.confirm = true
-        this.okToCancel()
+        this.okToCancel(place)
       }
     },
     // @vuese
