@@ -1035,10 +1035,7 @@ export default {
           this.confirm = false;
           this.okToCancel(place)
         }
-      } else {
-        this.confirm = true
-        this.okToCancel(place)
-      }
+      } 
     },
     // @vuese
     // Exit form to home page
