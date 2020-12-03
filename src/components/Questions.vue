@@ -377,7 +377,7 @@ export default {
         }
         this.saveTimeout = setTimeout(() => {
           if (!this.values.fromUndo) {
-            this.setContacts(this.values)
+            //this.setContacts(this.values)
             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
             this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
             var string_logging_object = this.$log.debug('pushQuestionsState')
@@ -547,26 +547,25 @@ export default {
         }
         let this_val = parseFloat(this.values[`${fld.id}_${direction}`])
         let comp_direction = {
-          'north': 'south',
-          'east': 'west',
           'south': 'north',
           'west': 'east'
         }
         let comp_val = parseFloat(this.values[`${fld.id}_${comp_direction[direction]}`])
+        let label = `${direction.substring(0, 1).toUpperCase()}`
         if (/west|south/.test(direction) && this_val >= comp_val) {
-          return `${direction.substring(0, 1).toUpperCase()} must be less than ${comp_direction[direction].substring(0, 1).toUpperCase()}`
+          return `${label} must be less than ${comp_direction[direction].substring(0, 1).toUpperCase()}`
         }
         if (direction == 'west' && this_val >= 180.0)  {
-          return 'Must be less than 180.0'
+          return `${label} must be less than 180.0`
         }
         if (direction == 'east' && this_val <= -180.0) {
-          return 'Must be greater than -180.0'
+          return `${label} must be greater than -180.0`
         }
         if (direction == 'south' && this_val >= 90.0) {
-          return 'Must be less than 90.0'
+          return `${label} must be less than 90.0`
         }
         if (direction == 'north' && this_val <= -90.0) {
-          return 'Must be greater than -90.0'
+          return `${label} must be greater than -90.0`
         }
       }
       return ''
@@ -855,7 +854,7 @@ export default {
       }
     },
     // @vuese
-    // @arg The event
+    // Prevents submit to apply validation; @arg The event
     enterSubmitForm(evt) {
       evt.preventDefault()
       if (this.enterSubmit) {
@@ -864,20 +863,45 @@ export default {
     },
     // @vuese
     // Sends data to the API
-    sendDataToApi(){
+    sendDataToApi(bvModal){
       let operation;
+      let action;
       let form_components = this.getPath()
       let form = form_components[0] 
+      let json = JSON.parse(window.localStorage.getItem(`${form}_outputs`))
       if(this.submissionId != ''){
         operation = 'submit'
+        action = 'submitted'
       } else {
         operation = 'save'
+        action = 'saved'
       }
       $.ajax({
         type: "POST",
-        url: `${process.env.VUE_APP_API_ROOT}submissions/${operation}`,
-        json: window.localStorage.getItem(`${form}_outputs`),
-        success: console.log('hide spinning wheel')
+        url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+        data: json,
+        success: function() {
+          bvModal.msgBoxOk(`Your data has been ${action}.`, {
+              title: 'Success!',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+          })
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          bvModal.msgBoxOk(`Your data could not be ${action} due to ${errorThrown}.  Please try again.`, {
+              title: 'Error!',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+          })
+        }
       });
     },
     // @vuese
@@ -886,7 +910,7 @@ export default {
       // Submit form (this.data) if valid
       this.saveFile(from)
       if (!this.$v.$anyError) {
-        this.sendDataToApi()
+        this.sendDataToApi(this.$bvModal)
       } else {
         if($('.vue-go-top__content').is(":visible")){
           $('.vue-go-top__content').click()
@@ -936,7 +960,7 @@ export default {
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
-          if (!from.toLowerCase().match('submit')) {
+          if (from.match(/draft/)) {
             this.$bvModal.msgBoxOk('Click submit to send the data.', {
               title: 'Your data has been saved',
               size: 'sm',
@@ -946,32 +970,23 @@ export default {
               hideHeaderClose: false,
               centered: true
             })
-          } else if (from.toLowerCase().match('submit')) {
-            this.$bvModal.msgBoxOk('Your data has been submitted.', {
-              title: 'Success!',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
-          } else {
-            this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
-              title: 'Your data has been saved',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
+          } else if(from.match(/save/)){
+            this.sendDataToApi(this.$bvModal)
           }
         } else {
+          this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
+            title: 'Your data has been saved',
+            size: 'sm',
+            buttonSize: 'sm',
+            okTitle: 'OK',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true
+          })
           if($('.vue-go-top__content').is(":visible")){
             $('.vue-go-top__content').click()
           }
-        }
+        } 
       }
     },
     // @vuese
@@ -995,7 +1010,7 @@ export default {
       this.$v.$touch()
       this.confirm = false
       if(typeof place_to_redirect != 'undefined'){
-        window.location.href = place_to_redirect
+        window.location.href = encodeURIComponent(place_to_redirect)
       }
     },
     // @vuese
@@ -1103,6 +1118,7 @@ export default {
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
     this.fetchQuestions()
+    // TODO add to get from API
     if (window.localStorage.getItem(`${form}_questions`) != null) {
       this.values = JSON.parse(window.localStorage.getItem(`${form}_questions`))
       this.$v.$touch()
@@ -1117,7 +1133,6 @@ export default {
   }
   .bbox.form-control {
     display:inline-flex;
-    margin-right:30px;
     margin-left:10px
   }
   .eui-checkbox {

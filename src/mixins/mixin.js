@@ -91,10 +91,10 @@ export default {
       // get Path via parameters, form title, then property 
       setShowDaacs(){
         let form = this.getPath()[0]
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined' && Boolean(this.$route.query.parameters.default)){
+        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)){
           window.headerComponent.showDaacs = true
           window.localStorage.setItem("showDaacs", true);
-        } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.default != 'undefined' && Boolean(this.$route.query.parameters.default)==false){
+        } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)==false){
           window.headerComponent.showDaacs = false
           window.localStorage.setItem("showDaacs", false);
         } else if (form.match(/questionnaire/g)){
