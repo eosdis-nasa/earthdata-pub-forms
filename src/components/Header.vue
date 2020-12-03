@@ -96,7 +96,7 @@ export default {
   },
   // The property to be set by questions.vue
   props: {
-    // The form title parsed from questions.vue
+    // The header
     formTitle: { default: "", type: String },
   },
   computed: {

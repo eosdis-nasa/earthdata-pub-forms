@@ -164,8 +164,8 @@ export default {
         if(typeof shortName !='undefined' && shortName != null && (lctn.match(/questions/g) || lctn.match(/daacs/g))){
           var current_href = lctn.substr(0, lctn.lastIndexOf("/")).toLowerCase()
           let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
-          let next_hash = `${current_href}/${to_href}`
-          history.replaceState('updating daac in href', window.document.title, next_hash);
+          let next_url = `${current_href}/${to_href}`
+          history.replaceState('updating daac in href', window.document.title, next_url.replace(/\/\//g,''));
         }
       }
     }
