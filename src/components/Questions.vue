@@ -868,8 +868,12 @@ export default {
       let action;
       let form_components = this.getPath()
       let form = form_components[0] 
-      let json = JSON.parse(window.localStorage.getItem(`${form}_outputs`))
+      let json = {
+        "formId":this.formId,
+        "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))
+      }
       if(this.submissionId != ''){
+        json["id"] = this.submissionId
         operation = 'submit'
         action = 'submitted'
       } else {
