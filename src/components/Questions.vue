@@ -869,7 +869,7 @@ export default {
       let form_components = this.getPath()
       let form = form_components[0] 
       let json = {
-        "formId":this.formId,
+        "form_id":this.formId,
         "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))
       }
       if(this.submissionId != ''){
@@ -883,6 +883,8 @@ export default {
       $.ajax({
         type: "POST",
         url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+        contentType:"application/json; charset=utf-8",
+        dataType:"json",
         data: json,
         success: function() {
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
