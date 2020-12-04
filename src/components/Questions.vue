@@ -968,8 +968,8 @@ export default {
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
           if (from.match(/draft/)) {
-            this.$bvModal.msgBoxOk('Click submit to send the data.', {
-              title: 'Your data has been saved',
+            this.$bvModal.msgBoxOk('Click save or submit to send the data.', {
+              title: 'Your data has been saved to your browser',
               size: 'sm',
               buttonSize: 'sm',
               okTitle: 'OK',
@@ -982,7 +982,7 @@ export default {
           }
         } else {
           this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
-            title: 'Your data has been saved',
+            title: 'Errors',
             size: 'sm',
             buttonSize: 'sm',
             okTitle: 'OK',
