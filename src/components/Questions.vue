@@ -886,7 +886,8 @@ export default {
         contentType:"application/json; charset=utf-8",
         dataType:"json",
         data: JSON.stringify(json),
-        success: function() {
+        success: (response) => {
+          this.submissionId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
               size: 'sm',
@@ -897,7 +898,7 @@ export default {
               centered: true
           })
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: (XMLHttpRequest, textStatus, errorThrown) => {
           bvModal.msgBoxOk(`Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`, {
               title: 'Error!',
               size: 'sm',
