@@ -1,6 +1,6 @@
 {
   "name": "earthdata-pub-forms",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "clean-modules": "rm -rf package-lock.json node_modules/",
