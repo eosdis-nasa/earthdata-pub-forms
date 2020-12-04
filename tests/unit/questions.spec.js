@@ -420,6 +420,10 @@ describe('Help', () => {
  
 });
 
+afterAll(() => {
+  window.location = location;
+  wrapper.destroy();
+});
 
 /*** METHODS:***/
 /*

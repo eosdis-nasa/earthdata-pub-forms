@@ -162,10 +162,18 @@ export default {
       // Set / Resets active location.href value without updating state
       setActiveLocationWithoutReload(lctn = location.href, shortName){
         if(typeof shortName !='undefined' && shortName != null && (lctn.match(/questions/g) || lctn.match(/daacs/g))){
+          let after_protocol, new_url;
           var current_href = lctn.substr(0, lctn.lastIndexOf("/")).toLowerCase()
           let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
           let next_url = `${current_href}/${to_href}`
-          history.replaceState('updating daac in href', window.document.title, next_url.replace(/\/\//g,''));
+          if(typeof next_url.split('http://')[1] != 'undefined'){
+            after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
+            new_url = `http://${after_protocol}`
+          } else {
+            after_protocol = next_url.replace(/\/\//g,'/')
+            new_url = `${after_protocol}`
+          }
+          history.replaceState('updating daac in href', window.document.title, new_url);
         }
       }
     }
