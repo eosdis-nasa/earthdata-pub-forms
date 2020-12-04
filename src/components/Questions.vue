@@ -885,7 +885,7 @@ export default {
         url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
         contentType:"application/json; charset=utf-8",
         dataType:"json",
-        data: json,
+        data: JSON.stringify(json),
         success: function() {
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
