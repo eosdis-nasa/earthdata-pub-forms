@@ -896,7 +896,7 @@ export default {
           })
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          bvModal.msgBoxOk(`Your data could not be ${action} due to ${errorThrown}.  Please try again.`, {
+          bvModal.msgBoxOk(`Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`, {
               title: 'Error!',
               size: 'sm',
               buttonSize: 'sm',
