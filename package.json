@@ -30,7 +30,7 @@
     "bootstrap-vue": "^2.18.1",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
-    "snyk": "^1.424.0",
+    "snyk": "^1.425.4",
     "vue": "^2.6.12",
     "vue-fixed-header": "^3.2.15",
     "vue-router": "^3.4.8",
