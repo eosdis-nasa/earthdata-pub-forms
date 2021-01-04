@@ -1,7 +1,7 @@
 <template>
 <div role="main">
   <!-- Form -->
-  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleChange">
+  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
     <b-container>
         <fixed-header :fixed.sync="isFixed" :threshold="168" style="z-index:2">
           <div class="navbar">
@@ -53,27 +53,50 @@
           <template v-for="(question, b_key) in heading">
             <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} section is required</li>
             <template v-for="(input, c_key) in question.inputs">
-              <li v-bind:key="`${a_key}_${b_key}_${c_key}`" v-if="($v.values[input.id] || {}).$error">
-                <template v-if="typeof input.required_if != 'undefined'">
-                  <template v-for="(req_if, d_key) in input.required_if">
-                    <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                      <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}</template>
-                      <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
-                      <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
-                    </span>
+              <span v-bind:key="`${a_key}_${b_key}_${c_key}`">
+                <template v-if="input.type == 'bbox'">
+                  <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
+                    <li v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="($v.values[`${input.id}_${direction}`] || {}).$error">
+                      {{ heading.heading }} - {{ question.title }} - {{ direction.substring(0, 1).toUpperCase() }}:
+                      <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
+                        <template v-for="(req_if, e_key) in input.required_if">
+                          <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}_${e_key}`" v-if="values[req_if.field] == req_if.value">
+                            <template v-if="typeof req_if.message != 'undefined'">{{ req_if.message }}</template>
+                            <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ input.validation_error_msg }}</template>
+                            <template v-else>is required</template>
+                          </span>
+                        </template>
+                      </template>
+                      <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ input.validation_error_msg }}</template>
+                      <template v-else-if="typeof $v.values[`${input.id}_${direction}`].required != 'undefined' && !$v.values[`${input.id}_${direction}`].required">is required</template>
+                      <template v-else>{{  getBboxError(input, direction) }}</template>
+                    </li>
                   </template>
                 </template>
-                <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                 <template v-else>
-                  {{ heading.heading }} - {{ question.title }} - {{ input.label }}
-                  <template v-if="typeof $v.values[input.id].required != 'undefined' && !$v.values[input.id].required">is required</template>
-                  <template v-else-if="typeof $v.values[input.id].patternMatch != 'undefined' && !$v.values[input.id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
-                  <template v-else-if="typeof $v.values[input.id].minLength != 'undefined' && !$v.values[input.id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
-                  <template v-else-if="typeof $v.values[input.id].maxLength != 'undefined' && !$v.values[input.id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
-                  <template v-else-if="typeof $v.values[input.id].min != 'undefined' && !$v.values[input.id].min">the value must be {{ input.attributes.min }} or greater.</template>
-                  <template v-else-if="typeof $v.values[input.id].max != 'undefined' && !$v.values[input.id].max">the value must be less than {{ input.attributes.max }}</template>
+                  <li v-if="($v.values[input.id] || {}).$error">
+                    <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
+                      <template v-for="(req_if, d_key) in input.required_if">
+                        <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
+                          <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}</template>
+                          <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                          <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
+                        </span>
+                      </template>
+                    </template>
+                    <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                    <template v-else>
+                      {{ heading.heading }} - {{ question.title }} - {{ input.label }}
+                      <template v-if="typeof $v.values[input.id].required != 'undefined' && !$v.values[input.id].required">is required</template>
+                      <template v-else-if="typeof $v.values[input.id].patternMatch != 'undefined' && !$v.values[input.id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
+                      <template v-else-if="typeof $v.values[input.id].minLength != 'undefined' && !$v.values[input.id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
+                      <template v-else-if="typeof $v.values[input.id].maxLength != 'undefined' && !$v.values[input.id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
+                      <template v-else-if="typeof $v.values[input.id].min != 'undefined' && !$v.values[input.id].min">the value must be {{ input.attributes.min }} or greater.</template>
+                      <template v-else-if="typeof $v.values[input.id].max != 'undefined' && !$v.values[input.id].max">the value must be less than {{ input.attributes.max }}</template>
+                    </template>
+                  </li>
                 </template>
-              </li>
+              </span>
             </template>
           </template>
         </template>
@@ -98,23 +121,23 @@
                     :readonly="readonly"
                     :key="b_key">
                         <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                        <label :for="question.id" class="eui-label">{{question.title}}:</label>
+                        <label :for="question.question_name" class="eui-label">{{question.title}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
-                        <p :id="question.id || a_key">{{question.text}}</p>
+                        <p :id="question.question_name || a_key">{{question.text}}</p>
                         <!-- Input -->
                         <b-row>
                           <b-col :lg="question.size || 12" class="question_size">
                             <b-col class="w-25 help">
-                              <a href="#" @click.prevent="" :id="`help_${question.id}`" v-if="question.help != ''" v-b-modal="`modal_${question.id}`">
+                              <a href="#" @click.prevent="" :id="`help_${question.question_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.question_name}`">
                               <font-awesome-icon icon="info-circle" name="info icon"/>
                                 Help</a>
-                              <b-modal :id="`modal_${question.id}`" :title="`${question.title} - Help`" ok-only centered>
+                              <b-modal :id="`modal_${question.question_name}`" :title="`${question.title} - Help`" ok-only centered>
                                 <p class="my-4">{{question.help}}</p>
                               </b-modal>
                             </b-col>
                             <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                               <span v-if="showIf(input.show_if)">
-                                <label :for="input.id || `${input}_${c_key}`" class="eui-label">{{input.label}}: </label>
+                                <label :for="input.id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                   {{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -137,7 +160,8 @@
                                         :id="`same_as_${input.id}`"
                                         value="true"
                                         unchecked-value="false"
-                                        @click="setContact(input.id, contact)"
+                                        @change.native="setContact(input.id, contact)"
+                                        @click.native="setContact(input.id, contact)"
                                         @keyup.space.native="setContact(input.id, contact)">
                                       </b-form-checkbox>
                                   </span>
@@ -150,7 +174,7 @@
                                     :name="input.id" 
                                     v-model="values[input.id]"
                                     size="lg" 
-                                    v-if="(input.type == 'text' || 
+                                    v-if="input.type == 'text' || 
                                     input.type == 'password' || 
                                     input.type == 'number' || 
                                     input.type == 'url' || 
@@ -159,8 +183,7 @@
                                     input.type == 'range' || 
                                     input.type == 'date' || 
                                     input.type == 'tel' || 
-                                    input.type == 'time') && 
-                                    input.type != 'bbox'"
+                                    input.type == 'time'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :pattern="getAttribute('pattern', question.inputs[c_key])"
@@ -172,19 +195,24 @@
                                 </b-form-input>
                                 <!-- End of Text Type of Input -->
                                 <!-- BBOX Type of Input -->
-                                <b-form-input 
-                                    :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
-                                    type="text" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
-                                    size="lg"
-                                    v-if="input.type == 'bbox'"
-                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                    class="bbox"
-                                    >
-                                </b-form-input>
+                                <div v-if="input.type == 'bbox'">
+                                  <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
+                                    <span :key="`${b_key}_${d_key}`">
+                                      <label class="eui-label">{{direction.substring(0, 1).toUpperCase()}}:</label>
+                                      <b-form-input 
+                                          :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.id}_${direction}`] || {}).$error }"
+                                          type="text" 
+                                          :id="`${input.id}_${direction}`" 
+                                          :name="`${input.id}_${direction}`" 
+                                          v-model="values[`${input.id}_${direction}`]"
+                                          size="lg"
+                                          :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                          :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                          >
+                                      </b-form-input>
+                                    </span>
+                                  </template>
+                                </div>
                                 <!-- End of Text Type of Input -->
                                 <!-- Textarea Type of Input -->
                                 <b-form-textarea 
@@ -268,7 +296,6 @@
                                 <div class="mt-3" v-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
                                 <!-- End of Selected Input File Name -->
                                 <p :id="`${input.id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
-                                <span v-if="input.type == 'bbox' && input.label == 'W'"><br></span>
                               </span>
                             </b-row>
                           </b-col>
@@ -304,6 +331,7 @@ export default {
       values: {},
       questions: [],
       contacts: [],
+      bboxs: [],
       dirty:false,
       formTitle: '',
       saveTimeout: 0,
@@ -311,7 +339,9 @@ export default {
       warning:'',
       isFixed:true,
       confirm:false,
-      validation_errors:{}
+      validation_errors:{},
+      formId:'',
+      submissionId:''
     }
   },
   props: {
@@ -347,7 +377,7 @@ export default {
         }
         this.saveTimeout = setTimeout(() => {
           if (!this.values.fromUndo) {
-            this.setContacts(this.values)
+            //this.setContacts(this.values)
             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
             this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
             var string_logging_object = this.$log.debug('pushQuestionsState')
@@ -376,24 +406,20 @@ export default {
         values: {}
     }
     var obj = []
-    if(typeof this.questions.inputs !='undefined'){
+    if(typeof this.questions != 'undefined' && typeof this.questions.inputs !='undefined'){
         obj = this.questions.inputs
     } else if (typeof this.questions !='undefined'){
         obj = this.questions
     }
-    //let custom_input_types = ['bbox']
-    // Gather required elements
+        // Gather required elements
+    // returning true in a custom validation is that it passes the validation, false does not pass
     for (let [group_index, group] of obj.entries()) {
         if (typeof group.heading_required != 'undefined' && group.heading_required) {
           val_fields.values[`section_${group_index}`] = {
             required: requiredIf(() => {
               for (let question of group) {
-                for (let input of question.inputs) {
-                  if (typeof this.values[input.id] != 'undefined' && this.values[input.id] != '' && this.values[input.id] != null) {
-                    if (input.type != 'checkbox' || this.values[input.id].toString() != 'false') {
-                      return false
-                    }
-                  }
+                if (!this.validateQuestionInputsRequired(question.inputs)) {
+                  return false
                 }
               }
               return true
@@ -404,61 +430,79 @@ export default {
             if (typeof question.required != 'undefined' && question.required) {
               val_fields.values[`question_${group_index}_${question_index}`] = {
                 required: requiredIf(() => {
-                  for (let input of question.inputs) {
-                    if (typeof this.values[input.id] != 'undefined' && this.values[input.id] != '' && this.values[input.id] != null) {
-                      if (input.type != 'checkbox' || this.values[input.id].toString() != 'false') {
-                        return false
-                      }
-                    }
-                  }
-                  return true
+                  return this.validateQuestionInputsRequired(question.inputs)
                 })
               }
             }
             if (typeof question.inputs != 'undefined'){
                 for (let fld of question.inputs){
-                    if (typeof fld.required != 'undefined' && fld.required) {
-                        if(fld.type != 'checkbox'){
-                            val_fields.values[fld.id] = {
-                                required
-                            }
-                        }
-                    } else if (typeof fld.required_if != 'undefined') {
-                      val_fields.values[fld.id] = {
-                        required: requiredIf(() => {
-                          for (let req_fld of fld.required_if) {
-                            try {
-                              if (typeof this.values[req_fld.field] != 'undefined' && this.values[req_fld.field].toString() === req_fld.value.toString()) {
-                                return true
-                              }
-                            } catch(e) {
-                              // test
-                            }
+                    if (fld.type == 'bbox') {
+                      for (let direction of ['north', 'east', 'south', 'west']) {
+                        val_fields.values[`${fld.id}_${direction}`] = {
+                          bbox: () => {
+                            return this.getBboxError(fld, direction) == ''
                           }
-                          return false
-                        })
-                      }
-                    }
-                    if (typeof fld.attributes != 'undefined' && typeof fld.attributes.pattern != 'undefined') {
-                      val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                      val_fields.values[fld.id].patternMatch = () => {
-                        if (typeof this.values[fld.id] != 'undefined') {
-                          return new RegExp(fld.attributes.pattern).test(this.values[fld.id])
                         }
-                        return false
+                        if (typeof fld.required != 'undefined' && fld.required) {
+                            val_fields.values[`${fld.id}_${direction}`].required = required
+                        } else if (typeof fld.required_if != 'undefined') {
+                          val_fields.values[`${fld.id}_${direction}`].required = requiredIf(() => {
+                              for (let req_fld of fld.required_if) {
+                                try {
+                                  if (typeof this.values[req_fld.field] != 'undefined' && this.values[req_fld.field].toString() === req_fld.value.toString()) {
+                                    return true
+                                  }
+                                } catch(e) {
+                                  // test
+                                }
+                              }
+                              return false
+                          })
+                        }
                       }
-                    }
+                    } else {
+                        if (typeof fld.required != 'undefined' && fld.required) {
+                            if(fld.type != 'checkbox'){
+                                val_fields.values[fld.id] = {
+                                    required
+                                }
+                            }
+                        } else if (typeof fld.required_if != 'undefined') {
+                          val_fields.values[fld.id] = {
+                            required: requiredIf(() => {
+                              for (let req_fld of fld.required_if) {
+                                try {
+                                  if (typeof this.values[req_fld.field] != 'undefined' && this.values[req_fld.field].toString() === req_fld.value.toString()) {
+                                    return true
+                                  }
+                                } catch(e) {
+                                  // test
+                                }
+                              }
+                              return false
+                            })
+                          }
+                        }
+                        if (typeof fld.attributes != 'undefined' && typeof fld.attributes.pattern != 'undefined') {
+                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
+                          val_fields.values[fld.id].patternMatch = () => {
+                            if (typeof this.values[fld.id] != 'undefined') {
+                              return new RegExp(fld.attributes.pattern).test(this.values[fld.id])
+                            }
+                            return false
+                          }
+                        }
 
-                    if (typeof fld.attributes != 'undefined' && typeof fld.attributes.minlength != 'undefined') {
-                      val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                      val_fields.values[fld.id].minLength = minLength(fld.attributes.minlength)
-                    }
+                        if (typeof fld.attributes != 'undefined' && typeof fld.attributes.minlength != 'undefined') {
+                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
+                          val_fields.values[fld.id].minLength = minLength(fld.attributes.minlength)
+                        }
 
-                    if (typeof fld.attributes != 'undefined' && typeof fld.attributes.maxlength != 'undefined') {
-                      val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                      val_fields.values[fld.id].maxLength = maxLength(fld.attributes.maxlength)
+                        if (typeof fld.attributes != 'undefined' && typeof fld.attributes.maxlength != 'undefined') {
+                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
+                          val_fields.values[fld.id].maxLength = maxLength(fld.attributes.maxlength)
+                        }
                     }
-                    
                 }
             }
         }
@@ -470,6 +514,62 @@ export default {
     return val_fields
   },
   methods: {
+    // @vuese
+    // Validates required question inputs; returns true if valid
+    validateQuestionInputsRequired(inputs) {
+      for (let input of inputs) {
+        if (input.type == 'bbox') {
+          let has_all_directions = true
+          for (let direction of ['north', 'east', 'south', 'west']) {
+            if (typeof this.values[`${input.id}_${direction}`] == 'undefined' || this.values[`${input.id}_${direction}`] == '' || this.values[`${input.id}_${direction}`] == null) {
+              has_all_directions = false
+            }
+          }
+          if (has_all_directions) {
+            return false
+          }
+        } else {
+          if (typeof this.values[input.id] != 'undefined' && this.values[input.id] != '' && this.values[input.id] != null) {
+            if (input.type != 'checkbox' || this.values[input.id].toString() != 'false') {
+              return false
+            }
+          }
+        }
+      }
+      return true
+    },
+    // @vuese
+    // Gets custom bbox validation errors; returns blank if valid
+    getBboxError(fld, direction) {
+      if (typeof this.values[`${fld.id}_${direction}`] != 'undefined' && this.values[`${fld.id}_${direction}`] != null) {
+        if (isNaN(this.values[`${fld.id}_${direction}`])) {
+          return 'Must be a number'
+        }
+        let this_val = parseFloat(this.values[`${fld.id}_${direction}`])
+        let comp_direction = {
+          'south': 'north',
+          'west': 'east'
+        }
+        let comp_val = parseFloat(this.values[`${fld.id}_${comp_direction[direction]}`])
+        let label = `${direction.substring(0, 1).toUpperCase()}`
+        if (/west|south/.test(direction) && this_val >= comp_val) {
+          return `${label} must be less than ${comp_direction[direction].substring(0, 1).toUpperCase()}`
+        }
+        if (direction == 'west' && this_val >= 180.0)  {
+          return `${label} must be less than 180.0`
+        }
+        if (direction == 'east' && this_val <= -180.0) {
+          return `${label} must be greater than -180.0`
+        }
+        if (direction == 'south' && this_val >= 90.0) {
+          return `${label} must be less than 90.0`
+        }
+        if (direction == 'north' && this_val <= -90.0) {
+          return `${label} must be greater than -90.0`
+        }
+      }
+      return ''
+    },
     // @vuese
     // Shows and Hides based of json show_if
     showIf(config) {
@@ -545,7 +645,7 @@ export default {
     },
     // @vuese
     // Gets contacts and builds options for checkbox
-   setContacts: function (values) {
+    setContacts: function (values) {
       this.contacts = []
       let questions = this.questions[0]
       for (var ea in values){
@@ -600,8 +700,9 @@ export default {
       return attribute_value
     },
     // @vuese
-    // Handle html5 invalidity on change
-    handleChange(evt) {
+    // Handle html5 invalidity on form
+    handleInvalid(evt) {
+      $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
       if(evt.target.validationMessage!=''){
         this.validation_errors = {
           ...this.validation_errors,
@@ -619,23 +720,6 @@ export default {
       }
     },
     // @vuese
-    // Handle html5 invalidity on form
-    handleInvalid(evt) {
-      $('#' + evt.target.name + '_invalid').text(evt.target.validationMessage)
-      if(evt.target.validationMessage!=''){
-        this.validation_errors = {
-          ...this.validation_errors,
-          [evt.target.name]: evt.target.validationMessage
-        }
-        $('#' + evt.target.name + '_invalid').removeClass('hidden')
-      } else {
-        if(evt.target.name in this.validation_errors){
-          delete this.validation_errors[evt.target.name]
-        }
-        $('#' + evt.target.name + '_invalid').addClass('hidden')
-      }
-    },
-    // @vuese
     // Hides errors banner
     dismiss(id){
       document.getElementById(id).style.display='none';
@@ -643,96 +727,122 @@ export default {
     // @vuese
     // Fetchs the questions data
     fetchQuestions(){
-      var question = []
-      this.contacts = []
-      let contact = false
-      // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-      let form = this.getPath()[0]
-      let json_name = ''
-      if(form.match(/interest/g)){
-        json_name = 'submission_request' 
-      } else {
-        json_name = `${form}/data_product_questionnaire`
-      }
-      $.getJSON( `../${json_name}.json`, ( questions ) => {
-      // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-
-      // $.getJSON(`${process.env.VUE_APP_API_ROOT}/data/form/6c544723-241c-4896-a38c-adbc0a364293`, ( questions ) => {
-        //The below line looks for custom css and applies it to the head (eui is done first)
-        this.formTitle = questions.form_title
-        $('head link[data-eui="yes"]').remove()
-        if(questions.style){
-          $('head link[data-custom="yes"]').remove()
-        }
-        var head = window.document.head;
-        var link = window.document.createElement("link");
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        $(link).attr('data-eui', 'yes');
-        link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
-        head.appendChild(link);
-        if (questions.style){
-          head = window.document.head;
-          link = window.document.createElement("link");
-          link.type = "text/css";
-          link.rel = "stylesheet";
-          $(link).attr('data-custom', 'yes');
-          link.href = questions.style
-          head.appendChild(link);
-        }
-        for(var section in questions['sections']) {
-          var heading = questions['sections'][section]['heading']
-          var heading_required = questions['sections'][section]['required'] || false
-          var heading_show_if = questions['sections'][section]['show_if'] || []
-          var questions_section = questions['sections'][section]['questions']
-          questions_section['heading'] = heading
-          questions_section['heading_required'] = heading_required
-          questions_section['heading_show_if'] = heading_show_if
-          for (var q in questions_section){
-            if (typeof questions_section[q].title != 'undefined'){
-              let text = questions_section[q].text
-              let title = questions_section[q].title
-              let help = questions_section[q].help
-              if(
-                (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
-                (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
-                (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
-                (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
-                (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
-                (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
-              ) {
-                contact = true
-              }
-            }
-            if(typeof questions_section[q].inputs != 'undefined'){
-              for(var input in questions_section[q].inputs){
-                var options = []
-                if(contact && questions_section[q].inputs[input].label.toLowerCase()=='name'){
-                  questions_section[q].inputs[input].contact = true
-                  contact = false
-                }
-                if(typeof questions_section[q].inputs[input].enums !='undefined'){
-                  for (var e in questions_section[q].inputs[input].enums){
-                    var option = questions_section[q].inputs[input].enums[e]
-                    if(Array.isArray(questions_section[q].inputs[input].enums)){
-                      options.push({ value: option, text: option })
-                    } else if (typeof questions_section[q].inputs[input].enums.value !='undefined' && typeof questions_section[q].inputs[input].enums.text !='undefined'){
-                      var text = questions_section[q].inputs[input].enums.text
-                      var value = questions_section[q].inputs[input].enums.value
-                      options.push({ value: value, text: text })
-                    }
-                  }
-                }
-                if(options.length>0){
-                  questions_section[q].inputs[input]['options'] = options
-                }
-              }
+      $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`, ( forms ) => {
+        var question = []
+        this.contacts = []
+        let contact = false
+        let form = this.getPath()[0]
+        if (this.formId == '' && (this.daac !=='selection' || this.daac != '') && (form.toLowerCase().match(/interest/g))){
+          for (let form in forms){
+            if (forms[form].form_name.toLowerCase().match(/interest/g)){
+              this.formId = forms[form]['id']
+              this.formTitle = forms[form]['title']
+              break
             }
           }
-          question.push(questions_section)
+          if(this.formId == ''){
+            this.$bvModal.msgBoxOk('Please report this error to your dev team indicating formId was blank.', {
+              title: 'Something has gone wrong',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+            })
+          }
         }
+        let url;
+        if (this.formId != ''){
+          url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.formId}`
+        } else {
+          let json_name = ''
+          if(form.match(/interest/g)){
+            json_name = 'data_publication_request' 
+          } else {
+            json_name = `${form}/data_product_information`
+          }
+          url = `../${json_name}.json`
+        }
+        $.getJSON(url, ( questions ) => {
+          if (this.formTitle == '' && questions['title']!= ''){
+            this.formTitle = questions['title']
+          }
+          //The below line looks for custom css and applies it to the head (eui is done first)
+          $('head link[data-eui="yes"]').remove()
+          if(questions.style){
+            $('head link[data-custom="yes"]').remove()
+          }
+          var head = window.document.head;
+          var link = window.document.createElement("link");
+          link.type = "text/css";
+          link.rel = "stylesheet";
+          $(link).attr('data-eui', 'yes');
+          link.href = 'https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css';
+          head.appendChild(link);
+          if (questions.style){
+            head = window.document.head;
+            link = window.document.createElement("link");
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            $(link).attr('data-custom', 'yes');
+            link.href = questions.style
+            head.appendChild(link);
+          }
+          for(var section in questions['sections']) {
+            var heading = questions['sections'][section]['heading']
+            var heading_required = questions['sections'][section]['required'] || false
+            var heading_show_if = questions['sections'][section]['show_if'] || []
+            var questions_section = questions['sections'][section]['questions']
+            questions_section['heading'] = heading
+            questions_section['heading_required'] = heading_required
+            questions_section['heading_show_if'] = heading_show_if
+            for (var q in questions_section){
+              if (typeof questions_section[q].title != 'undefined'){
+                let text = questions_section[q].text
+                let title = questions_section[q].title
+                let help = questions_section[q].help
+                if(
+                  (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
+                  (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
+                  (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
+                  (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                  (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
+                  (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
+                ) {
+                  contact = true
+                }
+              }
+              if(typeof questions_section[q].inputs != 'undefined'){
+                for(var input in questions_section[q].inputs){
+                  var options = []
+                  if(contact && questions_section[q].inputs[input].label.toLowerCase()=='name'){
+                    questions_section[q].inputs[input].contact = true
+                    contact = false
+                  }
+                  if(typeof questions_section[q].inputs[input].enums !='undefined'){
+                    for (var e in questions_section[q].inputs[input].enums){
+                      var option = questions_section[q].inputs[input].enums[e]
+                      if(Array.isArray(questions_section[q].inputs[input].enums)){
+                        options.push({ value: option, text: option })
+                      } else if (typeof questions_section[q].inputs[input].enums.value !='undefined' && typeof questions_section[q].inputs[input].enums.text !='undefined'){
+                        var text = questions_section[q].inputs[input].enums.text
+                        var value = questions_section[q].inputs[input].enums.value
+                        options.push({ value: value, text: text })
+                      }
+                    }
+                  }
+                  if(options.length>0){
+                    questions_section[q].inputs[input]['options'] = options
+                  }
+                }
+              }
+            }
+            question.push(questions_section)
+          }
+          this.questions = question
+        })
       })
-      return question
     },
     // @vuese
     // Validation of input data returns error and if dirty
@@ -744,7 +854,7 @@ export default {
       }
     },
     // @vuese
-    // @arg The event
+    // Prevents submit to apply validation; @arg The event
     enterSubmitForm(evt) {
       evt.preventDefault()
       if (this.enterSubmit) {
@@ -752,14 +862,62 @@ export default {
       }
     },
     // @vuese
+    // Sends data to the API
+    sendDataToApi(bvModal){
+      let operation;
+      let action;
+      let form_components = this.getPath()
+      let form = form_components[0] 
+      let json = {
+        "form_id":this.formId,
+        "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))
+      }
+      if(this.submissionId != ''){
+        json["id"] = this.submissionId
+        operation = 'submit'
+        action = 'submitted'
+      } else {
+        operation = 'save'
+        action = 'saved'
+      }
+      $.ajax({
+        type: "POST",
+        url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+        contentType:"application/json; charset=utf-8",
+        dataType:"json",
+        data: JSON.stringify(json),
+        success: (response) => {
+          this.submissionId = response.id
+          bvModal.msgBoxOk(`Your data has been ${action}.`, {
+              title: 'Success!',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+          })
+        },
+        error: (XMLHttpRequest, textStatus, errorThrown) => {
+          bvModal.msgBoxOk(`Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`, {
+              title: 'Error!',
+              size: 'sm',
+              buttonSize: 'sm',
+              okTitle: 'OK',
+              footerClass: 'p-2',
+              hideHeaderClose: false,
+              centered: true
+          })
+        }
+      });
+    },
+    // @vuese
     // Used to submit the form data if valid
     submitForm(from) {
       // Submit form (this.data) if valid
       this.saveFile(from)
-      let form_components = this.getPath()
-      let form = form_components[0] 
       if (!this.$v.$anyError) {
-        this.$emit('submit-form', window.localStorage.getItem(`${form}_questions`))
+        this.sendDataToApi(this.$bvModal)
       } else {
         if($('.vue-go-top__content').is(":visible")){
           $('.vue-go-top__content').click()
@@ -809,9 +967,9 @@ export default {
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
-          if (!from.toLowerCase().match('submit')) {
-            this.$bvModal.msgBoxOk('Click submit to send the data.', {
-              title: 'Your data has been saved',
+          if (from.match(/draft/)) {
+            this.$bvModal.msgBoxOk('Click save or submit to send the data.', {
+              title: 'Your data has been saved to your browser',
               size: 'sm',
               buttonSize: 'sm',
               okTitle: 'OK',
@@ -819,32 +977,23 @@ export default {
               hideHeaderClose: false,
               centered: true
             })
-          } else if (from.toLowerCase().match('submit')) {
-            this.$bvModal.msgBoxOk('Your data has been submitted.', {
-              title: 'Success!',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
-          } else {
-            this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
-              title: 'Your data has been saved',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
+          } else if(from.match(/save/)){
+            this.sendDataToApi(this.$bvModal)
           }
         } else {
+          this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
+            title: 'Errors',
+            size: 'sm',
+            buttonSize: 'sm',
+            okTitle: 'OK',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true
+          })
           if($('.vue-go-top__content').is(":visible")){
             $('.vue-go-top__content').click()
           }
-        }
+        } 
       }
     },
     // @vuese
@@ -855,7 +1004,7 @@ export default {
     },
     // @vuese
     // Cancel and exit form
-    okToCancel(){
+    okToCancel(place_to_redirect){
       this.$refs.form.reset()
       let form_components = this.getPath()
       let form = form_components[0] 
@@ -867,6 +1016,9 @@ export default {
       this.$values = {}
       this.$v.$touch()
       this.confirm = false
+      if(typeof place_to_redirect != 'undefined'){
+        window.location.href = encodeURIComponent(place_to_redirect)
+      }
     },
     // @vuese
     // Resets form and local storage to empty entries
@@ -876,9 +1028,15 @@ export default {
       }
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
+        let place;
+        if(this.submissionId != ''){
+          place = `${process.env.VUE_APP_DASHBOARD_URL}. Your latest save is available in the Earthdata Pub Dashboard.`
+        } else {
+          place = `${process.env.VUE_APP_OVERVIEW_URL}`
+        }
         if(this.confirm == false){
           this.confirm = ''
-          this.$bvModal.msgBoxConfirm('This will clear any data.  Are you sure?',{
+          this.$bvModal.msgBoxConfirm(`This will cancel any input and redirect you to ${place}.  Are you sure?`,{
             title: 'Please Confirm',
             size: 'sm',
             buttonSize: 'sm',
@@ -892,17 +1050,14 @@ export default {
           .then(value => {
             this.confirm = value
             if(value){
-              this.okToCancel()
+              this.okToCancel(place)
             } else { return }
           })
         } else {
           this.confirm = false;
-          this.okToCancel()
+          this.okToCancel(place)
         }
-      } else {
-        this.confirm = true
-        this.okToCancel()
-      }
+      } 
     },
     // @vuese
     // Exit form to home page
@@ -969,8 +1124,8 @@ export default {
         }
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
-    this.questions = this.fetchQuestions()
-    // TODO replace with load from api
+    this.fetchQuestions()
+    // TODO add to get from API
     if (window.localStorage.getItem(`${form}_questions`) != null) {
       this.values = JSON.parse(window.localStorage.getItem(`${form}_questions`))
       this.$v.$touch()
@@ -985,7 +1140,6 @@ export default {
   }
   .bbox.form-control {
     display:inline-flex;
-    margin-right:30px;
     margin-left:10px
   }
   .eui-checkbox {

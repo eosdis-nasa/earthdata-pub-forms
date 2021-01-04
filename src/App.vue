@@ -66,6 +66,11 @@
     }
 </script>
 <style>
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
     #go_top {
         max-width:50px;
         max-height:50px;

@@ -95,9 +95,11 @@ export default {
     fetchDaacs() {
       // Gets DAAC data for template
       var items = [];
-      $.getJSON("../daacs.json", daacs => {
-        for (var dict in daacs["data"]) {
-          items.push(daacs["data"][dict]);
+      // TESTING ONLY
+      //$.getJSON("../daacs.json", daacs => {
+      $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
+        for (var dict in daacs) {
+          items.push(daacs[dict]);
         }
         this.loaded = true;
       });
@@ -178,11 +180,11 @@ export default {
       ).toLowerCase();
       if (
         typeof this.$route != "undefined" &&
-        typeof this.$route.params.default != "undefined" &&
-        this.$route.params.default != null
+        typeof this.$route.params.group != "undefined" &&
+        this.$route.params.group != null
       ) {
         if (
-          this.$route.params.default.replace(/ /g, "_").toLowerCase() !=
+          this.$route.params.group.replace(/ /g, "_").toLowerCase() !=
           short_name.replace(/ /g, "_").toLowerCase()
         ) {
           short_name = this.setCurrentDaacObjects(
@@ -192,7 +194,7 @@ export default {
             long_name,
             description
           );
-          this.$route.params.default = short_name
+          this.$route.params.group = short_name
             .replace(/ /g, "_")
             .toLowerCase();
         }
@@ -218,11 +220,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Submission Request - Questions",
-          params: { default: this.data.toLowerCase() }
+          name: "Data Publication Request - Questions",
+          params: { group: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Submission Request - Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Data Publication Request - Daacs", params: { group: "selection" } });
       }
     },
     // @vuese
@@ -246,8 +248,8 @@ export default {
         this.selected == "" &&
         !window.location.href.match(/daacs\/selection/g) &&
         (typeof this.$route == "undefined" ||
-          typeof this.$route.params.default == "undefined" ||
-          this.$route.params.default == "")
+          typeof this.$route.params.group == "undefined" ||
+          this.$route.params.group == "")
       ) {
         history.replaceState(
           "updating href",
@@ -257,10 +259,10 @@ export default {
       }
       if (
         (typeof this.$route != "undefined" &&
-          typeof this.$route.params.default != "undefined" &&
-          this.$route.params.default != null &&
-          this.$route.params.default != "" &&
-          this.$route.params.default != "selection") ||
+          typeof this.$route.params.group != "undefined" &&
+          this.$route.params.group != null &&
+          this.$route.params.group != "" &&
+          this.$route.params.group != "selection") ||
         this.selected != "" ||
         window.localStorage.getItem("DAAC") != null
       ) {
@@ -268,9 +270,9 @@ export default {
         let selected;
         if (this.selected != "") {
           selected = this.getDaac(this.selected);
-        } else if (typeof this.$route.params.default != "undefined") {
+        } else if (typeof this.$route.params.group != "undefined") {
           selected = this.getDaac(
-            this.$route.params.default.replace(/_/g, " ").toUpperCase()
+            this.$route.params.group.replace(/_/g, " ").toUpperCase()
           );
         } else if (window.localStorage.getItem("DAAC") != null) {
           selected = this.getDaac(window.localStorage.getItem("DAAC"));
