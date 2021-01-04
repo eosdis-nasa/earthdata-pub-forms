@@ -1,0 +1,29 @@
+{
+  "ORNL_DAAC": {
+    "values": "{\"data_producer_info_name\":\"Kimberly Broughton\",\"data_producer_info_email\":\"sdfsdfsdfs@gmail.com\",\"data_producer_info_organization\":\"org\",\"archival_interest_poc_name\":\"Kimberly Broughton\",\"archival_interest_poc_organization\":\"org\",\"archival_interest_poc_email\":\"kimberly.broughton@gmail.com\",\"funding_program_name\":\"sdf\",\"data_product_name_value\":\"sdf\",\"data_product_description_value\":\"sdf\",\"publication_dois\":\"sdf\",\"science_value_description\":\"sdf\",\"archival_reason_description\":\"sdf\",\"archival_approval_dependencies_has_dependencies\":\"true\",\"data_product_restrictions_public\":\"true\",\"data_product_volume_units\":\"Weekly\",\"data_product_spatial_coverage_area\":\"sdf\",\"data_product_volume_amount\":\"234\"}",
+    "log": {
+      "Thu Dec 03 2020 14:10:44 GMT-0500 (Eastern Standard Time)": {
+        "log_string": "debug -  js:2197:52 -  pushQuestionsState",
+        "answers": {
+          "data_producer_info_name": "Kimberly Broughton",
+          "data_producer_info_email": "sdfsdfsdfs@gmail.com",
+          "data_producer_info_organization": "org",
+          "archival_interest_poc_name": "Kimberly Broughton",
+          "archival_interest_poc_organization": "org",
+          "archival_interest_poc_email": "kimberly.broughton@gmail.com",
+          "funding_program_name": "sdf",
+          "data_product_name_value": "sdf",
+          "data_product_description_value": "sdf",
+          "publication_dois": "sdf",
+          "science_value_description": "sdf",
+          "archival_reason_description": "sdf",
+          "archival_approval_dependencies_has_dependencies": "true",
+          "data_product_restrictions_public": "true",
+          "data_product_volume_units": "Weekly",
+          "data_product_spatial_coverage_area": "sdf",
+          "data_product_volume_amount": "234"
+        }
+      }
+    }
+  }
+}

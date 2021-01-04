@@ -20,19 +20,19 @@
             <router-link
               id="daacs_nav_link"
               v-if="daac !=='selection' && daac !== ''"
-              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { default: daac }}"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { group: daac }}"
             >DAACS</router-link>
             <!-- if daac is not set and not 'selection' -->
             <router-link
               id="daacs_nav_link"
               v-else-if="daac !=='selection'"
-              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { default: 'selection' }}"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { group: 'selection' }}"
             >DAACS</router-link>
             <!-- if daac is 'selection' -->
             <router-link
               id="daacs_nav_link"
               v-else
-              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs/selection', params: { default: 'selection' } }"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs/selection', params: { group: 'selection' } }"
             >DAACS</router-link>
             <!-- daac divider -->
             <div class="inline">  |  </div>
@@ -41,7 +41,7 @@
             <router-link
               id="questions_nav_link"
               v-if="daac !=='selection' && daac !== ''"
-              :to="{ name: 'Data Publication Request - Questions', path: '/interest/questions', params: { default: daac }}"
+              :to="{ name: 'Data Publication Request - Questions', path: '/interest/questions', params: { group: daac }}"
             >Questions</router-link>
             <!-- if daac is not set -->
             <a
@@ -62,17 +62,17 @@
             <router-link
               id="questions_nav_link"
               v-if="daac !== ''"
-              :to="{ name: 'Questionnaire - Questions', path: '/questionnaire/questions', params: { default: daac }}"
+              :to="{ name: 'Data Product Information - Questions', path: '/questionnaire/questions', params: { group: daac }}"
             >Questions</router-link>
             <!-- if questionnaire and daac unknown --> 
             <router-link
               id="questions_nav_link"
               v-else-if="daac =='selection' || daac == ''"
-              :to="{ name: 'Questionnaire - Questions', path: '/questionnaire/questions'}"
+              :to="{ name: 'Data Product Information - Questions', path: '/questionnaire/questions'}"
             >Questions</router-link>
             <div class="inline" >  |  </div>
             <!-- from questionnaire help -->
-            <router-link id="help_nav_link" :to="{ name: 'Questionnaire - Help', path: '/questionnaire/help' }">Help</router-link>
+            <router-link id="help_nav_link" :to="{ name: 'Data Product Information - Help', path: '/questionnaire/help' }">Help</router-link>
           </span>
         </div>
         <!-- End of Logo and menu -->
@@ -96,7 +96,7 @@ export default {
   },
   // The property to be set by questions.vue
   props: {
-    // The form title parsed from questions.vue
+    // The header
     formTitle: { default: "", type: String },
   },
   computed: {
@@ -112,7 +112,7 @@ export default {
         if (form.toLowerCase().match(/interest/g)){
           this.$router.push({
             name: `${form_name_prefix}Questions`,
-            params: { default: this.daac.toLowerCase() }
+            params: { group: this.daac.toLowerCase() }
           });
         }
       }

@@ -15,13 +15,23 @@ const routes = [
     component: Home
   },
   {
-    path: '/interest/daacs/:default',
+    path: '/interest/daacs/:group',
     name: 'Data Publication Request - Daacs',
     component: Daacs,
     alias: '/interest/daacs/selection'
   },
   {
-    path: '/interest/questions/:default',
+    path: '/interest/questions/:group/:formId',
+    name: 'Data Publication Request - Questions with FormId',
+    component: Questions
+  },
+  {
+    path: '/interest/questions/:group/:formId/:submissionId',
+    name: 'Data Publication Request - Questions with formId and submissionId',
+    component: Questions
+  },
+  {
+    path: '/interest/questions/:group',
     name: 'Data Publication Request - Questions',
     component: Questions
   },
@@ -32,12 +42,22 @@ const routes = [
   },
   {
     path: '/questionnaire/questions',
-    name: 'Questionnaire - Questions',
+    name: 'Data Product Information - Questions',
+    component: Questions
+  },
+  {
+    path: '/questionnaire/questions/:formId',
+    name: 'Data Product Information - Questions with FormId',
+    component: Questions
+  },
+  {
+    path: '/questionnaire/questions/:formId/:submissionId',
+    name: 'Data Product Information - Questions with formId and submissionId',
     component: Questions
   },
   {
     path: '/questionnaire/help',
-    name: 'Questionnaire - Help',
+    name: 'Data Product Information - Help',
     component: Help
   },
   {
