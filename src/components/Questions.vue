@@ -733,8 +733,9 @@ export default {
         let contact = false
         let form = this.getPath()[0]
         if (this.formId == '' && (this.daac !=='selection' || this.daac != '') && (form.toLowerCase().match(/interest/g))){
+          //console.log('form',form);
           for (let form in forms){
-            if (forms[form].form_name.toLowerCase().match(/interest/g)){
+            if (typeof(forms[form].form_name) != 'undefined' && forms[form].form_name.toLowerCase().match(/interest/g)){
               this.formId = forms[form]['id']
               this.formTitle = forms[form]['title']
               break
