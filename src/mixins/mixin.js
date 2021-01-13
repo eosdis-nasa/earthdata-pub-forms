@@ -8,6 +8,17 @@ export default {
     },
     methods: {
       // @vuese
+      // Checks for authorization token, if none, redirects to dashboard_root/auth
+      checkAuth(){
+        if(typeof this.$route.query.token == 'undefined') {
+          if(localStorage.getItem('auth-token') == null){
+            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth`
+          }
+        } else {
+          localStorage.setItem('auth-token', this.$route.query.token)
+        }
+      },
+      // @vuese
       // Converts sentence string to title case
       titleCase(str) {
         if(typeof str != 'undefined'){
@@ -23,6 +34,7 @@ export default {
       // @vuese
       // Re-evaluates the route and changes it if applicable
       resetRoute(){
+        this.checkAuth()
         this.setShowDaacs()
         let redirect = '';
         let form = this.getPath()[0]
