@@ -727,14 +727,20 @@ export default {
     // @vuese
     // Fetchs the questions data
     fetchQuestions(){
+      $.ajaxSetup({
+        headers : {
+          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+        }
+      });
       $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`, ( forms ) => {
         var question = []
         this.contacts = []
         let contact = false
         let form = this.getPath()[0]
         if (this.formId == '' && (this.daac !=='selection' || this.daac != '') && (form.toLowerCase().match(/interest/g))){
+          //console.log('form',form);
           for (let form in forms){
-            if (forms[form].form_name.toLowerCase().match(/interest/g)){
+            if (typeof(forms[form].form_name) != 'undefined' && forms[form].form_name.toLowerCase().match(/interest/g)){
               this.formId = forms[form]['id']
               this.formTitle = forms[form]['title']
               break
