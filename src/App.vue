@@ -1,9 +1,9 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Header :formTitle="formTitle"/>
+    <Header :formTitle="showFormTitle"/>
     <router-view ref="content"/>
-     <go-top bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius=3% aria-label="go to top button"></go-top>
+    <go-top id="go_top" bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
   </div>
 </template>
 <!-- End of Main App -->
@@ -32,13 +32,12 @@
                 { name: 'viewport', content: 'width=device-width, initial-scale=1' }
             ]
         },
-        data() {
-            return {
-                formTitle: '',
+        computed:{
+            showFormTitle: function(){
+                return window.formTitle
             }
         },
         props:{
-            
 
         },
         components: {
@@ -52,16 +51,10 @@
                         return this.$refs.content.formTitle
                     },
                     val => {
-                        this.formTitle = val
+                        window.formTitle = val
                     }
                 )
-                this.formTitle = this.$refs.content.formTitle
-            } else {
-                if(typeof this.$refs.content =='undefined' && window.localStorage.getItem('DAAC')!=null){
-                    this.$router.push({ name: 'Home', default: window.localStorage.getItem('DAAC').toLowerCase() })
-                } else {
-                    this.$router.push({ name: 'Daacs', path: '/selection', default: 'selection' })
-                }
+                window.formTitle = this.$refs.content.formTitle
             }
         },
         watch: {
@@ -73,6 +66,47 @@
     }
 </script>
 <style>
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    #go_top {
+        max-width:50px;
+        max-height:50px;
+    }
+    .modal-footer {
+        background-color: #ebebeb!important;
+    }
+    .eui-btn--green,
+    .eui-btn--green:disabled:hover {
+        background-color: #158749!important;
+    }
+    .eui-btn--green:hover,
+    footer button.btn-primary:hover {
+        background-color:#12713d!important;
+    }
+    .eui-btn--red,
+    .eui-btn--red:disabled:hover{
+        background-color: #DB1400;
+    }
+    .eui-btn--red:hover {
+        background-color: #c21200!important;
+    }
+    .btn:disabled, .btn.disabled {
+        cursor:not-allowed;
+    }
+    .eui-btn--blue,
+    .eui-btn--blue.disabled:hover {
+        background-color: #2275AA;
+    }
+    .eui-btn--blue:hover {
+        background-color: #2c3e50;
+    }
+    footer button.btn-primary {
+        background-color:#158749;
+        color:white;
+    }
     body{
         background:unset!important;
     }
@@ -94,11 +128,14 @@
     }
     .form-group {
         margin-top:.5rem;
-        margin-bottom: 1.75rem!important;
+    }
+    h1 {
+        margin: 0.67em 0;
     }
     #nav {
         padding: 5px;
         text-align:right;
+        padding-bottom: 1.75rem;
     }
     #nav a {
         color:white;
@@ -137,15 +174,20 @@
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
     }
-    /*.btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited {
+    /* undo_button */
+    #undo_button.disabled,
+    #redo_button.disabled {
+        background-color: #6c757d;
+    }
+    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited, .eui-btn--red.btn-secondary:disabled {
         background-color: #d62c1a;
     }
-    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited {
+    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited {
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, ..eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
-    }*/
+    }
     .default_background {
         background-color: #ebebeb;
     }

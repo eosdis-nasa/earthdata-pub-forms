@@ -14,7 +14,7 @@
                 v-for="(item, index) in daacs"
                 :key="index"
                 :name="item.short_name.replace(' ', '_')"
-                :id="item.short_name.replace(' ', '_') + '_' + index"
+                :id="`${item.short_name.replace(' ', '_')}_${index}`"
                 :value="item.long_name"
                 @click="setSelectedValues(item.url, item.short_name, item.long_name, item.description)"
                 v-model="selected"
@@ -24,21 +24,21 @@
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               You have selected:
               <br />
               <strong>{{ selected }}</strong>
             </div>
-            <div class="mt-3" v-if="selected">
+            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
-                <font-awesome-icon icon="external-link-alt">external link</font-awesome-icon>
+                <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
               </a>
             </div>
             <!-- Submit Button -->
             <div v-if="selected">
-              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button">Select</b-button>
+              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
             </div>
             <!-- End of Submit Button -->
           </div>
@@ -53,14 +53,12 @@
 <script>
 // Jquery javascript
 import $ from "jquery";
-import mixin from "../mixins/mixin";
 
 // This Daacs component gets DAAC data and displays abbreviations as a radio selection
 // On selection displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users more info and to move on.
 export default {
   name: "Daacs",
-  mixins: [mixin],
   data() {
     return {
       selected: "",
@@ -86,6 +84,8 @@ export default {
     }
   },
   mounted() {
+    window.daacsComponent = this;
+    this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();
     this.GetCurrentDaacAndUpdate();
   },
@@ -95,9 +95,16 @@ export default {
     fetchDaacs() {
       // Gets DAAC data for template
       var items = [];
-      $.getJSON("../daacs.json", daacs => {
-        for (var dict in daacs["data"]) {
-          items.push(daacs["data"][dict]);
+      $.ajaxSetup({
+        headers : {
+          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+        }
+      });
+      // TESTING ONLY
+      //$.getJSON("../daacs.json", daacs => {
+      $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
+        for (var dict in daacs) {
+          items.push(daacs[dict]);
         }
         this.loaded = true;
       });
@@ -137,7 +144,6 @@ export default {
       long_name,
       description
     ) {
-      //console.log('set current daac objects')
       var daac_specific_data;
       if (
         typeof url == "undefined" ||
@@ -179,11 +185,11 @@ export default {
       ).toLowerCase();
       if (
         typeof this.$route != "undefined" &&
-        typeof this.$route.params.default != "undefined" &&
-        this.$route.params.default != null
+        typeof this.$route.params.group != "undefined" &&
+        this.$route.params.group != null
       ) {
         if (
-          this.$route.params.default.replace(/ /g, "_").toLowerCase() !=
+          this.$route.params.group.replace(/ /g, "_").toLowerCase() !=
           short_name.replace(/ /g, "_").toLowerCase()
         ) {
           short_name = this.setCurrentDaacObjects(
@@ -193,7 +199,7 @@ export default {
             long_name,
             description
           );
-          this.$route.params.default = short_name
+          this.$route.params.group = short_name
             .replace(/ /g, "_")
             .toLowerCase();
         }
@@ -219,11 +225,11 @@ export default {
       this.$v.$touch();
       if (this.selected != "") {
         this.$router.push({
-          name: "Questions",
-          params: { default: this.data.toLowerCase() }
+          name: "Data Publication Request - Questions",
+          params: { group: this.data.toLowerCase() }
         });
       } else {
-        this.$router.push({ name: "Daacs", params: { default: "selection" } });
+        this.$router.push({ name: "Data Publication Request - Daacs", params: { group: "selection" } });
       }
     },
     // @vuese
@@ -247,21 +253,21 @@ export default {
         this.selected == "" &&
         !window.location.href.match(/daacs\/selection/g) &&
         (typeof this.$route == "undefined" ||
-          typeof this.$route.params.default == "undefined" ||
-          this.$route.params.default == "")
+          typeof this.$route.params.group == "undefined" ||
+          this.$route.params.group == "")
       ) {
         history.replaceState(
           "updating href",
           window.document.title,
-          window.location.href.toLowerCase() + "daacs/selection"
+          `${window.location.href.toLowerCase()}daacs/selection`
         );
       }
       if (
         (typeof this.$route != "undefined" &&
-          typeof this.$route.params.default != "undefined" &&
-          this.$route.params.default != null &&
-          this.$route.params.default != "" &&
-          this.$route.params.default != "selection") ||
+          typeof this.$route.params.group != "undefined" &&
+          this.$route.params.group != null &&
+          this.$route.params.group != "" &&
+          this.$route.params.group != "selection") ||
         this.selected != "" ||
         window.localStorage.getItem("DAAC") != null
       ) {
@@ -269,9 +275,9 @@ export default {
         let selected;
         if (this.selected != "") {
           selected = this.getDaac(this.selected);
-        } else if (typeof this.$route.params.default != "undefined") {
+        } else if (typeof this.$route.params.group != "undefined") {
           selected = this.getDaac(
-            this.$route.params.default.replace(/_/g, " ").toUpperCase()
+            this.$route.params.group.replace(/_/g, " ").toUpperCase()
           );
         } else if (window.localStorage.getItem("DAAC") != null) {
           selected = this.getDaac(window.localStorage.getItem("DAAC"));
@@ -284,8 +290,8 @@ export default {
             default_daac != "" &&
             default_daac != "SELECTION"
           ) {
-            if ($("label[for^='" + default_daac + "']")) {
-              $("label[for^='" + default_daac + "']").click();
+            if ($(`label[for^='${default_daac}']`)) {
+              $(`label[for^='${default_daac}']`).click();
             }
           }
         }
@@ -296,32 +302,35 @@ export default {
 };
 </script>
 <style scoped>
-#selected_daac, .external-link-alt, #selected_daac_link {
-  color: #2275AA;
-}
-.eui-btn--green {
-  background-color: #158749;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-  margin-bottom: 1rem;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
-.button_div {
-  margin-top: 1rem;
-  text-align: left;
-  float: left;
-}
-.radio_div {
-  width: 25%;
-  float: left;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
+  #daac_select_button {
+    margin-top:2rem;
+  }
+  .form-group {
+    margin-top:2rem;
+  }
+  #selected_daac, .external-link-alt, #selected_daac_link {
+    color: #2275AA;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+    margin-bottom: 1rem;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
+  .button_div {
+    margin-top: 1rem;
+    text-align: left;
+    float: left;
+  }
+  .radio_div {
+    width: 25%;
+    float: left;
+  }
+  .desc_div {
+    width: 75%;
+    float: right;
+  }
 </style>

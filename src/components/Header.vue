@@ -1,44 +1,79 @@
 <template>
   <!-- header with eui class -->
   <header class="doc-mast header" role="banner">
+  <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
           <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs">Earthdata Archive Interest Form</span>
+          <span id="title" v-else-if="showDaacs && getTitleFromLocation().toLowerCase().match(/interest/g)">Data Publication Request Form</span>
+          <span id="title" v-else-if="getTitleFromLocation().toLowerCase().match(/questionnaire/g)">Data Product Information</span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
+          <!-- if show daacs -->
           <span v-if="showDaacs">
+            <!-------------------- DAACS ---------------------->
+            <!-- if daac is set -->
             <router-link
               id="daacs_nav_link"
-              v-if="daac !=='selection'"
-              :to="{ name: 'Daacs', path: '/daacs', params: { default: daac }}"
+              v-if="daac !=='selection' && daac !== ''"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { group: daac }}"
             >DAACS</router-link>
-            <div v-if="daac !== 'selection'" class="inline"> | </div>
+            <!-- if daac is not set and not 'selection' -->
             <router-link
               id="daacs_nav_link"
-              v-if="daac =='selection'"
-              :to="{ name: 'Daacs', path: '/daacs/selection' }"
+              v-else-if="daac !=='selection'"
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs', params: { group: 'selection' }}"
             >DAACS</router-link>
-            <div v-if="daac == 'selection'" class="inline"> | </div>
+            <!-- if daac is 'selection' -->
+            <router-link
+              id="daacs_nav_link"
+              v-else
+              :to="{ name: 'Data Publication Request - Daacs', path: '/interest/daacs/selection', params: { group: 'selection' } }"
+            >DAACS</router-link>
+            <!-- daac divider -->
+            <div class="inline">  |  </div>
+            <!-------------------- QUESTIONS ---------------------->
+            <!-- if daac is set -->
+            <router-link
+              id="questions_nav_link"
+              v-if="daac !=='selection' && daac !== ''"
+              :to="{ name: 'Data Publication Request - Questions', path: '/interest/questions', params: { group: daac }}"
+            >Questions</router-link>
+            <!-- if daac is not set -->
+            <a
+              id="questions_nav_link"
+              v-else-if="daac =='selection' || daac == ''"
+              href="#"
+              @click="requireDaacSelection($event)"
+            >Questions</a>
+            <div class="inline" v-if="daac =='selection' || daac ==''" @click="requireDaacSelection()">  |  </div>
+            <!-- question divider divider -->
+            <div class="inline" v-else>  |  </div>
+            <!-------------------- HELP ---------------------->
+            <router-link id="help_nav_link" :to="{ name: 'Data Publication Request - Help', path: '/interest/help' }">Help</router-link>
           </span>
-          <router-link
-            id="questions_nav_link"
-            v-if="daac !=='selection'"
-            :to="{ name: 'Questions', path: '/questions', params: { default: daac }}"
-          >Questions</router-link>
-          <div class="inline" v-if="daac !=='selection'"> | </div>
-          <a
-            id="questions_nav_link"
-            v-if="daac =='selection'"
-            href="#"
-            @click="requireDaacSelection($event)"
-          >Questions</a>
-          <div class="inline" v-if="daac =='selection'" @click="requireDaacSelection()"> | </div>
-          <router-link id="help_nav_link" :to="{ name: 'Help', path: '/help'}">Help</router-link>
+          <!-- if daacs hidden -->
+          <span v-else>
+            <!-- if questionnaire and daac known -->
+            <router-link
+              id="questions_nav_link"
+              v-if="daac !== ''"
+              :to="{ name: 'Data Product Information - Questions', path: '/questionnaire/questions', params: { group: daac }}"
+            >Questions</router-link>
+            <!-- if questionnaire and daac unknown --> 
+            <router-link
+              id="questions_nav_link"
+              v-else-if="daac =='selection' || daac == ''"
+              :to="{ name: 'Data Product Information - Questions', path: '/questionnaire/questions'}"
+            >Questions</router-link>
+            <div class="inline" >  |  </div>
+            <!-- from questionnaire help -->
+            <router-link id="help_nav_link" :to="{ name: 'Data Product Information - Help', path: '/questionnaire/help' }">Help</router-link>
+          </span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -55,67 +90,86 @@ export default {
   name: "Header",
   data() {
     return {
-      showDaacs: true,
-      daac: "selection"
+      daac: "selection",
+      showDaacs: ''
     };
   },
   // The property to be set by questions.vue
   props: {
-    // The form title parsed from questions.vue
-    formTitle: { default: "", type: String }
+    // The header
+    formTitle: { default: "", type: String },
   },
-  computed: {},
+  computed: {
+    
+  },
   // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
   watch: {
     showDaacs: function(val) {
-      if (val == "false") {
-        this.$router.push({
-          name: "Questions",
-          params: { default: this.daac.toLowerCase() }
-        });
+      if (val == "false" || val == false) {
+        let form_components = this.getPath()
+        let form = form_components[0]
+        let form_name_prefix = form_components[1]
+        if (form.toLowerCase().match(/interest/g)){
+          this.$router.push({
+            name: `${form_name_prefix}Questions`,
+            params: { group: this.daac.toLowerCase() }
+          });
+        }
       }
     }
   },
   created() {
-    if (window.localStorage.getItem("DAAC") != null) {
-      this.daac = window.localStorage.getItem("DAAC");
-    } else {
-      this.daac = "selection";
-    }
-    let parameters = this.$route;
-    let showDaacs;
-    if (typeof parameters != "undefined") {
-      showDaacs = parameters.query["showDaacs"];
-    }
-    if (showDaacs) {
-      this.showDaacs = showDaacs;
-      window.localStorage.setItem("showDaacs", showDaacs);
-    } else if (window.localStorage.getItem("showDaacs") != null) {
-      this.showDaacs = Boolean(window.localStorage.getItem("showDaacs"));
-    } else {
-      window.localStorage.setItem("showDaacs", this.showDaacs);
-    }
+   
   },
   methods: {
+    // @vuese
+    // Get title of form from address bar location
+    getTitleFromLocation(){
+      let form_components = this.getPath()
+      let form = form_components[0]
+      return form
+    },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
     requireDaacSelection() {
       if (!location.href.match(/help/g)) {
-        alert("Please select a daac to continue.");
+        if(Object.keys(this.values).length > 0){
+          this.$bvModal.msgBoxOk('Please select a daac to continue.', {
+            title: 'No DAAC',
+            size: 'sm',
+            buttonSize: 'sm',
+            okTitle: 'OK',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true
+          })
+        }
         event.preventDefault();
         return false;
       } else {
-        window.location.href = "/daacs/selection";
+        let form_components = this.getPath()
+        let form = form_components[0] 
+        window.location.href = `/${form}/daacs/selection`;
       }
       return true;
     }
   },
   mounted() {
     window.headerComponent = this;
+    this.setShowDaacs()
+    this.daac = this.setDaacs()
+    this.resetRoute()
   }
 };
 </script>
 <style scoped>
+body {
+  border-top: unset;
+  padding: 0 0 0 0;
+}
+h1 {
+  margin: 0.67em 0;
+}
 a {
   cursor: pointer;
 }

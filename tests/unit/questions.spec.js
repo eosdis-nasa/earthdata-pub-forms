@@ -25,6 +25,13 @@ import Help from '@/components/Help.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
+import mixin from "@/mixins/mixin.js";
+import { config } from '@vue/test-utils';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
+
+config.showDeprecationWarnings = false
 
 const localVue = createLocalVue();
 localVue.use(VueRouter)
@@ -33,11 +40,22 @@ localVue.use(Vuelidate)
 localVue.use(Vuex)
 localVue.use(VuexUndoRedo)
 localVue.use(LayoutPlugin)
+localVue.mixin(mixin)
+library.add(fas)
+localVue.component('font-awesome-icon', FontAwesomeIcon)
+localVue.component('font-awesome-layers', FontAwesomeLayers)
+localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 const routes = [  { path: '/', name: 'Home', component: Home },
-                  { path: '/daacs/:default', name: 'Daacs', component: Daacs, alias: '/daacs/selection' },
-                  { path: '/questions/:default', name: 'Questions', component: Questions },
-                  { path: '/help/:default', name: 'Help', component: Help },
+                  { path: '/interest/daacs/:group', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:group', name: 'Data Publication Request - Questions', component: Questions },
+                  { path: '/interest/questions/:group/:formId', name: 'Data Publication Request - Questions with FormId', component: Questions },
+                  { path: '/interest/questions/:group/:formId/:submissionId', name: 'Data Publication Request - Questions with formId and submissionId', component: Questions },
+                  { path: '/interest/help', name: 'Data Publication Request - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Data Product Information - Questions', component: Questions },
+                  { path: '/questionnaire/questions:formId', name: 'Data Product Information - Questions with FormId', component: Questions },
+                  { path: '/questionnaire/questions/:formId/:submissionId', name: 'Data Product Information - Questions with formId and submissionId', component: Questions },
+                  { path: '/questionnaire/help', name: 'Data Product Information - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
@@ -86,6 +104,19 @@ describe('location.href is accessible in this environment', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -105,6 +136,19 @@ describe("App", () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -117,51 +161,12 @@ describe("App", () => {
       localVue,
       router
     })
-    const relative_path = "/daacs/selection"
+    const relative_path = "/interest/daacs/selection"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(window.location.href).toBe(relative_path);
     expect(wrapper.text().includes('Choose your DAAC:')).toBe(true)
   })
-  /*,
-  describe('builds store to test state action and html5 response', () => {
-    /*
-    let actions
-    let store
-  
-    beforeEach(() => {
-      actions = {
-        actionClick: jest.fn(),
-        actionInput: jest.fn()
-      }
-      store = new Vuex.Store({
-        router: routes,
-        actions
-      })
-    })
-
-    it('dispatches "actionInput" when input event email value is "something@example.com"', () => {
-      const wrapper = mount(App, { store, localVue })
-      const input = wrapper.find('email')
-      input.element.value = 'something@example.com'
-      input.trigger('email')
-      expect(actions.actionInput).toHaveBeenCalled()
-    })
-  
-    it('does not dispatch "actionInput" when event value is not correct', () => {
-      const wrapper = shallowMount(Questions, { store, localVue })
-      const input = wrapper.find('email')
-      input.element.value = 'not correct'
-      input.trigger('email')
-      expect(actions.actionInput).not.toHaveBeenCalled()
-    })
-  
-    it('calls store action "actionClick" when button is clicked', () => {
-      const wrapper = shallowMount(Questions, { store, localVue })
-      wrapper.find('undo_button').trigger('click')
-      expect(actions.actionClick).toHaveBeenCalled()
-    })
-  })*/
 })
 
 /*** HEADER TESTS ***/
@@ -181,6 +186,19 @@ describe('Header', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
   afterAll(() => {
       window.location = location;
@@ -193,14 +211,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: false,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: false
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).not.toContain('daacs_nav_link')
   }),
@@ -210,14 +225,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
   }),
@@ -226,14 +238,12 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:''
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true,
+      daac: ''
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions</a>')).toBe(true);
   }),
@@ -269,6 +279,19 @@ describe('Daacs selection', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -285,7 +308,7 @@ describe('Daacs selection', () => {
       selected: 'Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)'
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')
+    expect(wrapper.text().includes('Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')).toBe(true)
   })
   
 });
@@ -298,6 +321,19 @@ describe('Questions', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -316,19 +352,18 @@ describe('Questions', () => {
   });
   // UNIT TESTS
   // This should be written better when the api call has been inserted because it will change the test entirely.
-  test('on going to the route questions/ornl_daac, it will go to the questions page then load the questions data"', async () => {
+  test('on going to the route /interest/questions/ornl_daac, it will go to the questions page then load the questions data"', async () => {
     const fetchQuestions = jest.fn()
     jest.spyOn(localStorage, 'setItem');
     window.localStorage.__proto__.setItem = jest.fn();
     const wrapper = mount(Questions, {localVue, methods: { fetchQuestions }})
-    const relative_path = "/questions/ornl_daac"
+    const relative_path = "/interest/questions/ornl_daac"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(fetchQuestions).toHaveBeenCalledTimes(1)
     
   })
-	
-  // END-TO-END TESTS
+	// END-TO-END TESTS
   // 
 });
 
@@ -342,6 +377,19 @@ describe('Help', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -372,135 +420,76 @@ describe('Help', () => {
  
 });
 
-afterEach(() => {
+afterAll(() => {
+  window.location = location;
   wrapper.destroy();
 });
+
+/*** METHODS:***/
 /*
-/*** COMPONENT MARKUP / EVALUATION ***/
-/*Header and component navigation:
-	props/data:
-		showDaacs
-		daac
-		formTitle
-		functions:
-			showdaacs:
-				if !showdaacs, opens questions with default = the daac
-			on created:
-				get parameters sent in and sets this.showDaacs and localStorage
-				else get daac from localStorage if its set and sets this.showdaacs
-				else set localStorage to default of data prop
-			on clicking nav after selection:
-				from daacs:
-					daacs - nothing
-					questions - loads questions defaulting to the selected daac
-					help - loads all help
-				from questions:
-					daacs - loads questions defaulting to the selected daac
-					questions - nothing
-					help - loads all help
-				from help:
-					daacs - loads questions defaulting to the selected daac
-					questions - loads questions defaulting to the selected daac
-					help - nothing
-				refreshes the header
-				sets the class of the header active object
-			on clicking nav NO selection:
-				from /:
-					routes to /daacs/selection
-					refreshes the header
-					sets the class of the header active object
-					sets showDaacs in localStorage
-					
-					clicking:
-						daacs - nothing
-						questions - should alert to select a daac first
-						help - loads all help
-				from /daacs:
-					routes to /daacs/selection ('/')
-				from /questions:
-					routes to /daacs/selection ('/')
-
-Daacs:
-	props/data:
-		selected,
-		loaded
-		daacs
-		unique functions:
-			fetchsDaacs
-			GetCurrentDaacAndUpdate:
-				On load, looks for this.selected, param default or localStorage for autoselection then clicks daac radio object (executes the setSelectedValues)
-			setSelectedValues:
-				Receives the selected daac data ({ 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }), 
-				then sets the current daac objects (setCurrentDaacObjects). 
-				Then if there's a new daac selected, reruns with the new daac short name, 
-				updates the address bar, 
-				updates the header and saves
-			getDaac(daac)
-				Gets this.daacs specific daac data and returns the daacs { 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }
-			setCurrentDaacObjects:
-				Receives getDaac data or if none, looks it up (getDaac), then sets the text, url, description, this.selected and this.data (returns short_name). Sets active link in header.
-			save:
-				if something was selected, saves to localStorage and updates the header
-			submit:
-				if seomthing was selected, pushes through the router to Questions with the default as the selected or reroutes to daacs
-
-Questions:
-	props/data:
-		values
-		questions
-		dirty (only file uses this)
-		formTitle:
-		saveTimeout:0
-    daac
-    cancelLabel
-    resetLabel
-    draftLabel
-		saveLabel
-		undoLabel
-		redoLabel
-		submitLabel
-		enterSubmit
-    readonly
-    showCancelButton
-		showResetButton
-	validations:
-		sets the daac if in localStorage
-		gathers required inputs and stores them in localStorage for later evaluation -> returns this object
-	mounted:
-		on load, gets daac from local storage and if showDaacs is false refreshes header in form. sets this.daac
-		runs questions function (fetchQuestions)
-		sets active nav link
-		update the address bar without reload (or state capture) to reflect the daac
-		update header
-	functions:
-		reApplyValues
-			resets values from undo redo
-		fetchQuestions
-			sets this.formTitle
-			loads question data
-			appends style
-			returns question object
-		submitForm:
-      does this.$emit from localStorage question data object
-    draftFile:
-			gets values
-			gets daac from local storage if not set in questions.vue
-			sets data storage if not empty
-      Will alert a message if is passed string
-      Will exit form
-		saveFile:
-			gets values
-			gets daac from local storage if not set in questions.vue
-			sets data storage if not empty
-			Will alert a message if is passed string
-    cancel:
-      Exits form without saving
-    reset:
-			Clears form
-		redo:
-			Redos last action
-			then reApplyValues
-		undo:
-			Undoes last action
-      then reApplyValues
+// Redo the form and to its previous state.
+redoToPreviousState()
+// Undos the form and reverts it to its previous state.
+undoToPreviousState()
+// Re-applies the data entry values from values from the store for on undo and redo
+reApplyValues()
+// Exit form to home page
+exitForm()
+// Resets form and local storage to empty entries
+cancelForm(evt)
+// Cancel and exit form
+okToCancel(place_to_redirect)
+// Save as draft and exit form
+draftFile(from)
+// Used to save file
+saveFile(from)
+// Used to submit the form data if valid
+submitForm(from)
+// Sends data to the API
+sendDataToApi(bvModal)
+// Prevents submit to apply validation; @arg The event
+enterSubmitForm(evt)
+// Validation of input data returns error and if dirty
+status(validation)
+// Fetchs the questions data
+fetchQuestions()
+// Hides errors banner
+dismiss(id)
+// Handle html5 invalidity on form
+handleInvalid(evt)
+// Gets input attributes or undefined
+getAttribute(attr, input)
+// Gets characters remaining from textarea
+charactersRemaining(value, maxlength)
+// Gets contacts and builds options for checkbox
+setContacts (values)
+// Copies over contact information from the 'same as' checkbox for contact
+setContact(id_to, contact)
+// Shows and Hides based of json show_if
+showIf(config)
+// Gets custom bbox validation errors; returns blank if valid
+getBboxError(fld, direction)
+// Validates required question inputs; returns true if valid
+validateQuestionInputsRequired(inputs)
+*/
+/*** MIXIN METHODS: ***/
+/*
+// Converts sentence string to title case
+titleCase(str)
+// Re-evaluates the route and changes it if applicable
+resetRoute()
+// get Path via parameters, form title (json), then route path 
+getPath()
+// get Path via parameters, form title, then property 
+setShowDaacs()
+// Set Daacs daac via parameters or windows storage 
+setDaacs()
+// Set active nav element
+setActiveNav(activeElement, navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active router-link-active')
+// Get active nav element according to class of nav elements
+getActiveNavViaClass(navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active.router-link-active')
+// Set active nav element according to location.href value
+setActiveNavViaLocation(navs = ['daacs', 'help', 'questions'])
+// Set / Resets active location.href value without updating state
+setActiveLocationWithoutReload(lctn = location.href, shortName)
 */
