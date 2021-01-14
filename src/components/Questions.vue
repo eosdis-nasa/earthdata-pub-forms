@@ -727,6 +727,11 @@ export default {
     // @vuese
     // Fetchs the questions data
     fetchQuestions(){
+      $.ajaxSetup({
+        headers : {
+          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+        }
+      });
       $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`, ( forms ) => {
         var question = []
         this.contacts = []

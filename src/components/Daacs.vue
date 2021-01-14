@@ -95,6 +95,11 @@ export default {
     fetchDaacs() {
       // Gets DAAC data for template
       var items = [];
+      $.ajaxSetup({
+        headers : {
+          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+        }
+      });
       // TESTING ONLY
       //$.getJSON("../daacs.json", daacs => {
       $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {

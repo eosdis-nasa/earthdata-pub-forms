@@ -49,6 +49,11 @@
             // If a id is passed in, it just displays single 'Help Tip'
             fetchHelp(help_id){
                 var help_tips = []
+                $.ajaxSetup({
+                    headers : {
+                        'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+                    }
+                });
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
                 let form = this.getPath()[0]
                 let json_name = ''
