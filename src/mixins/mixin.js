@@ -77,7 +77,7 @@ export default {
         if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
           form = this.$route.query.form
         } else if (typeof window.formTitle != 'undefined' && window.formTitle != ''){
-          if (window.formTitle.toLowerCase().match(/interest/g)){
+          if (window.formTitle.toLowerCase().match(/publication/g)){
             form = 'interest'
           } else {
             form = 'questionnaire'
