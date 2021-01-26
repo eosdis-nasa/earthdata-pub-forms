@@ -27,14 +27,14 @@
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
                       <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- save button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
                       <!-- submit button -->
-                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
                       <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm">{{ cancelLabel }}</b-button>
                       <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm" disabled>{{ cancelLabel }}</b-button>
@@ -379,7 +379,7 @@ export default {
           if (!this.values.fromUndo) {
             this.setContacts(this.values)
             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
-            //this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
+            this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
             var string_logging_object = this.$log.debug('pushQuestionsState')
             this.$logging_object[Date(Date.now()).toString()] = {
               "log_string":string_logging_object,
@@ -763,7 +763,6 @@ export default {
           url = `../${json_name}.json`
         }
         $.getJSON(url, ( questions ) => {
-          console.log(questions)
           if (this.formTitle == '' && questions['long_name']!= ''){
             this.formTitle = questions['long_name']
           }
@@ -881,7 +880,6 @@ export default {
         operation = 'save'
         action = 'saved'
       }
-      console.log('send to api', json)
       $.ajax({
         type: "POST",
         headers: {
@@ -890,6 +888,7 @@ export default {
         url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
         data: JSON.stringify(json),
         dataType: "json",
+        contentType:"application/json; charset=utf-8",
         success: (response) => {
           this.$submissionId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
@@ -916,20 +915,20 @@ export default {
       });
     },
     // @vuese
-    // Used to submit the form data if valid
-    submitForm(from) {
-      // Submit form (this.data) if valid
-      this.saveFile(from)
-      if (!this.$v.$anyError) {
-        this.sendDataToApi(this.$bvModal)
-      } else {
-        this.errorsNotification(this.$bvModal)
-      }
-      
+    // If there's no errors, saves or submits, then exit form
+    submitForm() {
+      this.saveFile()
+      this.exitForm()
+    },
+    // @vuese
+    // If there's no errors, saves or submits, then exit form
+    draftFile() {
+      this.saveFile()
+      this.exitForm()
     },
     // @vuese
     // Used to save file
-    saveFile(from) {
+    saveFile() {
       let DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
@@ -937,12 +936,12 @@ export default {
         DAAC = this.daac
       }
       this.$v.$touch()
-      const data = JSON.stringify(this.values)
+      const data = this.values
       let form_components = this.getPath()
       let form = form_components[0] 
       if(data !== JSON.stringify({})){
         this.$values = data
-        window.localStorage.setItem(`${form}_questions`, data);
+        window.localStorage.setItem(`${form}_questions`, JSON.stringify(data));
         if(typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)){
           this.$output_object[DAAC] =  {
             "values": this.$values,
@@ -969,7 +968,7 @@ export default {
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
-          this.sendDataToApi(this.$bvModal, from)
+          this.sendDataToApi(this.$bvModal)
         } else {
           this.errorsNotification(this.$bvModal)
         } 
@@ -978,7 +977,7 @@ export default {
     // @vuese
     // Alerts the user to errors and goes to top of page for messages to help.
     errorsNotification(bvModal){
-      bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
+      bvModal.msgBoxOk('You have errors to correct before you can save or submit data.', {
         title: 'Errors',
         size: 'sm',
         buttonSize: 'sm',
@@ -992,14 +991,8 @@ export default {
       }
     },
     // @vuese
-    // Save as draft and exit form
-    draftFile(from) {
-      this.saveFile(from)
-      //this.exitForm()
-    },
-    // @vuese
     // Cancel and exit form
-    okToCancel(place_to_redirect){
+    okToCancel(){
       this.$refs.form.reset()
       let form_components = this.getPath()
       let form = form_components[0] 
@@ -1011,9 +1004,7 @@ export default {
       this.$values = {}
       this.$v.$touch()
       this.confirm = false
-      if(typeof place_to_redirect != 'undefined'){
-        window.location.href = encodeURIComponent(place_to_redirect)
-      }
+      this.exitForm()
     },
     // @vuese
     // Resets form and local storage to empty entries
@@ -1045,19 +1036,23 @@ export default {
           .then(value => {
             this.confirm = value
             if(value){
-              this.okToCancel(place)
+              this.okToCancel()
             } else { return }
           })
         } else {
           this.confirm = false;
-          this.okToCancel(place)
+          this.okToCancel()
         }
       } 
     },
     // @vuese
-    // Exit form to home page
-    exitForm(){
-      window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/submissions`
+    // Exit form to requests page
+    exitForm(url_override){
+      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/submissions`
+      if (typeof url_override != 'undefined'){
+        url = url_override
+      } 
+      window.location.href = url
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo

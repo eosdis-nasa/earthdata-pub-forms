@@ -12,7 +12,7 @@ export default {
       checkAuth(){
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
-            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth`
+            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
           }
         } else {
           localStorage.setItem('auth-token', this.$route.query.token)
