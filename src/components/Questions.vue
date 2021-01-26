@@ -646,7 +646,6 @@ export default {
     // @vuese
     // Gets contacts and builds options for checkbox
     setContacts: function (values) {
-      if (typeof values == 'undefined'){return}
       this.contacts = []
       let questions = this.questions[0]
       for (var ea in values){
