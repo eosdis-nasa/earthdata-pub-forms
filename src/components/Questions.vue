@@ -27,14 +27,14 @@
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
                       <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile('draft')" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- save button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile('save')" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
                       <!-- submit button -->
-                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm('submit')" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
                       <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm">{{ cancelLabel }}</b-button>
                       <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm" disabled>{{ cancelLabel }}</b-button>
@@ -51,13 +51,13 @@
         <template v-for="(heading, a_key) in questions">
           <li v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
           <template v-for="(question, b_key) in heading">
-            <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.title }} section is required</li>
+            <li v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
             <template v-for="(input, c_key) in question.inputs">
               <span v-bind:key="`${a_key}_${b_key}_${c_key}`">
                 <template v-if="input.type == 'bbox'">
                   <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
-                    <li v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="($v.values[`${input.id}_${direction}`] || {}).$error">
-                      {{ heading.heading }} - {{ question.title }} - {{ direction.substring(0, 1).toUpperCase() }}:
+                    <li v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="($v.values[`${input.control_id}_${direction}`] || {}).$error">
+                      {{ heading.heading }} - {{ question.long_name }} - {{ direction.substring(0, 1).toUpperCase() }}:
                       <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
                         <template v-for="(req_if, e_key) in input.required_if">
                           <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}_${e_key}`" v-if="values[req_if.field] == req_if.value">
@@ -68,31 +68,31 @@
                         </template>
                       </template>
                       <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ input.validation_error_msg }}</template>
-                      <template v-else-if="typeof $v.values[`${input.id}_${direction}`].required != 'undefined' && !$v.values[`${input.id}_${direction}`].required">is required</template>
+                      <template v-else-if="typeof $v.values[`${input.control_id}_${direction}`].required != 'undefined' && !$v.values[`${input.control_id}_${direction}`].required">is required</template>
                       <template v-else>{{  getBboxError(input, direction) }}</template>
                     </li>
                   </template>
                 </template>
                 <template v-else>
-                  <li v-if="($v.values[input.id] || {}).$error">
+                  <li v-if="($v.values[input.control_id] || {}).$error">
                     <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
                       <template v-for="(req_if, d_key) in input.required_if">
                         <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                          <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ req_if.message }}</template>
-                          <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                          <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ req_if.message }}</template>
+                          <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                           <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
                         </span>
                       </template>
                     </template>
-                    <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.title }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                    <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                     <template v-else>
-                      {{ heading.heading }} - {{ question.title }} - {{ input.label }}
-                      <template v-if="typeof $v.values[input.id].required != 'undefined' && !$v.values[input.id].required">is required</template>
-                      <template v-else-if="typeof $v.values[input.id].patternMatch != 'undefined' && !$v.values[input.id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
-                      <template v-else-if="typeof $v.values[input.id].minLength != 'undefined' && !$v.values[input.id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
-                      <template v-else-if="typeof $v.values[input.id].maxLength != 'undefined' && !$v.values[input.id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
-                      <template v-else-if="typeof $v.values[input.id].min != 'undefined' && !$v.values[input.id].min">the value must be {{ input.attributes.min }} or greater.</template>
-                      <template v-else-if="typeof $v.values[input.id].max != 'undefined' && !$v.values[input.id].max">the value must be less than {{ input.attributes.max }}</template>
+                      {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
+                      <template v-if="typeof $v.values[input.control_id].required != 'undefined' && !$v.values[input.control_id].required">is required</template>
+                      <template v-else-if="typeof $v.values[input.control_id].patternMatch != 'undefined' && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
+                      <template v-else-if="typeof $v.values[input.control_id].minLength != 'undefined' && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
+                      <template v-else-if="typeof $v.values[input.control_id].maxLength != 'undefined' && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
+                      <template v-else-if="typeof $v.values[input.control_id].min != 'undefined' && !$v.values[input.control_id].min">the value must be {{ input.attributes.min }} or greater.</template>
+                      <template v-else-if="typeof $v.values[input.control_id].max != 'undefined' && !$v.values[input.control_id].max">the value must be less than {{ input.attributes.max }}</template>
                     </template>
                   </li>
                 </template>
@@ -121,58 +121,58 @@
                     :readonly="readonly"
                     :key="b_key">
                         <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                        <label :for="question.question_name" class="eui-label">{{question.title}}:</label>
+                        <label :for="question.short_name" class="eui-label">{{question.long_name}}:</label>
                         <span class="required" v-if="question.required == true">* required</span>
-                        <p :id="question.question_name || a_key">{{question.text}}</p>
+                        <p :id="question.short_name || a_key">{{question.text}}</p>
                         <!-- Input -->
                         <b-row>
                           <b-col :lg="question.size || 12" class="question_size">
                             <b-col class="w-25 help">
-                              <a href="#" @click.prevent="" :id="`help_${question.question_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.question_name}`">
+                              <a href="#" @click.prevent="" :id="`help_${question.short_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.short_name}`">
                               <font-awesome-icon icon="info-circle" name="info icon"/>
                                 Help</a>
-                              <b-modal :id="`modal_${question.question_name}`" :title="`${question.title} - Help`" ok-only centered>
+                              <b-modal :id="`modal_${question.short_name}`" :title="`${question.long_name} - Help`" ok-only centered>
                                 <p class="my-4">{{question.help}}</p>
                               </b-modal>
                             </b-col>
                             <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                               <span v-if="showIf(input.show_if)">
-                                <label :for="input.id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
-                                <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
-                                  {{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
+                                <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
+                                  {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                                 </span>
-                                <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
-                                  ({{charactersRemaining(values[input.id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
+                                <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
+                                  ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                                 </span>
                                 <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                  <span v-if="contact != values[input.id] && contact != ''">
+                                  <span v-if="contact != values[input.control_id] && contact != ''">
                                     <label 
-                                      :id="`same_as_${input.id}_label`"
-                                      :for="`same_as_${input.id}`" 
+                                      :id="`same_as_${input.control_id}_label`"
+                                      :for="`same_as_${input.control_id}`" 
                                       v-if="input.contact == true" 
-                                      @click="setContact(input.id, contact)"
+                                      @click="setContact(input.control_id, contact)"
                                       class="eui-label">
                                       Same as {{contact}} </label>
                                       <b-form-checkbox 
                                         class="eui-checkbox"
                                         v-if="input.contact == true"
-                                        :id="`same_as_${input.id}`"
+                                        :id="`same_as_${input.control_id}`"
                                         value="true"
                                         unchecked-value="false"
-                                        @change.native="setContact(input.id, contact)"
-                                        @click.native="setContact(input.id, contact)"
-                                        @keyup.space.native="setContact(input.id, contact)">
+                                        @change.native="setContact(input.control_id, contact)"
+                                        @click.native="setContact(input.control_id, contact)"
+                                        @keyup.space.native="setContact(input.control_id, contact)">
                                       </b-form-checkbox>
                                   </span>
                                 </span>
                                 <!-- Text Type of Input -->
                                 <b-form-input 
-                                    :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'text' || 
                                     input.type == 'password' || 
@@ -200,11 +200,11 @@
                                     <span :key="`${b_key}_${d_key}`">
                                       <label class="eui-label">{{direction.substring(0, 1).toUpperCase()}}:</label>
                                       <b-form-input 
-                                          :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.id}_${direction}`] || {}).$error }"
+                                          :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${direction}`] || {}).$error }"
                                           type="text" 
-                                          :id="`${input.id}_${direction}`" 
-                                          :name="`${input.id}_${direction}`" 
-                                          v-model="values[`${input.id}_${direction}`]"
+                                          :id="`${input.control_id}_${direction}`" 
+                                          :name="`${input.control_id}_${direction}`" 
+                                          v-model="values[`${input.control_id}_${direction}`]"
                                           size="lg"
                                           :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                           :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
@@ -216,11 +216,11 @@
                                 <!-- End of Text Type of Input -->
                                 <!-- Textarea Type of Input -->
                                 <b-form-textarea 
-                                    :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
                                     size="lg" 
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
@@ -234,11 +234,11 @@
                                 <!-- End of Textarea Type of Input -->
                                 <!-- Radio Group Type of Input -->
                                 <b-form-radio-group
-                                    :class="{ 'form-radio-group-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    :class="{ 'form-radio-group-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
                                     size="lg" 
                                     value="true"
                                     unchecked-value="false"
@@ -249,26 +249,26 @@
                                 <!-- End of Radio Group Type of Input -->
                                 <!-- Checkbox Type of Input -->
                                 <b-form-checkbox 
-                                    :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error, 'checkboxes':true }"
+                                    :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
                                     size="lg" 
                                     value="true"
                                     unchecked-value="false"
                                     v-if="input.type == 'checkbox'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                 </b-form-checkbox>
-                                <span :id="input.id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
+                                <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                                 <!-- End of Checkbox Type of Input -->
                                 <!-- Select Type of Input -->
                                 <b-form-select
-                                    :class="{ 'form-select-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    :class="{ 'form-select-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :name="input.id" 
-                                    v-model="values[input.id]"
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'select'" 
                                     :options="input.options"
@@ -279,12 +279,12 @@
                                 <!-- End of Select Type of Input -->
                                 <!-- File Type of Input -->
                                 <b-form-file
-                                    :class="{ 'form-file-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.id] || {}).$error }"
+                                    :class="{ 'form-file-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     :type="input.type" 
-                                    :id="input.id" 
-                                    :scope="Boolean(values[input.id])"
-                                    :name="input.id" 
-                                    v-model="values[input.id]" 
+                                    :id="input.control_id" 
+                                    :scope="Boolean(values[input.control_id])"
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]" 
                                     size="lg" 
                                     v-if="input.type == 'file'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
@@ -293,9 +293,9 @@
                                 </b-form-file>
                                 <!-- End of File Type of Input -->
                                 <!-- Selected Input File Name -->
-                                <div class="mt-3" v-if="input.type == 'file' && values[input.id] != ''">Selected file: {{ values[input.id] ? values[input.id].name : '' }}</div>
+                                <div class="mt-3" v-if="input.type == 'file' && values[input.control_id] != ''">Selected file: {{ values[input.control_id] ? values[input.control_id].name : '' }}</div>
                                 <!-- End of Selected Input File Name -->
-                                <p :id="`${input.id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
+                                <p :id="`${input.control_id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
                               </span>
                             </b-row>
                           </b-col>
@@ -377,7 +377,7 @@ export default {
         }
         this.saveTimeout = setTimeout(() => {
           if (!this.values.fromUndo) {
-            //this.setContacts(this.values)
+            this.setContacts(this.values)
             this.$store.commit('pushQuestionsState', Object.assign({}, this.values))
             this.$log.debug('pushQuestionsState', Object.assign({}, this.values))
             var string_logging_object = this.$log.debug('pushQuestionsState')
@@ -438,15 +438,15 @@ export default {
                 for (let fld of question.inputs){
                     if (fld.type == 'bbox') {
                       for (let direction of ['north', 'east', 'south', 'west']) {
-                        val_fields.values[`${fld.id}_${direction}`] = {
+                        val_fields.values[`${fld.control_id}_${direction}`] = {
                           bbox: () => {
                             return this.getBboxError(fld, direction) == ''
                           }
                         }
                         if (typeof fld.required != 'undefined' && fld.required) {
-                            val_fields.values[`${fld.id}_${direction}`].required = required
+                            val_fields.values[`${fld.control_id}_${direction}`].required = required
                         } else if (typeof fld.required_if != 'undefined') {
-                          val_fields.values[`${fld.id}_${direction}`].required = requiredIf(() => {
+                          val_fields.values[`${fld.control_id}_${direction}`].required = requiredIf(() => {
                               for (let req_fld of fld.required_if) {
                                 try {
                                   if (typeof this.values[req_fld.field] != 'undefined' && this.values[req_fld.field].toString() === req_fld.value.toString()) {
@@ -463,12 +463,12 @@ export default {
                     } else {
                         if (typeof fld.required != 'undefined' && fld.required) {
                             if(fld.type != 'checkbox'){
-                                val_fields.values[fld.id] = {
+                                val_fields.values[fld.control_id] = {
                                     required
                                 }
                             }
                         } else if (typeof fld.required_if != 'undefined') {
-                          val_fields.values[fld.id] = {
+                          val_fields.values[fld.control_id] = {
                             required: requiredIf(() => {
                               for (let req_fld of fld.required_if) {
                                 try {
@@ -484,23 +484,23 @@ export default {
                           }
                         }
                         if (typeof fld.attributes != 'undefined' && typeof fld.attributes.pattern != 'undefined') {
-                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                          val_fields.values[fld.id].patternMatch = () => {
-                            if (typeof this.values[fld.id] != 'undefined') {
-                              return new RegExp(fld.attributes.pattern).test(this.values[fld.id])
+                          val_fields.values[fld.control_id] = val_fields.values[fld.control_id] || {}
+                          val_fields.values[fld.control_id].patternMatch = () => {
+                            if (typeof this.values[fld.control_id] != 'undefined') {
+                              return new RegExp(fld.attributes.pattern).test(this.values[fld.control_id])
                             }
                             return false
                           }
                         }
 
                         if (typeof fld.attributes != 'undefined' && typeof fld.attributes.minlength != 'undefined') {
-                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                          val_fields.values[fld.id].minLength = minLength(fld.attributes.minlength)
+                          val_fields.values[fld.control_id] = val_fields.values[fld.control_id] || {}
+                          val_fields.values[fld.control_id].minLength = minLength(fld.attributes.minlength)
                         }
 
                         if (typeof fld.attributes != 'undefined' && typeof fld.attributes.maxlength != 'undefined') {
-                          val_fields.values[fld.id] = val_fields.values[fld.id] || {}
-                          val_fields.values[fld.id].maxLength = maxLength(fld.attributes.maxlength)
+                          val_fields.values[fld.control_id] = val_fields.values[fld.control_id] || {}
+                          val_fields.values[fld.control_id].maxLength = maxLength(fld.attributes.maxlength)
                         }
                     }
                 }
@@ -521,7 +521,7 @@ export default {
         if (input.type == 'bbox') {
           let has_all_directions = true
           for (let direction of ['north', 'east', 'south', 'west']) {
-            if (typeof this.values[`${input.id}_${direction}`] == 'undefined' || this.values[`${input.id}_${direction}`] == '' || this.values[`${input.id}_${direction}`] == null) {
+            if (typeof this.values[`${input.control_id}_${direction}`] == 'undefined' || this.values[`${input.control_id}_${direction}`] == '' || this.values[`${input.control_id}_${direction}`] == null) {
               has_all_directions = false
             }
           }
@@ -529,8 +529,8 @@ export default {
             return false
           }
         } else {
-          if (typeof this.values[input.id] != 'undefined' && this.values[input.id] != '' && this.values[input.id] != null) {
-            if (input.type != 'checkbox' || this.values[input.id].toString() != 'false') {
+          if (typeof this.values[input.control_id] != 'undefined' && this.values[input.control_id] != '' && this.values[input.control_id] != null) {
+            if (input.type != 'checkbox' || this.values[input.control_id].toString() != 'false') {
               return false
             }
           }
@@ -541,16 +541,16 @@ export default {
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
     getBboxError(fld, direction) {
-      if (typeof this.values[`${fld.id}_${direction}`] != 'undefined' && this.values[`${fld.id}_${direction}`] != null) {
-        if (isNaN(this.values[`${fld.id}_${direction}`])) {
+      if (typeof this.values[`${fld.control_id}_${direction}`] != 'undefined' && this.values[`${fld.control_id}_${direction}`] != null) {
+        if (isNaN(this.values[`${fld.control_id}_${direction}`])) {
           return 'Must be a number'
         }
-        let this_val = parseFloat(this.values[`${fld.id}_${direction}`])
+        let this_val = parseFloat(this.values[`${fld.control_id}_${direction}`])
         let comp_direction = {
           'south': 'north',
           'west': 'east'
         }
-        let comp_val = parseFloat(this.values[`${fld.id}_${comp_direction[direction]}`])
+        let comp_val = parseFloat(this.values[`${fld.control_id}_${comp_direction[direction]}`])
         let label = `${direction.substring(0, 1).toUpperCase()}`
         if (/west|south/.test(direction) && this_val >= comp_val) {
           return `${label} must be less than ${comp_direction[direction].substring(0, 1).toUpperCase()}`
@@ -653,24 +653,24 @@ export default {
         for(let section of questions) {
           let inputs = section['inputs']
           let text = section['text']
-          let title =section['title']
+          let long_name =section['long_name']
           let help = section['help']
           for (let i in inputs){
             let inp = inputs[i]
             let label = inp['label']
-            if(ea === inp['id']){
+            if(ea === inp['control_id']){
               if(
                 ((typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
                 (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
-                (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
-                (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                (typeof long_name != 'undefined' && long_name.toLowerCase().match(/person/g)) ||
+                (typeof long_name != 'undefined' && long_name.toLowerCase().match(/contact/g)) || 
                 (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
                 (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))) &&
                 label.toLowerCase().match(/name/g) &&
-                this.contacts.includes(this.values[inputs[i]['id']]) == false &&
-                this.values[inputs[i]['id']]!=''
+                this.contacts.includes(this.values[inputs[i]['control_id']]) == false &&
+                this.values[inputs[i]['control_id']]!=''
               ) {
-                this.contacts.push(this.values[inputs[i]['id']])
+                this.contacts.push(this.values[inputs[i]['control_id']])
               }
             }
           }
@@ -737,25 +737,17 @@ export default {
         this.contacts = []
         let contact = false
         let form = this.getPath()[0]
-        if (this.formId == '' && (this.daac !=='selection' || this.daac != '') && (form.toLowerCase().match(/interest/g))){
-          //console.log('form',form);
-          for (let form in forms){
-            if (typeof(forms[form].form_name) != 'undefined' && forms[form].form_name.toLowerCase().match(/interest/g)){
-              this.formId = forms[form]['id']
-              this.formTitle = forms[form]['title']
+        if (this.formId == '' && (this.daac !=='selection' || this.daac != '')){
+          for (let f in forms){
+            if (form.toLowerCase().match(/interest/g) && typeof(forms[f].short_name) != 'undefined' && forms[f].short_name.toLowerCase().match(/data_publication_request/g)){
+              this.formId = forms[f]['id']
+              this.formTitle = forms[f]['long_name']
+              break
+            } else if (form.toLowerCase().match(/questionnaire/g) && typeof(forms[f].short_name) != 'undefined' && forms[f].short_name.toLowerCase().match(/data_product_information/g)){
+              this.formId = forms[f]['id']
+              this.formTitle = forms[f]['long_name']
               break
             }
-          }
-          if(this.formId == ''){
-            this.$bvModal.msgBoxOk('Please report this error to your dev team indicating formId was blank.', {
-              title: 'Something has gone wrong',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
           }
         }
         let url;
@@ -771,8 +763,8 @@ export default {
           url = `../${json_name}.json`
         }
         $.getJSON(url, ( questions ) => {
-          if (this.formTitle == '' && questions['title']!= ''){
-            this.formTitle = questions['title']
+          if (this.formTitle == '' && questions['long_name']!= ''){
+            this.formTitle = questions['long_name']
           }
           //The below line looks for custom css and applies it to the head (eui is done first)
           $('head link[data-eui="yes"]').remove()
@@ -804,15 +796,15 @@ export default {
             questions_section['heading_required'] = heading_required
             questions_section['heading_show_if'] = heading_show_if
             for (var q in questions_section){
-              if (typeof questions_section[q].title != 'undefined'){
+              if (typeof questions_section[q].long_name != 'undefined'){
                 let text = questions_section[q].text
-                let title = questions_section[q].title
+                let long_name = questions_section[q].long_name
                 let help = questions_section[q].help
                 if(
                   (typeof text != 'undefined' && text.toLowerCase().match(/person/g)) || 
                   (typeof text != 'undefined' && text.toLowerCase().match(/contact/g)) || 
-                  (typeof title != 'undefined' && title.toLowerCase().match(/person/g)) ||
-                  (typeof title != 'undefined' && title.toLowerCase().match(/contact/g)) || 
+                  (typeof long_name != 'undefined' && long_name.toLowerCase().match(/person/g)) ||
+                  (typeof long_name != 'undefined' && long_name.toLowerCase().match(/contact/g)) || 
                   (typeof help != 'undefined' && help.toLowerCase().match(/person/g)) || 
                   (typeof help != 'undefined' && help.toLowerCase().match(/contact/g))
                 ) {
@@ -875,8 +867,10 @@ export default {
       let form_components = this.getPath()
       let form = form_components[0] 
       let json = {
-        "form_id":this.formId,
         "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))
+      }
+      if(this.formId != ''){
+        json['form_id'] = this.formId
       }
       if(this.submissionId != ''){
         json["id"] = this.submissionId
@@ -888,12 +882,15 @@ export default {
       }
       $.ajax({
         type: "POST",
+        headers: {
+          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`
+        },
         url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
-        contentType:"application/json; charset=utf-8",
-        dataType:"json",
         data: JSON.stringify(json),
+        dataType: "json",
+        contentType:"application/json; charset=utf-8",
         success: (response) => {
-          this.submissionId = response.id
+          this.$submissionId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
               size: 'sm',
@@ -918,22 +915,20 @@ export default {
       });
     },
     // @vuese
-    // Used to submit the form data if valid
-    submitForm(from) {
-      // Submit form (this.data) if valid
-      this.saveFile(from)
-      if (!this.$v.$anyError) {
-        this.sendDataToApi(this.$bvModal)
-      } else {
-        if($('.vue-go-top__content').is(":visible")){
-          $('.vue-go-top__content').click()
-        }
-      }
+    // If there's no errors, saves or submits, then exit form
+    submitForm() {
+      this.saveFile()
+      this.exitForm()
+    },
+    // @vuese
+    // If there's no errors, saves or submits, then exit form
+    draftFile() {
+      this.saveFile()
+      this.exitForm()
     },
     // @vuese
     // Used to save file
-    saveFile(from) {
-      // Currently Saves file to localStorage
+    saveFile() {
       let DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
@@ -941,12 +936,12 @@ export default {
         DAAC = this.daac
       }
       this.$v.$touch()
-      const data = JSON.stringify(this.values)
+      const data = this.values
       let form_components = this.getPath()
       let form = form_components[0] 
       if(data !== JSON.stringify({})){
         this.$values = data
-        window.localStorage.setItem(`${form}_questions`, data);
+        window.localStorage.setItem(`${form}_questions`, JSON.stringify(data));
         if(typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)){
           this.$output_object[DAAC] =  {
             "values": this.$values,
@@ -973,44 +968,31 @@ export default {
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
-          if (from.match(/draft/)) {
-            this.$bvModal.msgBoxOk('Click save or submit to send the data.', {
-              title: 'Your data has been saved to your browser',
-              size: 'sm',
-              buttonSize: 'sm',
-              okTitle: 'OK',
-              footerClass: 'p-2',
-              hideHeaderClose: false,
-              centered: true
-            })
-          } else if(from.match(/save/)){
-            this.sendDataToApi(this.$bvModal)
-          }
+          this.sendDataToApi(this.$bvModal)
         } else {
-          this.$bvModal.msgBoxOk('You have errors to correct before you can submit the data.', {
-            title: 'Errors',
-            size: 'sm',
-            buttonSize: 'sm',
-            okTitle: 'OK',
-            footerClass: 'p-2',
-            hideHeaderClose: false,
-            centered: true
-          })
-          if($('.vue-go-top__content').is(":visible")){
-            $('.vue-go-top__content').click()
-          }
+          this.errorsNotification(this.$bvModal)
         } 
       }
     },
     // @vuese
-    // Save as draft and exit form
-    draftFile(from) {
-      this.saveFile(from)
-      this.exitForm()
+    // Alerts the user to errors and goes to top of page for messages to help.
+    errorsNotification(bvModal){
+      bvModal.msgBoxOk('You have errors to correct before you can save or submit data.', {
+        title: 'Errors',
+        size: 'sm',
+        buttonSize: 'sm',
+        okTitle: 'OK',
+        footerClass: 'p-2',
+        hideHeaderClose: false,
+        centered: true
+      })
+      if($('.vue-go-top__content').is(":visible")){
+        $('.vue-go-top__content').click()
+      }
     },
     // @vuese
     // Cancel and exit form
-    okToCancel(place_to_redirect){
+    okToCancel(){
       this.$refs.form.reset()
       let form_components = this.getPath()
       let form = form_components[0] 
@@ -1022,9 +1004,7 @@ export default {
       this.$values = {}
       this.$v.$touch()
       this.confirm = false
-      if(typeof place_to_redirect != 'undefined'){
-        window.location.href = encodeURIComponent(place_to_redirect)
-      }
+      this.exitForm()
     },
     // @vuese
     // Resets form and local storage to empty entries
@@ -1036,9 +1016,9 @@ export default {
       if(Object.keys(this.values).length > 0){
         let place;
         if(this.submissionId != ''){
-          place = `${process.env.VUE_APP_DASHBOARD_URL}. Your latest save is available in the Earthdata Pub Dashboard.`
+          place = `${process.env.VUE_APP_DASHBOARD_ROOT}. Your latest save is available in the Earthdata Pub Dashboard.`
         } else {
-          place = `${process.env.VUE_APP_OVERVIEW_URL}`
+          place = `${process.env.VUE_APP_OVERVIEW_ROOT}`
         }
         if(this.confirm == false){
           this.confirm = ''
@@ -1056,20 +1036,23 @@ export default {
           .then(value => {
             this.confirm = value
             if(value){
-              this.okToCancel(place)
+              this.okToCancel()
             } else { return }
           })
         } else {
           this.confirm = false;
-          this.okToCancel(place)
+          this.okToCancel()
         }
       } 
     },
     // @vuese
-    // Exit form to home page
-    exitForm(){
-      // exit form here
-      window.location.href = encodeURIComponent(process.env.VUE_APP_DASHBOARD_URL)
+    // Exit form to requests page
+    exitForm(url_override){
+      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/submissions`
+      if (typeof url_override != 'undefined'){
+        url = url_override
+      } 
+      window.location.href = url
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
@@ -1131,7 +1114,6 @@ export default {
         this.setActiveLocationWithoutReload(set_loc, this.daac)
     }
     this.fetchQuestions()
-    // TODO add to get from API
     if (window.localStorage.getItem(`${form}_questions`) != null) {
       this.values = JSON.parse(window.localStorage.getItem(`${form}_questions`))
       this.$v.$touch()

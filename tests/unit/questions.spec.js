@@ -440,11 +440,11 @@ cancelForm(evt)
 // Cancel and exit form
 okToCancel(place_to_redirect)
 // Save as draft and exit form
-draftFile(from)
+draftFile()
 // Used to save file
-saveFile(from)
+saveFile()
 // Used to submit the form data if valid
-submitForm(from)
+submitForm()
 // Sends data to the API
 sendDataToApi(bvModal)
 // Prevents submit to apply validation; @arg The event
