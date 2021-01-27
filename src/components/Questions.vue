@@ -890,7 +890,7 @@ export default {
         dataType: "json",
         contentType:"application/json; charset=utf-8",
         success: (response) => {
-          this.$submissionId = response.id
+          this.submissionId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
               size: 'sm',

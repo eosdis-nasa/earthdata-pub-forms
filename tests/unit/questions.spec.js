@@ -438,7 +438,7 @@ exitForm()
 // Resets form and local storage to empty entries
 cancelForm(evt)
 // Cancel and exit form
-okToCancel(place_to_redirect)
+okToCancel()
 // Save as draft and exit form
 draftFile()
 // Used to save file
