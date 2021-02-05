@@ -885,7 +885,7 @@ export default {
         headers: {
           'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`
         },
-        url: `${process.env.VUE_APP_API_ROOT}/request/${operation}`,
+        url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
         data: JSON.stringify(json),
         dataType: "json",
         contentType:"application/json; charset=utf-8",
