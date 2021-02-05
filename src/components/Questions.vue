@@ -918,13 +918,17 @@ export default {
     // If there's no errors, saves or submits, then exit form
     submitForm() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // If there's no errors, saves or submits, then exit form
     draftFile() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // Used to save file

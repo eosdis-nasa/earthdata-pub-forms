@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.2 - 2021-02-05
 
+- [Added condition if no error before redirect in exitform function]()
 - [Corrected request back to submission for post](71022acb85c83d90be193b9f3f8d358be3a0fc07)
 - [Did a blanket replace of 'submission' to request to simulate the dashboard.](abc4bc0229480919eeadbb75fd5eb59ff08d1ff2)
 
