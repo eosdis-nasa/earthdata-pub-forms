@@ -915,8 +915,10 @@ export default {
               centered: true
           }).then(() => {
             if (operation =='draft' || operation == 'submit'){
-              if (!this.$v.$anyError) {
-                this.exitForm()
+              if(operation == 'submit'){
+                if (!this.$v.$anyError) {
+                  this.exitForm()
+                }
               }
             }
           })
@@ -960,7 +962,7 @@ export default {
         // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
-        if (!this.$v.$anyError) {
+        if ((!this.$v.$anyError && operation == 'submit') || operation != 'submit') {
           this.sendDataToApi(this.$bvModal, DAAC, operation)
         } else {
           this.errorsNotification(this.$bvModal)
