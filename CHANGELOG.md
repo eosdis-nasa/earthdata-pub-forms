@@ -6,6 +6,13 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.2 - 2021-02-05
+
+- [Updated cancel redirect to just say dashboard requests versus long url](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
+- [Added condition if no error before redirect in exitform function](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
+- [Corrected request back to submission for post](71022acb85c83d90be193b9f3f8d358be3a0fc07)
+- [Did a blanket replace of 'submission' to request to simulate the dashboard.](abc4bc0229480919eeadbb75fd5eb59ff08d1ff2)
+
 ## 0.1.1 - 2021-01-04
 
 - [Added auth token function in mixin.js to redirect when none](b23c320067349187059995e90abad014bba1a91c)

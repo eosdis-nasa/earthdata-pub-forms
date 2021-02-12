@@ -341,7 +341,7 @@ export default {
       confirm:false,
       validation_errors:{},
       formId:'',
-      submissionId:''
+      requestId:''
     }
   },
   props: {
@@ -872,8 +872,8 @@ export default {
       if(this.formId != ''){
         json['form_id'] = this.formId
       }
-      if(this.submissionId != ''){
-        json["id"] = this.submissionId
+      if(this.requestId != ''){
+        json["id"] = this.requestId
         operation = 'submit'
         action = 'submitted'
       } else {
@@ -890,7 +890,7 @@ export default {
         dataType: "json",
         contentType:"application/json; charset=utf-8",
         success: (response) => {
-          this.submissionId = response.id
+          this.requestId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
               size: 'sm',
@@ -918,13 +918,17 @@ export default {
     // If there's no errors, saves or submits, then exit form
     submitForm() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // If there's no errors, saves or submits, then exit form
     draftFile() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // Used to save file
@@ -1014,17 +1018,11 @@ export default {
       }
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
-        let place;
-        if(this.submissionId != ''){
-          place = `${process.env.VUE_APP_DASHBOARD_ROOT}. Your latest save is available in the Earthdata Pub Dashboard.`
-        } else {
-          place = `${process.env.VUE_APP_OVERVIEW_ROOT}`
-        }
         if(this.confirm == false){
           this.confirm = ''
-          this.$bvModal.msgBoxConfirm(`This will cancel any input and redirect you to ${place}.  Are you sure?`,{
+          this.$bvModal.msgBoxConfirm(`This will cancel any input and redirect you to EDPub Dashboard Requests.  Are you sure?`,{
             title: 'Please Confirm',
-            size: 'sm',
+            size: 'lg',
             buttonSize: 'sm',
             okVariant: 'danger',
             okTitle: 'YES',
@@ -1048,7 +1046,7 @@ export default {
     // @vuese
     // Exit form to requests page
     exitForm(url_override){
-      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/submissions`
+      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`
       if (typeof url_override != 'undefined'){
         url = url_override
       } 
