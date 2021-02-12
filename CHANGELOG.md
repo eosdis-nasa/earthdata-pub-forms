@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.3 - 2021-02-12
 
+- [added external links to header](ef3de7ee30dcd842a9195ffd06ec70717d95d085)
+- [allows save and draft posts with error](9380492558a04b2996651eb4e150c262ea3bc2ee)
+- [changed has to have](3d2ce1165381b6b6698eb37375daf12dbad2aa72)
 - [changed json structure to have data and daac_id on form_id level](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
 - [changed post to promise resolve for firefox save and submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
 - [save post sends to /save and submit post to /submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
-
 
 ## 0.1.2 - 2021-02-05
 
