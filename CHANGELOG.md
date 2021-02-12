@@ -6,6 +6,13 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.3 - 2021-02-12
+
+- [changed json structure to have data and daac_id on form_id level](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+- [changed post to promise resolve for firefox save and submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+- [save post sends to /save and submit post to /submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+
+
 ## 0.1.2 - 2021-02-05
 
 - [Updated cancel redirect to just say dashboard requests versus long url](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
