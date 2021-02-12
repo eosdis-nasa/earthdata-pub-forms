@@ -36,8 +36,8 @@
                       <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
-                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm">{{ cancelLabel }}</b-button>
-                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm" disabled>{{ cancelLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
                   </div>
               </div>
           </div>
@@ -341,7 +341,8 @@ export default {
       confirm:false,
       validation_errors:{},
       formId:'',
-      requestId:''
+      requestId:'',
+      exitAfterSave: false
     }
   },
   props: {
@@ -860,26 +861,40 @@ export default {
       }
     },
     // @vuese
+    // If there's no errors, submits, then exit form
+    submitForm() {
+      this.saveFile('submit');
+    },
+    // @vuese
+    // If there's no errors, saves, then exit form
+    draftFile() {
+      this.saveFile('draft');
+    },
+    // @vuese
     // Sends data to the API
-    sendDataToApi(bvModal){
-      let operation;
+    sendDataToApi(bvModal, DAAC, operation = 'save'){
       let action;
       let form_components = this.getPath()
       let form = form_components[0] 
       let json = {
-        "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))
+        "data": JSON.parse(window.localStorage.getItem(`${form}_outputs`))['data'],
+        "log":JSON.parse(window.localStorage.getItem(`${form}_outputs`))['log']
       }
       if(this.formId != ''){
         json['form_id'] = this.formId
       }
       if(this.requestId != ''){
         json["id"] = this.requestId
-        operation = 'submit'
-        action = 'submitted'
-      } else {
-        operation = 'save'
-        action = 'saved'
       }
+      if(typeof DAAC !== 'undefined' && DAAC != ''){
+        json["daac_id"] = DAAC
+      }
+      if (operation == 'save'){
+        action = 'saved'
+      } else {
+        action = 'submitted'
+      }
+      console.log('BEFORE POST', json)
       $.ajax({
         type: "POST",
         headers: {
@@ -899,6 +914,12 @@ export default {
               footerClass: 'p-2',
               hideHeaderClose: false,
               centered: true
+          }).then(() => {
+            if (operation =='draft' || operation == 'submit'){
+              if (!this.$v.$anyError) {
+                this.exitForm()
+              }
+            }
           })
         },
         error: (XMLHttpRequest, textStatus, errorThrown) => {
@@ -915,24 +936,8 @@ export default {
       });
     },
     // @vuese
-    // If there's no errors, saves or submits, then exit form
-    submitForm() {
-      this.saveFile()
-      if (!this.$v.$anyError) {
-        this.exitForm()
-      }
-    },
-    // @vuese
-    // If there's no errors, saves or submits, then exit form
-    draftFile() {
-      this.saveFile()
-      if (!this.$v.$anyError) {
-        this.exitForm()
-      }
-    },
-    // @vuese
     // Used to save file
-    saveFile() {
+    saveFile(operation = 'save') {
       let DAAC
       if(this.daac == null){
         DAAC = window.localStorage.getItem('DAAC')
@@ -946,25 +951,10 @@ export default {
       if(data !== JSON.stringify({})){
         this.$values = data
         window.localStorage.setItem(`${form}_questions`, JSON.stringify(data));
-        if(typeof DAAC != 'undefined' && DAAC !== null && form.toLowerCase().match(/interest/g)){
-          this.$output_object[DAAC] =  {
-            "values": this.$values,
-            "log":this.$logging_object
-          }
-          this.$input_object[DAAC] = {
-            "questions":this.questions[0],
-            "required":this.$required
-          }
-        } else {
-          this.$output_object['NoDaac'] =  {
-            "values": this.$values,
-            "log":this.$logging_object
-          }
-          this.$input_object['NoDaac'] = {
-            "questions":this.questions[0],
-            "required":this.$required
-          }
-        }
+        this.$output_object['data'] =  this.$values
+        this.$output_object['log'] =  this.$logging_object
+        this.$input_object['questions'] = this.questions[0]
+        this.$input_object['required'] = this.$required
         window.localStorage.setItem(`${form}_inputs`, JSON.stringify(this.$input_object))
         window.localStorage.setItem(`${form}_outputs`, JSON.stringify(this.$output_object))
         // @vuese
@@ -972,7 +962,7 @@ export default {
         // If production level set (see main.js), will be at different level automatically.
         // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
         if (!this.$v.$anyError) {
-          this.sendDataToApi(this.$bvModal)
+          this.sendDataToApi(this.$bvModal, DAAC, operation)
         } else {
           this.errorsNotification(this.$bvModal)
         } 
