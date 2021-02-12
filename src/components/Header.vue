@@ -74,6 +74,8 @@
             <!-- from questionnaire help -->
             <router-link id="help_nav_link" :to="{ name: 'Data Product Information - Help', path: '/questionnaire/help' }">Help</router-link>
           </span>
+          <span>  | <a @click="goToDashboard()" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
+          <span>  | <a @click="goToOverview()" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -122,6 +124,12 @@ export default {
    
   },
   methods: {
+    goToDashboard(){
+      location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+    },
+    goToOverview(){
+      location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+    },
     // @vuese
     // Get title of form from address bar location
     getTitleFromLocation(){
