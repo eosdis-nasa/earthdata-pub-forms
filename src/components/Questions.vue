@@ -341,7 +341,7 @@ export default {
       confirm:false,
       validation_errors:{},
       formId:'',
-      submissionId:''
+      requestId:''
     }
   },
   props: {
@@ -872,8 +872,8 @@ export default {
       if(this.formId != ''){
         json['form_id'] = this.formId
       }
-      if(this.submissionId != ''){
-        json["id"] = this.submissionId
+      if(this.requestId != ''){
+        json["id"] = this.requestId
         operation = 'submit'
         action = 'submitted'
       } else {
@@ -890,7 +890,7 @@ export default {
         dataType: "json",
         contentType:"application/json; charset=utf-8",
         success: (response) => {
-          this.submissionId = response.id
+          this.requestId = response.id
           bvModal.msgBoxOk(`Your data has been ${action}.`, {
               title: 'Success!',
               size: 'sm',
@@ -1015,7 +1015,7 @@ export default {
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
         let place;
-        if(this.submissionId != ''){
+        if(this.requestId != ''){
           place = `${process.env.VUE_APP_DASHBOARD_ROOT}. Your latest save is available in the Earthdata Pub Dashboard.`
         } else {
           place = `${process.env.VUE_APP_OVERVIEW_ROOT}`
@@ -1048,7 +1048,7 @@ export default {
     // @vuese
     // Exit form to requests page
     exitForm(url_override){
-      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/submissions`
+      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`
       if (typeof url_override != 'undefined'){
         url = url_override
       } 

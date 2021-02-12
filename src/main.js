@@ -36,7 +36,7 @@ Vue.prototype.$logging_object = {}
 Vue.prototype.$output_object = {}
 
 Vue.prototype.$formId = ''
-Vue.prototype.$submissionId = ''
+Vue.prototype.$requestId = ''
 
 // Use simple logger
 Vue.use(VueLogger, logOptions);
