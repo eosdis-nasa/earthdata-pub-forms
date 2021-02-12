@@ -894,7 +894,6 @@ export default {
       } else {
         action = 'submitted'
       }
-      console.log('BEFORE POST', json)
       $.ajax({
         type: "POST",
         headers: {
@@ -906,7 +905,7 @@ export default {
         contentType:"application/json; charset=utf-8",
         success: (response) => {
           this.requestId = response.id
-          bvModal.msgBoxOk(`Your data has been ${action}.`, {
+          bvModal.msgBoxOk(`Your data have been ${action}.`, {
               title: 'Success!',
               size: 'sm',
               buttonSize: 'sm',
