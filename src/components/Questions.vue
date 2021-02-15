@@ -121,7 +121,7 @@
                     :readonly="readonly"
                     :key="b_key">
                         <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                        <label :for="question.short_name" class="eui-label">{{question.long_name}}:</label>
+                        <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}</label>
                         <span class="required" v-if="question.required == true">* required</span>
                         <p :id="question.short_name || a_key">{{question.text}}</p>
                         <!-- Input -->
@@ -137,7 +137,8 @@
                             </b-col>
                             <b-row v-for="(input, c_key) in question.inputs" :key="c_key">
                               <span v-if="showIf(input.show_if)">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="typeof input.label != 'undefined' && input.type != 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined' && input.type == 'checkbox'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                   {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -172,6 +173,7 @@
                                     :type="input.type" 
                                     :id="input.control_id" 
                                     :name="input.control_id" 
+                                    class="eui-label-nopointer"
                                     v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'text' || 
@@ -198,7 +200,7 @@
                                 <div v-if="input.type == 'bbox'">
                                   <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
                                     <span :key="`${b_key}_${d_key}`">
-                                      <label class="eui-label">{{direction.substring(0, 1).toUpperCase()}}:</label>
+                                      <label class="eui-label-nopointer">{{direction.substring(0, 1).toUpperCase()}}:</label>
                                       <b-form-input 
                                           :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${direction}`] || {}).$error }"
                                           type="text" 
@@ -1111,6 +1113,9 @@ export default {
 }
 </script>
 <style scoped>
+  .eui-label-nopointer{
+    cursor: auto;
+  }
   .bbox {
     min-width:100px;
     max-width:100px;
