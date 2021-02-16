@@ -88,6 +88,8 @@
                     <template v-else>
                       {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
                       <template v-if="typeof $v.values[input.control_id].required != 'undefined' && !$v.values[input.control_id].required">is required</template>
+                      <template v-else-if="input.control_id == 'data_product_volume_amount'"> - The data product volume amount must be greater than 0</template>
+                      <template v-else-if="input.type == 'date'"> - Start date must be less than End date</template>
                       <template v-else-if="typeof $v.values[input.control_id].patternMatch != 'undefined' && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                       <template v-else-if="typeof $v.values[input.control_id].minLength != 'undefined' && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
                       <template v-else-if="typeof $v.values[input.control_id].maxLength != 'undefined' && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
@@ -173,7 +175,6 @@
                                     :type="input.type" 
                                     :id="input.control_id" 
                                     :name="input.control_id" 
-                                    class="eui-label-nopointer"
                                     v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'text' || 
@@ -181,9 +182,8 @@
                                     input.type == 'number' || 
                                     input.type == 'url' || 
                                     input.type == 'email' || 
-                                    input.type == 'search' || 
-                                    input.type == 'range' || 
-                                    input.type == 'date' || 
+                                    input.type == 'search' ||
+                                    input.type == 'range' ||
                                     input.type == 'tel' || 
                                     input.type == 'time'"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
@@ -195,6 +195,18 @@
                                     :min="getAttribute('min', question.inputs[c_key])"
                                     >
                                 </b-form-input>
+                                <b-form-datepicker 
+                                    :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                    :type="input.type" 
+                                    :id="input.control_id" 
+                                    :name="input.control_id" 
+                                    v-model="values[input.control_id]"
+                                    size="lg" 
+                                    v-if="input.type == 'date'"
+                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                    >
+                                </b-form-datepicker>
                                 <!-- End of Text Type of Input -->
                                 <!-- BBOX Type of Input -->
                                 <div v-if="input.type == 'bbox'">
@@ -493,6 +505,44 @@ export default {
                               return new RegExp(fld.attributes.pattern).test(this.values[fld.control_id])
                             }
                             return false
+                          }
+                        }
+                        // Add to the messages bit and test
+                        if (fld.control_id == 'data_product_volume_amount'){
+                          val_fields.values[fld.control_id] = val_fields.values[fld.control_id] || {}
+                          val_fields.values[fld.control_id].checkVolume = () => {
+                            this.$v.$touch()
+                            if (parseInt(this.values[fld.control_id]) === 0){
+                              return false
+                            } else {
+                              return true
+                            }
+                          }
+                        }
+                        if (fld.type=="date") {
+                          val_fields.values[fld.control_id] = val_fields.values[fld.control_id] || {}
+                          val_fields.values[fld.control_id].startEndDates = () => {
+                            this.$v.$touch()
+                            if(typeof fld.control_id != 'undefined'){
+                              let start, end
+                              if(fld.control_id.match(/start/g)){
+                                start = fld.control_id
+                                end = fld.control_id.replace(/start/g,'end')
+                              } else if(fld.control_id.match(/end/g)){
+                                end = fld.control_id
+                                start = fld.control_id.replace(/end/g,'start')
+                              }
+                              let start_bits = this.values[start].split('-')
+                              let end_bits = this.values[end].split('-')
+                              let start_date_obj = new Date(start_bits[0], start_bits[1]-1, start_bits[2])
+                              let end_date_obj = new Date(end_bits[0], end_bits[1]-1, end_bits[2])
+                              if(typeof start_date_obj != 'undefined' && start_date_obj != 'Invalid Date' && typeof end_date_obj != 'undefined' && end_date_obj != 'Invalid Date'){
+                                if(start_date_obj >= end_date_obj){
+                                  return false
+                                }
+                              }
+                            }
+                            return true
                           }
                         }
 
@@ -891,7 +941,10 @@ export default {
       if(typeof DAAC !== 'undefined' && DAAC != ''){
         json["daac_id"] = DAAC
       }
-      if (operation == 'save'){
+      if (operation == 'save' || operation == 'draft'){
+        if (operation == 'draft'){
+          operation = 'save'
+        }
         action = 'saved'
       } else {
         action = 'submitted'
@@ -916,7 +969,7 @@ export default {
               hideHeaderClose: false,
               centered: true
           }).then(() => {
-            if (operation =='draft' || operation == 'submit'){
+            if (operation =='save' || operation == 'submit'){
               if(operation == 'submit'){
                 if (!this.$v.$anyError) {
                   this.exitForm()
