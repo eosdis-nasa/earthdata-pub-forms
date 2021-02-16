@@ -918,13 +918,17 @@ export default {
     // If there's no errors, saves or submits, then exit form
     submitForm() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // If there's no errors, saves or submits, then exit form
     draftFile() {
       this.saveFile()
-      this.exitForm()
+      if (!this.$v.$anyError) {
+        this.exitForm()
+      }
     },
     // @vuese
     // Used to save file
@@ -1014,17 +1018,11 @@ export default {
       }
       // Resets form to blank entries
       if(Object.keys(this.values).length > 0){
-        let place;
-        if(this.requestId != ''){
-          place = `${process.env.VUE_APP_DASHBOARD_ROOT}. Your latest save is available in the Earthdata Pub Dashboard.`
-        } else {
-          place = `${process.env.VUE_APP_OVERVIEW_ROOT}`
-        }
         if(this.confirm == false){
           this.confirm = ''
-          this.$bvModal.msgBoxConfirm(`This will cancel any input and redirect you to ${place}.  Are you sure?`,{
+          this.$bvModal.msgBoxConfirm(`This will cancel any input and redirect you to EDPub Dashboard Requests.  Are you sure?`,{
             title: 'Please Confirm',
-            size: 'sm',
+            size: 'lg',
             buttonSize: 'sm',
             okVariant: 'danger',
             okTitle: 'YES',
