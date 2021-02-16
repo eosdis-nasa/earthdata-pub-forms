@@ -6,8 +6,12 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 0.1.3 - 2021-02-12
+## 0.1.3 - 2021-02-16
 
+- [Added start and end date validation](956b82ef7336c84c4585ae142e15d735be8b3696)
+- [Added data volume validation](956b82ef7336c84c4585ae142e15d735be8b3696)
+- [altered headers to not display colons](0f156ac3f633193d1540eaa7080fa0d443e73224)
+- [label cursor properties fixed](0f156ac3f633193d1540eaa7080fa0d443e73224)
 - [added external links to header](ef3de7ee30dcd842a9195ffd06ec70717d95d085)
 - [allows save and draft posts with error](9380492558a04b2996651eb4e150c262ea3bc2ee)
 - [changed has to have](3d2ce1165381b6b6698eb37375daf12dbad2aa72)
