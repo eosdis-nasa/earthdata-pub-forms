@@ -152,13 +152,16 @@
     }
     div.row{
         margin:0rem;
-        display:unset;
+    }
+    .checkbox{
+        padding-left:0px!important;
     }
     .custom-radio.b-custom-control-lg, .input-group-lg .custom-radio {
         font-size: unset!important;
     }
     .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
         min-height: 1.75rem!important;
+        padding-right:1rem;
     }
     .checkboxes {
         display:-webkit-box;

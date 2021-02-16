@@ -14,9 +14,9 @@
                 v-for="(item, index) in daacs"
                 :key="index"
                 :name="item.short_name.replace(' ', '_')"
-                :id="`${item.short_name.replace(' ', '_')}_${index}`"
+                :id="`${item.id}`"
                 :value="item.long_name"
-                @click="setSelectedValues(item.url, item.short_name, item.long_name, item.description)"
+                @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
                 v-model="selected"
               >{{ item.short_name }}</b-form-radio>
             </div>
@@ -115,18 +115,21 @@ export default {
     getDaac(daac_specific) {
       // Gets DAAC data for template
       if (typeof daac_specific === "undefined") {
-        return { short_name: "", long_name: "", url: "", description: "" };
+        return { id: "", short_name: "", long_name: "", url: "", description: "" };
       }
       for (var dict in this.daacs) {
+        let id = this.daacs[dict]["id"];
         let long_name = this.daacs[dict]["long_name"];
         let short_name = this.daacs[dict]["short_name"];
         if (
           daac_specific.toLowerCase() === long_name.toLowerCase() ||
-          daac_specific.toLowerCase() === short_name.toLowerCase()
+          daac_specific.toLowerCase() === short_name.toLowerCase() ||
+          daac_specific.toLowerCase() === id.toLowerCase()
         ) {
           let url = this.daacs[dict]["url"];
           let description = this.daacs[dict]["description"];
           return {
+            id:id,
             short_name: short_name,
             long_name: long_name,
             url: url,
@@ -140,6 +143,7 @@ export default {
     setCurrentDaacObjects(
       current_daac,
       url,
+      id,
       short_name,
       long_name,
       description
@@ -147,6 +151,7 @@ export default {
       var daac_specific_data;
       if (
         typeof url == "undefined" ||
+        typeof id == "undefined" ||
         typeof short_name == "undefined" ||
         typeof long_name == "undefined" ||
         typeof description == "undefined"
@@ -155,6 +160,9 @@ export default {
       }
       if (typeof url == "undefined") {
         url = daac_specific_data["url"];
+      }
+      if (typeof id == "undefined") {
+        id = daac_specific_data["id"];
       }
       if (typeof short_name == "undefined") {
         short_name = daac_specific_data["short_name"];
@@ -171,18 +179,21 @@ export default {
       this.setActiveNav("daacs");
       this.selected = long_name;
       this.data = short_name;
-      return short_name;
+      return [short_name, id];
     },
     // @vuese
     // On selected, builds dynamic text and sets html dynamically with the link
-    setSelectedValues(url, short_name, long_name, description) {
-      short_name = this.setCurrentDaacObjects(
+    setSelectedValues(url, id, short_name, long_name, description) {
+      let current = this.setCurrentDaacObjects(
         this.selected,
         url,
+        id,
         short_name,
         long_name,
         description
-      ).toLowerCase();
+      );
+      short_name = current[0]
+      id = current[1]
       if (
         typeof this.$route != "undefined" &&
         typeof this.$route.params.group != "undefined" &&
@@ -192,13 +203,16 @@ export default {
           this.$route.params.group.replace(/ /g, "_").toLowerCase() !=
           short_name.replace(/ /g, "_").toLowerCase()
         ) {
-          short_name = this.setCurrentDaacObjects(
-            short_name,
+          let current = this.setCurrentDaacObjects(
+            this.selected,
             url,
+            id,
             short_name,
             long_name,
             description
           );
+          short_name = current[0]
+          id = current[1]
           this.$route.params.group = short_name
             .replace(/ /g, "_")
             .toLowerCase();
@@ -206,7 +220,7 @@ export default {
       }
       this.setActiveLocationWithoutReload(location.href, short_name);
       window.headerComponent.daac = short_name.toLowerCase();
-      this.setSaveObject(short_name);
+      this.setSaveObject(short_name, id);
       return short_name;
     },
     // @vuese
@@ -234,12 +248,13 @@ export default {
     },
     // @vuese
     // Used to save file
-    setSaveObject(short_name) {
+    setSaveObject(short_name, id) {
       // Saves file to localStorage
       if (this.selected != "") {
         window.localStorage.setItem(
           "DAAC",
-          short_name.replace(/ /g, "_").toUpperCase()
+          // `${short_name.replace(/ /g, "_").toUpperCase()}^${id}`
+          `${id}`
         );
         window.headerComponent.daac = short_name
           .replace(/ /g, "_")
