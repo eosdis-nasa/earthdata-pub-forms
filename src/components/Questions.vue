@@ -58,43 +58,43 @@
                   <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
                     <li v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="($v.values[`${input.control_id}_${direction}`] || {}).$error">
                       {{ heading.heading }} - {{ question.long_name }} - {{ direction.substring(0, 1).toUpperCase() }}:
-                      <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
+                      <template v-if="input.required_if !== undefined && input.required_if.length > 0">
                         <template v-for="(req_if, e_key) in input.required_if">
                           <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}_${e_key}`" v-if="values[req_if.field] == req_if.value">
-                            <template v-if="typeof req_if.message != 'undefined'">{{ req_if.message }}</template>
-                            <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ input.validation_error_msg }}</template>
+                            <template v-if="req_if.message !== undefined">{{ req_if.message }}</template>
+                            <template v-else-if="input.validation_error_msg !== undefined">{{ input.validation_error_msg }}</template>
                             <template v-else>is required</template>
                           </span>
                         </template>
                       </template>
-                      <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ input.validation_error_msg }}</template>
-                      <template v-else-if="typeof $v.values[`${input.control_id}_${direction}`].required != 'undefined' && !$v.values[`${input.control_id}_${direction}`].required">is required</template>
+                      <template v-else-if="input.validation_error_msg !== undefined">{{ input.validation_error_msg }}</template>
+                      <template v-else-if="$v.values[`${input.control_id}_${direction}`].required !== undefined && !$v.values[`${input.control_id}_${direction}`].required">is required</template>
                       <template v-else>{{  getBboxError(input, direction) }}</template>
                     </li>
                   </template>
                 </template>
                 <template v-else>
                   <li v-if="($v.values[input.control_id] || {}).$error">
-                    <template v-if="typeof input.required_if != 'undefined' && input.required_if.length > 0">
+                    <template v-if="input.required_if !== undefined && input.required_if.length > 0">
                       <template v-for="(req_if, d_key) in input.required_if">
                         <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                          <template v-if="typeof req_if.message != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ req_if.message }}</template>
-                          <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                          <template v-if="req_if.message !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ req_if.message }}</template>
+                          <template v-else-if="input.validation_error_msg !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                           <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
                         </span>
                       </template>
                     </template>
-                    <template v-else-if="typeof input.validation_error_msg != 'undefined'">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                    <template v-else-if="input.validation_error_msg !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
                     <template v-else>
                       {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
-                      <template v-if="typeof $v.values[input.control_id].required != 'undefined' && !$v.values[input.control_id].required">is required</template>
+                      <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                       <template v-else-if="input.control_id == 'data_product_volume_amount'"> - The data product volume amount must be greater than 0</template>
                       <template v-else-if="input.type == 'date'"> - Start date must be less than End date</template>
-                      <template v-else-if="typeof $v.values[input.control_id].patternMatch != 'undefined' && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
-                      <template v-else-if="typeof $v.values[input.control_id].minLength != 'undefined' && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
-                      <template v-else-if="typeof $v.values[input.control_id].maxLength != 'undefined' && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
-                      <template v-else-if="typeof $v.values[input.control_id].min != 'undefined' && !$v.values[input.control_id].min">the value must be {{ input.attributes.min }} or greater.</template>
-                      <template v-else-if="typeof $v.values[input.control_id].max != 'undefined' && !$v.values[input.control_id].max">the value must be less than {{ input.attributes.max }}</template>
+                      <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
+                      <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
+                      <template v-else-if="$v.values[input.control_id].maxLength !== undefined && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
+                      <template v-else-if="$v.values[input.control_id].min !== undefined && !$v.values[input.control_id].min">the value must be {{ input.attributes.min }} or greater.</template>
+                      <template v-else-if="$v.values[input.control_id].max !== undefined && !$v.values[input.control_id].max">the value must be less than {{ input.attributes.max }}</template>
                     </template>
                   </li>
                 </template>
@@ -140,8 +140,8 @@
                             <template v-for="(input, c_key) in question.inputs">
                               <span  :key="c_key">
                                 <span v-if="input.type == 'checkbox'" class="checkbox">
-                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="typeof input.label != 'undefined' && input.type != 'checkbox'">{{input.label}}: </label>
-                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined' && input.type == 'checkbox'">{{input.label}}: </label>
+                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
+                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                   <!-- Checkbox Type of Input -->
                                   <b-form-checkbox 
                                       :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
@@ -159,8 +159,8 @@
                             <b-row v-else>
                               <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                               <template v-if="showIf(input.show_if)">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="typeof input.label != 'undefined' && input.type != 'checkbox'">{{input.label}}: </label>
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="typeof input.label != 'undefined' && input.type == 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                   {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -1232,7 +1232,7 @@ export default {
     // Alerts the user to errors and goes to top of page for messages to help.
     errorsNotification(bvModal) {
       bvModal.msgBoxOk(
-        "You have errors to correct before you can save or submit data.",
+        "You have errors to correct before you can submit data.  You can save data.",
         {
           title: "Errors",
           size: "sm",
@@ -1510,6 +1510,16 @@ button {
   padding-right: 8px;
   padding-top: 8px;
   padding-bottom: 5px;
+}
+input {
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 8px;
+  padding-bottom: 5px;
+  border-color:#b2b2b2
 }
 .radio_checkbox_group_error {
   border-color: red;
