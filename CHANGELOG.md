@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.3 - 2021-02-16
 
+- [Retweaked styles for calendar](9d3e81bbb8e5724437817b0e98e8b0c76c1265f1)
 - [Added start and end date validation](956b82ef7336c84c4585ae142e15d735be8b3696)
 - [Added data volume validation](956b82ef7336c84c4585ae142e15d735be8b3696)
 - [altered headers to not display colons](0f156ac3f633193d1540eaa7080fa0d443e73224)
