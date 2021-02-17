@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [Altered date validation so start date can equal end date](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
 - [Added config option for auto-redirect (VUE_APP_REDIRECT_CONFIRMATION)](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
 - [Added redirect confirmation when config option is undefined or set to true for draft and submit](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Removed data volume specific validation so it can be 0](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
 
 ## 0.1.3 - 2021-02-16
 
