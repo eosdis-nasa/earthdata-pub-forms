@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.4 - 2021-02-17
 
+- [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
+- [Added validation to insure no negative numbers; fixed save so does not redirect](7e74d607103c17dcf0bfa1e44b845270002aab8f)
 - [Added message to redirect notification so theres 1 popup for that condition](deb64d5f3f3215b75a8f86a05b9e5a12aa73e755)
 - [Altered date validation so start date can equal end date](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
 - [Added config option for auto-redirect (VUE_APP_REDIRECT_CONFIRMATION)](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
