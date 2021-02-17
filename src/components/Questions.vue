@@ -88,7 +88,6 @@
                     <template v-else>
                       {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
                       <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
-                      <template v-else-if="input.control_id == 'data_product_volume_amount'"> - The data product volume amount must be greater than 0</template>
                       <template v-else-if="input.type == 'date'"> - Start date must be less than End date</template>
                       <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                       <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
@@ -546,19 +545,6 @@ export default {
                   return false;
                 };
               }
-              // Add to the messages bit and test
-              if (fld.control_id == "data_product_volume_amount") {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].checkVolume = () => {
-                  this.$v.$touch();
-                  if (parseInt(this.values[fld.control_id]) === 0) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                };
-              }
               if (fld.type == "date") {
                 val_fields.values[fld.control_id] =
                   val_fields.values[fld.control_id] || {};
@@ -591,7 +577,7 @@ export default {
                       typeof end_date_obj != "undefined" &&
                       end_date_obj != "Invalid Date"
                     ) {
-                      if (start_date_obj >= end_date_obj) {
+                      if (start_date_obj > end_date_obj) {
                         return false;
                       }
                     }
@@ -1116,6 +1102,7 @@ export default {
       let action;
       let form_components = this.getPath();
       let form = form_components[0];
+      let was_draft = false
       let json = {
         data: JSON.parse(window.localStorage.getItem(`${form}_outputs`))[
           "data"
@@ -1133,6 +1120,7 @@ export default {
       }
       if (operation == "save" || operation == "draft") {
         if (operation == "draft") {
+          was_draft = true
           operation = "save";
         }
         action = "saved";
@@ -1163,9 +1151,15 @@ export default {
             .then(() => {
               if (operation == "save" || operation == "submit") {
                 if (operation == "submit") {
-                  if (!this.$v.$anyError) {
-                    this.exitForm();
+                  if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+                    this.redirectNotification(bvModal)
+                  } else {
+                    this.exitForm()
                   }
+                } else if (was_draft && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+                  this.redirectNotification(bvModal)
+                } else {
+                  this.exitForm()
                 }
               }
             });
@@ -1245,6 +1239,29 @@ export default {
       );
       if ($(".vue-go-top__content").is(":visible")) {
         $(".vue-go-top__content").click();
+      }
+    },
+    // @vuese
+    // Asks the user if they want to be redirected to the dashboard requests page.
+    async redirectNotification(bvModal) {
+      const value = await bvModal.msgBoxConfirm(
+        `Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
+        {
+          title: "Confirmation",
+          size: "sm",
+          buttonSize: "sm",
+          okVariant: "danger",
+          okTitle: "YES",
+          cancelTitle: "NO",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        }
+      )
+      if (value) {
+        this.exitForm();
+      } else {
+        return;
       }
     },
     // @vuese
