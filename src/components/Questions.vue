@@ -88,7 +88,7 @@
                     <template v-else>
                       {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
                       <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
-                      <template v-else-if="input.control_id == 'data_product_volume_amount'"> - The data product volume amount must be greater than 0</template>
+                      <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
                       <template v-else-if="input.type == 'date'"> - Start date must be less than End date</template>
                       <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                       <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
@@ -546,19 +546,6 @@ export default {
                   return false;
                 };
               }
-              // Add to the messages bit and test
-              if (fld.control_id == "data_product_volume_amount") {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].checkVolume = () => {
-                  this.$v.$touch();
-                  if (parseInt(this.values[fld.control_id]) === 0) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                };
-              }
               if (fld.type == "date") {
                 val_fields.values[fld.control_id] =
                   val_fields.values[fld.control_id] || {};
@@ -573,33 +560,46 @@ export default {
                       end = fld.control_id;
                       start = fld.control_id.replace(/end/g, "start");
                     }
-                    let start_bits = this.values[start].split("-");
-                    let end_bits = this.values[end].split("-");
-                    let start_date_obj = new Date(
-                      start_bits[0],
-                      start_bits[1] - 1,
-                      start_bits[2]
-                    );
-                    let end_date_obj = new Date(
-                      end_bits[0],
-                      end_bits[1] - 1,
-                      end_bits[2]
-                    );
-                    if (
-                      typeof start_date_obj != "undefined" &&
-                      start_date_obj != "Invalid Date" &&
-                      typeof end_date_obj != "undefined" &&
-                      end_date_obj != "Invalid Date"
-                    ) {
-                      if (start_date_obj >= end_date_obj) {
-                        return false;
+                    if (typeof this.values[start] != 'undefined' && typeof this.values[end] != 'undefined'){
+                      let start_bits = this.values[start].split("-");
+                      let end_bits = this.values[end].split("-");
+                      let start_date_obj = new Date(
+                        start_bits[0],
+                        start_bits[1] - 1,
+                        start_bits[2]
+                      );
+                      let end_date_obj = new Date(
+                        end_bits[0],
+                        end_bits[1] - 1,
+                        end_bits[2]
+                      );
+                      if (
+                        typeof start_date_obj != "undefined" &&
+                        start_date_obj != "Invalid Date" &&
+                        typeof end_date_obj != "undefined" &&
+                        end_date_obj != "Invalid Date"
+                      ) {
+                        if (start_date_obj > end_date_obj) {
+                          return false;
+                        }
                       }
                     }
+                    return true
                   }
                   return true;
                 };
               }
-
+              if (fld.type == "number") {
+                val_fields.values[fld.control_id] =
+                  val_fields.values[fld.control_id] || {};
+                val_fields.values[fld.control_id].noNegatives = () => {
+                  this.$v.$touch();
+                  if (parseInt(this.values[fld.control_id]) < 0){
+                    return false;
+                  }
+                  return true;
+                };
+              }
               if (
                 typeof fld.attributes != "undefined" &&
                 typeof fld.attributes.minlength != "undefined"
@@ -1116,6 +1116,7 @@ export default {
       let action;
       let form_components = this.getPath();
       let form = form_components[0];
+      let was_draft = false
       let json = {
         data: JSON.parse(window.localStorage.getItem(`${form}_outputs`))[
           "data"
@@ -1133,6 +1134,7 @@ export default {
       }
       if (operation == "save" || operation == "draft") {
         if (operation == "draft") {
+          was_draft = true
           operation = "save";
         }
         action = "saved";
@@ -1150,8 +1152,21 @@ export default {
         contentType: "application/json; charset=utf-8",
         success: (response) => {
           this.requestId = response.id;
-          bvModal
-            .msgBoxOk(`Your data have been ${action}.`, {
+          let message = `Your data have been ${action}.`
+          if (operation == "submit") {
+            if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+              this.redirectNotification(bvModal, message, operation)
+            } else {
+              this.exitForm(undefined, bvModal, message)
+            }
+          } else if (was_draft){
+            if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
+              this.redirectNotification(bvModal, message, 'draft')
+            } else {
+              this.exitForm(undefined, bvModal, message)
+            }
+          } else {
+              bvModal.msgBoxOk(message, {
               title: "Success!",
               size: "sm",
               buttonSize: "sm",
@@ -1160,15 +1175,7 @@ export default {
               hideHeaderClose: false,
               centered: true,
             })
-            .then(() => {
-              if (operation == "save" || operation == "submit") {
-                if (operation == "submit") {
-                  if (!this.$v.$anyError) {
-                    this.exitForm();
-                  }
-                }
-              }
-            });
+          }
         },
         error: (XMLHttpRequest, textStatus, errorThrown) => {
           bvModal.msgBoxOk(
@@ -1248,6 +1255,43 @@ export default {
       }
     },
     // @vuese
+    // Asks the user if they want to be redirected to the dashboard requests page.
+    async redirectNotification(bvModal, message, operation) {
+      if(operation == "submit"){
+        const value = await bvModal.msgBoxOk(
+        `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`, 
+        {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        if (value) {
+          this.exitForm();
+        }
+    } else {
+        const value = await bvModal.msgBoxConfirm(
+        `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
+        {
+          title: "Confirmation",
+          size: "sm",
+          buttonSize: "sm",
+          okVariant: "danger",
+          okTitle: "YES",
+          cancelTitle: "NO",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        if (value) {
+          this.exitForm();
+        }
+      }
+    },
+    // @vuese
     // Cancel and exit form
     okToCancel() {
       this.$refs.form.reset();
@@ -1275,7 +1319,7 @@ export default {
           this.confirm = "";
           this.$bvModal
             .msgBoxConfirm(
-              `This will cancel any input and redirect you to EDPub Dashboard Requests.  Are you sure?`,
+              `This will cancel any input and redirect you to Earthdata Dashboard Requests.  Are you sure?`,
               {
                 title: "Please Confirm",
                 size: "lg",
@@ -1304,12 +1348,27 @@ export default {
     },
     // @vuese
     // Exit form to requests page
-    exitForm(url_override) {
+    exitForm(url_override, bvModal, message) {
       let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
       if (typeof url_override != "undefined") {
         url = url_override;
       }
-      window.location.href = url;
+      if(typeof bvModal != 'undefined' && typeof message != 'undefined'){
+        bvModal.msgBoxOk(message, {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        .then(() => {
+          window.location.href = url;
+        })
+      } else {
+        window.location.href = url;
+      }
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo

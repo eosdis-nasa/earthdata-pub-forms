@@ -6,6 +6,16 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.4 - 2021-02-17
+
+- [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
+- [Added validation to insure no negative numbers; fixed save so does not redirect](7e74d607103c17dcf0bfa1e44b845270002aab8f)
+- [Added message to redirect notification so theres 1 popup for that condition](deb64d5f3f3215b75a8f86a05b9e5a12aa73e755)
+- [Altered date validation so start date can equal end date](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Added config option for auto-redirect (VUE_APP_REDIRECT_CONFIRMATION)](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Added redirect confirmation when config option is undefined or set to true for draft and submit](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Removed data volume specific validation so it can be 0](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+
 ## 0.1.3 - 2021-02-16
 
 - [Retweaked styles for calendar](9d3e81bbb8e5724437817b0e98e8b0c76c1265f1)
