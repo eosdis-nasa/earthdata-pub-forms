@@ -1138,31 +1138,20 @@ export default {
         contentType: "application/json; charset=utf-8",
         success: (response) => {
           this.requestId = response.id;
-          bvModal
-            .msgBoxOk(`Your data have been ${action}.`, {
-              title: "Success!",
-              size: "sm",
-              buttonSize: "sm",
-              okTitle: "OK",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            })
-            .then(() => {
-              if (operation == "save" || operation == "submit") {
-                if (operation == "submit") {
-                  if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-                    this.redirectNotification(bvModal)
-                  } else {
-                    this.exitForm()
-                  }
-                } else if (was_draft && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-                  this.redirectNotification(bvModal)
-                } else {
-                  this.exitForm()
-                }
+          let message = `Your data have been ${action}.`
+          if (operation == "save" || operation == "submit") {
+            if (operation == "submit") {
+              if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+                this.redirectNotification(bvModal, message)
+              } else {
+                this.exitForm(undefined, bvModal, message)
               }
-            });
+            } else if (was_draft && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+              this.redirectNotification(bvModal, message)
+            } else {
+              this.exitForm(undefined, bvModal, message)
+            }
+          }
         },
         error: (XMLHttpRequest, textStatus, errorThrown) => {
           bvModal.msgBoxOk(
@@ -1243,9 +1232,9 @@ export default {
     },
     // @vuese
     // Asks the user if they want to be redirected to the dashboard requests page.
-    async redirectNotification(bvModal) {
+    async redirectNotification(bvModal, message) {
       const value = await bvModal.msgBoxConfirm(
-        `Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
+        `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
         {
           title: "Confirmation",
           size: "sm",
@@ -1321,12 +1310,27 @@ export default {
     },
     // @vuese
     // Exit form to requests page
-    exitForm(url_override) {
+    exitForm(url_override, bvModal, message) {
       let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
       if (typeof url_override != "undefined") {
         url = url_override;
       }
-      window.location.href = url;
+      if(typeof bvModal != 'undefined' && typeof message != 'undefined'){
+        bvModal.msgBoxOk(message, {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        .then(() => {
+          window.location.href = url;
+        })
+      } else {
+        window.location.href = url;
+      }
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
