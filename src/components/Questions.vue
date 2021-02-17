@@ -1155,13 +1155,13 @@ export default {
           let message = `Your data have been ${action}.`
           if (operation == "submit") {
             if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-              this.redirectNotification(bvModal, message)
+              this.redirectNotification(bvModal, message, operation)
             } else {
               this.exitForm(undefined, bvModal, message)
             }
           } else if (was_draft){
             if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
-              this.redirectNotification(bvModal, message)
+              this.redirectNotification(bvModal, message, 'draft')
             } else {
               this.exitForm(undefined, bvModal, message)
             }
@@ -1256,8 +1256,24 @@ export default {
     },
     // @vuese
     // Asks the user if they want to be redirected to the dashboard requests page.
-    async redirectNotification(bvModal, message) {
-      const value = await bvModal.msgBoxConfirm(
+    async redirectNotification(bvModal, message, operation) {
+      if(operation == "submit"){
+        const value = await bvModal.msgBoxOk(
+        `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`, 
+        {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        if (value) {
+          this.exitForm();
+        }
+    } else {
+        const value = await bvModal.msgBoxConfirm(
         `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
         {
           title: "Confirmation",
@@ -1269,12 +1285,10 @@ export default {
           footerClass: "p-2",
           hideHeaderClose: false,
           centered: true,
+        })
+        if (value) {
+          this.exitForm();
         }
-      )
-      if (value) {
-        this.exitForm();
-      } else {
-        return;
       }
     },
     // @vuese
