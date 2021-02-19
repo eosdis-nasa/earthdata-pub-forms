@@ -2,7 +2,7 @@
 import $ from 'jquery'
 export default {
     props:{
-      
+
     },
     computed: {
     },
@@ -24,7 +24,7 @@ export default {
         if(typeof str != 'undefined'){
             str = str.toLowerCase().split(' ');
             for (var i = 0; i < str.length; i++) {
-                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
             }
         } else {
             return 'undefined'
@@ -38,21 +38,14 @@ export default {
         this.setShowDaacs()
         let redirect = '';
         let form = this.getPath()[0]
-        let address = window.location.href.split("/")
-        var host = address[0] + address[1] + address[2];
-        host = host.replace('http:','http://')
-        // Get form set path start
-        if(window.headerComponent.showDaacs){
-            redirect=`/${form}/daacs`
-        } else {
-            redirect=`/${form}/questions`
-        }
         // Append daac if parameter available
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined'){
-            redirect+=`/${this.$route.query.parameters.group.toLowerCase()}`
+        if(this.$route && this.$route.query.parameters && this.$route.query.parameters.group){
+            const page = window.headerComponent.showDaacs ? '/daacs' : '/questions'
+            const group = this.$route.query.parameters.group
+            redirect=`/${form}/${page}/${group}`
         // Automatically redirect to questions if daac selected
         } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
-            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC').toLowerCase()}`
+            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC')}`
         // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
             redirect=`/${form}/daacs/selection`
@@ -61,17 +54,17 @@ export default {
             redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
-            redirect = `${window.location.href}interest/daacs/selection`
+            redirect = `/interest/daacs/selection`
         // Set path from localhost to questionnaire questions
         } else if (!window.localStorage.getItem("showDaacs")){
-            redirect = `${window.location.href}questionaire/questions`
+            redirect = `/questionaire/questions`
         }
-        if(window.location.href != `${host}${redirect}`){
-            window.location.href = redirect.toLowerCase()
+        if(this.$route.fullPath != redirect){
+            this.$router.push(redirect)
         }
       },
       // @vuese
-      // get Path via parameters, form title (json), then route path 
+      // get Path via parameters, form title (json), then route path
       getPath(){
         let form = ''
         if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
@@ -81,7 +74,7 @@ export default {
             form = 'interest'
           } else {
             form = 'questionnaire'
-          }   
+          }
         } else if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
           if(this.$route.path.toLowerCase().match(/interest/g)){
             form = 'interest'
@@ -100,7 +93,7 @@ export default {
         return [form, component_name_prefix]
       },
       // @vuese
-      // get Path via parameters, form title, then property 
+      // get Path via parameters, form title, then property
       setShowDaacs(){
         let form = this.getPath()[0]
         if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)){
@@ -118,7 +111,7 @@ export default {
         }
       },
       // @vuese
-      // Set Daacs daac via parameters or windows storage 
+      // Set Daacs daac via parameters or windows storage
       setDaacs(){
         if (window.localStorage.getItem("DAAC") != null) {
           return window.localStorage.getItem("DAAC");
@@ -139,7 +132,7 @@ export default {
                 window.document.getElementById(`${activeElement}_nav_link`).className = activeClass
               } else {
                 prevClassname = window.document.getElementById(`${navs[n]}_nav_link`).className
-                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'') 
+                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'')
               }
             }
           }
