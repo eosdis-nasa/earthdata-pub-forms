@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.2 - 2021-02-05
 
+- [Made base url configurable](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Updated vue-router to use the base url](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Updated mixin to use router for internal redirects](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Removed APIROOT from start script](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+
+## 0.1.2 - 2021-02-05
+
 - [Corrected request back to submission for post](71022acb85c83d90be193b9f3f8d358be3a0fc07)
 - [Did a blanket replace of 'submission' to request to simulate the dashboard.](abc4bc0229480919eeadbb75fd5eb59ff08d1ff2)
 
