@@ -6,8 +6,34 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.4 - 2021-02-17
+
+- [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
+- [Added validation to insure no negative numbers; fixed save so does not redirect](7e74d607103c17dcf0bfa1e44b845270002aab8f)
+- [Added message to redirect notification so theres 1 popup for that condition](deb64d5f3f3215b75a8f86a05b9e5a12aa73e755)
+- [Altered date validation so start date can equal end date](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Added config option for auto-redirect (VUE_APP_REDIRECT_CONFIRMATION)](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Added redirect confirmation when config option is undefined or set to true for draft and submit](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+- [Removed data volume specific validation so it can be 0](0bc1f8deba5c8fbbe6ecf22252fd4bf156842524)
+
+## 0.1.3 - 2021-02-16
+
+- [Retweaked styles for calendar](9d3e81bbb8e5724437817b0e98e8b0c76c1265f1)
+- [Added start and end date validation](956b82ef7336c84c4585ae142e15d735be8b3696)
+- [Added data volume validation](956b82ef7336c84c4585ae142e15d735be8b3696)
+- [altered headers to not display colons](0f156ac3f633193d1540eaa7080fa0d443e73224)
+- [label cursor properties fixed](0f156ac3f633193d1540eaa7080fa0d443e73224)
+- [added external links to header](ef3de7ee30dcd842a9195ffd06ec70717d95d085)
+- [allows save and draft posts with error](9380492558a04b2996651eb4e150c262ea3bc2ee)
+- [changed has to have](3d2ce1165381b6b6698eb37375daf12dbad2aa72)
+- [changed json structure to have data and daac_id on form_id level](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+- [changed post to promise resolve for firefox save and submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+- [save post sends to /save and submit post to /submit](794ed95533bf6f5429ff027ebbc0977736b9f6b8)
+
 ## 0.1.2 - 2021-02-05
 
+- [Updated cancel redirect to just say dashboard requests versus long url](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
+- [Added condition if no error before redirect in exitform function](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
 - [Corrected request back to submission for post](71022acb85c83d90be193b9f3f8d358be3a0fc07)
 - [Did a blanket replace of 'submission' to request to simulate the dashboard.](abc4bc0229480919eeadbb75fd5eb59ff08d1ff2)
 
