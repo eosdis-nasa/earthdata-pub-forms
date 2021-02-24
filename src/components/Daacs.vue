@@ -63,7 +63,9 @@ export default {
     return {
       selected: "",
       loaded: false,
-      daacs: []
+      daacs: [],
+      formId: '',
+      requestId: ''
     };
   },
   props: {},
@@ -88,6 +90,15 @@ export default {
     this.setActiveNav("daacs");
     this.daacs = this.fetchDaacs();
     this.GetCurrentDaacAndUpdate();
+    if(typeof this.$route.query.formId != 'undefined'){
+      this.formId = this.$route.query.formId
+    }
+    if(typeof this.$route.query.requestId != 'undefined'){
+      this.requestId = this.$route.query.requestId
+    }
+    if(typeof this.$route.query.group != 'undefined'){
+      this.selected = this.$route.query.group
+    }
   },
   methods: {
     // @vuese
@@ -237,13 +248,22 @@ export default {
     submitForm() {
       // Submit form (this.selected) if valid
       this.$v.$touch();
+      let args = {}
+      if (this.formId != ''){
+        args['formId'] = this.formId
+      }
+      if (this.requestId != ''){
+        args['requestId'] = this.requestId
+      }
       if (this.selected != "") {
+        args['group'] = this.data.toLowerCase()
         this.$router.push({
           name: "Data Publication Request - Questions",
-          params: { group: this.data.toLowerCase() }
+          params: { args }
         });
       } else {
-        this.$router.push({ name: "Data Publication Request - Daacs", params: { group: "selection" } });
+        args['group'] = 'selection'
+        this.$router.push({ name: "Data Publication Request - Daacs", params: args });
       }
     },
     // @vuese

@@ -834,34 +834,36 @@ export default {
         if (!ea.toLowerCase().match(/name/g)) {
           continue;
         }
-        for (let section of questions) {
-          let inputs = section["inputs"];
-          let text = section["text"];
-          let long_name = section["long_name"];
-          let help = section["help"];
-          for (let i in inputs) {
-            let inp = inputs[i];
-            let label = inp["label"];
-            if (ea === inp["control_id"]) {
-              if (
-                ((typeof text != "undefined" &&
-                  text.toLowerCase().match(/person/g)) ||
-                  (typeof text != "undefined" &&
-                    text.toLowerCase().match(/contact/g)) ||
-                  (typeof long_name != "undefined" &&
-                    long_name.toLowerCase().match(/person/g)) ||
-                  (typeof long_name != "undefined" &&
-                    long_name.toLowerCase().match(/contact/g)) ||
-                  (typeof help != "undefined" &&
-                    help.toLowerCase().match(/person/g)) ||
-                  (typeof help != "undefined" &&
-                    help.toLowerCase().match(/contact/g))) &&
-                label.toLowerCase().match(/name/g) &&
-                this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
-                  false &&
-                this.values[inputs[i]["control_id"]] != ""
-              ) {
-                this.contacts.push(this.values[inputs[i]["control_id"]]);
+        if(typeof questions != 'undefined'){
+          for (let section of questions) {
+            let inputs = section["inputs"];
+            let text = section["text"];
+            let long_name = section["long_name"];
+            let help = section["help"];
+            for (let i in inputs) {
+              let inp = inputs[i];
+              let label = inp["label"];
+              if (ea === inp["control_id"]) {
+                if (
+                  ((typeof text != "undefined" &&
+                    text.toLowerCase().match(/person/g)) ||
+                    (typeof text != "undefined" &&
+                      text.toLowerCase().match(/contact/g)) ||
+                    (typeof long_name != "undefined" &&
+                      long_name.toLowerCase().match(/person/g)) ||
+                    (typeof long_name != "undefined" &&
+                      long_name.toLowerCase().match(/contact/g)) ||
+                    (typeof help != "undefined" &&
+                      help.toLowerCase().match(/person/g)) ||
+                    (typeof help != "undefined" &&
+                      help.toLowerCase().match(/contact/g))) &&
+                  label.toLowerCase().match(/name/g) &&
+                  this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
+                    false &&
+                  this.values[inputs[i]["control_id"]] != ""
+                ) {
+                  this.contacts.push(this.values[inputs[i]["control_id"]]);
+                }
               }
             }
           }
@@ -1154,6 +1156,14 @@ export default {
           this.requestId = response.id;
           let message = `Your data have been ${action}.`
           if (operation == "submit") {
+            window.localStorage.removeItem(`${form}_outputs`);
+            window.localStorage.removeItem(`${form}_inputs`);
+            window.localStorage.removeItem(`${form}_questions`);
+            window.localStorage.removeItem(`DAAC`);
+            window.localStorage.removeItem(`showDaacs`);
+            this.$values = {};
+            this.$v.$touch();
+            this.confirm = false;
             if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
               this.redirectNotification(bvModal, message, operation)
             } else {
@@ -1192,6 +1202,23 @@ export default {
           );
         },
       });
+    },
+    // @vuese
+    // Loads answers using request id
+    loadAnswers() {
+      let form_components = this.getPath();
+      let form = form_components[0];
+      if (this.formId != "" && this.requestId != '') {
+        $.getJSON(
+        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+        (answers) => {
+          this.values = answers.form_data;
+        })
+      } else if (window.localStorage.getItem(`${form}_questions`) != null) {
+        this.values = JSON.parse(
+          window.localStorage.getItem(`${form}_questions`)
+        );
+      }
     },
     // @vuese
     // Used to save file
@@ -1302,6 +1329,8 @@ export default {
       window.localStorage.removeItem(`${form}_outputs`);
       window.localStorage.removeItem(`${form}_inputs`);
       window.localStorage.removeItem(`${form}_questions`);
+      window.localStorage.removeItem(`DAAC`);
+      window.localStorage.removeItem(`showDaacs`);
       this.$values = {};
       this.$v.$touch();
       this.confirm = false;
@@ -1406,6 +1435,13 @@ export default {
     let form = form_components[0];
     let form_name_prefix = form_components[1];
     this.setShowDaacs();
+    if(typeof this.$route.query.formId != 'undefined'){
+      this.formId = this.$route.query.formId
+    }
+    if(typeof this.$route.query.requestId != 'undefined'){
+      // http://localhost:8081/interest/questions/15df4fda-ed0d-417f-9124-558fb5e5b561?formId=6c544723-241c-4896-a38c-adbc0a364293&requestId=c3124249-5696-4a14-a312-2bb0d1481091
+      this.requestId = this.$route.query.requestId
+    }
     if (form.toLowerCase().match(/questionnaire/g)) {
       this.daac = null;
     } else {
@@ -1424,7 +1460,6 @@ export default {
           default: "selection",
         });
       }
-
       let set_loc = location.href;
       let re = `/${form}/questions/`;
       if (!set_loc.match(re, "g")) {
@@ -1441,11 +1476,8 @@ export default {
       this.setActiveLocationWithoutReload(set_loc, this.daac);
     }
     this.fetchQuestions();
-    if (window.localStorage.getItem(`${form}_questions`) != null) {
-      this.values = JSON.parse(
-        window.localStorage.getItem(`${form}_questions`)
-      );
-      this.$v.$touch();
+    if(this.formId != '' && this.requestId != ''){
+      this.loadAnswers()
     }
   },
 };

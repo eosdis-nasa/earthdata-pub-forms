@@ -93,7 +93,9 @@ export default {
   data() {
     return {
       daac: "selection",
-      showDaacs: ''
+      showDaacs: '',
+      formId:'',
+      requestId: ''
     };
   },
   // The property to be set by questions.vue
@@ -108,7 +110,7 @@ export default {
   watch: {
     showDaacs: function(val) {
       if (val == "false" || val == false) {
-        let form_components = this.getPath()
+        /*let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
         if (form.toLowerCase().match(/interest/g)){
@@ -116,7 +118,7 @@ export default {
             name: `${form_name_prefix}Questions`,
             params: { group: this.daac.toLowerCase() }
           });
-        }
+        }*/
       }
     }
   },
@@ -165,6 +167,19 @@ export default {
   mounted() {
     window.headerComponent = this;
     this.setShowDaacs()
+    if(typeof this.$route.query.formId != 'undefined'){
+      this.formId = this.$route.query.formId
+    }
+    if(typeof this.$route.query.requestId != 'undefined'){
+      this.requestId = this.$route.query.requestId
+    }
+    if(typeof this.$route.query.group != 'undefined'){
+      this.daac = this.$route.query.group
+    }
+    if(typeof this.$route.query.showDaacs != 'undefined'){
+      this.showDaacs = this.$route.query.showDaacs
+      localStorage.setItem('showDaacs', this.showDaacs)
+    }
     this.daac = this.setDaacs()
     this.resetRoute()
   }

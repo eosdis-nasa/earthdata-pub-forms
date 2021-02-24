@@ -66,16 +66,49 @@ export default {
         } else if (!window.localStorage.getItem("showDaacs")){
             redirect = `${window.location.href}questionaire/questions`
         }
+        // Append passed in parameters from dashboard
+        if(typeof this.$route.query.formId != 'undefined'){
+          if(!redirect.match(/\?/g)){
+            redirect += `?formId=${this.$route.query.formId}`
+          } else {
+            redirect += `&formId=${this.$route.query.formId}`
+          }
+        }
+        if(typeof this.$route.query.requestId != 'undefined'){
+          if(!redirect.match(/\?/g)){
+            redirect += `?requestId=${this.$route.query.requestId}`
+          } else {
+            redirect += `&requestId=${this.$route.query.requestId}`
+          }
+        }
+        if(typeof this.$route.query.group != 'undefined'){
+          if(!redirect.match(/\?/g)){
+            redirect += `?group=${this.$route.query.group}`
+          } else {
+            redirect += `&group=${this.$route.query.group}`
+          }
+        }
+        if(typeof this.$route.query.showDaacs != 'undefined'){
+          if(!redirect.match(/\?/g)){
+            redirect += `?showDaacs=${this.$route.query.showDaacs}`
+          } else {
+            redirect += `&showDaacs=${this.$route.query.showDaacs}`
+          }
+        }
         if(window.location.href != `${host}${redirect}`){
-            window.location.href = redirect.toLowerCase()
+          window.location.href = redirect
         }
       },
       // @vuese
       // get Path via parameters, form title (json), then route path 
       getPath(){
         let form = ''
-        if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
-          form = this.$route.query.form
+        if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.formId != 'undefined'){
+          if (this.$route.query.formId == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`){
+            form = 'questionnaire'
+          } else if (this.$route.query.formId == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`){
+            form = 'interest'
+          }
         } else if (typeof window.formTitle != 'undefined' && window.formTitle != ''){
           if (window.formTitle.toLowerCase().match(/publication/g)){
             form = 'interest'
@@ -103,7 +136,10 @@ export default {
       // get Path via parameters, form title, then property 
       setShowDaacs(){
         let form = this.getPath()[0]
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)){
+        if(typeof this.$route.query.showDaacs != 'undefined'){
+          window.headerComponent.showDaacs = (this.$route.query.showDaacs == 'true')
+          window.localStorage.setItem("showDaacs", window.headerComponent.showDaacs);
+        } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)){
           window.headerComponent.showDaacs = true
           window.localStorage.setItem("showDaacs", true);
         } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)==false){
