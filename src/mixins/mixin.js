@@ -33,7 +33,7 @@ export default {
       // @vuese
       // Re-evaluates the route and changes it if applicable
       resetRoute(){
-        console.log('SET ROUTE')
+        //console.log('SET ROUTE')
         this.checkAuth()
         this.setShowDaacs()
         let redirect = '';
@@ -51,28 +51,23 @@ export default {
         }
         // Automatically redirect to questions if daac sent in
         if(typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.group != 'undefined'){
-          console.log(1)
           redirect=`/${form}/questions/${this.$route.query.group}`
         // Automatically redirect to questions if daac selected
         } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
-          console.log(2)
           redirect=`/${form}/questions/${window.localStorage.getItem('DAAC')}`
           this.$store.commit(
             "pushGlobalParams",
             ['group',`${window.localStorage.getItem('DAAC')}`]
           );
-          console.log('request id is ' + this.$store.state.global_params['requestId'])
+          //console.log('request id is ' + this.$store.state.global_params['requestId'])
         // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
-          console.log(3)
           redirect=`/${form}/daacs/selection`
         // Set path to form and questions for questionnaire
         } else if (form != ''){
-          console.log(4)
           redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC') == null){
-          console.log(5)
           redirect = `${window.location.href}interest/daacs/selection`
           this.$store.commit(
             "pushGlobalParams",
@@ -80,7 +75,6 @@ export default {
           );
         // Set path from localhost to questionnaire questions
         } else if (!window.localStorage.getItem("showDaacs")){
-          console.log(6)
           redirect = `${window.location.href}questionaire/questions`
         }
         this.setGlobalParameters(form);
@@ -106,8 +100,7 @@ export default {
         // set store global parameters
         if(typeof this.$route.query.formId != 'undefined'){
           // set form id
-          this.$store.commit("pushGlobalParams",['formId',`${this.$route.query.formId}`]
-          );
+          this.$store.commit("pushGlobalParams",['formId',`${this.$route.query.formId}`]);
         } else if (form == 'questionnaire'){
           this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`]);
         } else {
@@ -253,7 +246,7 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
-          console.log(`location: ${lctn}, shortName: ${shortName}, current_href: ${current_href}, to_href: ${to_href}, nextUrl: ${next_url}, after_protocol: ${after_protocol}, newurl: ${new_url}`)
+          //console.log(`location: ${lctn}, shortName: ${shortName}, current_href: ${current_href}, to_href: ${to_href}, nextUrl: ${next_url}, after_protocol: ${after_protocol}, newurl: ${new_url}`)
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       }

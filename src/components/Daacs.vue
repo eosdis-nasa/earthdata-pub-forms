@@ -87,15 +87,12 @@ export default {
   },
   mounted() {
     window.daacsComponent = this;
-    console.log('DAACS MOUNTED')
+    //console.log('DAACS MOUNTED')
     this.setActiveNav("daacs");
     // You are at the point when you are clicking links, you will have to see about setting params for the header clicking -> questions is wrong
     this.fetchDaacs().then(() => {
       if(typeof this.$store.state.global_params['group'] != 'undefined'){
         let daacData = this.getDaac(this.$store.state.global_params['group'])
-        if(typeof daacData == 'undefined'){
-          console.log(JSON.stringify(daacData))
-        }
         this.selected = daacData.long_name;
       }
     });

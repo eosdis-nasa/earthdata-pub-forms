@@ -180,7 +180,7 @@ export default {
   mounted() {
     window.headerComponent = this;
     this.setShowDaacs()
-    console.log('HEADERS MOUNTED')
+    // console.log('HEADERS MOUNTED')
     this.daac = this.setDaacs()
     this.resetRoute()
     if(typeof this.$store.state.global_params['formId'] != 'undefined'){
@@ -192,7 +192,7 @@ export default {
     if(typeof this.$store.state.global_params['group'] != 'undefined'){
       this.daac = this.$store.state.global_params['group']
     }
-    console.log(`HEADER formId: ${this.formId}, requestId: ${this.requestId}, group: ${this.daac}, showDaacs: ${this.showDaacs}`)
+    // console.log(`HEADER formId: ${this.formId}, requestId: ${this.requestId}, group: ${this.daac}, showDaacs: ${this.showDaacs}`)
   }
 };
 </script>

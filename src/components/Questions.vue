@@ -159,7 +159,7 @@
                             <b-row v-else>
                               <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
                               <template v-if="showIf(input.show_if)">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox'">{{input.label}}:</label>
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
@@ -1430,7 +1430,7 @@ export default {
   mounted() {
     window.questionsComponent = this;
     this.setActiveNav("questions");
-    console.log('QUESTIONS MOUNTED')
+    //console.log('QUESTIONS MOUNTED')
     let form_components = this.getPath();
     let form = form_components[0];
     let form_name_prefix = form_components[1];
@@ -1506,6 +1506,9 @@ span.checkbox label {
 span span label {
   margin-left: 2rem;
   font-weight: normal;
+}
+span span:nth-child(-n+1) label {
+  margin-left:0rem;
 }
 .question_size {
   padding-left: 0px;
