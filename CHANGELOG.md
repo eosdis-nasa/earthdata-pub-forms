@@ -6,6 +6,10 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+<!-- Unreleased -->
+
+- [Add pull request template to CONTRIBUTING.md](1a4f968106d37c2f6a88994fcb15ec59182906b1)
+
 ## 0.1.4 - 2021-02-17
 
 - [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
