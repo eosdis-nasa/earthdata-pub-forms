@@ -96,16 +96,16 @@
             let loc;
             let daacStored;
             if(window.localStorage.getItem('DAAC')!=null){
-                daacStored = window.localStorage.getItem('DAAC').toLowerCase()
+                daacStored = window.localStorage.getItem('DAAC')
             }
             if(daacStored !=null && typeof this.$route != 'undefined'){
                 let re = new RegExp(`/${daacStored}`)
-                if(window.location.href.toLowerCase().match(re,'g')){
-                    loc = window.location.href.toLowerCase()
+                if(window.location.href.match(re,'g')){
+                    loc = window.location.href
                     loc = loc.replace(re,'')
                 }
             } else {
-                loc = window.location.href.toLowerCase()
+                loc = window.location.href
             }
             this.help_tips = this.fetchHelp()
             if (typeof loc != 'undefined'){

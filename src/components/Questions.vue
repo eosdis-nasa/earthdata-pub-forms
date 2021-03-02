@@ -368,8 +368,7 @@ export default {
       confirm: false,
       validation_errors: {},
       formId: "",
-      requestId: "",
-      exitAfterSave: false,
+      requestId: ""
     };
   },
   props: {
@@ -936,8 +935,8 @@ export default {
           let contact = false;
           let form = this.getPath()[0];
           if (
-            this.formId == "" &&
-            (this.daac !== "selection" || this.daac != "")
+            this.$store.state.global_params['formId'] == "" &&
+            (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
           ) {
             for (let f in forms) {
               if (
@@ -947,7 +946,7 @@ export default {
                   .toLowerCase()
                   .match(/data_publication_request/g)
               ) {
-                this.formId = forms[f]["id"];
+                this.$store.state.global_params['formId'] = forms[f]["id"];
                 this.formTitle = forms[f]["long_name"];
                 break;
               } else if (
@@ -957,15 +956,15 @@ export default {
                   .toLowerCase()
                   .match(/data_product_information/g)
               ) {
-                this.formId = forms[f]["id"];
+                this.$store.state.global_params['formId'] = forms[f]["id"];
                 this.formTitle = forms[f]["long_name"];
                 break;
               }
             }
           }
           let url;
-          if (this.formId != "") {
-            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.formId}`;
+          if (this.$store.state.global_params['formId'] != "") {
+            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
           } else {
             let json_name = "";
             if (form.match(/interest/g)) {
@@ -1125,11 +1124,11 @@ export default {
         ],
         log: JSON.parse(window.localStorage.getItem(`${form}_outputs`))["log"],
       };
-      if (this.formId != "") {
-        json["form_id"] = this.formId;
+      if (this.$store.state.global_params['formId'] != "") {
+        json["form_id"] = this.$store.state.global_params['formId'];
       }
-      if (this.requestId != "") {
-        json["id"] = this.requestId;
+      if (this.$store.state.global_params['requestId'] != "") {
+        json["id"] = this.$store.state.global_params['requestId'];
       }
       if (typeof DAAC !== "undefined" && DAAC != "") {
         json["daac_id"] = DAAC;
@@ -1208,7 +1207,7 @@ export default {
     loadAnswers() {
       let form_components = this.getPath();
       let form = form_components[0];
-      if (this.formId != "" && this.requestId != '') {
+      if (this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '') {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
         (answers) => {
@@ -1431,25 +1430,25 @@ export default {
   mounted() {
     window.questionsComponent = this;
     this.setActiveNav("questions");
+    console.log('QUESTIONS MOUNTED')
     let form_components = this.getPath();
     let form = form_components[0];
     let form_name_prefix = form_components[1];
     this.setShowDaacs();
-    if(typeof this.$route.query.formId != 'undefined'){
-      this.formId = this.$route.query.formId
+    if(typeof this.$store.state.global_params['formId'] != 'undefined'){
+      this.formId = this.$store.state.global_params['formId']
     }
-    if(typeof this.$route.query.requestId != 'undefined'){
-      // http://localhost:8081/interest/questions/15df4fda-ed0d-417f-9124-558fb5e5b561?formId=6c544723-241c-4896-a38c-adbc0a364293&requestId=c3124249-5696-4a14-a312-2bb0d1481091
-      this.requestId = this.$route.query.requestId
+    if(typeof this.$store.state.global_params['requestId'] != 'undefined'){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
+    if(typeof this.$store.state.global_params['group'] != 'undefined'){
+      this.daac = this.$store.state.global_params['group']
     }
     if (form.toLowerCase().match(/questionnaire/g)) {
       this.daac = null;
     } else {
-      if (
-        typeof this.$route != "undefined" &&
-        typeof this.$route.params.default != "undefined"
-      ) {
-        this.daac = this.$route.params.default;
+      if (typeof this.$store.state.global_params['group'] != "undefined") {
+        this.daac = this.$store.state.global_params['group'];
       } else if (window.localStorage.getItem("DAAC") != null) {
         this.daac = window.localStorage.getItem("DAAC");
       }
@@ -1459,24 +1458,27 @@ export default {
           path: "/selection",
           default: "selection",
         });
+      } else {
+        this.$store.commit(
+          "pushGlobalParams",
+          ['group',`${this.daac}`]
+        );
       }
       let set_loc = location.href;
       let re = `/${form}/questions/`;
       if (!set_loc.match(re, "g")) {
         set_loc += `/${form}/questions/`;
       }
-      if (set_loc.match(/selection/g)) {
+      if (set_loc.match(/selection/g) && (this.daac === '' || this.daac == null)) {
         this.warning = "No daac has been selected";
       }
       if (typeof window.headerComponent != "undefined") {
         window.headerComponent.daac = this.daac
-          .replace(/ /g, "_")
-          .toLowerCase();
       }
       this.setActiveLocationWithoutReload(set_loc, this.daac);
     }
     this.fetchQuestions();
-    if(this.formId != '' && this.requestId != ''){
+    if(typeof this.$store.state.global_params['formId'] != 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
       this.loadAnswers()
     }
   },

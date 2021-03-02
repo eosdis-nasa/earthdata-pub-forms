@@ -87,39 +87,48 @@ export default {
   },
   mounted() {
     window.daacsComponent = this;
+    console.log('DAACS MOUNTED')
     this.setActiveNav("daacs");
-    this.daacs = this.fetchDaacs();
-    this.GetCurrentDaacAndUpdate();
-    if(typeof this.$route.query.formId != 'undefined'){
-      this.formId = this.$route.query.formId
+    // You are at the point when you are clicking links, you will have to see about setting params for the header clicking -> questions is wrong
+    this.fetchDaacs().then(() => {
+      if(typeof this.$store.state.global_params['group'] != 'undefined'){
+        let daacData = this.getDaac(this.$store.state.global_params['group'])
+        if(typeof daacData == 'undefined'){
+          console.log(JSON.stringify(daacData))
+        }
+        this.selected = daacData.long_name;
+      }
+    });
+    if(typeof this.$store.state.global_params['formId'] != 'undefined'){
+      this.formId = this.$store.state.global_params['formId']
     }
-    if(typeof this.$route.query.requestId != 'undefined'){
-      this.requestId = this.$route.query.requestId
+    if(typeof this.$store.state.global_params['requestId'] != 'undefined'){
+      this.requestId = this.$store.state.global_params['requestId']
     }
-    if(typeof this.$route.query.group != 'undefined'){
-      this.selected = this.$route.query.group
-    }
+    //console.log(`DAACS formId: ${this.formId}, requestId: ${this.requestId}, group: ${this.daac}, showDaacs: ${this.showDaacs}`)
   },
   methods: {
     // @vuese
     // Fetchs the DAAC data
-    fetchDaacs() {
-      // Gets DAAC data for template
-      var items = [];
-      $.ajaxSetup({
-        headers : {
-          'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
-        }
-      });
-      // TESTING ONLY
-      //$.getJSON("../daacs.json", daacs => {
-      $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
-        for (var dict in daacs) {
-          items.push(daacs[dict]);
-        }
-        this.loaded = true;
-      });
-      return items;
+    async fetchDaacs() {
+      return new Promise((resolve) => {
+        // Gets DAAC data for template
+        var items = [];
+        $.ajaxSetup({
+          headers : {
+            'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+          }
+        });
+        // TESTING ONLY
+        //$.getJSON("../daacs.json", daacs => {
+        $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
+          for (var dict in daacs) {
+            items.push(daacs[dict]);
+          }
+          this.daacs = items
+          resolve(items);
+        });
+      })
     },
     // @vuese
     // Fetchs DAAC specific data
@@ -135,7 +144,7 @@ export default {
         if (
           daac_specific.toLowerCase() === long_name.toLowerCase() ||
           daac_specific.toLowerCase() === short_name.toLowerCase() ||
-          daac_specific.toLowerCase() === id.toLowerCase()
+          daac_specific === id
         ) {
           let url = this.daacs[dict]["url"];
           let description = this.daacs[dict]["description"];
@@ -206,31 +215,21 @@ export default {
       short_name = current[0]
       id = current[1]
       if (
-        typeof this.$route != "undefined" &&
-        typeof this.$route.params.group != "undefined" &&
-        this.$route.params.group != null
+        typeof this.$store.state.global_params['group'] != "undefined" &&
+        this.$store.state.global_params['group'] != null
       ) {
-        if (
-          this.$route.params.group.replace(/ /g, "_").toLowerCase() !=
-          short_name.replace(/ /g, "_").toLowerCase()
-        ) {
-          let current = this.setCurrentDaacObjects(
-            this.selected,
-            url,
-            id,
-            short_name,
-            long_name,
-            description
-          );
-          short_name = current[0]
-          id = current[1]
-          this.$route.params.group = short_name
-            .replace(/ /g, "_")
-            .toLowerCase();
-        }
+        let current = this.setCurrentDaacObjects(
+          this.selected,
+          url,
+          id,
+          short_name,
+          long_name,
+          description
+        );
+        id = current[1]
+        this.$store.state.global_params['group'] = id
       }
-      this.setActiveLocationWithoutReload(location.href, short_name);
-      window.headerComponent.daac = short_name.toLowerCase();
+      this.setActiveLocationWithoutReload(location.href, id);
       this.setSaveObject(short_name, id);
       return short_name;
     },
@@ -249,14 +248,14 @@ export default {
       // Submit form (this.selected) if valid
       this.$v.$touch();
       let args = {}
-      if (this.formId != ''){
-        args['formId'] = this.formId
+      if (this.$store.state.global_params['formId'] != ''){
+        args['formId'] = this.$store.state.global_params['formId']
       }
-      if (this.requestId != ''){
-        args['requestId'] = this.requestId
+      if (this.$store.state.global_params['requestId'] != ''){
+        args['requestId'] = this.$store.state.global_params['requestId']
       }
-      if (this.selected != "") {
-        args['group'] = this.data.toLowerCase()
+      if (this.$store.state.global_params['group'] != "") {
+        args['group'] = this.$store.state.global_params['group']
         this.$router.push({
           name: "Data Publication Request - Questions",
           params: { args }
@@ -270,26 +269,23 @@ export default {
     // Used to save file
     setSaveObject(short_name, id) {
       // Saves file to localStorage
-      if (this.selected != "") {
+      if (this.$store.state.global_params['group'] != "") {
+        'setting storage'
         window.localStorage.setItem(
           "DAAC",
-          // `${short_name.replace(/ /g, "_").toUpperCase()}^${id}`
           `${id}`
         );
-        window.headerComponent.daac = short_name
-          .replace(/ /g, "_")
-          .toLowerCase();
+        window.headerComponent.daac = id
       }
     },
     // @vuese
     // Gets the current daac selected and updates
     GetCurrentDaacAndUpdate() {
       if (
-        this.selected == "" &&
+        this.$store.state.global_params['group'] == "" &&
         !window.location.href.match(/daacs\/selection/g) &&
-        (typeof this.$route == "undefined" ||
-          typeof this.$route.params.group == "undefined" ||
-          this.$route.params.group == "")
+        (typeof this.$store.state.global_params['group'] == "undefined" ||
+          this.$store.state.global_params['group'] == "")
       ) {
         history.replaceState(
           "updating href",
@@ -298,28 +294,26 @@ export default {
         );
       }
       if (
-        (typeof this.$route != "undefined" &&
-          typeof this.$route.params.group != "undefined" &&
-          this.$route.params.group != null &&
-          this.$route.params.group != "" &&
-          this.$route.params.group != "selection") ||
-        this.selected != "" ||
+        (this.$store.state.global_params['group'] != "undefined" &&
+          this.$store.state.global_params['group'] != null &&
+          this.$store.state.global_params['group'] != "" &&
+          this.$store.state.global_params['group'] != "selection") ||
         window.localStorage.getItem("DAAC") != null
       ) {
         let default_daac;
         let selected;
-        if (this.selected != "") {
-          selected = this.getDaac(this.selected);
-        } else if (typeof this.$route.params.group != "undefined") {
+        if (this.$store.state.global_params['group'] != "") {
+          selected = this.getDaac(this.$store.state.global_params['group']);
+        } else if (typeof this.$store.state.global_params['group'] != "undefined") {
           selected = this.getDaac(
-            this.$route.params.group.replace(/_/g, " ").toUpperCase()
+            this.$store.state.global_params['group']
           );
         } else if (window.localStorage.getItem("DAAC") != null) {
           selected = this.getDaac(window.localStorage.getItem("DAAC"));
         }
         if (typeof selected != "undefined") {
-          let selected_short = selected["short_name"];
-          default_daac = selected_short.replace(/ /g, "_").toUpperCase();
+          let id = selected["id"];
+          default_daac = id;
           if (
             typeof default_daac != "undefined" &&
             default_daac != "" &&

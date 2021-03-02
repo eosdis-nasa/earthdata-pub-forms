@@ -26,6 +26,7 @@
         // This is equivalent to document.ready
         mounted() {
             window.homeComponent = this;
+            console.log('HOME MOUNTED')
             this.resetRoute()
         }
     }

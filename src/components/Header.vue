@@ -110,15 +110,28 @@ export default {
   watch: {
     showDaacs: function(val) {
       if (val == "false" || val == false) {
-        /*let form_components = this.getPath()
+        let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
+        let params = {}
+        if(typeof this.formId != "undefined"){
+          params['formId'] = this.formId
+        }
+        if(typeof this.requestId != "undefined"){
+          params['requestId'] = this.requestId
+        }
+        if(typeof this.group != "undefined"){
+          params['group'] = this.daac
+        }
+        if(typeof this.showDaacs != "undefined"){
+          params['showDaacs'] = this.showDaacs
+        }
         if (form.toLowerCase().match(/interest/g)){
           this.$router.push({
             name: `${form_name_prefix}Questions`,
-            params: { group: this.daac.toLowerCase() }
+            params: params
           });
-        }*/
+        }
       }
     }
   },
@@ -167,21 +180,19 @@ export default {
   mounted() {
     window.headerComponent = this;
     this.setShowDaacs()
-    if(typeof this.$route.query.formId != 'undefined'){
-      this.formId = this.$route.query.formId
-    }
-    if(typeof this.$route.query.requestId != 'undefined'){
-      this.requestId = this.$route.query.requestId
-    }
-    if(typeof this.$route.query.group != 'undefined'){
-      this.daac = this.$route.query.group
-    }
-    if(typeof this.$route.query.showDaacs != 'undefined'){
-      this.showDaacs = this.$route.query.showDaacs
-      localStorage.setItem('showDaacs', this.showDaacs)
-    }
+    console.log('HEADERS MOUNTED')
     this.daac = this.setDaacs()
     this.resetRoute()
+    if(typeof this.$store.state.global_params['formId'] != 'undefined'){
+      this.formId = this.$store.state.global_params['formId']
+    }
+    if(typeof this.$store.state.global_params['requestId'] != 'undefined'){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
+    if(typeof this.$store.state.global_params['group'] != 'undefined'){
+      this.daac = this.$store.state.global_params['group']
+    }
+    console.log(`HEADER formId: ${this.formId}, requestId: ${this.requestId}, group: ${this.daac}, showDaacs: ${this.showDaacs}`)
   }
 };
 </script>

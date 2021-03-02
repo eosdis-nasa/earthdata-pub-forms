@@ -35,9 +35,6 @@ Vue.prototype.$logging_object = {}
 // Collection object of output prototypes
 Vue.prototype.$output_object = {}
 
-Vue.prototype.$formId = ''
-Vue.prototype.$requestId = ''
-
 // Use simple logger
 Vue.use(VueLogger, logOptions);
 // Install BootstrapVue
