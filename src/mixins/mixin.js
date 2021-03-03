@@ -2,6 +2,10 @@
 import $ from 'jquery'
 export default {
     props:{
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/path-based-routing
     },
     computed: {
     },
@@ -24,7 +28,7 @@ export default {
         if(typeof str != 'undefined'){
             str = str.toLowerCase().split(' ');
             for (var i = 0; i < str.length; i++) {
-                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
             }
         } else {
             return 'undefined'
@@ -38,6 +42,7 @@ export default {
         this.checkAuth()
         this.setShowDaacs()
         let redirect = '';
+<<<<<<< HEAD
         let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
@@ -65,6 +70,17 @@ export default {
             ['group',`${window.localStorage.getItem('DAAC')}`]
           );
           //console.log('request id is ' + this.$store.state.global_params['requestId'])
+=======
+        let form = this.getPath()[0]
+        // Append daac if parameter available
+        if(this.$route && this.$route.query.parameters && this.$route.query.parameters.group){
+            const page = window.headerComponent.showDaacs ? '/daacs' : '/questions'
+            const group = this.$route.query.parameters.group
+            redirect=`/${form}/${page}/${group}`
+        // Automatically redirect to questions if daac selected
+        } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
+            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC')}`
+>>>>>>> feature/path-based-routing
         // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
           redirect=`/${form}/daacs/selection`
@@ -72,6 +88,7 @@ export default {
         } else if (form != ''){
           redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
+<<<<<<< HEAD
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC') == null){
           //redirect = `${window.location.href}interest/daacs/selection`
           redirect = `/interest/daacs/selection`
@@ -126,10 +143,20 @@ export default {
         }
         if(typeof this.$route.query.showDaacs != 'undefined'){
           this.$store.commit("pushGlobalParams",['showDaacs',`${this.$route.query.showDaacs}`]);
+=======
+        } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
+            redirect = `/interest/daacs/selection`
+        // Set path from localhost to questionnaire questions
+        } else if (!window.localStorage.getItem("showDaacs")){
+            redirect = `/questionaire/questions`
+        }
+        if(this.$route.fullPath != redirect){
+            this.$router.push(redirect)
+>>>>>>> feature/path-based-routing
         }
       },
       // @vuese
-      // get Path via parameters, form title (json), then route path 
+      // get Path via parameters, form title (json), then route path
       getPath(){
         let form = ''
         if (this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`){
@@ -141,7 +168,7 @@ export default {
             form = 'interest'
           } else {
             form = 'questionnaire'
-          }   
+          }
         } else if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
           if(this.$route.path.toLowerCase().match(/interest/g)){
             form = 'interest'
@@ -160,7 +187,7 @@ export default {
         return [form, component_name_prefix]
       },
       // @vuese
-      // get Path via parameters, form title, then property 
+      // get Path via parameters, form title, then property
       setShowDaacs(){
         let form = this.getPath()[0]
         if(typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
@@ -184,7 +211,7 @@ export default {
         }
       },
       // @vuese
-      // Set Daacs daac via parameters or windows storage 
+      // Set Daacs daac via parameters or windows storage
       setDaacs(){
         if (window.localStorage.getItem("DAAC") != null) {
           this.$store.commit(
@@ -209,7 +236,7 @@ export default {
                 window.document.getElementById(`${activeElement}_nav_link`).className = activeClass
               } else {
                 prevClassname = window.document.getElementById(`${navs[n]}_nav_link`).className
-                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'') 
+                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'')
               }
             }
           }
