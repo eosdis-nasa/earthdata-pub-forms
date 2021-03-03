@@ -2,10 +2,6 @@
 import $ from 'jquery'
 export default {
     props:{
-<<<<<<< HEAD
-=======
-
->>>>>>> feature/path-based-routing
     },
     computed: {
     },
@@ -42,7 +38,6 @@ export default {
         this.checkAuth()
         this.setShowDaacs()
         let redirect = '';
-<<<<<<< HEAD
         let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
@@ -70,17 +65,6 @@ export default {
             ['group',`${window.localStorage.getItem('DAAC')}`]
           );
           //console.log('request id is ' + this.$store.state.global_params['requestId'])
-=======
-        let form = this.getPath()[0]
-        // Append daac if parameter available
-        if(this.$route && this.$route.query.parameters && this.$route.query.parameters.group){
-            const page = window.headerComponent.showDaacs ? '/daacs' : '/questions'
-            const group = this.$route.query.parameters.group
-            redirect=`/${form}/${page}/${group}`
-        // Automatically redirect to questions if daac selected
-        } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
-            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC')}`
->>>>>>> feature/path-based-routing
         // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
           redirect=`/${form}/daacs/selection`
@@ -88,7 +72,6 @@ export default {
         } else if (form != ''){
           redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
-<<<<<<< HEAD
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC') == null){
           //redirect = `${window.location.href}interest/daacs/selection`
           redirect = `/interest/daacs/selection`
@@ -143,16 +126,6 @@ export default {
         }
         if(typeof this.$route.query.showDaacs != 'undefined'){
           this.$store.commit("pushGlobalParams",['showDaacs',`${this.$route.query.showDaacs}`]);
-=======
-        } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
-            redirect = `/interest/daacs/selection`
-        // Set path from localhost to questionnaire questions
-        } else if (!window.localStorage.getItem("showDaacs")){
-            redirect = `/questionaire/questions`
-        }
-        if(this.$route.fullPath != redirect){
-            this.$router.push(redirect)
->>>>>>> feature/path-based-routing
         }
       },
       // @vuese
