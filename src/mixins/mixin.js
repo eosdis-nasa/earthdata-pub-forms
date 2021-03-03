@@ -9,6 +9,7 @@ export default {
       // @vuese
       // Checks for authorization token, if none, redirects to dashboard_root/auth
       checkAuth(){
+        console.log('CHECK AUTH')
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
@@ -40,7 +41,7 @@ export default {
         let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
-        let address = window.location.href.split("/")
+        /*let address = window.location.href.split("/")
         var host = address[0] + address[1] + address[2];
         host = host.replace('http:','http://')
         // Get form set path start
@@ -48,11 +49,15 @@ export default {
           redirect=`/${form}/daacs`
         } else {
           redirect=`/${form}/questions`
-        }
+        }*/
         // Automatically redirect to questions if daac sent in
-        if(typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.group != 'undefined'){
-          redirect=`/${form}/questions/${this.$route.query.group}`
+        //if(typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.group != 'undefined'){
+          //redirect=`/${form}/questions/${this.$route.query.group}`
         // Automatically redirect to questions if daac selected
+        if(this.$route && this.$route.query && this.$route.query.group){
+          const page = window.headerComponent.showDaacs ? '/daacs' : '/questions'
+          const group = this.$route.query.group
+          redirect=`/${form}/${page}/${group}`
         } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
           redirect=`/${form}/questions/${window.localStorage.getItem('DAAC')}`
           this.$store.commit(
@@ -68,23 +73,27 @@ export default {
           redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC') == null){
-          redirect = `${window.location.href}interest/daacs/selection`
+          //redirect = `${window.location.href}interest/daacs/selection`
+          redirect = `/interest/daacs/selection`
           this.$store.commit(
             "pushGlobalParams",
             ['showDaacs',`${window.localStorage.getItem('showDaacs')}`]
           );
         // Set path from localhost to questionnaire questions
         } else if (!window.localStorage.getItem("showDaacs")){
-          redirect = `${window.location.href}questionaire/questions`
+          //redirect = `${window.location.href}questionaire/questions`
+          redirect = `/questionaire/questions`
         }
         this.setGlobalParameters(form);
-        if(window.location.href != `${host}${redirect}`){
-          this.setActiveLocationWithoutReload(window.location.href, `${host}${redirect}`)
+        //if(window.location.href != `${host}${redirect}`){
+        if(this.$route.fullPath != redirect){
+          //this.setActiveLocationWithoutReload(window.location.href, `${host}${redirect}`)
+          this.setActiveLocationWithoutReload(window.location.href, `${redirect}`)
           if(window.location.href.match(/questions/g)){
             this.setActiveNav('questions');
             this.$router.push({
               name: `${form_name_prefix}Questions`,
-              path: `${host}${redirect}`,
+              path: `${redirect}`,
               params: {
                 formId: this.$store.state.global_params['formId'],
                 requestId: this.$store.state.global_params['requestId'],
@@ -246,7 +255,7 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
-          //console.log(`location: ${lctn}, shortName: ${shortName}, current_href: ${current_href}, to_href: ${to_href}, nextUrl: ${next_url}, after_protocol: ${after_protocol}, newurl: ${new_url}`)
+          console.log(`location: ${lctn}, shortName: ${shortName}, current_href: ${current_href}, to_href: ${to_href}, nextUrl: ${next_url}, after_protocol: ${after_protocol}, newurl: ${new_url}`)
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       }
