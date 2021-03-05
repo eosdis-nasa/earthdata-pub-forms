@@ -100,6 +100,17 @@ export default {
                 group: this.$store.state.global_params['group']
               }
             });
+          } else {
+            this.setActiveNav('daacs');
+            this.$router.push({
+              name: `${form_name_prefix}Daacs`,
+              path: `${redirect}`,
+              params: {
+                formId: this.$store.state.global_params['formId'],
+                requestId: this.$store.state.global_params['requestId'],
+                group: this.$store.state.global_params['group']
+              }
+            });
           }
         }
       },

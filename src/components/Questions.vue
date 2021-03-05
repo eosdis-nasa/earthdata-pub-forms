@@ -157,7 +157,7 @@
                                   <!-- End of Checkbox Type of Input -->
                                 </span>
                             <b-row v-else>
-                              <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
+                              <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                               <template v-if="showIf(input.show_if)">
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox'">{{input.label}}:</label>
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
@@ -169,13 +169,13 @@
                                   ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                                 </span>
                                 <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                  <span v-if="contact != values[input.control_id] && contact != ''">
+                                  <span id="contact_span" v-if="contact != values[input.control_id] && contact != ''">
                                     <label 
                                       :id="`same_as_${input.control_id}_label`"
                                       :for="`same_as_${input.control_id}`" 
                                       v-if="input.contact == true" 
                                       @click="setContact(input.control_id, contact)"
-                                      class="eui-label">
+                                      class="eui-label"> 
                                       Same as {{contact}} </label>
                                       <b-form-checkbox 
                                         class="eui-checkbox"
@@ -1485,6 +1485,9 @@ export default {
 };
 </script>
 <style scoped>
+#contact_span{
+  margin-left:2rem; 
+}
 .eui-label-nopointer {
   cursor: auto;
 }
