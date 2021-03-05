@@ -41,18 +41,6 @@ export default {
         let form_components = this.getPath()
         let form = form_components[0]
         let form_name_prefix = form_components[1]
-        /*let address = window.location.href.split("/")
-        var host = address[0] + address[1] + address[2];
-        host = host.replace('http:','http://')
-        // Get form set path start
-        if(window.headerComponent.showDaacs){
-          redirect=`/${form}/daacs`
-        } else {
-          redirect=`/${form}/questions`
-        }*/
-        // Automatically redirect to questions if daac sent in
-        //if(typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.group != 'undefined'){
-          //redirect=`/${form}/questions/${this.$route.query.group}`
         // Automatically redirect to questions if daac selected
         if(this.$route && this.$route.query && this.$route.query.group){
           const page = window.headerComponent.showDaacs ? '/daacs' : '/questions'
@@ -64,7 +52,6 @@ export default {
             "pushGlobalParams",
             ['group',`${window.localStorage.getItem('DAAC')}`]
           );
-          //console.log('request id is ' + this.$store.state.global_params['requestId'])
         // Set path to form and group daac (selection) for interest form
         } else if (form != '' && form.toLowerCase().match(/interest/g)){
           redirect=`/${form}/daacs/selection`
@@ -73,7 +60,6 @@ export default {
           redirect=`/${form}/questions`
         // Set path from localhost to interest form with group daac (selection)
         } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC') == null){
-          //redirect = `${window.location.href}interest/daacs/selection`
           redirect = `/interest/daacs/selection`
           this.$store.commit(
             "pushGlobalParams",
@@ -81,15 +67,11 @@ export default {
           );
         // Set path from localhost to questionnaire questions
         } else if (!window.localStorage.getItem("showDaacs")){
-          //redirect = `${window.location.href}questionaire/questions`
           redirect = `/questionaire/questions`
         }
         this.setGlobalParameters(form);
-        //if(window.location.href != `${host}${redirect}`){
         if(this.$route.fullPath != redirect){
-          //this.setActiveLocationWithoutReload(window.location.href, `${host}${redirect}`)
-          this.setActiveLocationWithoutReload(window.location.href, `${redirect}`)
-          if(window.location.href.match(/questions/g)){
+          if(this.$route.fullPath.match(/questions/g)){
             this.setActiveNav('questions');
             this.$router.push({
               name: `${form_name_prefix}Questions`,
@@ -112,6 +94,7 @@ export default {
               }
             });
           }
+          this.setActiveLocationWithoutReload(window.location.href, `${redirect}`)
         }
       },
       // @vuese

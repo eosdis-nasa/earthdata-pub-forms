@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.1.4 - 2021-02-17
 
+- [added in for daacs selection page route; added slash to config; minor style tweak for contact checkbox](dac7111791cc8879106607460b1328bc2509ca48)
 - [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
 - [Added validation to insure no negative numbers; fixed save so does not redirect](7e74d607103c17dcf0bfa1e44b845270002aab8f)
 - [Added message to redirect notification so theres 1 popup for that condition](deb64d5f3f3215b75a8f86a05b9e5a12aa73e755)
