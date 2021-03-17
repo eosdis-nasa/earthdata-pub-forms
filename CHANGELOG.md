@@ -6,6 +6,10 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.5 - 2021-03-17
+
+- [Removed Home.vue and simplified code; removed any unused code for increased test coverage; cleaned up routes and updated vuese comments](69ed572819031b0f674bdd2db3f9b9854d0ef375)
+
 ## 0.1.4 - 2021-02-17
 
 - [added in for daacs selection page route; added slash to config; minor style tweak for contact checkbox](dac7111791cc8879106607460b1328bc2509ca48)
