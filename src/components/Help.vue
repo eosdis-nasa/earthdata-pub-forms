@@ -28,7 +28,10 @@
         data() {
             return {
                 selected: '',
-                help_tips: []
+                help_tips: [],
+                formId: '',
+                requestId: '',
+                group:''
             }
         },
         computed: {
@@ -45,8 +48,10 @@
             }
         },
         methods: {
-            // Loops through the questions.json and builds a help object from that.
-            // If a id is passed in, it just displays single 'Help Tip'
+            // @vuese
+            // Fetches help tips or individual tip. Loops through questions.json and builds
+            // help object from that.
+            // @help_id - the id to the question's specific help for individual lookup
             fetchHelp(help_id){
                 var help_tips = []
                 $.ajaxSetup({
@@ -55,7 +60,7 @@
                     }
                 });
                 // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-                let form = this.getPath()[0]
+                let form = this.getForm();
                 let json_name = ''
                 if(form.match(/interest/g)){
                     json_name = 'data_publication_request' 
@@ -95,8 +100,14 @@
             this.setActiveNav("help");
             let loc;
             let daacStored;
-            if(window.localStorage.getItem('DAAC')!=null){
-                daacStored = window.localStorage.getItem('DAAC')
+            if(typeof this.$store !== 'undefined' && this.$store.state.global_params['group']){
+                daacStored = this.$store.state.global_params['group']
+            }
+            if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+                this.formId = this.$store.state.global_params['formId']
+            }
+            if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+                this.requestId = this.$store.state.global_params['requestId']
             }
             if(daacStored !=null && typeof this.$route != 'undefined'){
                 let re = new RegExp(`/${daacStored}`)

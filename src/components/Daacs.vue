@@ -65,7 +65,8 @@ export default {
       loaded: false,
       daacs: [],
       formId: '',
-      requestId: ''
+      requestId: '',
+      showDaacs: ''
     };
   },
   props: {},
@@ -85,24 +86,27 @@ export default {
       }, 1);
     }
   },
+  // This is equivalent to document.ready
   mounted() {
     window.daacsComponent = this;
-    //console.log('DAACS MOUNTED')
     this.setActiveNav("daacs");
-    // You are at the point when you are clicking links, you will have to see about setting params for the header clicking -> questions is wrong
     this.fetchDaacs().then(() => {
-      if(typeof this.$store.state.global_params['group'] != 'undefined'){
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
         let daacData = this.getDaac(this.$store.state.global_params['group'])
-        this.selected = daacData.long_name;
+        if(typeof daacData!= 'undefined'){
+          this.selected = daacData.long_name;
+        }
       }
     });
-    if(typeof this.$store.state.global_params['formId'] != 'undefined'){
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
       this.formId = this.$store.state.global_params['formId']
     }
-    if(typeof this.$store.state.global_params['requestId'] != 'undefined'){
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
       this.requestId = this.$store.state.global_params['requestId']
     }
-    //console.log(`DAACS formId: ${this.formId}, requestId: ${this.requestId}, group: ${this.daac}, showDaacs: ${this.showDaacs}`)
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
+      this.showDaacs = this.$store.state.global_params['showDaacs']
+    }
   },
   methods: {
     // @vuese
@@ -128,7 +132,8 @@ export default {
       })
     },
     // @vuese
-    // Fetchs DAAC specific data
+    // Fetchs DAAC specific metadata
+    // @daac_specific - current hash to look for
     getDaac(daac_specific) {
       // Gets DAAC data for template
       if (typeof daac_specific === "undefined") {
@@ -157,6 +162,12 @@ export default {
     },
     // @vuese
     // On selected, sets current daac objects from values
+    // @current_daac - currently a hash
+    // @url - daac url
+    // @id - currently a hash
+    // @short_name - string
+    // @long_name - string
+    // @description - string
     setCurrentDaacObjects(
       current_daac,
       url,
@@ -200,18 +211,14 @@ export default {
     },
     // @vuese
     // On selected, builds dynamic text and sets html dynamically with the link
+    // @url - daac url
+    // @id - currently a hash
+    // @short_name - string
+    // @long_name - string
+    // @description - string
     setSelectedValues(url, id, short_name, long_name, description) {
-      let current = this.setCurrentDaacObjects(
-        this.selected,
-        url,
-        id,
-        short_name,
-        long_name,
-        description
-      );
-      short_name = current[0]
-      id = current[1]
       if (
+        typeof this.$store !== 'undefined' && 
         typeof this.$store.state.global_params['group'] != "undefined" &&
         this.$store.state.global_params['group'] != null
       ) {
@@ -226,60 +233,46 @@ export default {
         id = current[1]
         this.$store.state.global_params['group'] = id
       }
-      this.setActiveLocationWithoutReload(location.href, id);
-      this.setSaveObject(short_name, id);
+      this.setActiveLocationWithoutReload(id);
+      window.headerComponent.daac = id
       return short_name;
     },
     // @vuese
-    // @arg The event
-    enterSubmitForm(evt) {
+    // @arg The event to prevent for checking validity first
+    enterSubmitForm() {
       // Calls submit form via enter key
-      evt.preventDefault();
       if (this.enterSubmit) {
         this.submitForm();
       }
     },
     // @vuese
-    // Used to submit the form data if valid
+    // Used to submit the form data and move on to questions, if daac valid
     submitForm() {
-      // Submit form (this.selected) if valid
       this.$v.$touch();
       let args = {}
-      if (this.$store.state.global_params['formId'] != ''){
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != ''){
         args['formId'] = this.$store.state.global_params['formId']
       }
-      if (this.$store.state.global_params['requestId'] != ''){
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] != ''){
         args['requestId'] = this.$store.state.global_params['requestId']
       }
-      if (this.$store.state.global_params['group'] != "") {
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
         this.$router.push({
-          name: "Data Publication Request - Questions",
+          name: `${this.getFormNamePrefix()}Questions`,
           params: { args }
         });
       } else {
         args['group'] = 'selection'
-        this.$router.push({ name: "Data Publication Request - Daacs", params: args });
-      }
-    },
-    // @vuese
-    // Used to save file
-    setSaveObject(short_name, id) {
-      // Saves file to localStorage
-      if (this.$store.state.global_params['group'] != "") {
-        'setting storage'
-        window.localStorage.setItem(
-          "DAAC",
-          `${id}`
-        );
-        window.headerComponent.daac = id
+        this.$router.push({ name: `${this.getFormNamePrefix()}Daacs`, params: args });
       }
     },
     // @vuese
     // Gets the current daac selected and updates
     GetCurrentDaacAndUpdate() {
       if (
-        this.$store.state.global_params['group'] == "" &&
+        (typeof this.$store !== 'undefined' && 
+        this.$store.state.global_params['group'] == "") &&
         !window.location.href.match(/daacs\/selection/g) &&
         (typeof this.$store.state.global_params['group'] == "undefined" ||
           this.$store.state.global_params['group'] == "")
@@ -291,24 +284,20 @@ export default {
         );
       }
       if (
-        (this.$store.state.global_params['group'] != "undefined" &&
+        (typeof this.$store !== 'undefined' && 
+          this.$store.state.global_params['group'] != "undefined" &&
           this.$store.state.global_params['group'] != null &&
           this.$store.state.global_params['group'] != "" &&
-          this.$store.state.global_params['group'] != "selection") ||
-        window.localStorage.getItem("DAAC") != null
+          this.$store.state.global_params['group'] != "selection")
       ) {
         let default_daac;
         let selected;
-        if (this.$store.state.global_params['group'] != "") {
+        if (typeof this.$store !== 'undefined' && 
+          (this.$store.state.global_params['group'] != "" ||
+          typeof this.$store.state.global_params['group'] !== "undefined")) {
           selected = this.getDaac(this.$store.state.global_params['group']);
-        } else if (typeof this.$store.state.global_params['group'] != "undefined") {
-          selected = this.getDaac(
-            this.$store.state.global_params['group']
-          );
-        } else if (window.localStorage.getItem("DAAC") != null) {
-          selected = this.getDaac(window.localStorage.getItem("DAAC"));
-        }
-        if (typeof selected != "undefined") {
+        } 
+        if (typeof selected !== "undefined") {
           let id = selected["id"];
           default_daac = id;
           if (

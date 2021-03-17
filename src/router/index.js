@@ -3,17 +3,11 @@ import VueRouter from 'vue-router'
 import Daacs from '@/components/Daacs'
 import Questions from '@/components/Questions'
 import Help from '@/components/Help'
-import Home from '@/components/Home'
 import PageNotFound from '@/components/PageNotFound'
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
   {
     path: '/interest/daacs/:group',
     name: 'Data Publication Request - Daacs',
