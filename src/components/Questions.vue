@@ -1236,6 +1236,10 @@ export default {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
         (answers) => {
+          if(answers.error){
+            window.localStorage.removeItem('vuex')
+            return
+          }
           this.values = answers.form_data;
         })
       }
@@ -1249,8 +1253,6 @@ export default {
         typeof this.$store !== 'undefined' && 
         this.$store.state.global_params['group'] != "") {
         DAAC = this.$store.state.global_params['group']
-      } else if (this.daac == null && window.localStorage.getItem("DAAC") != null){
-        DAAC = window.localStorage.getItem("DAAC");
       } else {
         DAAC = this.daac;
       }
