@@ -111,6 +111,6 @@ More information on requiredif and [vuelidate validators](https://vuelidate.js.o
 
 Files that were used during development are available in the repo and can be viewed:
 
-- [Submission Request Form](public/questionnaire/submission_request.json)
-- [Daacs](public/questionnaire/daacs.json)
-- [Data Product Questionnaire](public/questionnaire/data_product_questionnaire.json)
+- [Data Publication Request](public/interest/data_publication_request.json)
+- [Daacs](public/interest/daacs.json)
+- [Data Product Information](public/questionnaire/data_product_information.json)

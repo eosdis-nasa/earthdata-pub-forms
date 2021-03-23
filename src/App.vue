@@ -18,8 +18,7 @@
     export default {
         name: 'app',
         metaInfo: {
-            title: 'Default App Title',
-            titleTemplate: '%s | vue-meta Example App',
+            title: 'Earthdata Pub Forms',
             htmlAttrs: {
                 reptilian: 'gator'
             },
@@ -48,7 +47,9 @@
             if(typeof this.$refs.content !='undefined'){
                 this.$watch(
                     () => {
-                        return this.$refs.content.formTitle
+                        if(typeof this.$refs.content !=='undefined'){
+                            return this.$refs.content.formTitle
+                        }
                     },
                     val => {
                         window.formTitle = val

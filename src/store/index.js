@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
+import createPersistedState from "vuex-persistedstate";
 
 // This is to use vuex for the state management
 Vue.use(Vuex)
@@ -12,16 +13,21 @@ Vue.use(VuexUndoRedo);
 export const store = new Vuex.Store({
   // State is the default obj and value
   state: {
-    question_answers: []
+    question_answers: [],
+    global_params: {},
   },
   mutations: {
     // push question state to save the payload to the store state question_answers
     pushQuestionsState(state, payload){
       state.question_answers.push(Object.assign({}, payload))
     },
+    pushGlobalParams(state, param){
+      state.global_params[param[0]] = param[1]
+    },
     // .emptyState() is needed by VuexUndoRedo
     emptyState() {
       this.replaceState({ question_answers: [] });
+      this.replaceState({ global_params: [] });
     },
   },
   actions: {
@@ -31,5 +37,7 @@ export const store = new Vuex.Store({
 
   },
   modules: {
-  }
+    
+  },
+  plugins: [createPersistedState()]
 })

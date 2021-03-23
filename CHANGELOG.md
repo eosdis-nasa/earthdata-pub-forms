@@ -10,8 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [Add pull request template to CONTRIBUTING.md](1a4f968106d37c2f6a88994fcb15ec59182906b1)
 
+## 0.1.5 - 2021-03-17
+
+- [Removed Home.vue and simplified code; removed any unused code for increased test coverage; cleaned up routes and updated vuese comments](69ed572819031b0f674bdd2db3f9b9854d0ef375)
+
 ## 0.1.4 - 2021-02-17
 
+- [added in for daacs selection page route; added slash to config; minor style tweak for contact checkbox](dac7111791cc8879106607460b1328bc2509ca48)
 - [Changed submit message and confirmation dialog to msgbox to reflect auto-redirect](1ee547d197ffa4153805ae2cc8a3c71dfbfaa54e)
 - [Added validation to insure no negative numbers; fixed save so does not redirect](7e74d607103c17dcf0bfa1e44b845270002aab8f)
 - [Added message to redirect notification so theres 1 popup for that condition](deb64d5f3f3215b75a8f86a05b9e5a12aa73e755)
@@ -38,6 +43,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - [Updated cancel redirect to just say dashboard requests versus long url](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
 - [Added condition if no error before redirect in exitform function](b07d898f9d867d5b9684fd3a78dae0e85c65cdd6)
+- [Made base url configurable](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Updated vue-router to use the base url](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Updated mixin to use router for internal redirects](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
+- [Removed APIROOT from start script](f74c22d69b532d4f25839b64b723bcb7ee26c9bb)
 - [Corrected request back to submission for post](71022acb85c83d90be193b9f3f8d358be3a0fc07)
 - [Did a blanket replace of 'submission' to request to simulate the dashboard.](abc4bc0229480919eeadbb75fd5eb59ff08d1ff2)
 

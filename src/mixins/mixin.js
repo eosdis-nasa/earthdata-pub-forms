@@ -1,14 +1,12 @@
 // Jquery javascript
-import $ from 'jquery'
 export default {
     props:{
-      
     },
     computed: {
     },
     methods: {
       // @vuese
-      // Checks for authorization token, if none, redirects to dashboard_root/auth
+      // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
@@ -20,11 +18,12 @@ export default {
       },
       // @vuese
       // Converts sentence string to title case
+      // @str - the string to make title case
       titleCase(str) {
         if(typeof str != 'undefined'){
             str = str.toLowerCase().split(' ');
             for (var i = 0; i < str.length; i++) {
-                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
             }
         } else {
             return 'undefined'
@@ -32,56 +31,131 @@ export default {
         return str.join(' ');
       },
       // @vuese
-      // Re-evaluates the route and changes it if applicable
-      resetRoute(){
-        this.checkAuth()
-        this.setShowDaacs()
-        let redirect = '';
-        let form = this.getPath()[0]
-        let address = window.location.href.split("/")
-        var host = address[0] + address[1] + address[2];
-        host = host.replace('http:','http://')
-        // Get form set path start
-        if(window.headerComponent.showDaacs){
-            redirect=`/${form}/daacs`
+      // Returns form global params or looks it up by the path
+      getForm(){
+        let form;
+        if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['form'] != 'undefined'){
+          form = this.$store.state.global_params['form']
         } else {
-            redirect=`/${form}/questions`
+          form = this.getPath()[0]
         }
-        // Append daac if parameter available
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined'){
-            redirect+=`/${this.$route.query.parameters.group.toLowerCase()}`
-        // Automatically redirect to questions if daac selected
-        } else if(window.localStorage.getItem('DAAC')!=null && form.toLowerCase().match(/interest/g)){
-            redirect=`/${form}/questions/${window.localStorage.getItem('DAAC').toLowerCase()}`
-        // Set path to form and group daac (selection) for interest form
-        } else if (form != '' && form.toLowerCase().match(/interest/g)){
-            redirect=`/${form}/daacs/selection`
+        return form
+      },
+      // @vuese
+      // Returns form name prefix from global params or looks it up by the path
+      getFormNamePrefix(){
+        let form_name_prefix;
+        if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['form_name_prefix'] != 'undefined'){
+          form_name_prefix = this.$store.state.global_params['form_name_prefix']
+        } else {
+          form_name_prefix = this.getPath()[1]
+        }
+        return form_name_prefix
+      },
+      // @vuese
+      // Evaluates the route and changes it if applicable
+      setRoute(){
+        this.checkAuth()
+        let redirect = '';
+        let form = this.getForm();
+        this.setShowDaacs()
+        // Automatically redirect to questions if daac selected or sent in
+        if(this.$route && this.$route.query && this.$route.query.group){
+          redirect=`/${form}/questions/${this.$route.query.group}`
+          if(typeof this.$store !=='undefined'){
+            this.$store.commit("pushGlobalParams", ['group',`${this.$route.query.group}`]);
+          }
+        // Set path to form and questions for interest form
+        } else if (form.toLowerCase().match(/interest/g)){
+          redirect=`/${form}/daacs/selection`
+          if(typeof this.$store !=='undefined'){
+            this.$store.commit("pushGlobalParams", ['group',`selection`]);
+          }
         // Set path to form and questions for questionnaire
-        } else if (form != ''){
-            redirect=`/${form}/questions`
-        // Set path from localhost to interest form with group daac (selection)
-        } else if (window.localStorage.getItem("showDaacs") && window.localStorage.getItem('DAAC').toLowerCase() == null){
-            redirect = `${window.location.href}interest/daacs/selection`
-        // Set path from localhost to questionnaire questions
-        } else if (!window.localStorage.getItem("showDaacs")){
-            redirect = `${window.location.href}questionaire/questions`
+        } else if (form.toLowerCase().match(/questionnaire/g)){
+          redirect=`/${form}/questions`
+          if(typeof this.$store !=='undefined'){
+            this.$store.commit("pushGlobalParams", ['group', null]);
+          }
         }
-        if(window.location.href != `${host}${redirect}`){
-            window.location.href = redirect.toLowerCase()
+        this.setGlobalParameters();
+        if(this.$route.fullPath != redirect){
+          let prefix, formId, requestId, group, loc
+          if(typeof this.$store === 'undefined'){
+            prefix = this.getFormNamePrefix();
+            formId = undefined;
+            requestId = undefined;
+            group = undefined;
+          } else {
+            prefix = this.$store.state.global_params['form_name_prefix'];
+            formId = this.$store.state.global_params['formId'];
+            requestId = this.$store.state.global_params['requestId'];
+            group = this.$store.state.global_params['group'];
+          }
+          if(redirect.match(/questions/g)){
+            loc = 'questions';
+          } else {
+            loc = 'daacs';
+          }
+          this.setActiveNav(loc);
+          this.$router.push({
+            name: `${prefix}${this.titleCase(loc)}`,
+            path: `${redirect}`,
+            params: {
+              formId: formId,
+              requestId: requestId,
+              group: group
+            }
+          });
+          this.setActiveLocationWithoutReload(`${redirect}`)
         }
       },
       // @vuese
-      // get Path via parameters, form title (json), then route path 
+      // Set store global parameters from route
+      setGlobalParameters(){
+        let form_components = this.getPath()
+        let form = form_components[0]
+        if(typeof this.$store !=='undefined'){
+          this.$store.commit("pushGlobalParams", ['form_name_prefix',`${form_components[1]}`]);
+          this.$store.commit("pushGlobalParams", ['form',`${form}`]);
+          if(typeof this.$route.query.formId != 'undefined'){
+            this.$store.commit("pushGlobalParams",['formId',`${this.$route.query.formId}`]);
+          } else if (form == 'questionnaire'){
+            this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`]);
+          } else {
+            this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`]);
+          }
+          if(typeof this.$route.query.requestId != 'undefined'){
+            this.$store.commit("pushGlobalParams",['requestId',`${this.$route.query.requestId}`]);
+          }
+          if(typeof this.$route.query.group != 'undefined'){
+            if (form == 'questionnaire'){
+              this.$store.commit("pushGlobalParams",['group', null]);
+            } else {
+              this.$store.commit("pushGlobalParams",['group',`${this.$route.query.group}`]);
+            }
+          }
+          if(typeof this.$route.query.showDaacs != 'undefined'){
+            this.$store.commit("pushGlobalParams",['showDaacs',`${this.$route.query.showDaacs}`]);
+          }
+        }
+      },
+      // @vuese
+      // get Path via parameters, form title (json), then route path
       getPath(){
         let form = ''
-        if (typeof this.$route != 'undefined' && typeof this.$route.query != 'undefined' && typeof this.$route.query.form != 'undefined'){
-          form = this.$route.query.form
+        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}` || 
+          typeof this.$route !== 'undefined' && this.$route.query.formId == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`){
+          form = 'questionnaire'
+        } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}` ||
+          typeof this.$route !== 'undefined' && this.$route.query.formId == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`){
+          form = 'interest'
         } else if (typeof window.formTitle != 'undefined' && window.formTitle != ''){
           if (window.formTitle.toLowerCase().match(/publication/g)){
             form = 'interest'
           } else {
             form = 'questionnaire'
-          }   
+          }
         } else if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
           if(this.$route.path.toLowerCase().match(/interest/g)){
             form = 'interest'
@@ -100,30 +174,34 @@ export default {
         return [form, component_name_prefix]
       },
       // @vuese
-      // get Path via parameters, form title, then property 
+      // get Path via parameters then form, then saves whether daacs should show to the store
       setShowDaacs(){
-        let form = this.getPath()[0]
-        if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)){
+        let form = this.getForm()
+        if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
+          window.headerComponent.showDaacs = (this.$store.state.global_params['showDaacs'] == 'true' || this.$store.state.global_params['showDaacs'])
+        } else if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined' && form.toLowerCase().match(/interest/g)){
           window.headerComponent.showDaacs = true
-          window.localStorage.setItem("showDaacs", true);
-        } else if(typeof this.$route != 'undefined' && typeof this.$route.query.parameters != 'undefined' && typeof this.$route.query.parameters.group != 'undefined' && Boolean(this.$route.query.parameters.group)==false){
-          window.headerComponent.showDaacs = false
-          window.localStorage.setItem("showDaacs", false);
         } else if (form.match(/questionnaire/g)){
           window.headerComponent.showDaacs = false
-          window.localStorage.setItem("showDaacs", false);
         } else if (form.match(/interest/g)){
           window.headerComponent.showDaacs = true
-          window.localStorage.setItem("showDaacs", true);
+        }
+        if (window.headerComponent.showDaacs && typeof this.$store !=='undefined'){
+          this.$store.commit("pushGlobalParams", ['showDaacs',`${window.headerComponent.showDaacs}`]);
         }
       },
       // @vuese
-      // Set Daacs daac via parameters or windows storage 
+      // Set Daacs daac via parameters or form
       setDaacs(){
-        if (window.localStorage.getItem("DAAC") != null) {
-          return window.localStorage.getItem("DAAC");
-        } else {
+        let form = this.getForm()
+        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group']!= ''){
+          this.$store.commit("pushGlobalParams", ['group',`${this.$store.state.global_params['group']}`]);
+          return this.$store.state.global_params['group']
+        } else if (form.toLowerCase().match(/interest/g) && typeof this.$store !== 'undefined'){
+          this.$store.commit("pushGlobalParams", ['group',`selection`]);
           return "selection";
+        } else {
+          return null;
         }
       },
       // @vuese
@@ -139,45 +217,19 @@ export default {
                 window.document.getElementById(`${activeElement}_nav_link`).className = activeClass
               } else {
                 prevClassname = window.document.getElementById(`${navs[n]}_nav_link`).className
-                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'') 
+                window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'')
               }
             }
           }
         }, 10)
       },
       // @vuese
-      // Get active nav element according to class of nav elements
-      getActiveNavViaClass(navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active.router-link-active'){
-        for(var n in navs){
-          if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
-          if ($(`#${navs[n]}_nav_link`).hasClass(activeClass)){
-            return navs[n]
-          }
-        }
-      },
-      // @vuese
-      // Set active nav element according to location.href value
-      setActiveNavViaLocation(navs = ['daacs', 'help', 'questions']){
-          var match_found = false
-          for(var n in navs){
-            if(!window.headerComponent.showDaacs && navs[n] == 'daacs'){ continue }
-            var reg = `/${navs[n]}/`
-            var re = new RegExp(reg, "g")
-            if(location.href.match(re)){
-              this.setActiveNav(navs[n])
-              match_found = true
-            }
-          }
-          return match_found
-      },
-      // @vuese
       // Set / Resets active location.href value without updating state
-      setActiveLocationWithoutReload(lctn = location.href, shortName){
-        if(typeof shortName !='undefined' && shortName != null && (lctn.match(/questions/g) || lctn.match(/daacs/g))){
+      setActiveLocationWithoutReload(shortName){
+        if(typeof shortName !='undefined' && shortName != null){
           let after_protocol, new_url;
-          var current_href = lctn.substr(0, lctn.lastIndexOf("/")).toLowerCase()
           let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
-          let next_url = `${current_href}/${to_href}`
+          let next_url = `${to_href}`
           if(typeof next_url.split('http://')[1] != 'undefined'){
             after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
             new_url = `http://${after_protocol}`

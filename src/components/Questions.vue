@@ -157,9 +157,9 @@
                                   <!-- End of Checkbox Type of Input -->
                                 </span>
                             <b-row v-else>
-                              <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required </span>
+                              <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                               <template v-if="showIf(input.show_if)">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox'">{{input.label}}:</label>
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
@@ -169,13 +169,13 @@
                                   ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                                 </span>
                                 <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                  <span v-if="contact != values[input.control_id] && contact != ''">
+                                  <span id="contact_span" v-if="contact != values[input.control_id] && contact != ''">
                                     <label 
                                       :id="`same_as_${input.control_id}_label`"
                                       :for="`same_as_${input.control_id}`" 
                                       v-if="input.contact == true" 
                                       @click="setContact(input.control_id, contact)"
-                                      class="eui-label">
+                                      class="eui-label"> 
                                       Same as {{contact}} </label>
                                       <b-form-checkbox 
                                         class="eui-checkbox"
@@ -368,8 +368,7 @@ export default {
       confirm: false,
       validation_errors: {},
       formId: "",
-      requestId: "",
-      exitAfterSave: false,
+      requestId: ""
     };
   },
   props: {
@@ -402,25 +401,27 @@ export default {
           clearTimeout(this.saveTimeout);
         }
         this.saveTimeout = setTimeout(() => {
-          if (!this.values.fromUndo) {
-            this.setContacts(this.values);
-            this.$store.commit(
-              "pushQuestionsState",
-              Object.assign({}, this.values)
-            );
-            this.$log.debug(
-              "pushQuestionsState",
-              Object.assign({}, this.values)
-            );
-            var string_logging_object = this.$log.debug("pushQuestionsState");
-            this.$logging_object[Date(Date.now()).toString()] = {
-              log_string: string_logging_object,
-              answers: Object.assign({}, this.values),
-            };
-          }
-          delete this.values.fromUndo;
-          if (this.$v.$anyError) {
-            this.$v.$touch();
+          if(typeof this.values != 'undefined'){
+            if (!this.values.fromUndo) {
+              this.setContacts(this.values);
+              this.$store.commit(
+                "pushQuestionsState",
+                Object.assign({}, this.values)
+              );
+              this.$log.debug(
+                "pushQuestionsState",
+                Object.assign({}, this.values)
+              );
+              var string_logging_object = this.$log.debug("pushQuestionsState");
+              this.$logging_object[Date(Date.now()).toString()] = {
+                log_string: string_logging_object,
+                answers: Object.assign({}, this.values),
+              };
+            }
+            delete this.values.fromUndo;
+            if (this.$v.$anyError) {
+              this.$v.$touch();
+            }
           }
         }, 250);
       },
@@ -550,7 +551,6 @@ export default {
                 val_fields.values[fld.control_id] =
                   val_fields.values[fld.control_id] || {};
                 val_fields.values[fld.control_id].startEndDates = () => {
-                  this.$v.$touch();
                   if (typeof fld.control_id != "undefined") {
                     let start, end;
                     if (fld.control_id.match(/start/g)) {
@@ -593,7 +593,6 @@ export default {
                 val_fields.values[fld.control_id] =
                   val_fields.values[fld.control_id] || {};
                 val_fields.values[fld.control_id].noNegatives = () => {
-                  this.$v.$touch();
                   if (parseInt(this.values[fld.control_id]) < 0){
                     return false;
                   }
@@ -626,7 +625,10 @@ export default {
         }
       }
     }
-    let DAAC_SET = window.localStorage.getItem("DAAC");
+    let DAAC_SET;
+    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != ''){
+      DAAC_SET = this.$store.state.global_params['group']
+    } 
     if (DAAC_SET !== null) {
       this.$required = JSON.stringify(val_fields.values);
     }
@@ -635,6 +637,7 @@ export default {
   methods: {
     // @vuese
     // Validates required question inputs; returns true if valid
+    // @inputs - array of inputs to look for bbox in
     validateQuestionInputsRequired(inputs) {
       for (let input of inputs) {
         if (input.type == "bbox") {
@@ -671,6 +674,8 @@ export default {
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
+    // @fld - the bbox field
+    // @direction - The direction of the fld
     getBboxError(fld, direction) {
       if (
         typeof this.values[`${fld.control_id}_${direction}`] != "undefined" &&
@@ -712,6 +717,7 @@ export default {
     },
     // @vuese
     // Shows and Hides based of json show_if
+    // @config - validates for showif
     showIf(config) {
       if (typeof config == "undefined" || config.length == 0) {
         return true;
@@ -731,6 +737,8 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
+    // @id_to - The id of the element to set to
+    // @contact - The value of the element to set to
     setContact: function (id_to, contact) {
       let inputs = $("#questions_container input");
       for (let i in inputs) {
@@ -821,12 +829,17 @@ export default {
               $(`#${to_orcid_id}`).focus();
             }
             this.setContacts(this.values);
+            this.$store.commit(
+              "pushQuestionsState",
+              Object.assign({}, this.values)
+            );
           }
         }
       }
     },
     // @vuese
     // Gets contacts and builds options for checkbox
+    // @values - The forms values to look for contacts in
     setContacts: function (values) {
       this.contacts = [];
       let questions = this.questions[0];
@@ -834,34 +847,36 @@ export default {
         if (!ea.toLowerCase().match(/name/g)) {
           continue;
         }
-        for (let section of questions) {
-          let inputs = section["inputs"];
-          let text = section["text"];
-          let long_name = section["long_name"];
-          let help = section["help"];
-          for (let i in inputs) {
-            let inp = inputs[i];
-            let label = inp["label"];
-            if (ea === inp["control_id"]) {
-              if (
-                ((typeof text != "undefined" &&
-                  text.toLowerCase().match(/person/g)) ||
-                  (typeof text != "undefined" &&
-                    text.toLowerCase().match(/contact/g)) ||
-                  (typeof long_name != "undefined" &&
-                    long_name.toLowerCase().match(/person/g)) ||
-                  (typeof long_name != "undefined" &&
-                    long_name.toLowerCase().match(/contact/g)) ||
-                  (typeof help != "undefined" &&
-                    help.toLowerCase().match(/person/g)) ||
-                  (typeof help != "undefined" &&
-                    help.toLowerCase().match(/contact/g))) &&
-                label.toLowerCase().match(/name/g) &&
-                this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
-                  false &&
-                this.values[inputs[i]["control_id"]] != ""
-              ) {
-                this.contacts.push(this.values[inputs[i]["control_id"]]);
+        if(typeof questions != 'undefined'){
+          for (let section of questions) {
+            let inputs = section["inputs"];
+            let text = section["text"];
+            let long_name = section["long_name"];
+            let help = section["help"];
+            for (let i in inputs) {
+              let inp = inputs[i];
+              let label = inp["label"];
+              if (ea === inp["control_id"]) {
+                if (
+                  ((typeof text != "undefined" &&
+                    text.toLowerCase().match(/person/g)) ||
+                    (typeof text != "undefined" &&
+                      text.toLowerCase().match(/contact/g)) ||
+                    (typeof long_name != "undefined" &&
+                      long_name.toLowerCase().match(/person/g)) ||
+                    (typeof long_name != "undefined" &&
+                      long_name.toLowerCase().match(/contact/g)) ||
+                    (typeof help != "undefined" &&
+                      help.toLowerCase().match(/person/g)) ||
+                    (typeof help != "undefined" &&
+                      help.toLowerCase().match(/contact/g))) &&
+                  label.toLowerCase().match(/name/g) &&
+                  this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
+                    false &&
+                  this.values[inputs[i]["control_id"]] != ""
+                ) {
+                  this.contacts.push(this.values[inputs[i]["control_id"]]);
+                }
               }
             }
           }
@@ -870,6 +885,8 @@ export default {
     },
     // @vuese
     // Gets characters remaining from textarea
+    // @value - The current value 
+    // @maxlength - The maxlength to compare against the value
     charactersRemaining: function (value, maxlength) {
       let left = maxlength;
       let chars = 0;
@@ -882,7 +899,9 @@ export default {
       return left;
     },
     // @vuese
-    // Gets input attributes or undefined
+    // Gets input attributes and filters out those that are undefined
+    // @attr - The input attribute value
+    // @input - The input the attribute belongs to
     getAttribute(attr, input) {
       let attribute_value = undefined;
       if (
@@ -895,6 +914,7 @@ export default {
     },
     // @vuese
     // Handle html5 invalidity on form
+    // @evt - The event
     handleInvalid(evt) {
       $("#" + evt.target.name + "_invalid").text(evt.target.validationMessage);
       if (evt.target.validationMessage != "") {
@@ -914,7 +934,8 @@ export default {
       }
     },
     // @vuese
-    // Hides errors banner
+    // Hides errors banner on clicking x
+    // @id - The id of the element to hide
     dismiss(id) {
       document.getElementById(id).style.display = "none";
     },
@@ -932,10 +953,11 @@ export default {
           var question = [];
           this.contacts = [];
           let contact = false;
-          let form = this.getPath()[0];
+          let form = this.getForm();
           if (
-            this.formId == "" &&
-            (this.daac !== "selection" || this.daac != "")
+            typeof this.$store !== 'undefined' && 
+            this.$store.state.global_params['formId'] == "" &&
+            (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
           ) {
             for (let f in forms) {
               if (
@@ -945,7 +967,7 @@ export default {
                   .toLowerCase()
                   .match(/data_publication_request/g)
               ) {
-                this.formId = forms[f]["id"];
+                this.$store.state.global_params['formId'] = forms[f]["id"];
                 this.formTitle = forms[f]["long_name"];
                 break;
               } else if (
@@ -955,15 +977,15 @@ export default {
                   .toLowerCase()
                   .match(/data_product_information/g)
               ) {
-                this.formId = forms[f]["id"];
+                this.$store.state.global_params['formId'] = forms[f]["id"];
                 this.formTitle = forms[f]["long_name"];
                 break;
               }
             }
           }
           let url;
-          if (this.formId != "") {
-            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.formId}`;
+          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
           } else {
             let json_name = "";
             if (form.match(/interest/g)) {
@@ -1084,18 +1106,9 @@ export default {
       );
     },
     // @vuese
-    // Validation of input data returns error and if dirty
-    status(validation) {
-      // Returns error and if dirty
-      return {
-        error: validation.$error,
-        dirty: validation.$dirty,
-      };
-    },
-    // @vuese
-    // Prevents submit to apply validation; @arg The event
-    enterSubmitForm(evt) {
-      evt.preventDefault();
+    // Prevents submit to apply validation; 
+    // @evt - the event
+    enterSubmitForm() {
       if (this.enterSubmit) {
         this.submitForm();
       }
@@ -1112,24 +1125,26 @@ export default {
     },
     // @vuese
     // Sends data to the API
+    // @bvModal - the alert object to modify if an alert is necessary
+    // @DAAC - hash string of the group to set in the json
+    // @operation - string action (save, draft, submit)
     sendDataToApi(bvModal, DAAC, operation = "save") {
       let action;
-      let form_components = this.getPath();
-      let form = form_components[0];
+      let form = this.getForm();
       let was_draft = false
       let json = {
-        data: JSON.parse(window.localStorage.getItem(`${form}_outputs`))[
+        data: JSON.parse(this.$store.state.global_params[`${form}_outputs`])[
           "data"
         ],
-        log: JSON.parse(window.localStorage.getItem(`${form}_outputs`))["log"],
+        log: JSON.parse(this.$store.state.global_params[`${form}_outputs`])["log"],
       };
-      if (this.formId != "") {
-        json["form_id"] = this.formId;
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+        json["form_id"] = this.$store.state.global_params['formId'];
       }
-      if (this.requestId != "") {
-        json["id"] = this.requestId;
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] != "") {
+        json["id"] = this.$store.state.global_params['requestId'];
       }
-      if (typeof DAAC !== "undefined" && DAAC != "") {
+      if (typeof DAAC !== "undefined" && DAAC != "" && DAAC != null) {
         json["daac_id"] = DAAC;
       }
       if (operation == "save" || operation == "draft") {
@@ -1152,18 +1167,22 @@ export default {
         contentType: "application/json; charset=utf-8",
         success: (response) => {
           this.requestId = response.id;
+          this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
           let message = `Your data have been ${action}.`
           if (operation == "submit") {
+            window.localStorage.removeItem(`vuex`);
+            this.$values = {};
+            this.confirm = false;
             if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
               this.redirectNotification(bvModal, message, operation)
             } else {
-              this.exitForm(undefined, bvModal, message)
+              this.exitForm(bvModal, message)
             }
           } else if (was_draft){
             if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
               this.redirectNotification(bvModal, message, 'draft')
             } else {
-              this.exitForm(undefined, bvModal, message)
+              this.exitForm(bvModal, message)
             }
           } else {
               bvModal.msgBoxOk(message, {
@@ -1194,33 +1213,60 @@ export default {
       });
     },
     // @vuese
+    // Loads answers using request id or vuex store
+    loadAnswers() {
+      let localStorage = window.localStorage.getItem('vuex')
+      if (localStorage != null){
+        let ls = JSON.parse(localStorage)
+        let params = ls['global_params']
+        if(typeof params !== 'undefined'){
+          this.$store.global_params = params
+        }
+        let answers_section = ls['question_answers']
+        if(typeof answers_section !== 'undefined'){
+          this.$store.question_answers = answers_section
+          let length = ls['question_answers'].length
+          let answers = ls['question_answers'][parseInt(length-1)]
+          if(typeof answers !== 'undefined'){
+            this.values = answers;
+          } 
+        }
+      }
+      if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
+        $.getJSON(
+        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+        (answers) => {
+          this.values = answers.form_data;
+        })
+      }
+    },
+    // @vuese
     // Used to save file
+    // @operation - string action (save, draft, submit)
     saveFile(operation = "save") {
       let DAAC;
-      if (this.daac == null) {
+      if (this.daac == null && 
+        typeof this.$store !== 'undefined' && 
+        this.$store.state.global_params['group'] != "") {
+        DAAC = this.$store.state.global_params['group']
+      } else if (this.daac == null && window.localStorage.getItem("DAAC") != null){
         DAAC = window.localStorage.getItem("DAAC");
       } else {
         DAAC = this.daac;
       }
-      this.$v.$touch();
+      if(operation != 'draft'){
+        this.$v.$touch();
+      }
       const data = this.values;
-      let form_components = this.getPath();
-      let form = form_components[0];
+      let form = this.getForm();
       if (data !== JSON.stringify({})) {
         this.$values = data;
-        window.localStorage.setItem(`${form}_questions`, JSON.stringify(data));
         this.$output_object["data"] = this.$values;
         this.$output_object["log"] = this.$logging_object;
         this.$input_object["questions"] = this.questions[0];
         this.$input_object["required"] = this.$required;
-        window.localStorage.setItem(
-          `${form}_inputs`,
-          JSON.stringify(this.$input_object)
-        );
-        window.localStorage.setItem(
-          `${form}_outputs`,
-          JSON.stringify(this.$output_object)
-        );
+        this.$store.commit("pushGlobalParams", [`${form}_inputs`,`${JSON.stringify(this.$input_object)}`]);
+        this.$store.commit("pushGlobalParams", [`${form}_outputs`,`${JSON.stringify(this.$output_object)}`]);
         // @vuese
         // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
         // If production level set (see main.js), will be at different level automatically.
@@ -1237,6 +1283,7 @@ export default {
     },
     // @vuese
     // Alerts the user to errors and goes to top of page for messages to help.
+    // @bvModal - the alert object to modify if an alert is necessary
     errorsNotification(bvModal) {
       bvModal.msgBoxOk(
         "You have errors to correct before you can submit data.  You can save data.",
@@ -1256,6 +1303,9 @@ export default {
     },
     // @vuese
     // Asks the user if they want to be redirected to the dashboard requests page.
+    // @bvModal - the alert object to modify if an alert is necessary
+    // @message - any other function messages to include
+    // @operation - string action (save, draft, submit)
     async redirectNotification(bvModal, message, operation) {
       if(operation == "submit"){
         const value = await bvModal.msgBoxOk(
@@ -1292,16 +1342,12 @@ export default {
       }
     },
     // @vuese
-    // Cancel and exit form
+    // Cancels current edits and exits the form
     okToCancel() {
       this.$refs.form.reset();
-      let form_components = this.getPath();
-      let form = form_components[0];
       $("#reset_data").focus();
       $("#eui-banner").addClass("hidden");
-      window.localStorage.removeItem(`${form}_outputs`);
-      window.localStorage.removeItem(`${form}_inputs`);
-      window.localStorage.removeItem(`${form}_questions`);
+      window.localStorage.removeItem(`vuex`);
       this.$values = {};
       this.$v.$touch();
       this.confirm = false;
@@ -1309,9 +1355,10 @@ export default {
     },
     // @vuese
     // Resets form and local storage to empty entries
-    cancelForm(evt) {
+    // @evt - the event to prevent before checks
+    cancelForm() {
       if (!this.confirm) {
-        evt.preventDefault();
+        event.preventDefault();
       }
       // Resets form to blank entries
       if (Object.keys(this.values).length > 0) {
@@ -1347,12 +1394,11 @@ export default {
       }
     },
     // @vuese
-    // Exit form to requests page
-    exitForm(url_override, bvModal, message) {
+    // Removes the store from storage and exits the form to requests page
+    // @bvModal - the alert object to modify if an alert is necessary
+    // @message - any other function messages to include
+    exitForm(bvModal, message) {
       let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
-      if (typeof url_override != "undefined") {
-        url = url_override;
-      }
       if(typeof bvModal != 'undefined' && typeof message != 'undefined'){
         bvModal.msgBoxOk(message, {
           title: "Success!",
@@ -1364,10 +1410,22 @@ export default {
           centered: true,
         })
         .then(() => {
-          window.location.href = url;
+          return new Promise((resolve) => {
+            localStorage.removeItem('vuex')
+            resolve(true)
+          }).then(() => {
+            $("#eui-banner").addClass("hidden");
+            window.location.href = url;
+          })
         })
       } else {
-        window.location.href = url;
+        return new Promise((resolve) => {
+          localStorage.removeItem('vuex')
+          resolve(true)
+        }).then(() => {
+          $("#eui-banner").addClass("hidden");
+          window.location.href = url;
+        })
       }
     },
     // @vuese
@@ -1386,13 +1444,13 @@ export default {
       }
     },
     // @vuese
-    // Undos the form and reverts it to its previous state.
+    // Undos the form to its previous state.
     undoToPreviousState() {
       this.undo();
       this.reApplyValues();
     },
     // @vuese
-    // Redo the form and to its previous state.
+    // Redo the form state
     redoToPreviousState() {
       this.redo();
       this.reApplyValues();
@@ -1402,55 +1460,42 @@ export default {
   mounted() {
     window.questionsComponent = this;
     this.setActiveNav("questions");
-    let form_components = this.getPath();
-    let form = form_components[0];
-    let form_name_prefix = form_components[1];
+    let form = this.getForm();
     this.setShowDaacs();
+    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
+      this.formId = this.$store.state.global_params['formId']
+    }
+    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
     if (form.toLowerCase().match(/questionnaire/g)) {
       this.daac = null;
-    } else {
-      if (
-        typeof this.$route != "undefined" &&
-        typeof this.$route.params.default != "undefined"
-      ) {
-        this.daac = this.$route.params.default;
-      } else if (window.localStorage.getItem("DAAC") != null) {
-        this.daac = window.localStorage.getItem("DAAC");
-      }
-      if (this.daac == null) {
-        this.$router.push({
-          name: `${form_name_prefix}Daacs`,
-          path: "/selection",
-          default: "selection",
-        });
-      }
-
-      let set_loc = location.href;
-      let re = `/${form}/questions/`;
-      if (!set_loc.match(re, "g")) {
-        set_loc += `/${form}/questions/`;
-      }
-      if (set_loc.match(/selection/g)) {
-        this.warning = "No daac has been selected";
-      }
-      if (typeof window.headerComponent != "undefined") {
-        window.headerComponent.daac = this.daac
-          .replace(/ /g, "_")
-          .toLowerCase();
-      }
-      this.setActiveLocationWithoutReload(set_loc, this.daac);
+    } else if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
+      this.daac = this.$store.state.global_params['group']
+    } 
+    let set_loc = location.href;
+    let re = `/${form}/questions/`;
+    if (!set_loc.match(re, "g")) {
+      set_loc += `/${form}/questions/`;
     }
+    if (set_loc.match(/selection/g) && (this.daac === '' || this.daac == null)) {
+      this.warning = "No daac has been selected";
+    }
+    if (typeof window.headerComponent != "undefined") {
+      window.headerComponent.daac = this.daac
+    }
+    this.setActiveLocationWithoutReload(this.daac);
     this.fetchQuestions();
-    if (window.localStorage.getItem(`${form}_questions`) != null) {
-      this.values = JSON.parse(
-        window.localStorage.getItem(`${form}_questions`)
-      );
-      this.$v.$touch();
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
+      this.loadAnswers()
     }
   },
 };
 </script>
 <style scoped>
+#contact_span{
+  margin-left:2rem; 
+}
 .eui-label-nopointer {
   cursor: auto;
 }
@@ -1472,6 +1517,9 @@ span.checkbox label {
 span span label {
   margin-left: 2rem;
   font-weight: normal;
+}
+span span:nth-child(-n+1) label {
+  margin-left:0rem;
 }
 .question_size {
   padding-left: 0px;
