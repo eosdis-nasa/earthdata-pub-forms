@@ -1236,6 +1236,10 @@ export default {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
         (answers) => {
+          if(answers.error){
+            window.localStorage.removeItem('vuex')
+            return
+          }
           this.values = answers.form_data;
         })
       }
