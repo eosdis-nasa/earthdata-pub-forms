@@ -138,13 +138,15 @@ export default {
     // Go the help page specified with all the params needed
     goToHelp(){
       let form = this.getForm();
-      let formId, requestId, group, showDaacs;
+      let prefix, formId, requestId, group, showDaacs;
       if(typeof this.$store === 'undefined'){
+        prefix = this.getFormNamePrefix();
         formId = undefined;
         requestId = undefined;
         group = undefined;
         showDaacs = undefined;
       } else {
+        prefix = this.$store.state.global_params['form_name_prefix'];
         formId = this.$store.state.global_params['formId'];
         requestId = this.$store.state.global_params['requestId'];
         group = this.$store.state.global_params['group'];
@@ -152,7 +154,7 @@ export default {
       }
       this.setActiveNav('help');
       this.$router.push({
-        name: `Data Publication Request - Help`,
+        name: `${prefix}Help`,
         path: `/${form}/help`,
         params: {
           formId: formId,
