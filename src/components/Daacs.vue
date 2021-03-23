@@ -144,8 +144,6 @@ export default {
         let long_name = this.daacs[dict]["long_name"];
         let short_name = this.daacs[dict]["short_name"];
         if (
-          daac_specific.toLowerCase() === long_name.toLowerCase() ||
-          daac_specific.toLowerCase() === short_name.toLowerCase() ||
           daac_specific === id
         ) {
           let url = this.daacs[dict]["url"];

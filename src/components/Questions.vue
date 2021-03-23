@@ -1253,8 +1253,6 @@ export default {
         typeof this.$store !== 'undefined' && 
         this.$store.state.global_params['group'] != "") {
         DAAC = this.$store.state.global_params['group']
-      } else if (this.daac == null && window.localStorage.getItem("DAAC") != null){
-        DAAC = window.localStorage.getItem("DAAC");
       } else {
         DAAC = this.daac;
       }
