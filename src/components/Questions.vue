@@ -1170,7 +1170,6 @@ export default {
           this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
           let message = `Your data have been ${action}.`
           if (operation == "submit") {
-            window.localStorage.removeItem(`vuex`);
             this.$values = {};
             this.confirm = false;
             if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
@@ -1213,36 +1212,19 @@ export default {
       });
     },
     // @vuese
-    // Loads answers using request id or vuex store
+    // Loads answers using request id
     loadAnswers() {
-      let localStorage = window.localStorage.getItem('vuex')
-      if (localStorage != null){
-        let ls = JSON.parse(localStorage)
-        let params = ls['global_params']
-        if(typeof params !== 'undefined'){
-          this.$store.global_params = params
-        }
-        let answers_section = ls['question_answers']
-        if(typeof answers_section !== 'undefined'){
-          this.$store.question_answers = answers_section
-          let length = ls['question_answers'].length
-          let answers = ls['question_answers'][parseInt(length-1)]
-          if(typeof answers !== 'undefined'){
-            this.values = answers;
-          } 
-        }
-      }
       if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
         (answers) => {
           if(answers.error){
-            window.localStorage.removeItem('vuex')
-            return
+            return {}
           }
           this.values = answers.form_data;
         })
       }
+      return this.values
     },
     // @vuese
     // Used to save file
@@ -1349,7 +1331,6 @@ export default {
       this.$refs.form.reset();
       $("#reset_data").focus();
       $("#eui-banner").addClass("hidden");
-      window.localStorage.removeItem(`vuex`);
       this.$values = {};
       this.$v.$touch();
       this.confirm = false;
@@ -1412,22 +1393,12 @@ export default {
           centered: true,
         })
         .then(() => {
-          return new Promise((resolve) => {
-            localStorage.removeItem('vuex')
-            resolve(true)
-          }).then(() => {
-            $("#eui-banner").addClass("hidden");
-            window.location.href = url;
-          })
-        })
-      } else {
-        return new Promise((resolve) => {
-          localStorage.removeItem('vuex')
-          resolve(true)
-        }).then(() => {
           $("#eui-banner").addClass("hidden");
           window.location.href = url;
         })
+      } else {
+        $("#eui-banner").addClass("hidden");
+        window.location.href = url;
       }
     },
     // @vuese

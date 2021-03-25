@@ -24,7 +24,6 @@ import Help from '@/components/Help.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
-import createPersistedState from "vuex-persistedstate";
 import mixin from "@/mixins/mixin.js";
 import { config } from '@vue/test-utils';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -91,8 +90,7 @@ describe('creating test store', () => {
     },
     modules: {
       
-    },
-    plugins: [createPersistedState()]
+    }
   })
 })
 
