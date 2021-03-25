@@ -6,6 +6,10 @@ should be included in merge requests. Then copied here.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.1.6 - 2021-03-25
+
+- [Removed local storage store lib; removed local storage vuex object; added prompting if data is different before header links are clicked](bcee32ecbebdd7261f394d57b8c25a479fb2bdb8)
+
 ## 0.1.6 - 2021-03-23
 
 - [Fixed saving of bad data on error](d5e2be8a933530411259a9ed9c8c8c7e926312e0)
