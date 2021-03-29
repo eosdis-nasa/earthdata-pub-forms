@@ -43,7 +43,6 @@
     "vuejs-logger": "^1.5.5",
     "vuelidate": "^0.7.6",
     "vuex": "^3.5.1",
-    "vuex-persistedstate": "^4.0.0-beta.3",
     "vuex-undo-redo": "^1.1.4"
   },
   "devDependencies": {

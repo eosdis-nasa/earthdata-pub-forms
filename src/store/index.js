@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
-import createPersistedState from "vuex-persistedstate";
 
 // This is to use vuex for the state management
 Vue.use(Vuex)
@@ -38,6 +37,5 @@ export const store = new Vuex.Store({
   },
   modules: {
     
-  },
-  plugins: [createPersistedState()]
+  }
 })

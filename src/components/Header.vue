@@ -13,14 +13,14 @@
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
-          <a v-if="showDaacs" @click="goToComponent('daacs')" id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a>
+          <a v-if="showDaacs" @click="compareDataAskLeave('daacs')" id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a>
           <div v-if="showDaacs" class="inline">  |  </div>
           <a id="questions_nav_link" v-if="showDaacs && daac =='selection' || daac == ''" href="#" @click="requireDaacSelection()">Questions</a>
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
           <div class="inline" >  |  </div>
-          <a @click="goToHelp()" id="help_nav_link" alt="go the EDPub Help" title="go the EDPub Help">Help</a>
-          <span>  | <a @click="goToDashboard()" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
-          <span>  | <a @click="goToOverview()" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
+          <a @click="compareDataAskLeave('help')" id="help_nav_link" alt="go the EDPub Help" title="go the EDPub Help">Help</a>
+          <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
+          <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -30,6 +30,7 @@
 </template>
 <script>
 // Jquery javascript
+import $ from "jquery";
 // Exports the header as a component
 export default {
   name: "Header",
@@ -82,24 +83,84 @@ export default {
   },
   methods: {
     // @vuese
-    // On clicking the Dashboard link, will clear vuex store from storage then redirect to the dashboard
-    async goToDashboard(){
-      return new Promise((resolve) => {
-        localStorage.removeItem('vuex');
-        resolve(true)
-      }).then(() => {
-        location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-      })
+    // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
+    compareDataAskLeave(comp){
+      if(typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0){
+        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
+          $.getJSON(
+          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+          (answers) => {
+            if(!answers.error){
+              let lookupSorted = Object.keys(answers.form_data).sort(function(a,b){return answers.form_data[a]-answers.form_data[b]})
+              let currentSorted = Object.keys(window.questionsComponent.values).sort(function(a,b){return window.questionsComponent.values[a]-window.questionsComponent.values[b]})
+              if (!this.shallowEqual(lookupSorted, currentSorted)){
+                this.$bvModal
+                  .msgBoxConfirm(
+                    `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+                    {
+                      title: "Please Confirm",
+                      size: "lg",
+                      buttonSize: "sm",
+                      okVariant: "danger",
+                      okTitle: "YES",
+                      cancelTitle: "NO",
+                      footerClass: "p-2",
+                      hideHeaderClose: false,
+                      centered: true,
+                    }
+                  )
+                  .then((value) => {
+                    if (value){
+                      if (comp.match(/help/g) || comp.match(/daacs/g)){
+                        this.goToComponent(comp)
+                      } else if (comp.match(/dashboard/g)){
+                        location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+                      } else if (comp.match(/overview/g)){
+                        location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+                      }
+                    }
+                  });
+              } else {
+                if (comp.match(/help/g) || comp.match(/daacs/g)){
+                  this.goToComponent(comp)
+                } else if (comp.match(/dashboard/g)){
+                  location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+                } else if (comp.match(/overview/g)){
+                  location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+                }
+              }
+            }
+          })
+        }
+      } else {
+        if (comp.match(/help/g) || comp.match(/daacs/g)){
+          this.goToComponent(comp)
+        } else if (comp.match(/dashboard/g)){
+          location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+        } else if (comp.match(/overview/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+        }
+      }
     },
     // @vuese
-    // On clicking the Overview link, will clear vuex store from storage then redirect to the overview pages
-    async goToOverview(){
-      return new Promise((resolve) => {
-        localStorage.removeItem('vuex')
-        resolve(true)
-      }).then(() => {
-        location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-      })
+    // Go the component page specified with all the params needed
+    // @object1 - object 1 to compare
+    // @object2 - object 2 to compare
+    shallowEqual(object1, object2) {
+      const keys1 = Object.keys(object1);
+      const keys2 = Object.keys(object2);
+
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+
+      for (let key of keys1) {
+        if (object1[key] !== object2[key]) {
+          return false;
+        }
+      }
+
+      return true;
     },
     // @vuese
     // Go the component page specified with all the params needed
@@ -135,36 +196,6 @@ export default {
       }
     },
     // @vuese
-    // Go the help page specified with all the params needed
-    goToHelp(){
-      let form = this.getForm();
-      let prefix, formId, requestId, group, showDaacs;
-      if(typeof this.$store === 'undefined'){
-        prefix = this.getFormNamePrefix();
-        formId = undefined;
-        requestId = undefined;
-        group = undefined;
-        showDaacs = undefined;
-      } else {
-        prefix = this.$store.state.global_params['form_name_prefix'];
-        formId = this.$store.state.global_params['formId'];
-        requestId = this.$store.state.global_params['requestId'];
-        group = this.$store.state.global_params['group'];
-        showDaacs = this.$store.state.global_params['showDaacs'];
-      }
-      this.setActiveNav('help');
-      this.$router.push({
-        name: `${prefix}Help`,
-        path: `/${form}/help`,
-        params: {
-          formId: formId,
-          requestId: requestId,
-          group: group,
-          showDaacs: showDaacs
-        }
-      });      
-    },
-    // @vuese
     // Requires daac to be selected before progressing to the questions component
     requireDaacSelection() {
       if (!location.href.match(/help/g)) {
@@ -186,7 +217,6 @@ export default {
   // This is equivalent to document.ready
   mounted() {
     window.headerComponent = this;
-    window.localStorage.removeItem(`vuex`);
     this.daac = this.setDaacs()
     this.setRoute()
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
