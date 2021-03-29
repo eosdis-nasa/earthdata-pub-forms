@@ -1,7 +1,23 @@
 {
   "name": "earthdata-pub-forms",
-  "version": "0.1.0",
+  "version": "0.1.6",
+  "description": "Forms for Earthdata Pub API",
+  "repository": {
+    "type": "git",
+    "url": "https://git.earthdata.nasa.gov/scm/EDPUB/forms.git"
+  },
+  "author": {
+    "name": "Earthdata Pub Dev Team"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://bugs.earthdata.nasa.gov/browse/EDPUB"
+  },
+  "homepage": "https://git.earthdata.nasa.gov/projects/EDPUB/repos/forms/browse",
   "private": true,
+  "engines": {
+    "node": ">=12.18.0"
+  },
   "scripts": {
     "clean-modules": "rm -rf package-lock.json node_modules/",
     "serve": "vue-cli-service serve",
