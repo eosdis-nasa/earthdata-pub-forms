@@ -194,9 +194,9 @@ export default {
     // Go the component page specified with all the params needed
     // @comp - component to switch too (string)
     goToComponent(comp){
-      let form = this.getForm();
-      let prefix, formId, requestId, group, showDaacs;
+      let form, prefix, formId, requestId, group, showDaacs;
       if(typeof this.$store === 'undefined'){
+        form = this.getForm();
         prefix = this.getFormNamePrefix();
         formId = undefined;
         requestId = undefined;
@@ -204,6 +204,10 @@ export default {
         showDaacs = undefined;
       } else {
         prefix = this.$store.state.global_params['form_name_prefix'];
+        if(typeof this.$store.state.global_params['form'] == 'undefined'){
+          form = this.getForm();
+          this.$store.commit("pushGlobalParams", ['form',`${form}`]);
+        }
         if(typeof prefix == 'undefined'){
           prefix = this.getFormNamePrefix();
           this.$store.commit("pushGlobalParams", ['form_name_prefix',`${prefix}`]);
@@ -219,6 +223,11 @@ export default {
           this.$store.commit("pushGlobalParams", ['showDaacs',`${showDaacs}`]);
         }
         formId = this.$store.state.global_params['formId'];
+        if(typeof formId == 'undefined' && form.match(/interest/g)){
+          this.$store.commit("pushGlobalParams", ['formId',`${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`]);
+        } else if (typeof formId == 'undefined'){
+          this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`]);
+        }
         requestId = this.$store.state.global_params['requestId'];
       }
       this.setActiveNav(comp.toLowerCase());

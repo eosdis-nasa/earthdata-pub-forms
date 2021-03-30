@@ -1419,8 +1419,31 @@ export default {
     // @vuese
     // Undos the form to its previous state.
     undoToPreviousState() {
-      this.undo();
-      this.reApplyValues();
+      if(Object.keys(this.values).length===0){
+        this.$bvModal
+          .msgBoxConfirm(
+            `This will undo your Daac selection.  Are you sure you want to do this?`,
+            {
+              title: "Please Confirm",
+              size: "lg",
+              buttonSize: "sm",
+              okVariant: "danger",
+              okTitle: "YES",
+              cancelTitle: "NO",
+              footerClass: "p-2",
+              hideHeaderClose: false,
+              centered: true,
+            }
+          )
+          .then((value) => {
+            if (value){
+              window.headerComponent.goToComponent('daacs')
+            }
+          });
+      } else {
+        this.undo();
+        this.reApplyValues();
+      }
     },
     // @vuese
     // Redo the form state
