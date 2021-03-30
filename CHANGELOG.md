@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.1.7 - 2021-03-30
 
 - [Appended to new compareDataAskLeave function so modals will work standalone also.](18d86f41305996830ca273c5f27fffde4c0aff38)
-- [corrected store to retain both questions_answers and params so undo and redo buttons work again](f8c41564ead3044750a52c28b962f2adb04cb5b9)
+- [Corrected store to retain both questions_answers and params so undo and redo buttons work again; added prompt for undoing daac selection](4f2ffaddccce430ee8c75e03e73b215c17ee7940)
 - [Allow cancel without any input](040df12b5a09455716ee67114458bcacd5378701)
 
 ## 0.1.6 - 2021-03-25

@@ -88,9 +88,9 @@ export default {
             group = undefined;
           } else {
             prefix = this.$store.state.global_params['form_name_prefix'];
+            group = this.$store.state.global_params['group'];
             formId = this.$store.state.global_params['formId'];
             requestId = this.$store.state.global_params['requestId'];
-            group = this.$store.state.global_params['group'];
           }
           if(redirect.match(/questions/g)){
             loc = 'questions';
