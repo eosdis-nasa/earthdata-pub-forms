@@ -36,7 +36,7 @@
                       <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
-                      <b-button v-if="Object.keys(this.values).length > 0 && showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                      <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
                       <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
                   </div>
               </div>
@@ -1328,11 +1328,13 @@ export default {
     // @vuese
     // Cancels current edits and exits the form
     okToCancel() {
-      this.$refs.form.reset();
-      $("#reset_data").focus();
       $("#eui-banner").addClass("hidden");
-      this.$values = {};
-      this.$v.$touch();
+      if (Object.keys(this.values).length > 0) {
+        this.$refs.form.reset();
+        this.$values = {};
+        this.$v.$touch();
+      }
+      $("#reset_data").focus();
       this.confirm = false;
       this.exitForm();
     },
@@ -1344,36 +1346,34 @@ export default {
         event.preventDefault();
       }
       // Resets form to blank entries
-      if (Object.keys(this.values).length > 0) {
-        if (this.confirm == false) {
-          this.confirm = "";
-          this.$bvModal
-            .msgBoxConfirm(
-              `This will cancel any input and redirect you to Earthdata Dashboard Requests.  Are you sure?`,
-              {
-                title: "Please Confirm",
-                size: "lg",
-                buttonSize: "sm",
-                okVariant: "danger",
-                okTitle: "YES",
-                cancelTitle: "NO",
-                footerClass: "p-2",
-                hideHeaderClose: false,
-                centered: true,
-              }
-            )
-            .then((value) => {
-              this.confirm = value;
-              if (value) {
-                this.okToCancel();
-              } else {
-                return;
-              }
-            });
-        } else {
-          this.confirm = false;
-          this.okToCancel();
-        }
+      if (this.confirm == false) {
+        this.confirm = "";
+        this.$bvModal
+          .msgBoxConfirm(
+            `This will cancel any input and redirect you to Earthdata Dashboard Requests.  Are you sure?`,
+            {
+              title: "Please Confirm",
+              size: "lg",
+              buttonSize: "sm",
+              okVariant: "danger",
+              okTitle: "YES",
+              cancelTitle: "NO",
+              footerClass: "p-2",
+              hideHeaderClose: false,
+              centered: true,
+            }
+          )
+          .then((value) => {
+            this.confirm = value;
+            if (value) {
+              this.okToCancel();
+            } else {
+              return;
+            }
+          });
+      } else {
+        this.confirm = false;
+        this.okToCancel();
       }
     },
     // @vuese

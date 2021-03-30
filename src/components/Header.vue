@@ -86,7 +86,8 @@ export default {
     // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
     compareDataAskLeave(comp){
       if(typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0){
-        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
+        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
+          (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
           $.getJSON(
           `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
           (answers) => {
@@ -131,6 +132,33 @@ export default {
               }
             }
           })
+        } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+          this.$bvModal
+          .msgBoxConfirm(
+            `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+            {
+              title: "Please Confirm",
+              size: "lg",
+              buttonSize: "sm",
+              okVariant: "danger",
+              okTitle: "YES",
+              cancelTitle: "NO",
+              footerClass: "p-2",
+              hideHeaderClose: false,
+              centered: true,
+            }
+          )
+          .then((value) => {
+            if (value){
+              if (comp.match(/help/g) || comp.match(/daacs/g)){
+                this.goToComponent(comp)
+              } else if (comp.match(/dashboard/g)){
+                location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+              } else if (comp.match(/overview/g)){
+                location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+              }
+            }
+          });
         }
       } else {
         if (comp.match(/help/g) || comp.match(/daacs/g)){
@@ -176,10 +204,22 @@ export default {
         showDaacs = undefined;
       } else {
         prefix = this.$store.state.global_params['form_name_prefix'];
+        if(typeof prefix == 'undefined'){
+          prefix = this.getFormNamePrefix();
+          this.$store.commit("pushGlobalParams", ['form_name_prefix',`${prefix}`]);
+        }
+        group = this.$store.state.global_params['group'];
+        if(typeof group == 'undefined' && form.match(/interest/g)){
+          group = 'selection'
+          this.$store.commit("pushGlobalParams", ['group',`${group}`]);
+        }
+        showDaacs = this.$store.state.global_params['showDaacs'];
+        if(typeof showDaacs == 'undefined' && form.match(/interest/g)){
+          showDaacs = true
+          this.$store.commit("pushGlobalParams", ['showDaacs',`${showDaacs}`]);
+        }
         formId = this.$store.state.global_params['formId'];
         requestId = this.$store.state.global_params['requestId'];
-        group = this.$store.state.global_params['group'];
-        showDaacs = this.$store.state.global_params['showDaacs'];
       }
       this.setActiveNav(comp.toLowerCase());
       if(this.$router.history.current.path != `/${form}/${comp.toLowerCase()}/${group}`){
