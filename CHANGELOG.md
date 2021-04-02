@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 0.2.0  - 2021-04-01
+
+- [Release version 0.2 for testing in SIT](915f4046ddec74edaf89a1fb32b14ae5690942bb)
+
 ## 0.1.7 - 2021-03-30
 
 - [Fixed js error in compareDataAskLeave function for when window.questionsComponent is undefined, to allow header links to work correctly on no daac selection](fef5d14bcfaf77bc5b56dec59478eb32f4cb84bd)
