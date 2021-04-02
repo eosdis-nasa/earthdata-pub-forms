@@ -21,17 +21,17 @@
 <script>
     // Jquery javascript
     import $ from 'jquery'
-    import mixin from '../mixins/mixin'
-
     // This help component displays all the help in the questions.json
     // It sets the above template properties and methods. Takes an optional help.id
     export default {
         name: 'Help',
-        mixins: [mixin],
         data() {
             return {
                 selected: '',
-                help_tips: []
+                help_tips: [],
+                formId: '',
+                requestId: '',
+                group:''
             }
         },
         computed: {
@@ -48,12 +48,27 @@
             }
         },
         methods: {
-            // Loops through the questions.json and builds a help object from that.
-            // If a id is passed in, it just displays 'Help Tip'
+            // @vuese
+            // Fetches help tips or individual tip. Loops through questions.json and builds
+            // help object from that.
+            // @help_id - the id to the question's specific help for individual lookup
             fetchHelp(help_id){
-                //console.log('fetching help...')
                 var help_tips = []
-                $.getJSON( "../questions.json", ( questions ) => {
+                $.ajaxSetup({
+                    headers : {
+                        'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+                    }
+                });
+                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+                let form = this.getForm();
+                let json_name = ''
+                if(form.match(/interest/g)){
+                    json_name = 'data_publication_request' 
+                } else {
+                    json_name = 'data_product_information' 
+                }
+                $.getJSON( `../${form}/${json_name}.json`, ( questions ) => {
+                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
                     for(var section in questions['sections']) {
                         var questions_section = questions['sections'][section]['questions']
                         for(var q in questions_section){
@@ -81,34 +96,33 @@
         },
         // This is equivalent to document.ready
         mounted() {
+            window.helpComponent = this;
+            this.setActiveNav("help");
             let loc;
             let daacStored;
-            if(window.localStorage.getItem('DAAC')!=null){
-                daacStored = window.localStorage.getItem('DAAC').toLowerCase()
+            if(typeof this.$store !== 'undefined' && this.$store.state.global_params['group']){
+                daacStored = this.$store.state.global_params['group']
             }
-            if(daacStored !=null && typeof this.$route != 'undefined' && this.$route.params.default != 'selection'){
-                let re = new RegExp('/' + daacStored)
-                if(window.location.href.toLowerCase().match(re,'g')){
-                    loc = window.location.href.toLowerCase()
+            if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+                this.formId = this.$store.state.global_params['formId']
+            }
+            if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+                this.requestId = this.$store.state.global_params['requestId']
+            }
+            if(daacStored !=null && typeof this.$route != 'undefined'){
+                let re = new RegExp(`/${daacStored}`)
+                if(window.location.href.match(re,'g')){
+                    loc = window.location.href
                     loc = loc.replace(re,'')
-                    this.$route.params.default = 'selection'
                 }
             } else {
-                loc = window.location.href.toLowerCase()
+                loc = window.location.href
             }
-            if((typeof this.$route != 'undefined' && typeof this.$route.params.default != 'undefined' && this.$route.params.default!=null && this.$route.params.default !='' && this.$route.params.default !='selection') || this.selected != ''){
-                if(this.selected !=''){ 
-                    this.help_tips = this.fetchHelp(this.selected)
-                } else if(typeof this.$route.params.default !='undefined'){
-                    this.help_tips = this.fetchHelp(this.$route.params.default)
-                } else if(window.localStorage.getItem('help_id')!=null){
-                    this.help_tips = this.fetchHelp(window.localStorage.getItem('help_id'))
-                }
-            } else {
-                this.help_tips = this.fetchHelp()
+            this.help_tips = this.fetchHelp()
+            if (typeof loc != 'undefined'){
+                history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
             }
-            history.replaceState('updating href', window.document.title, loc.replace(/\/selection/g, ''))
-        },
+        }
     }
 </script>
 <style scoped>
@@ -118,8 +132,15 @@
     .card{
         border-radius:unset;
         width:unset;
+        margin-bottom:1rem;
     }
     .card-body {
         display:unset
+    }
+    div.card-body:nth-of-type(odd) {
+        background: rgb(235, 235, 235);
+    }
+    .form-group:first-of-type{
+        margin-top:2rem;
     }
 </style>

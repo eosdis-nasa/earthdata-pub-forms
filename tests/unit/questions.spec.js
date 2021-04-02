@@ -18,13 +18,19 @@ import { BootstrapVue } from 'bootstrap-vue'
 import { LayoutPlugin } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
 import Header from '@/components/Header.vue'
-import Home from '@/components/Home.vue'
 import Daacs from '@/components/Daacs.vue'
 import Questions from '@/components/Questions.vue'
 import Help from '@/components/Help.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
+import mixin from "@/mixins/mixin.js";
+import { config } from '@vue/test-utils';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
+
+config.showDeprecationWarnings = false
 
 const localVue = createLocalVue();
 localVue.use(VueRouter)
@@ -33,37 +39,59 @@ localVue.use(Vuelidate)
 localVue.use(Vuex)
 localVue.use(VuexUndoRedo)
 localVue.use(LayoutPlugin)
+localVue.mixin(mixin)
+library.add(fas)
+localVue.component('font-awesome-icon', FontAwesomeIcon)
+localVue.component('font-awesome-layers', FontAwesomeLayers)
+localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
-const routes = [  { path: '/', name: 'Home', component: Home },
-                  { path: '/daacs/:default', name: 'Daacs', component: Daacs, alias: '/daacs/selection' },
-                  { path: '/questions/:default', name: 'Questions', component: Questions },
-                  { path: '/help/:default', name: 'Help', component: Help },
+const routes = [  { path: '/interest/daacs/:group', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:group', name: 'Data Publication Request - Questions', component: Questions },
+                  { path: '/interest/questions/:group/:formId', name: 'Data Publication Request - Questions with FormId', component: Questions },
+                  { path: '/interest/questions/:group/:formId/:requestId', name: 'Data Publication Request - Questions with formId and requestId', component: Questions },
+                  { path: '/interest/help', name: 'Data Publication Request - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Data Product Information - Questions', component: Questions },
+                  { path: '/questionnaire/questions:formId', name: 'Data Product Information - Questions with FormId', component: Questions },
+                  { path: '/questionnaire/questions/:formId/:requestId', name: 'Data Product Information - Questions with formId and requestId', component: Questions },
+                  { path: '/questionnaire/help', name: 'Data Product Information - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
-const router = new VueRouter({ routes, mode: 'history' })
-let actions
+const router = new VueRouter({ routes, mode: 'history', base: process.env.BASE_URL})
 let store
-let global_default_target = 'http://localhost:8080/daacs/selection'
+let global_default_target = 'http://localhost:8081/interest/daacs/selection'
 
 describe('creating test store', () => {
-    store = new Vuex.Store({ 
-      actions,
-      // State is the default obj and value
-      state: {
-        question_answers: []
+  store = new Vuex.Store({
+    // State is the default obj and value
+    state: {
+      question_answers: [],
+      global_params: {},
+    },
+    mutations: {
+      // push question state to save the payload to the store state question_answers
+      pushQuestionsState(state, payload){
+        state.question_answers.push(Object.assign({}, payload))
       },
-      mutations: {
-        // push question state to save the payload to the store state question_answers
-        pushQuestionsState(state, payload){
-          state.question_answers.push(Object.assign({}, payload))
-        },
-        // .emptyState() is needed by VuexUndoRedo
-        emptyState() {
-          this.replaceState({ question_answers: [] });
-        },
-      }
-    })
+      pushGlobalParams(state, param){
+        state.global_params[param[0]] = param[1]
+      },
+      // .emptyState() is needed by VuexUndoRedo
+      emptyState() {
+        this.replaceState({ question_answers: [] });
+        this.replaceState({ global_params: [] });
+      },
+    },
+    actions: {
+  
+    },
+    getters: {
+  
+    },
+    modules: {
+      
+    }
+  })
 })
 
 const wrapper = mount(Daacs, { store, localVue, router })
@@ -86,6 +114,19 @@ describe('location.href is accessible in this environment', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -105,63 +146,39 @@ describe("App", () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
+      localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
   });
 
   afterAll(() => {
       window.location = location;
       wrapper.destroy();
   });
+  
   test("tests the daac selection route", async () => {
+    // This test will warn 'missing param for named route "Data Publication Request - Daacs": Expected "group" to be defined
+    // This test is verifying that when the group is undefined, the user is routed to the 'Choose your DAAC' page to make group selection
     const router = new VueRouter({ routes })
     const wrapper = mount(App, { 
       localVue,
       router
     })
-    const relative_path = "/daacs/selection"
-    router.push(relative_path)
     await wrapper.vm.$nextTick()
-    expect(window.location.href).toBe(relative_path);
+    expect(location.href).toBe('http://localhost/interest/daacs/selection');
     expect(wrapper.text().includes('Choose your DAAC:')).toBe(true)
   })
-  /*,
-  describe('builds store to test state action and html5 response', () => {
-    /*
-    let actions
-    let store
-  
-    beforeEach(() => {
-      actions = {
-        actionClick: jest.fn(),
-        actionInput: jest.fn()
-      }
-      store = new Vuex.Store({
-        router: routes,
-        actions
-      })
-    })
-
-    it('dispatches "actionInput" when input event email value is "something@example.com"', () => {
-      const wrapper = mount(App, { store, localVue })
-      const input = wrapper.find('email')
-      input.element.value = 'something@example.com'
-      input.trigger('email')
-      expect(actions.actionInput).toHaveBeenCalled()
-    })
-  
-    it('does not dispatch "actionInput" when event value is not correct', () => {
-      const wrapper = shallowMount(Questions, { store, localVue })
-      const input = wrapper.find('email')
-      input.element.value = 'not correct'
-      input.trigger('email')
-      expect(actions.actionInput).not.toHaveBeenCalled()
-    })
-  
-    it('calls store action "actionClick" when button is clicked', () => {
-      const wrapper = shallowMount(Questions, { store, localVue })
-      wrapper.find('undo_button').trigger('click')
-      expect(actions.actionClick).toHaveBeenCalled()
-    })
-  })*/
 })
 
 /*** HEADER TESTS ***/
@@ -174,6 +191,7 @@ describe('Header', () => {
     jest.resetAllMocks();
     // or individually reset a mock used
     localStorage.setItem.mockClear();
+    localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
   });
   const { location } = window;
   beforeAll(() => {
@@ -181,6 +199,19 @@ describe('Header', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
   afterAll(() => {
       window.location = location;
@@ -193,14 +224,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: false,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: false
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).not.toContain('daacs_nav_link')
   }),
@@ -210,14 +238,11 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:'selection'
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true
+    });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
   }),
@@ -226,16 +251,14 @@ describe('Header', () => {
     const wrapper = mount(Header, { 
       store, 
       localVue, 
-      router,
-      data(){
-        return {
-          showDaacs: true,
-          daac:''
-        }
-      } 
+      router
     })
+    wrapper.setData({
+      showDaacs: true,
+      daac: ''
+    });
     await wrapper.vm.$nextTick()
-    expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions</a>')).toBe(true);
+    expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions')).toBe(true);
   }),
 
   test('on form title change, should update the header title.', async () => {
@@ -262,6 +285,7 @@ describe('Daacs selection', () => {
     jest.resetAllMocks();
     // or individually reset a mock used
     localStorage.setItem.mockClear();
+    localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
   });
   const { location } = window;
   beforeAll(() => {
@@ -269,6 +293,19 @@ describe('Daacs selection', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -285,7 +322,7 @@ describe('Daacs selection', () => {
       selected: 'Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)'
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('You have selected: Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')
+    expect(wrapper.text().includes('Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)')).toBe(true)
   })
   
 });
@@ -298,6 +335,19 @@ describe('Questions', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -313,22 +363,22 @@ describe('Questions', () => {
     jest.resetAllMocks();
     // or individually reset a mock used
     localStorage.setItem.mockClear();
+    localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
   });
   // UNIT TESTS
   // This should be written better when the api call has been inserted because it will change the test entirely.
-  test('on going to the route questions/ornl_daac, it will go to the questions page then load the questions data"', async () => {
+  test('on going to the route /interest/questions/15df4fda-ed0d-417f-9124-558fb5e5b561, it will go to the questions page then load the questions data"', async () => {
     const fetchQuestions = jest.fn()
     jest.spyOn(localStorage, 'setItem');
     window.localStorage.__proto__.setItem = jest.fn();
     const wrapper = mount(Questions, {localVue, methods: { fetchQuestions }})
-    const relative_path = "/questions/ornl_daac"
+    const relative_path = "/interest/questions/15df4fda-ed0d-417f-9124-558fb5e5b561"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(fetchQuestions).toHaveBeenCalledTimes(1)
     
   })
-	
-  // END-TO-END TESTS
+	// END-TO-END TESTS
   // 
 });
 
@@ -342,6 +392,19 @@ describe('Help', () => {
       window.location = {
           href: '',
       };
+      Object.defineProperty(window, "matchMedia", {
+        writable: true,
+        value: jest.fn().mockImplementation(query => ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(), // Deprecated
+          removeListener: jest.fn(), // Deprecated
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }))
+      });
   });
 
   afterAll(() => {
@@ -356,6 +419,7 @@ describe('Help', () => {
     jest.resetAllMocks();
     // or individually reset a mock used
     localStorage.setItem.mockClear();
+    localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
   });
   
   // UNIT TESTS
@@ -372,135 +436,16 @@ describe('Help', () => {
  
 });
 
-afterEach(() => {
+afterAll(() => {
+  window.location = location;
   wrapper.destroy();
 });
+
+/*** METHODS:***/
 /*
-/*** COMPONENT MARKUP / EVALUATION ***/
-/*Header and component navigation:
-	props/data:
-		showDaacs
-		daac
-		formTitle
-		functions:
-			showdaacs:
-				if !showdaacs, opens questions with default = the daac
-			on created:
-				get parameters sent in and sets this.showDaacs and localStorage
-				else get daac from localStorage if its set and sets this.showdaacs
-				else set localStorage to default of data prop
-			on clicking nav after selection:
-				from daacs:
-					daacs - nothing
-					questions - loads questions defaulting to the selected daac
-					help - loads all help
-				from questions:
-					daacs - loads questions defaulting to the selected daac
-					questions - nothing
-					help - loads all help
-				from help:
-					daacs - loads questions defaulting to the selected daac
-					questions - loads questions defaulting to the selected daac
-					help - nothing
-				refreshes the header
-				sets the class of the header active object
-			on clicking nav NO selection:
-				from /:
-					routes to /daacs/selection
-					refreshes the header
-					sets the class of the header active object
-					sets showDaacs in localStorage
-					
-					clicking:
-						daacs - nothing
-						questions - should alert to select a daac first
-						help - loads all help
-				from /daacs:
-					routes to /daacs/selection ('/')
-				from /questions:
-					routes to /daacs/selection ('/')
 
-Daacs:
-	props/data:
-		selected,
-		loaded
-		daacs
-		unique functions:
-			fetchsDaacs
-			GetCurrentDaacAndUpdate:
-				On load, looks for this.selected, param default or localStorage for autoselection then clicks daac radio object (executes the setSelectedValues)
-			setSelectedValues:
-				Receives the selected daac data ({ 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }), 
-				then sets the current daac objects (setCurrentDaacObjects). 
-				Then if there's a new daac selected, reruns with the new daac short name, 
-				updates the address bar, 
-				updates the header and saves
-			getDaac(daac)
-				Gets this.daacs specific daac data and returns the daacs { 'short_name':short_name, 'long_name': long_name, 'url':url, 'description':description }
-			setCurrentDaacObjects:
-				Receives getDaac data or if none, looks it up (getDaac), then sets the text, url, description, this.selected and this.data (returns short_name). Sets active link in header.
-			save:
-				if something was selected, saves to localStorage and updates the header
-			submit:
-				if seomthing was selected, pushes through the router to Questions with the default as the selected or reroutes to daacs
+*/
+/*** MIXIN METHODS: ***/
+/*
 
-Questions:
-	props/data:
-		values
-		questions
-		dirty (only file uses this)
-		formTitle:
-		saveTimeout:0
-    daac
-    cancelLabel
-    resetLabel
-    draftLabel
-		saveLabel
-		undoLabel
-		redoLabel
-		submitLabel
-		enterSubmit
-    readonly
-    showCancelButton
-		showResetButton
-	validations:
-		sets the daac if in localStorage
-		gathers required inputs and stores them in localStorage for later evaluation -> returns this object
-	mounted:
-		on load, gets daac from local storage and if showDaacs is false refreshes header in form. sets this.daac
-		runs questions function (fetchQuestions)
-		sets active nav link
-		update the address bar without reload (or state capture) to reflect the daac
-		update header
-	functions:
-		reApplyValues
-			resets values from undo redo
-		fetchQuestions
-			sets this.formTitle
-			loads question data
-			appends style
-			returns question object
-		submitForm:
-      does this.$emit from localStorage question data object
-    draftFile:
-			gets values
-			gets daac from local storage if not set in questions.vue
-			sets data storage if not empty
-      Will alert a message if is passed string
-      Will exit form
-		saveFile:
-			gets values
-			gets daac from local storage if not set in questions.vue
-			sets data storage if not empty
-			Will alert a message if is passed string
-    cancel:
-      Exits form without saving
-    reset:
-			Clears form
-		redo:
-			Redos last action
-			then reApplyValues
-		undo:
-			Undoes last action
-      then reApplyValues
 */
