@@ -14,6 +14,10 @@ export const store = new Vuex.Store({
   state: {
     question_answers: [],
     global_params: {},
+    token: ''
+  },
+  getters: {
+    token: state => state.token
   },
   mutations: {
     // push question state to save the payload to the store state question_answers
@@ -27,14 +31,15 @@ export const store = new Vuex.Store({
     emptyState() {
       this.replaceState({ question_answers: [], global_params: {} });
     },
+    // set JSON web token
+    setToken(state, token) {
+      Vue.set(state, 'token', token)
+    }
   },
   actions: {
 
   },
-  getters: {
-
-  },
   modules: {
-    
+
   }
 })

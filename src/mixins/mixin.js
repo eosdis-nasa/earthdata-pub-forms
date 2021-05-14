@@ -15,6 +15,7 @@ export default {
         } else {
           localStorage.setItem('auth-token', this.$route.query.token)
         }
+        this.$store.commit("setToken", localStorage.getItem('auth-token'));
       },
       // @vuese
       // Converts sentence string to title case
@@ -144,7 +145,7 @@ export default {
       // get Path via parameters, form title (json), then route path
       getPath(){
         let form = ''
-        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}` || 
+        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}` ||
           typeof this.$route !== 'undefined' && this.$route.query.formId == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`){
           form = 'questionnaire'
         } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}` ||
