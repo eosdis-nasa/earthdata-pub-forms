@@ -51,6 +51,7 @@
     "bootstrap-vue": "^2.19.0",
     "eslint-loader": "^4.0.2",
     "jquery": "^3.5.1",
+    "jsonwebtoken": "^8.5.1",
     "popper.js": "^1.16.1",
     "snyk": "^1.431.1",
     "vue": "^2.6.12",
