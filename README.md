@@ -1,6 +1,6 @@
 # Earthdata Pub Forms
 
-This is the Forms code repository for Earthdata Pub (EDPUB).
+This is the Forms code repository for Earthdata Pub (EDPub).
 
 ## Table of Contents
 
@@ -14,11 +14,11 @@ This is the Forms code repository for Earthdata Pub (EDPUB).
 ## Contributing
 
 The [`CONTRIBUTING.md`](./CONTRIBUTING.md) has instruction for contributing to
-the Earthata Pub project. Be sure to read that before submitting pull requests.
+the Earthdata Pub project. Be sure to read that before submitting pull requests.
 
 ## Building and Quickstarts
 
-EDPUB Forms use node v12.18.0. To build/run the Forms on your local
+EDPub Forms use node v12.18.0. To build/run the Forms on your local
 machine, install nvm following the [nvm Install & Update Script](https://github.com/nvm-sh/nvm#install--update-script)
 instructions.
 
@@ -145,24 +145,40 @@ terraform plan
 terraform apply
 ```
 
-To destroy all AWS resoureces, run:
+To destroy all AWS resources, run:
 
 ```bash
 terraform destroy
 ```
 
-## Open source liceneses for depenencies
+## Open source licenses for dependencies
 
-| Dependencies     | License                                                               |
-| ---              | ---                                                                   |
-| `fontawesome`    | `https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt` |
-| `bootstrap`      | `https://github.com/twbs/bootstrap/blob/master/LICENSE`               |
-| `core-js`        | `https://github.com/zloirock/core-js/blob/master/LICENSE`             |
-| `jquery`         | `https://github.com/jquery/jquery/blob/master/LICENSE.txt`            |
-| `popper.js`      | `https://github.com/popperjs/popper-core/blob/master/LICENSE.md`      |
-| `undo-redo-vuex` | `https://github.com/factorial-io/undo-redo-vuex/blob/master/LICENSE`  |
-| `vee-validate`   | `https://github.com/logaretm/vee-validate/blob/master/LICENSE`        |
-| `vue`            | `https://github.com/vuejs/vue/blob/dev/LICENSE`                       |
-| `vue-router`     | `https://github.com/vuejs/vue-router/blob/dev/LICENSE`                |
-| `vuelidate`      | `https://github.com/vuelidate/vuelidate/blob/master/LICENSE`          |
-| `vuex`           | `https://github.com/vuejs/vuex/blob/dev/LICENSE`                      |
+| Dependencies       | License                                                                |
+| ------------------ | ---------------------------------------------------------------------- |
+| `babel`            | `https://github.com/babel/babel/blob/master/LICENSE`                   |
+| `bootstrap`        | `https://github.com/twbs/bootstrap/blob/master/LICENSE`                |
+| `core-js`          | `https://github.com/zloirock/core-js/blob/master/LICENSE`              |
+| `eslint`           | `https://github.com/eslint/eslint/blob/master/LICENSE`                 |
+| `fontawesome`      | `https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt`  |
+| `jest`             | `https://github.com/facebook/jest/blob/master/LICENSE`                 |
+| `jquery`           | `https://github.com/jquery/jquery/blob/master/LICENSE.txt`             |
+| `js-logger`        | `https://github.com/jonnyreeves/js-logger/blob/master/MIT-LICENSE.txt` |
+| `popper.js`        | `https://github.com/popperjs/popper-core/blob/master/LICENSE.md`       |
+| `serve`            | `https://github.com/vercel/serve/blob/master/LICENSE`                  |
+| `undo-redo-vuex`   | `https://github.com/factorial-io/undo-redo-vuex/blob/master/LICENSE`   |
+| `vee-validate`     | `https://github.com/logaretm/vee-validate/blob/master/LICENSE`         |
+| `vue-fixed-header` | `https://github.com/potato4d/vue-fixed-header/blob/master/LICENCE`     |
+| `vue-router`       | `https://github.com/vuejs/vue-router/blob/dev/LICENSE`                 |
+| `vue-to-top`       | `https://github.com/inotom/vue-go-top/blob/master/LICENSE`             |
+| `vue`              | `https://github.com/vuejs/vue/blob/dev/LICENSE`                        |
+| `vuejs-logger`     | `https://github.com/justinkames/vuejs-logger/blob/master/LICENSE`      |
+| `vuelidate`        | `https://github.com/vuelidate/vuelidate/blob/master/LICENSE`           |
+| `vuex`             | `https://github.com/vuejs/vuex/blob/dev/LICENSE`                       |
+
+### Not open-source
+
+NASA pays for a Snyk license.
+
+| Dependencies | License                                            |
+| ------------ | -------------------------------------------------- |
+| `snyk`       | `https://github.com/snyk/snyk/blob/master/LICENSE` |
