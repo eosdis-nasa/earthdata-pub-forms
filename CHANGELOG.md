@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.2.2 - 2021-06-09
 
-- [Fix massive breakage from update to bootstrap 5.0.1 from 4.5.3](450f29227297309b9959b34b572dd506bc99bc0e)
+- [Fix massive breakage from update to bootstrap 5.0.1 from 4.5.3](5ede14ad8563490a76b683c82ecdd3ac1d75af36)
 
 ## 0.2.1 - 2021-04-22
 
