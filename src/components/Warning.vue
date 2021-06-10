@@ -56,6 +56,7 @@ export default {
         const decoded = jwt.decode(this.token);
         if (decoded && decoded.exp) {
           const expiration = decoded.exp - Date.now() - 31000;
+          this.count = 30;
           if (expiration < 1000) {
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`;
           }
