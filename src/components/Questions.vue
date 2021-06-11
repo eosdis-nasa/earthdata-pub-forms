@@ -89,7 +89,8 @@
                       {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
                       <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                       <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
-                      <template v-else-if="input.type == 'date'"> - Start date must be less than End date</template>
+                      <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
+                      <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id] && input.control_id.match(/start/g)"> Date must be less than or equal to End date</template>
                       <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                       <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
                       <template v-else-if="$v.values[input.control_id].maxLength !== undefined && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
@@ -162,6 +163,8 @@
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox'">{{input.label}}:</label>
                                 <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
+                                <span class="date_formats" v-if="input.type == 'date'"><b>Preferred format: </b><span class="date_formats_required">YYYY-MM-DD</span>
+                                </span>
                                 <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                   {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                                 </span>
@@ -572,37 +575,11 @@ export default {
                   val_fields.values[fld.control_id] || {};
                 val_fields.values[fld.control_id].startEndDates = () => {
                   if (typeof fld.control_id != "undefined") {
-                    let start, end;
-                    if (fld.control_id.match(/start/g)) {
-                      start = fld.control_id;
-                      end = fld.control_id.replace(/start/g, "end");
-                    } else if (fld.control_id.match(/end/g)) {
-                      end = fld.control_id;
-                      start = fld.control_id.replace(/end/g, "start");
-                    }
-                    if (typeof this.values[start] != 'undefined' && typeof this.values[end] != 'undefined'){
-                      let start_bits = this.values[start].split("-");
-                      let end_bits = this.values[end].split("-");
-                      let start_date_obj = new Date(
-                        start_bits[0],
-                        start_bits[1] - 1,
-                        start_bits[2]
-                      );
-                      let end_date_obj = new Date(
-                        end_bits[0],
-                        end_bits[1] - 1,
-                        end_bits[2]
-                      );
-                      if (
-                        typeof start_date_obj != "undefined" &&
-                        start_date_obj != "Invalid Date" &&
-                        typeof end_date_obj != "undefined" &&
-                        end_date_obj != "Invalid Date"
-                      ) {
-                        if (start_date_obj > end_date_obj) {
-                          return false;
-                        }
-                      }
+                    if (!this.isDateValid(fld.control_id, "greater")){
+                      return false;
+                    } 
+                    if (!this.isDateValid(fld.control_id, "validity")){
+                      return false;
                     }
                     return true
                   }
@@ -667,6 +644,71 @@ export default {
           //
         }
       }
+    },
+    // @vuese
+    // Checks if date text is valid
+    // @id - The id used to lookup the value
+    // @check_type - Optional string parameter, accepts "greater" or "validity" with "greater" being default
+    isDateValid(id, check_type = "greater") {
+      let start, end;
+      if (id.match(/start/g)) {
+        start = id;
+        end = id.replace(/start/g, "end");
+      } else if (id.match(/end/g)) {
+        end = id;
+        start = id.replace(/end/g, "start");
+      }
+      if (typeof this.values[start] != 'undefined' && typeof this.values[end] != 'undefined'){
+        let start_bits = this.values[start].split("-");
+        let end_bits = this.values[end].split("-");
+        let start_date_obj = new Date(
+          start_bits[0],
+          start_bits[1] - 1,
+          start_bits[2]
+        );
+        let end_date_obj = new Date(
+          end_bits[0],
+          end_bits[1] - 1,
+          end_bits[2]
+        );
+        if (
+          id.match(/start/g) &&
+          typeof start_date_obj != "undefined"
+        ){
+          if (
+            start_date_obj != "Invalid Date" &&
+            check_type == 'greater'
+          ) {
+            if (start_date_obj > end_date_obj) {
+              return false;
+            }
+          } else if (
+            check_type == "validity" &&
+            start_date_obj == "Invalid Date"
+          ) {
+            return false;
+          }
+        }
+        if (
+          id.match(/end/g) &&
+          typeof end_date_obj != "undefined"
+        ){
+          if (
+            end_date_obj != "Invalid Date" &&
+            check_type == 'greater'
+          ) {
+            if (start_date_obj > end_date_obj) {
+              return false;
+            }
+          } else if (
+            check_type == "validity" &&
+            end_date_obj == "Invalid Date"
+          ) {
+            return false;
+          }
+        }
+      }
+      return true
     },
     // @vuese
     // Validates required question inputs; returns true if valid
@@ -1596,6 +1638,16 @@ h2 {
 .required {
   color: red !important;
   padding-top: 7px;
+}
+.date_formats {
+  padding-top: 7px;
+  padding-left:20px;
+  color: light-grey;
+  float:right
+}
+.date_formats_required {
+  padding-top: 7px;
+  padding-left:10px;
 }
 label {
   margin-right: 1rem;
