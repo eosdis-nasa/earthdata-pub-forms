@@ -215,18 +215,38 @@
                                     :min="getAttribute('min', question.inputs[c_key])"
                                     >
                                 </b-form-input>
-                                <b-form-datepicker 
+                                <!-- Date Type of Input -->
+                                <b-input-group>
+                                  <b-form-input
                                     :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                    :type="input.type" 
                                     :id="input.control_id" 
                                     :name="input.control_id" 
                                     v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'date'"
+                                    @blur="fixDate"
                                     :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                    :max="getAttribute('max', question.inputs[c_key])"
+                                    :min="getAttribute('min', question.inputs[c_key])"
+                                    type="text"
+                                    autocomplete="off"
+                                  ></b-form-input>
+                                  <b-input-group-append>
+                                    <b-form-datepicker 
+                                      v-model="values[input.control_id]"
+                                      size="lg" 
+                                      v-if="input.type == 'date'"
+                                      :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                      :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                      :max="getAttribute('max', question.inputs[c_key])"
+                                      :min="getAttribute('min', question.inputs[c_key])"
+                                      button-only
+                                      dropleft
                                     >
-                                </b-form-datepicker>
+                                    </b-form-datepicker>
+                                  </b-input-group-append>
+                                </b-input-group>
                                 <!-- End of Text Type of Input -->
                                 <!-- BBOX Type of Input -->
                                 <div v-if="input.type == 'bbox'" class="w-100">
