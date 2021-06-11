@@ -70,6 +70,9 @@
     }
 </script>
 <style>
+    .input-group > .input-group-append > .btn-group > .btn, .input-group > .input-group-prepend:not(:first-child) > .btn-group > .btn, .input-group > .input-group-prepend:first-child > .btn-group:not(:first-child) > .btn {
+        margin-top: .38rem!important;
+    }
     ul {
         list-style-type: none;
         margin: 0;
