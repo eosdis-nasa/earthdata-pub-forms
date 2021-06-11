@@ -656,6 +656,19 @@ export default {
   },
   methods: {
     // @vuese
+    // Formats any date text to YYYY-MM-DD
+    // @event - The event that executed
+    fixDate(event) {
+      if(this.values[event.target.id] !== ''){
+        try{
+          new Date(this.values[event.target.id]).toISOString();
+          this.values[event.target.id] = new Date(this.values[event.target.id]).toISOString().split('T')[0];
+        } catch {
+          //
+        }
+      }
+    },
+    // @vuese
     // Validates required question inputs; returns true if valid
     // @inputs - array of inputs to look for bbox in
     validateQuestionInputsRequired(inputs) {
