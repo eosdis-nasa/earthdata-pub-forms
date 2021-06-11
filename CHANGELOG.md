@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 0.2.3 - 2021-06-11
+
+- [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
+- [Separated out date to text input and calendar to allow for text entry](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added min and max attributes one can optionally apply to new text input for date and calendar for date](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added calendar button button-only and dropleft attributes to make calendar stand out and force the calendar position so that the calendar buttons never shift up and down](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added fixDate function to work on blur of date field, to attempt to reformat to browser default of YYYY-MM-DD](891afe49a725900e2e97809e7c10a99ea0cfb0d8)
+- [Moved Date Validation to isDateValid function to allow for adding a call to that to use in both templates and validation.](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Altered Date validation to check individual field requirements and rules, as well as check if the date is in a valid format](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Altered template message that checked for Start Date to be greater or equal to End Date to include isDateValid function call](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added template message for when a date is in an invalid format](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added label to hint at ideal format above date fields.](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added format date hint styling](7e449c3c6c3597168de6e66d58b653762545e2f1)
+
 ## 0.2.2 - 2021-06-09
 
 - [Fix massive breakage from update to bootstrap 5.0.1 from 4.5.3](5ede14ad8563490a76b683c82ecdd3ac1d75af36)
