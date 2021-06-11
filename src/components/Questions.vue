@@ -90,7 +90,7 @@
                       <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                       <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
                       <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
-                      <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id] && input.control_id.match(/start/g)"> Date must be less than or equal to End date</template>
+                      <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id]"> Date must be less than or equal to End date</template>
                       <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                       <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
                       <template v-else-if="$v.values[input.control_id].maxLength !== undefined && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
@@ -694,13 +694,6 @@ export default {
           typeof end_date_obj != "undefined"
         ){
           if (
-            end_date_obj != "Invalid Date" &&
-            check_type == 'greater'
-          ) {
-            if (start_date_obj > end_date_obj) {
-              return false;
-            }
-          } else if (
             check_type == "validity" &&
             end_date_obj == "Invalid Date"
           ) {
