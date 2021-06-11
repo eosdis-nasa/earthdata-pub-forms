@@ -43,7 +43,7 @@
           </div>
       </fixed-header>
     </b-container>
-    <b-container style="margin-top:2rem;">
+    <!--<b-container style="margin-top:2rem;">
       <p v-if="$v.$anyError" class="eui-banner--danger" id="eui-banner">
         <b><strong>Please correct the following error(s):</strong></b>
         <a href="javascript:void(0)" class="eui-banner__dismiss float_right" title="Dismiss banner"><i class="eui-icon eui-fa-times-circle" @click="dismiss('eui-banner');"></i></a>
@@ -105,58 +105,61 @@
         </template>
       </ul>
       </p>
-    </b-container>
+    </b-container>-->
     <b-container name="questions_container" id="questions_container">
         <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
-            <div :class="{ 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
+              <li class="eui-banner--danger" v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
+              <div :class="{ 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
                 <input type="hidden" :id="`section_${a_key}`" v-if="heading.heading_required" />
                 <h2>{{heading.heading}}</h2>
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
                     <template v-for="(question, b_key) in heading"  >
+                      <li class="eui-banner--danger" v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
                       <b-form-group v-if="showIf(question.show_if)"
-                      :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
-                      size="lg" lg=12
-                      :disabled="disabled"
-                      :readonly="readonly"
-                      :key="b_key">
-                        <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                        <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}</label>
-                        <span class="required" v-if="question.required == true">* required</span>
-                        <p :id="question.short_name || a_key">{{question.text}}</p>
-                            <span class="help">
-                              <a href="#" @click.prevent="" :id="`help_${question.short_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.short_name}`">
-                              <font-awesome-icon icon="info-circle" name="info icon"/>
-                                Help</a>
-                              <b-modal :id="`modal_${question.short_name}`" :title="`${question.long_name} - Help`" ok-only centered>
-                                <p class="my-4">{{question.help}}</p>
-                              </b-modal>
-                            </span>
-                        <!-- Input -->
-                        <b-row>
-                          <b-col :lg="question.size || 12" class="question_size">
-                            <template v-for="(input, c_key) in question.inputs">
-                              <span  :key="c_key">
-                                <span v-if="input.type == 'checkbox'" class="checkbox">
-                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
-                                  <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
-                                  <!-- Checkbox Type of Input -->
-                                  <b-form-checkbox 
-                                      :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
-                                      :type="input.type" 
-                                      :id="input.control_id" 
-                                      :name="input.control_id" 
-                                      v-model="values[input.control_id]"
-                                      size="lg" 
-                                      value="true"
-                                      unchecked-value="false"
-                                      :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
-                                  </b-form-checkbox>
-                                  <!-- End of Checkbox Type of Input -->
-                                </span>
+                        :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
+                        size="lg" lg=12
+                        :disabled="disabled"
+                        :readonly="readonly"
+                        :key="b_key"
+                      >
+                      <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
+                      <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}</label>
+                      <span class="required" v-if="question.required == true">* required</span>
+                      <p :id="question.short_name || a_key">{{question.text}}</p>
+                      <span class="help">
+                        <a href="#" @click.prevent="" :id="`help_${question.short_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.short_name}`">
+                        <font-awesome-icon icon="info-circle" name="info icon"/>
+                          Help</a>
+                        <b-modal :id="`modal_${question.short_name}`" :title="`${question.long_name} - Help`" ok-only centered>
+                          <p class="my-4">{{question.help}}</p>
+                        </b-modal>
+                      </span>
+                      <!-- Input -->
+                      <b-row>
+                        <b-col :lg="question.size || 12" class="question_size">
+                          <template v-for="(input, c_key) in question.inputs">
+                            <span  :key="c_key">
+                              <span v-if="input.type == 'checkbox'" class="checkbox">
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
+                                <!-- Checkbox Type of Input -->
+                                <b-form-checkbox 
+                                  :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
+                                  :type="input.type" 
+                                  :id="input.control_id" 
+                                  :name="input.control_id" 
+                                  v-model="values[input.control_id]"
+                                  size="lg" 
+                                  value="true"
+                                  unchecked-value="false"
+                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
+                                </b-form-checkbox>
+                                <!-- End of Checkbox Type of Input -->
+                              </span>
                             <b-row v-else>
                               <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                               <template v-if="showIf(input.show_if)">
@@ -338,19 +341,20 @@
                                 <!-- Selected Input File Name -->
                                 <div class="mt-3" v-if="input.type == 'file' && values[input.control_id] != ''">Selected file: {{ values[input.control_id] ? values[input.control_id].name : '' }}</div>
                                 <!-- End of Selected Input File Name -->
-                                <p :id="`${input.control_id}_invalid`" class="eui-banner eui-banner--danger hidden validation"></p>
+                                <p :id="`${input.control_id}_invalid`" class="eui-banner--danger form-control validation"></p>
                               </template>
                             </b-row>
+                            
                             </span>
-                            </template>
-                          </b-col>
-                        </b-row>
-                        <!-- End of Input -->
-                        </b-form-group>
+                          </template>
+                        </b-col>
+                      </b-row>
+                      <!-- End of Input -->
+                      </b-form-group>
                     </template>
                     <!-- End of Question -->
                 </div>
-                </div>
+              </div>
             </b-row>
         </section>
         <!-- End of Section -->
