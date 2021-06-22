@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 0.2.4 - 2021-06-22
+
+- [Removed error message block and moved errors to corresponding inputs](fca3b988f1a2c53852fbe120dc3eb872d2316056)
+
 ## 0.2.3 - 2021-06-11
 
 - [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
