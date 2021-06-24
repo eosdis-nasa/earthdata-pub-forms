@@ -1,18 +1,4 @@
 <template>
-  <!--<div id="warning-overlay" v-if="active">
-    <div id="warning-window">
-      <div id="warning-window-header">
-        <h3>Session Expiring</h3>
-      </div>
-      <div id="warning-window-body">
-        <p>Your session will expire in {{ testcount }} seconds. Would you like to extend the session?</p>
-      </div>
-      <div id="warning-window-footer">
-        <button v-on:click="logout">Logout Now</button>
-        <button v-on:click="extend">Extend Session</button>
-      </div>
-    </div>
-  </div>-->
   <b-modal ref="timeout-warning"
     title="Session Expiring"
     ok-title="Extend Session"
