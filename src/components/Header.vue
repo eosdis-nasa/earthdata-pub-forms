@@ -8,8 +8,8 @@
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
           <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request</span>
-          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information</span>
+          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
+          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
@@ -195,8 +195,8 @@ export default {
     // @comp - component to switch too (string)
     goToComponent(comp){
       let form, prefix, formId, requestId, group, showDaacs;
+      form = this.getForm();
       if(typeof this.$store === 'undefined'){
-        form = this.getForm();
         prefix = this.getFormNamePrefix();
         formId = undefined;
         requestId = undefined;

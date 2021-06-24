@@ -55,7 +55,6 @@
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
                     <template v-for="(question, b_key) in heading"  >
-                      <li class="eui-banner--danger same-as-html5" v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
                       <b-form-group v-if="showIf(question.show_if)"
                         :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
                         size="lg" lg=12
@@ -333,6 +332,7 @@
                       </b-row>
                       <!-- End of Input -->
                       </b-form-group>
+                      <li class="eui-banner--danger same-as-html5" v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
                     </template>
                     <!-- End of Question -->
                 </div>
@@ -1001,9 +1001,20 @@ export default {
           Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
         },
       });
-      $.getJSON(
-        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`,
-        (forms) => {
+      let url;
+      let form = this.getForm();
+      let json_name = ''
+      if(form.match(/interest/g)){
+        json_name = 'data_publication_request' 
+      } else {
+        json_name = 'data_product_information' 
+      }
+      if (this.$testing){
+        url = `../../${json_name}.json`
+      } else {
+        url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
+      }
+      $.getJSON(url, (forms) => {
           var question = [];
           this.contacts = [];
           let contact = false;
@@ -1037,17 +1048,8 @@ export default {
               }
             }
           }
-          let url;
-          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+          if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
-          } else {
-            let json_name = "";
-            if (form.match(/interest/g)) {
-              json_name = "data_publication_request";
-            } else {
-              json_name = `${form}/data_product_information`;
-            }
-            url = `../${json_name}.json`;
           }
           $.getJSON(url, (questions) => {
             if (this.formTitle == "" && questions["long_name"] != "") {
@@ -1210,60 +1212,72 @@ export default {
       } else {
         action = "submitted";
       }
-      $.ajax({
-        type: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-        url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
-        data: JSON.stringify(json),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: (response) => {
-          this.requestId = response.id;
-          this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
-          let message = `Your data have been ${action}.`
-          if (operation == "submit") {
-            this.$values = {};
-            this.confirm = false;
-            if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-              this.redirectNotification(bvModal, message, operation)
+      if(!this.$testing){
+        $.ajax({
+          type: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+          },
+          url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+          data: JSON.stringify(json),
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: (response) => {
+            this.requestId = response.id;
+            this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
+            let message = `Your data have been ${action}.`
+            if (operation == "submit") {
+              this.$values = {};
+              this.confirm = false;
+              if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+                this.redirectNotification(bvModal, message, operation)
+              } else {
+                this.exitForm(bvModal, message)
+              }
+            } else if (was_draft){
+              if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
+                this.redirectNotification(bvModal, message, 'draft')
+              } else {
+                this.exitForm(bvModal, message)
+              }
             } else {
-              this.exitForm(bvModal, message)
+                bvModal.msgBoxOk(message, {
+                title: "Success!",
+                size: "sm",
+                buttonSize: "sm",
+                okTitle: "OK",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+              })
             }
-          } else if (was_draft){
-            if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
-              this.redirectNotification(bvModal, message, 'draft')
-            } else {
-              this.exitForm(bvModal, message)
-            }
-          } else {
-              bvModal.msgBoxOk(message, {
-              title: "Success!",
-              size: "sm",
-              buttonSize: "sm",
-              okTitle: "OK",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            })
-          }
-        },
-        error: (XMLHttpRequest, textStatus, errorThrown) => {
-          bvModal.msgBoxOk(
-            `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
-            {
-              title: "Error!",
-              size: "sm",
-              buttonSize: "sm",
-              okTitle: "OK",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            }
-          );
-        },
-      });
+          },
+          error: (XMLHttpRequest, textStatus, errorThrown) => {
+            bvModal.msgBoxOk(
+              `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
+              {
+                title: "Error!",
+                size: "sm",
+                buttonSize: "sm",
+                okTitle: "OK",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+              }
+            );
+          },
+        });
+      } else {
+        bvModal.msgBoxOk('Data did not save.  Testing is set to true.', {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+      }
     },
     // @vuese
     // Loads answers using request id
@@ -1522,7 +1536,7 @@ export default {
       this.daac = null;
     } else if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
       this.daac = this.$store.state.global_params['group']
-    } 
+    }
     let set_loc = location.href;
     let re = `/${form}/questions/`;
     if (!set_loc.match(re, "g")) {
@@ -1673,6 +1687,9 @@ button {
   padding-right: 8px;
   padding-top: 8px;
   padding-bottom: 5px;
+}
+.form-group {
+  margin-bottom:unset;
 }
 input {
   border-radius: 5px;
