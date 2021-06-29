@@ -147,3 +147,4 @@ dist
 website
 
 .snyk
+package-lock.json

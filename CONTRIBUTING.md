@@ -147,7 +147,7 @@ to know why and how.
 
 ### Version numbers
 
-EDPUB adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+EDPub adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Version numbers for code will be used to identify changes to the code base. The format
 of that number should be `1.1.1` where the numbers mean `major.minor.fix`.
 
@@ -162,6 +162,6 @@ See the [CHANGELOG.md](CHANGELOG.md) for examples.
 ## Bitbucket settings
 
 All Bitbucket settings, e.g. Workflow and Pull Requests settings, should be set
-at the [EDPUB project settings](https://git.earthdata.nasa.gov/projects/EDPUB/settings)
+at the [EDPub project settings](https://git.earthdata.nasa.gov/projects/EDPUB/settings)
 level. This is to ensure that all repositories under Earthdata Pub act the same.
 Developers will have an easier time working across repos if the behavior is consistent.
