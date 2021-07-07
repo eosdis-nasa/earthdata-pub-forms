@@ -1,18 +1,4 @@
 <template>
-  <!--<div id="warning-overlay" v-if="active">
-    <div id="warning-window">
-      <div id="warning-window-header">
-        <h3>Session Expiring</h3>
-      </div>
-      <div id="warning-window-body">
-        <p>Your session will expire in {{ testcount }} seconds. Would you like to extend the session?</p>
-      </div>
-      <div id="warning-window-footer">
-        <button v-on:click="logout">Logout Now</button>
-        <button v-on:click="extend">Extend Session</button>
-      </div>
-    </div>
-  </div>-->
   <b-modal ref="timeout-warning"
     title="Session Expiring"
     ok-title="Extend Session"
@@ -37,6 +23,7 @@ export default {
   name: 'Warning',
   data() {
     return {
+      expiration: 0,
       count: 30,
       timeout: false,
       interval: false
@@ -55,23 +42,27 @@ export default {
       if (this.token) {
         const decoded = jwt.decode(this.token);
         if (decoded && decoded.exp) {
-          const expiration = decoded.exp - Date.now() - 31000;
-          this.count = 30;
-          if (expiration < 1000) {
+          this.expiration = decoded.exp;
+          const currentTime = Math.floor(Date.now() / 1000);
+          const sessionLength = this.expiration - currentTime;
+          const warningTime = (sessionLength - 30) * 1000;
+          if (sessionLength < 1) {
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`;
           }
-          this.timeout = setTimeout(this.show, expiration);
+          this.timeout = setTimeout(this.show, warningTime);
         }
       }
     },
     update: function () {
-      this.count -= 1;
+      const currentTime = Math.floor(Date.now() / 1000);
+      this.count = this.expiration - currentTime;
       if (this.count <= 1) {
         this.logout();
       }
     },
     show: function () {
       this.timeout = false;
+      this.update();
       this.interval = setInterval(this.update, 1000);
       this.$refs['timeout-warning'].show()
     },
