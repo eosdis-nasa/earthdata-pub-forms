@@ -70,6 +70,20 @@
     }
 </script>
 <style>
+    .form-control {
+        border-radius:5px!important;
+        height: unset!important;
+    }
+    .same-as-html5{
+        border-radius:5px!important;
+        list-style-type: none;
+    }
+    input, textarea {
+        margin: unset!important;
+    }
+    textarea {
+        padding-left:8px!important;
+    }
     ul {
         list-style-type: none;
         margin: 0;
@@ -192,7 +206,7 @@
     .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, ..eui-btn--green.btn-secondary:disabled {
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, .eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
     }
     .default_background {
