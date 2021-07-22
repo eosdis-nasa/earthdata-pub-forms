@@ -120,9 +120,13 @@ export default {
             'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
           }
         });
-        // TESTING ONLY
-        //$.getJSON("../daacs.json", daacs => {
-        $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
+        let url;
+        if(this.$testing){
+          url = "../../daacs.json"
+        } else {
+          url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
+        }
+        $.getJSON(url, daacs => {
           for (var dict in daacs) {
             items.push(daacs[dict]);
           }

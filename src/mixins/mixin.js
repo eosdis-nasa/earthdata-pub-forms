@@ -8,6 +8,9 @@ export default {
       // @vuese
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
+        if(this.$testing){
+          return;
+        }
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`

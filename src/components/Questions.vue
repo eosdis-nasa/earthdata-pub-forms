@@ -55,7 +55,6 @@
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
                     <template v-for="(question, b_key) in heading"  >
-                      <li class="eui-banner--danger same-as-html5" v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
                       <b-form-group v-if="showIf(question.show_if)"
                         :class="{ 'form-group-error': ($v.values[`question_${a_key}_${b_key}`] || {}).$error }"
                         size="lg" lg=12
@@ -100,7 +99,7 @@
                           <b-row v-else>
                             <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                             <template v-if="showIf(input.show_if)">
-                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox'">{{input.label}}:</label>
+                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                               <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <span class="date_formats" v-if="input.type == 'date'"><b>Preferred format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
@@ -209,7 +208,60 @@
                                   </span>
                                 </template>
                               </div>
-                              <!-- End of Text Type of Input -->
+                              <!-- Table Type of Input -->
+                              <div v-if="input.type == 'table'" class="w-100">
+                                <template v-for="(e, d_key) in question.inputs[c_key]['enums']">
+                                  <span :key="`${b_key}_${d_key}`">
+                                    <label class="eui-label-nopointer">{{e.label}}:</label>
+                                    <b-form-input 
+                                        :class="{ 'btable': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${e.key}`] || {}).$error }"
+                                        :type="e.type" 
+                                        :id="`${input.control_id}_${e.key}`" 
+                                        :name="`${input.control_id}_${e.key}`" 
+                                        v-model="values[`${input.control_id}_${e.key}`]"
+                                        size="lg"
+                                        :maxlength="getAttribute('maxlength', question.inputs[c_key])"
+                                        :minlength="getAttribute('minlength', question.inputs[c_key])"
+                                        :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                        :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                        >
+                                    </b-form-input>
+                                  </span>
+                                </template>
+                                <div style="float:right;">
+                                  <b-button 
+                                    class="button" 
+                                    type="add_row" 
+                                    id="add_row_button" 
+                                    aria-label="add row button" 
+                                    style="margin-right:0px;"
+                                    @click="addRow(input.control_id)">
+                                    <font-awesome-icon icon="plus"/>
+                                  </b-button>
+                                </div>
+                                <b-table 
+                                  :class="{ 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                  responsive 
+                                  bordered
+                                  sticky-header 
+                                  show-empty
+                                  :items="values[input.control_id]"
+                                  :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                  <!-- as I'm parsing add in items -->
+                                  <!-- additional table slots here if needed -->
+                                  <!-- A custom formatted column -->
+                                  <template #cell(X)="data">
+                                    <b-button 
+                                      class="button" 
+                                      aria-label="remove row button" 
+                                      style="margin:0px"
+                                      @click="removeRow(input.control_id, data.item)">
+                                      <font-awesome-icon icon="trash-alt"/>
+                                    </b-button>
+                                  </template>
+                                </b-table>
+                              </div>
+                              <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
                               <b-form-textarea 
                                   :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -333,6 +385,7 @@
                       </b-row>
                       <!-- End of Input -->
                       </b-form-group>
+                      <li class="eui-banner--danger same-as-html5" v-bind:key="`${a_key}_${b_key}`" v-if="($v.values[`question_${a_key}_${b_key}`] || {}).$error">{{ heading.heading }} - {{ question.long_name }} section is required</li>
                     </template>
                     <!-- End of Question -->
                 </div>
@@ -514,6 +567,40 @@ export default {
                   });
                 }
               }
+            } else if (fld.type == "table") {
+              let enum_arr = []
+              for (let subfield in fld.enums){
+                enum_arr.push(fld.enums[subfield]['key'])
+              }
+              val_fields.values[`${fld.control_id}`] = {
+                /* table: () => {
+                  return this.getTableError(fld.control_id, enum_arr) == "";
+                } */
+              };
+              if (typeof fld.required != "undefined" && fld.required) {
+                val_fields.values[
+                  `${fld.control_id}`
+                ].required = required;
+              } else if (typeof fld.required_if != "undefined") {
+                val_fields.values[
+                  `${fld.control_id}`
+                ].required = requiredIf(() => {
+                  for (let req_fld of fld.required_if) {
+                    try {
+                      if (
+                        typeof this.values[req_fld.field] != "undefined" &&
+                        this.values[req_fld.field].toString() ===
+                          req_fld.value.toString()
+                      ) {
+                        return true;
+                      }
+                    } catch (e) {
+                      // test
+                    }
+                  }
+                  return false;
+                });
+              }
             } else {
               if (typeof fld.required != "undefined" && fld.required) {
                 if (fld.type != "checkbox") {
@@ -618,6 +705,48 @@ export default {
     return val_fields;
   },
   methods: {
+    // @vuese
+    // Filters the table
+    // @tableId - The id of the table in question
+    addRow(tableId) {
+      let enum_arr = {}
+      for (let group of this.questions) {
+        for (let question of group) {
+          if (typeof question.inputs != "undefined") {
+            for (let input of question.inputs) {
+              if (input.type != 'table'){ continue }
+              if (input.control_id == tableId){
+                for (let e in input.enums){
+                  const en = input.enums[e]
+                  enum_arr[`${en.key}`] = this.values[`${tableId}_${en.key}`]
+                }
+                if (!this.values[tableId]) {
+                  this.$set(this.values, tableId, [])
+                }
+                this.values[tableId].push(enum_arr)
+                break
+              }
+            }
+          }
+        }
+      }
+    },
+    removeRow(tableId, item) {
+      for (let r = 0;r < this.values[tableId].length;r++) {
+        let row = this.values[tableId][r]
+        let found = true
+        for (let field of Object.keys(row)) {
+          if (row[field] != item[field]) {
+            found = false
+            break
+          }
+        }
+        if (found) {
+          this.values[tableId].splice(r, 1)
+          break
+        }
+      }
+    },
     // @vuese
     // Formats any date text to YYYY-MM-DD
     // @event - The event that executed
@@ -725,6 +854,14 @@ export default {
         }
       }
       return true;
+    },
+    // @vuese
+    // Gets custom table validation errors; returns blank if valid
+    // @fld - the table field
+    // @index - The row of the fld
+    getTableError(id, enum_keys) {
+      console.log('get table error', id, enum_keys)
+      return "";
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
@@ -1001,9 +1138,20 @@ export default {
           Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
         },
       });
-      $.getJSON(
-        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`,
-        (forms) => {
+      let url;
+      let form = this.getForm();
+      let json_name = ''
+      if(form.match(/interest/g)){
+        json_name = 'data_publication_request' 
+      } else {
+        json_name = 'data_product_information' 
+      }
+      if (this.$testing){
+        url = `../../${json_name}.json`
+      } else {
+        url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
+      }
+      $.getJSON(url, (forms) => {
           var question = [];
           this.contacts = [];
           let contact = false;
@@ -1037,17 +1185,8 @@ export default {
               }
             }
           }
-          let url;
-          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+          if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
-          } else {
-            let json_name = "";
-            if (form.match(/interest/g)) {
-              json_name = "data_publication_request";
-            } else {
-              json_name = `${form}/data_product_information`;
-            }
-            url = `../${json_name}.json`;
           }
           $.getJSON(url, (questions) => {
             if (this.formTitle == "" && questions["long_name"] != "") {
@@ -1210,60 +1349,72 @@ export default {
       } else {
         action = "submitted";
       }
-      $.ajax({
-        type: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-        url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
-        data: JSON.stringify(json),
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: (response) => {
-          this.requestId = response.id;
-          this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
-          let message = `Your data have been ${action}.`
-          if (operation == "submit") {
-            this.$values = {};
-            this.confirm = false;
-            if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-              this.redirectNotification(bvModal, message, operation)
+      if(!this.$testing){
+        $.ajax({
+          type: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+          },
+          url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+          data: JSON.stringify(json),
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          success: (response) => {
+            this.requestId = response.id;
+            this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
+            let message = `Your data have been ${action}.`
+            if (operation == "submit") {
+              this.$values = {};
+              this.confirm = false;
+              if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
+                this.redirectNotification(bvModal, message, operation)
+              } else {
+                this.exitForm(bvModal, message)
+              }
+            } else if (was_draft){
+              if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
+                this.redirectNotification(bvModal, message, 'draft')
+              } else {
+                this.exitForm(bvModal, message)
+              }
             } else {
-              this.exitForm(bvModal, message)
+                bvModal.msgBoxOk(message, {
+                title: "Success!",
+                size: "sm",
+                buttonSize: "sm",
+                okTitle: "OK",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+              })
             }
-          } else if (was_draft){
-            if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
-              this.redirectNotification(bvModal, message, 'draft')
-            } else {
-              this.exitForm(bvModal, message)
-            }
-          } else {
-              bvModal.msgBoxOk(message, {
-              title: "Success!",
-              size: "sm",
-              buttonSize: "sm",
-              okTitle: "OK",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            })
-          }
-        },
-        error: (XMLHttpRequest, textStatus, errorThrown) => {
-          bvModal.msgBoxOk(
-            `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
-            {
-              title: "Error!",
-              size: "sm",
-              buttonSize: "sm",
-              okTitle: "OK",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            }
-          );
-        },
-      });
+          },
+          error: (XMLHttpRequest, textStatus, errorThrown) => {
+            bvModal.msgBoxOk(
+              `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
+              {
+                title: "Error!",
+                size: "sm",
+                buttonSize: "sm",
+                okTitle: "OK",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+              }
+            );
+          },
+        });
+      } else {
+        bvModal.msgBoxOk('Data did not save.  Testing is set to true.', {
+          title: "Success!",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "OK",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+      }
     },
     // @vuese
     // Loads answers using request id
@@ -1522,7 +1673,7 @@ export default {
       this.daac = null;
     } else if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
       this.daac = this.$store.state.global_params['group']
-    } 
+    }
     let set_loc = location.href;
     let re = `/${form}/questions/`;
     if (!set_loc.match(re, "g")) {
@@ -1543,6 +1694,10 @@ export default {
 };
 </script>
 <style scoped>
+.b-table-sticky-header, .table-responsive, [class*=table-responsive-] {
+  margin-bottom: unset;
+  border-radius: 5px;
+}
 #contact_span{
   margin-left:2rem; 
 }
@@ -1554,6 +1709,14 @@ export default {
   max-width: 100px;
 }
 .bbox.form-control {
+  display: inline-flex;
+  margin-left: 10px;
+}
+.btable {
+  min-width: unset;
+  max-width: 200px;
+}
+.btable.form-control {
   display: inline-flex;
   margin-left: 10px;
 }
@@ -1660,12 +1823,14 @@ button {
 .form-checkbox-error,
 .form-input-error,
 .form-group-error,
-.form-section-error {
+.form-section-error,
+.form-table-error {
   border-color: red;
 }
 .form-group-error,
 .form-radio-group-error,
-.form-section-error {
+.form-section-error,
+.form-table-error {
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
@@ -1673,6 +1838,9 @@ button {
   padding-right: 8px;
   padding-top: 8px;
   padding-bottom: 5px;
+}
+.form-group {
+  margin-bottom:unset;
 }
 input {
   border-radius: 5px;

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.1 - 2021-07-22
 
+- [Updated jsons from api and moved them to public folder](e5f2359446313fde12120b6bb19918f01f31c8d8)
+- [Added var for testing and code to use json instead of api; fixed help page error](80e820043703263d471bdb3f14c05abbef4370bd)
+- [Some style tweaks and cleanup from after message move.](393b4679571743b84e94d74da5d19d8391ccd723)
 - [Removed error message block and moved errors to corresponding inputs](fca3b988f1a2c53852fbe120dc3eb872d2316056)
 - [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
 - [Separated out date to text input and calendar to allow for text entry](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)

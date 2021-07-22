@@ -81,6 +81,9 @@
     input, textarea {
         margin: unset!important;
     }
+    textarea {
+        padding-left:8px!important;
+    }
     ul {
         list-style-type: none;
         margin: 0;
