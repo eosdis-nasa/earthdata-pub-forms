@@ -70,6 +70,9 @@
     }
 </script>
 <style>
+    .input-group > .input-group-append > .btn-group > .btn, .input-group > .input-group-prepend:not(:first-child) > .btn-group > .btn, .input-group > .input-group-prepend:first-child > .btn-group:not(:first-child) > .btn {
+        margin-top: .38rem!important;
+    }
     ul {
         list-style-type: none;
         margin: 0;
@@ -192,7 +195,7 @@
     .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, ..eui-btn--green.btn-secondary:disabled {
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, .eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
     }
     .default_background {
