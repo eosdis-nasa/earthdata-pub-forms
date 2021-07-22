@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.1 - 2021-07-22
 
+- [Removed error message block and moved errors to corresponding inputs](fca3b988f1a2c53852fbe120dc3eb872d2316056)
 - [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
 - [Separated out date to text input and calendar to allow for text entry](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
 - [Added min and max attributes one can optionally apply to new text input for date and calendar for date](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
