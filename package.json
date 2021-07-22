@@ -1,6 +1,6 @@
 {
   "name": "earthdata-pub-forms",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Forms for Earthdata Pub API",
   "repository": {
     "type": "git",

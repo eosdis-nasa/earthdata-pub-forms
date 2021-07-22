@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
-## 0.2.3 - 2021-06-11
+## 1.0.1 - 2021-07-22
 
 - [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
 - [Separated out date to text input and calendar to allow for text entry](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [Added template message for when a date is in an invalid format](7e449c3c6c3597168de6e66d58b653762545e2f1)
 - [Added label to hint at ideal format above date fields.](7e449c3c6c3597168de6e66d58b653762545e2f1)
 - [Added format date hint styling](7e449c3c6c3597168de6e66d58b653762545e2f1)
+
+## 1.0.0 - 2021-06-29
+
+- [Open source release version 1.0.0](46bdfcd3bbf12c4090f3948374395b7c07de884c)
 
 ## 0.2.2 - 2021-06-09
 
