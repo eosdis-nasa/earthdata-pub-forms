@@ -70,8 +70,16 @@
     }
 </script>
 <style>
-    .input-group > .input-group-append > .btn-group > .btn, .input-group > .input-group-prepend:not(:first-child) > .btn-group > .btn, .input-group > .input-group-prepend:first-child > .btn-group:not(:first-child) > .btn {
-        margin-top: .38rem!important;
+    .form-control {
+        border-radius:5px!important;
+        height: unset!important;
+    }
+    .same-as-html5{
+        border-radius:5px!important;
+        list-style-type: none;
+    }
+    input, textarea {
+        margin: unset!important;
     }
     ul {
         list-style-type: none;
