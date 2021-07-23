@@ -572,11 +572,7 @@ export default {
               for (let subfield in fld.enums){
                 enum_arr.push(fld.enums[subfield]['key'])
               }
-              val_fields.values[`${fld.control_id}`] = {
-                /* table: () => {
-                  return this.getTableError(fld.control_id, enum_arr) == "";
-                } */
-              };
+              val_fields.values[`${fld.control_id}`] = {};
               if (typeof fld.required != "undefined" && fld.required) {
                 val_fields.values[
                   `${fld.control_id}`
@@ -854,14 +850,6 @@ export default {
         }
       }
       return true;
-    },
-    // @vuese
-    // Gets custom table validation errors; returns blank if valid
-    // @fld - the table field
-    // @index - The row of the fld
-    getTableError(id, enum_keys) {
-      console.log('get table error', id, enum_keys)
-      return "";
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
