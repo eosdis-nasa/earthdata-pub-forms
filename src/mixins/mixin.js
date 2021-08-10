@@ -229,10 +229,10 @@ export default {
       },
       // @vuese
       // Set / Resets active location.href value without updating state
-      setActiveLocationWithoutReload(shortName){
-        if(typeof shortName !='undefined' && shortName != null){
+      setActiveLocationWithoutReload(id){
+        if(typeof id !='undefined' && id != null){
           let after_protocol, new_url;
-          let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
+          let to_href = decodeURIComponent(id).replace(/ /g,'_').toLowerCase()
           let next_url = `${to_href}`
           if(typeof next_url.split('http://')[1] != 'undefined'){
             after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
@@ -240,6 +240,15 @@ export default {
           } else {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
+          }
+          let daacData
+          if(typeof window.daacsComponent != 'undefined'){
+            daacData = window.daacsComponent.getDaac(id)
+            console.log('daac data being set', typeof window.questionsComponent)
+          }
+          if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
+            window.questionsComponent.daac_name = daacData.short_name
+            console.log('set daac name',window.questionsComponent.daac_name)
           }
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
