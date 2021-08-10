@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.2 - 2021-08-10
+
+- [Updated jsons for publication_dois to be table format for multirow](26bfbd65dc6c514aebbc833493eb254e1442affa)
+
 ## 1.0.1 - 2021-07-22
 
 - [Updated jsons from api and moved them to public folder](e5f2359446313fde12120b6bb19918f01f31c8d8)
