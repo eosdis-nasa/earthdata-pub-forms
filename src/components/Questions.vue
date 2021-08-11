@@ -52,7 +52,7 @@
               <div :class="{ 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
                 <input type="hidden" :id="`section_${a_key}`" v-if="heading.heading_required" />
                 <div v-if="daac_name!=''" id="daac_selection"><b>DAAC Selected</b>: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
-                  <a @click="window.headerComponent.compareDataAskLeave('daacs')" id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span></div>
+                  <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span></div>
                 <h2>{{heading.heading}}</h2>
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
@@ -704,6 +704,11 @@ export default {
     return val_fields;
   },
   methods: {
+    // @vuese
+    // Activate header daac link
+    goToDaacs(){
+      document.getElementById('daacs_nav_link').click()
+    },
     // @vuese
     // Filters the table
     // @tableId - The id of the table in question

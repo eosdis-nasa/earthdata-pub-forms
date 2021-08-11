@@ -244,11 +244,9 @@ export default {
           let daacData
           if(typeof window.daacsComponent != 'undefined'){
             daacData = window.daacsComponent.getDaac(id)
-            console.log('daac data being set', typeof window.questionsComponent)
           }
           if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
             window.questionsComponent.daac_name = daacData.short_name
-            console.log('set daac name',window.questionsComponent.daac_name)
           }
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
