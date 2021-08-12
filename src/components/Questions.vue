@@ -46,13 +46,14 @@
     <b-container name="questions_container" id="questions_container">
         <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
+        <div v-if="daac_name!=''" id="daac_selection"><b>DAAC Selected</b>: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
+          <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span>
+        </div>
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
               <li class="eui-banner--danger same-as-html5" v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
               <div :class="{ 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
                 <input type="hidden" :id="`section_${a_key}`" v-if="heading.heading_required" />
-                <div v-if="daac_name!=''" id="daac_selection"><b>DAAC Selected</b>: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
-                  <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span></div>
                 <h2>{{heading.heading}}</h2>
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
