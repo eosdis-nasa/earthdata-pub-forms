@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.2 - 2021-08-12
+
+- [Added config option for unknown website link label override (VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR)](3b3bdf0b7cd914654fa9ea9fda2f9fee61cc5ae3)
+
 ## 1.0.1 - 2021-07-22
 
 - [Updated jsons from api and moved them to public folder](e5f2359446313fde12120b6bb19918f01f31c8d8)
