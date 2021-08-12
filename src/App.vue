@@ -70,6 +70,9 @@
     }
 </script>
 <style>
+    .eui-link {
+        cursor:pointer;
+    }
     .form-control {
         border-radius:5px!important;
         height: unset!important;

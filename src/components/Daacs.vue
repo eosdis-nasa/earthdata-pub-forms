@@ -110,61 +110,6 @@ export default {
   },
   methods: {
     // @vuese
-    // Fetchs the DAAC data
-    async fetchDaacs() {
-      return new Promise((resolve) => {
-        // Gets DAAC data for template
-        var items = [];
-        $.ajaxSetup({
-          headers : {
-            'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
-          }
-        });
-        let url;
-        if(this.$testing){
-          url = "../../daacs.json"
-        } else {
-          url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
-        }
-        $.getJSON(url, daacs => {
-          for (var dict in daacs) {
-            items.push(daacs[dict]);
-          }
-          this.daacs = items
-          resolve(items);
-        });
-      })
-    },
-    // @vuese
-    // Fetchs DAAC specific metadata
-    // @daac_specific - current hash to look for
-    getDaac(daac_specific) {
-      // Gets DAAC data for template
-      if (typeof daac_specific === "undefined") {
-        return { id: "", short_name: "", long_name: "", url: "", description: "" };
-      }
-      for (var dict in this.daacs) {
-        let id = this.daacs[dict]["id"];
-        let long_name = this.daacs[dict]["long_name"];
-        let short_name = this.daacs[dict]["short_name"];
-        if (
-          daac_specific === long_name ||
-          daac_specific === short_name ||
-          daac_specific === id
-        ) {
-          let url = this.daacs[dict]["url"];
-          let description = this.daacs[dict]["description"];
-          return {
-            id:id,
-            short_name: short_name,
-            long_name: long_name,
-            url: url,
-            description: description
-          };
-        }
-      }
-    },
-    // @vuese
     // On selected, sets current daac objects from values
     // @current_daac - currently a hash
     // @url - daac url

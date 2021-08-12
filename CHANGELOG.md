@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 1.0.2 - 2021-08-12
 
 - [Added config option for unknown website link label override (VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR)](ed92ed8e5235764abcf004acee1d6b6028e0d7a7)
+- [Added link to daac name selected in questions](7a7e7b3e80075266272b8e323fd3eb45fed55827)
+- [Added daac name selected to questions (being set from mixin in setting the active location)](c752ac0373b0561d0bf4381bb83d0a4f2b8ca075)
+- [Updated jsons for publication_dois to be table format for multirow](26bfbd65dc6c514aebbc833493eb254e1442affa)
 
 ## 1.0.1 - 2021-07-22
 
