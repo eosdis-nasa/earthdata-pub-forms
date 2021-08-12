@@ -24,12 +24,12 @@
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
-            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
+            <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
               You have selected:
               <br />
               <strong>{{ selected }}</strong>
             </div>
-            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
+            <div class="mt-3" v-if="selected">
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
@@ -150,7 +150,10 @@ export default {
       if (typeof description == "undefined") {
         description = daac_specific_data["description"];
       }
-      $("#selected_daac").html(short_name.toUpperCase());
+      if(short_name.match(/Unknown/g)){
+        short_name = `${process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}`
+      } 
+      $("#selected_daac").html(short_name);
       $("#selected_daac_link").attr("href", url);
       $("#selected_description").html(description);
       this.setActiveNav("daacs");
