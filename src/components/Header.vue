@@ -6,10 +6,12 @@
       <!-- Logo and menu -->
       <div class="eui-application-logo">
         <h1>
-          <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
-          <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
-          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
+          <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
+          <span id="title" v-if="formTitle" style="background:blue">{{formTitle}}</span>
+          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request&nbsp;
+          <span v-if="this.$testing">(TESTING MODE)</span></span>
+          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information&nbsp;
+          <span v-if="this.$testing">(TESTING MODE)</span></span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">

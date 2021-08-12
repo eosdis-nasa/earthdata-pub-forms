@@ -46,6 +46,9 @@
     <b-container name="questions_container" id="questions_container">
         <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
+        <div v-if="daac_name!=''" id="daac_selection"><b>DAAC Selected</b>: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
+          <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span>
+        </div>
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
               <li class="eui-banner--danger same-as-html5" v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
@@ -430,7 +433,8 @@ export default {
       confirm: false,
       validation_errors: {},
       formId: "",
-      requestId: ""
+      requestId: "",
+      daac_name: ""
     };
   },
   props: {
@@ -701,6 +705,11 @@ export default {
     return val_fields;
   },
   methods: {
+    // @vuese
+    // Activate header daac link
+    goToDaacs(){
+      document.getElementById('daacs_nav_link').click()
+    },
     // @vuese
     // Filters the table
     // @tableId - The id of the table in question
@@ -1682,6 +1691,9 @@ export default {
 };
 </script>
 <style scoped>
+#daac_selection {
+  margin-bottom:1rem;
+}
 .b-table-sticky-header, .table-responsive, [class*=table-responsive-] {
   margin-bottom: unset;
   border-radius: 5px;

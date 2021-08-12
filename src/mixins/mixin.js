@@ -1,4 +1,5 @@
 // Jquery javascript
+import $ from "jquery";
 export default {
     props:{
     },
@@ -33,6 +34,61 @@ export default {
             return 'undefined'
         }
         return str.join(' ');
+      },
+      // @vuese
+      // Fetchs the DAAC data
+      async fetchDaacs() {
+        return new Promise((resolve) => {
+          // Gets DAAC data for template
+          var items = [];
+          $.ajaxSetup({
+            headers : {
+              'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+            }
+          });
+          let url;
+          if(this.$testing){
+            url = "../../daacs.json"
+          } else {
+            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
+          }
+          $.getJSON(url, daacs => {
+            for (var dict in daacs) {
+              items.push(daacs[dict]);
+            }
+            this.daacs = items
+            resolve(items);
+          });
+        })
+      },
+      // @vuese
+      // Fetchs DAAC specific metadata
+      // @daac_specific - current hash to look for
+      getDaac(daac_specific) {
+        // Gets DAAC data for template
+        if (typeof daac_specific === "undefined") {
+          return { id: "", short_name: "", long_name: "", url: "", description: "" };
+        }
+        for (var dict in this.daacs) {
+          let id = this.daacs[dict]["id"];
+          let long_name = this.daacs[dict]["long_name"];
+          let short_name = this.daacs[dict]["short_name"];
+          if (
+            daac_specific === long_name ||
+            daac_specific === short_name ||
+            daac_specific === id
+          ) {
+            let url = this.daacs[dict]["url"];
+            let description = this.daacs[dict]["description"];
+            return {
+              id:id,
+              short_name: short_name,
+              long_name: long_name,
+              url: url,
+              description: description
+            };
+          }
+        }
       },
       // @vuese
       // Returns form global params or looks it up by the path
@@ -229,10 +285,10 @@ export default {
       },
       // @vuese
       // Set / Resets active location.href value without updating state
-      setActiveLocationWithoutReload(shortName){
-        if(typeof shortName !='undefined' && shortName != null){
+      setActiveLocationWithoutReload(id){
+        if(typeof id !='undefined' && id != null){
           let after_protocol, new_url;
-          let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
+          let to_href = decodeURIComponent(id).replace(/ /g,'_').toLowerCase()
           let next_url = `${to_href}`
           if(typeof next_url.split('http://')[1] != 'undefined'){
             after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
@@ -241,6 +297,12 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
+          this.fetchDaacs().then(() => {
+            let daacData = this.getDaac(id)
+            if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
+              window.questionsComponent.daac_name = daacData.short_name
+            }
+          });
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       }
