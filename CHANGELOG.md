@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.2 - 2021-08-16
+
+- [Fixed header links so they work correctly from each view and altered logic so there is no warning to save when on just daac selection and navigating away.](14f1bfc4e3b1901a330f35944324cfb52c2943c3)
+
 ## 1.0.1 - 2021-07-22
 
 - [Updated jsons from api and moved them to public folder](e5f2359446313fde12120b6bb19918f01f31c8d8)
