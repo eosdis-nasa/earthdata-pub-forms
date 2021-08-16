@@ -96,38 +96,15 @@ export default {
     // @vuese
     // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
     compareDataAskLeave(comp){
-      if(location.href.match(/interest\/questions/g)){
-        // console.log('from questions')
-      }
-      // console.log('typeof window.questionsComponent', typeof window.questionsComponent)
-      if(typeof window.questionsComponent != 'undefined'){
-        // console.log('typeof window.questionsComponent.values', typeof window.questionsComponent.values)
-        // console.log('Object.keys(window.questionsComponent.values).length', Object.keys(window.questionsComponent.values).length)
-        // console.log('Object.keys(window.questionsComponent.values)', Object.keys(window.questionsComponent.values))
-      }
-      // console.log('type this.$store', typeof this.$store)
-      // console.log('this.$store.state.global_params[formId]', this.$store.state.global_params['formId'])
-      // console.log('this.$store.state.global_params[requestId]', this.$store.state.global_params['requestId'])
-      // console.log('comp', comp)
-      // console.log('this daac', this.daac)
-      if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) 
-      /*
-        Undo/redo should not see daac selection (this is just so the buttons are consistent) - see if mitchell says it's better to write that as a condition to exclude and remove the modal or keep inconsistent.
-      } */
-        //
-        {
+      if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
           (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
           $.getJSON(
-          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
-            // console.log('answers', answers)
             if(!answers.error){
               let lookupSorted = Object.keys(answers.form_data).sort(function(a,b){return answers.form_data[a]-answers.form_data[b]})
               let currentSorted = Object.keys(window.questionsComponent.values).sort(function(a,b){return window.questionsComponent.values[a]-window.questionsComponent.values[b]})
-              // console.log('lookupSorted', lookupSorted)
-              // console.log('currentSorted', currentSorted)
-              // console.log('shallowEqual', this.shallowEqual(lookupSorted, currentSorted))
               if (!this.shallowEqual(lookupSorted, currentSorted)){
                 this.$bvModal
                   .msgBoxConfirm(
