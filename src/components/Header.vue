@@ -19,8 +19,6 @@
           <div v-if="showDaacs" class="inline">  |  </div>
           <a id="questions_nav_link" v-if="showDaacs && daac =='selection' || daac == ''" href="#" @click="requireDaacSelection()">Questions</a>
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
-          <div class="inline" >  |  </div>
-          <a @click="compareDataAskLeave('help')" id="help_nav_link" alt="go the EDPub Help" title="go the EDPub Help">Help</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
         </div>

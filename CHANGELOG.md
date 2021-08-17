@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.3 - 2021-08-16
 
-- [Altered help to show on forms automatically instead of by link](865afe709c714ba0ca66ccb82f6bcaf33f72b292)
+- [Altered help to show on forms automatically instead of by link](9e2d6fc60ebfb33f734a707f9dfa03e58759be4d)
 
 ## 1.0.2 - 2021-08-12
 
