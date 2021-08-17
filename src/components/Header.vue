@@ -83,13 +83,24 @@ export default {
   },
   methods: {
     // @vuese
+    // Changes location 
+    changeLocation(comp) {
+      if (comp.match(/help/g) || comp.match(/daacs/g)){
+          this.goToComponent(comp)
+        } else if (comp.match(/dashboard/g)){
+          location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+        } else if (comp.match(/overview/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+        }
+    },
+    // @vuese
     // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
     compareDataAskLeave(comp){
-      if(typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0){
+      if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
           (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
           $.getJSON(
-          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
               let lookupSorted = Object.keys(answers.form_data).sort(function(a,b){return answers.form_data[a]-answers.form_data[b]})
@@ -97,7 +108,7 @@ export default {
               if (!this.shallowEqual(lookupSorted, currentSorted)){
                 this.$bvModal
                   .msgBoxConfirm(
-                    `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+                    `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
                     {
                       title: "Please Confirm",
                       size: "lg",
@@ -112,27 +123,17 @@ export default {
                   )
                   .then((value) => {
                     if (value){
-                      if (comp.match(/help/g) || comp.match(/daacs/g)){
-                        this.goToComponent(comp)
-                      } else if (comp.match(/dashboard/g)){
-                        location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-                      } else if (comp.match(/overview/g)){
-                        location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-                      }
+                      this.changeLocation(comp)
                     }
                   });
               } else {
-                if (comp.match(/help/g) || comp.match(/daacs/g)){
-                  this.goToComponent(comp)
-                } else if (comp.match(/dashboard/g)){
-                  location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-                } else if (comp.match(/overview/g)){
-                  location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-                }
+                this.changeLocation(comp)
               }
             }
           })
-        } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+        } 
+        else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
+          (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
           this.$bvModal
           .msgBoxConfirm(
             `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
@@ -150,24 +151,15 @@ export default {
           )
           .then((value) => {
             if (value){
-              if (comp.match(/help/g) || comp.match(/daacs/g)){
-                this.goToComponent(comp)
-              } else if (comp.match(/dashboard/g)){
-                location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-              } else if (comp.match(/overview/g)){
-                location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-              }
+              this.changeLocation(comp)
             }
           });
+        }  
+        else {
+          this.changeLocation(comp)
         }
       } else {
-        if (comp.match(/help/g) || comp.match(/daacs/g)){
-          this.goToComponent(comp)
-        } else if (comp.match(/dashboard/g)){
-          location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-        } else if (comp.match(/overview/g)){
-          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-        }
+        this.changeLocation(comp)
       }
     },
     // @vuese
@@ -247,7 +239,7 @@ export default {
     // @vuese
     // Requires daac to be selected before progressing to the questions component
     requireDaacSelection() {
-      if (!location.href.match(/help/g)) {
+      if (!location.href.match(/help/g) || (location.href.match(/help/g) || (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection'))) {
         if(typeof this.values === 'undefined' || Object.keys(this.values).length === 0){
           this.$bvModal.msgBoxOk('Please select a daac to continue.', {
             title: 'No DAAC',
@@ -255,11 +247,14 @@ export default {
             buttonSize: 'sm',
             okTitle: 'OK',
             footerClass: 'p-2',
-            hideHeaderClose: false,
+            hideHeaderClose: true,
             centered: true
+          }).then((value) => {
+            if (value && (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection') && (typeof this.values === 'undefined' || Object.keys(this.values).length === 0)){
+              this.changeLocation('daacs')
+            }
           })
         }
-        return false;
       } 
     }
   },
