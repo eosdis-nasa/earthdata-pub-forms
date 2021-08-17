@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.3 - 2021-08-16
+
+- [Fixed header links so they work correctly from each view and altered logic so there is no warning to save when on just daac selection and navigating away.](14f1bfc4e3b1901a330f35944324cfb52c2943c3)
+
 ## 1.0.2 - 2021-08-12
 
 - [Added config option for unknown website link label override (VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR)](ed92ed8e5235764abcf004acee1d6b6028e0d7a7)

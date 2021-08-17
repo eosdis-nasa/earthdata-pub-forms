@@ -1639,6 +1639,8 @@ export default {
           )
           .then((value) => {
             if (value){
+              this.undo();
+              this.reApplyValues();
               window.headerComponent.goToComponent('daacs')
             }
           });
