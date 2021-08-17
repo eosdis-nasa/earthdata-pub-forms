@@ -66,17 +66,10 @@
                         :key="b_key"
                       >
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}</label>
+                      <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:</label>
+                      <span :id="question.short_name || a_key">{{question.text}}</span>
                       <span class="required" v-if="question.required == true">* required</span>
-                      <p :id="question.short_name || a_key">{{question.text}}</p>
-                      <span class="help">
-                        <a href="#" @click.prevent="" :id="`help_${question.short_name}`" v-if="question.help != ''" v-b-modal="`modal_${question.short_name}`">
-                        <font-awesome-icon icon="info-circle" name="info icon"/>
-                          Help</a>
-                        <b-modal :id="`modal_${question.short_name}`" :title="`${question.long_name} - Help`" ok-only centered>
-                          <p class="my-4">{{question.help}}</p>
-                        </b-modal>
-                      </span>
+                      <p class="help" v-if="question.help != 'undefined'">{{question.help}}</p>
                       <!-- Input -->
                       <b-row>
                         <b-col :lg="question.size || 12" class="question_size">
@@ -1790,7 +1783,7 @@ h2 {
   padding-left:10px;
 }
 label {
-  margin-right: 1rem;
+  margin-right: .5rem;
   cursor: pointer;
 }
 p {
@@ -1808,12 +1801,7 @@ button {
   margin-right: 0 !important;
 }
 .help {
-  text-align: right;
-  padding-right: 0px;
-  padding-top: 7px;
-  position: absolute;
-  right: 7px;
-  top: 0px;
+  color:#b5babe;
 }
 .form-group {
   position: relative;
