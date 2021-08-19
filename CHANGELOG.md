@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.4 - 2021-08-19
+
+- [Updated tables for inline editing](da8cf30995d15bfebd85e3a64b35fd46e56989cb)
+
 ## 1.0.3 - 2021-08-16
 
 - [Altered help to show on forms automatically instead of by link](9e2d6fc60ebfb33f734a707f9dfa03e58759be4d)
