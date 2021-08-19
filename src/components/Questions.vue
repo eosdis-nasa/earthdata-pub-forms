@@ -8,7 +8,7 @@
               <!-- Button Options -->
               <div class="button_bar">
                   <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button">
+                      <b-button class="button" type="redo" id="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
@@ -16,7 +16,7 @@
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button">
+                      <b-button class="button" type="undo" id="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
                         <font-awesome-icon v-bind:icon="undoLabel"/>
                         {{ undoLabel }}
                       </b-button>
@@ -108,10 +108,10 @@
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
                                 <span id="contact_span" v-if="contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
                                   <label 
-                                    :id="`same_as_${input.control_id}_label`"
-                                    :for="`same_as_${input.control_id}`" 
+                                    :id="`same_as_${input.control_id}_${contact_key}_label`"
+                                    :for="`same_as_${input.control_id}_${contact_key}`" 
                                     v-if="input.contact == true" 
-                                    @click="setContact(input.control_id, contact)"
+                                    @click="setContact(input.control_id, contact_fields[contact_key], contact_key)"
                                     class="eui-label"> 
                                     Same as {{contact}} </label>
                                     <b-form-checkbox 
@@ -121,9 +121,7 @@
                                       :id="`same_as_${input.control_id}_${contact_key}`"
                                       value="true"
                                       unchecked-value="false"
-                                      @change.native="setContact(input.control_id, contact)"
-                                      @click.native="setContact(input.control_id, contact)"
-                                      @keyup.space.native="setContact(input.control_id, contact)">
+                                      @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
                                     </b-form-checkbox>
                                 </span>
                               </span>
@@ -222,12 +220,10 @@
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     bordered 
-                                    :small="true" 
                                     fixed
                                     responsive 
                                     sticky-header 
                                     show-empty
-                                    @input-change="handleInput"
                                     :items="values[input.control_id]"
                                     :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
                                     <template #cell(X)="data">
@@ -402,6 +398,7 @@ export default {
       values: {},
       questions: [],
       contacts: [],
+      contact_fields: [],
       bboxs: [],
       dirty: false,
       formTitle: "",
@@ -413,7 +410,9 @@ export default {
       validation_errors: {},
       formId: "",
       requestId: "",
-      daac_name: ""
+      daac_name: "",
+      valueHistory: [{fromUndo: true}],
+      valueHistoryUndoIdx: 0
     };
   },
   props: {
@@ -449,19 +448,34 @@ export default {
           if(typeof this.values != 'undefined'){
             if (!this.values.fromUndo) {
               this.setContacts(this.values);
+              for (let sameAs of Object.keys(this.values).filter(item => /^same_as_/.test(item))) {
+                if (this.values[sameAs].toString() == 'true') {
+                  for (let v in this.values) {
+                    if (new RegExp(`^same_as_.*_${v}$`).test(sameAs)) {
+                      let to_base_name = sameAs.replace(/^same_as_/, '').replace(new RegExp(`_${v}$`), '').replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      let from_base_name = v.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      for (let ea in this.values) {
+                        if (new RegExp(`^${from_base_name}_`).test(ea)) {
+                          this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
+                        }
+                      }
+                    }
+                  }
+                }
+              }
               // try to handle items going from '' to undefined
               let saveValues = JSON.parse(JSON.stringify(this.values))
-              let saveKeys = Object.keys(saveValues)
-              for (let ea of saveKeys) {
+              for (let ea in saveValues) {
                 if (!(saveValues[ea]) && saveValues[ea] != 'false') {
                   delete saveValues[ea]
                 }
               }
-              this.$store.commit(
-                "pushQuestionsState",
-                Object.assign({}, this.values),
-                saveValues
-              );
+              saveValues.fromUndo = true
+              if (this.valueHistory.length == 0 || JSON.stringify(saveValues, Object.keys(saveValues).sort()) != JSON.stringify(this.valueHistory[this.valueHistory.length - 1], Object.keys(this.valueHistory[this.valueHistory.length - 1]).sort())) {
+                this.valueHistory.splice(this.valueHistory.length - this.valueHistoryUndoIdx)
+                this.valueHistory.push(saveValues)
+                this.valueHistoryUndoIdx = 0
+              }
               this.$log.debug(
                 "pushQuestionsState",
                 saveValues
@@ -695,13 +709,6 @@ export default {
   },
   methods: {
     // @vuese
-    // Event for on click of a table object
-    // @value - The value passed in
-    // @data - The data passed in
-    handleInput(value, data) {
-      console.log('value is ' + value + ' data is ' + data)
-    },
-    // @vuese
     // Activate header daac link
     goToDaacs(){
       document.getElementById('daacs_nav_link').click()
@@ -722,9 +729,7 @@ export default {
                   enum_arr[`${en.key}`] = this.values[`${tableId}_${en.key}`]
                 }
                 if (!this.values[tableId]) {
-                  console.log('addRow', tableId);
                   this.$set(this.values, tableId, [])
-                  console.log('data producers table', this.values['data_producers_table'])
                 }
                 this.values[tableId].push(enum_arr)
                 break
@@ -923,37 +928,31 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
-    // @id_to - The id of the element to set to
-    // @contact - The value of the element to set to
-    setContact: function (id_to, contact, contact_key) {
-      let nameIDs = this.getNameIdByLongName(contact);
-      let unchecked = $(`#same_as_${id_to}_${contact_key}`).is(":checked");
-      for (const id in nameIDs) {
-        let current_id = nameIDs[id]
-        let from_base_name = current_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-        let to_base_name = id_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-        let to = nameIDs[id].replace(`${from_base_name}_`, `${to_base_name}_`)
-        if (unchecked) {
-          if (typeof $(`#${to}`) != "undefined") {
-            this.values[to] = "";
+    // @fld_to - The id of the element to set to
+    // @fld_from - The id of the element it's coming from
+    // @contact_key - The contact key needed to object checkbox state
+    setContact(fld_to, fld_from, contact_key) {
+      let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
+      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      if (checked) {
+        for (let ea in this.values) {
+          if (new RegExp(`^${from_base_name}_`).test(ea)) {
+            this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
           }
-        } else {
-          if (
-            typeof $(`#same_as_${inputs[i].id}_label`) != "undefined" &&
-            this.values[inputs[i].id] === contact
-          ) {
-            this.values[to] = this.values[current_id];
+        }
+      } else {
+        for (let ea in this.values) {
+          if (new RegExp(`^${to_base_name}_`).test(ea)) {
+            this.$set(this.values, ea, '')
           }
-        } 
-        this.setContacts(this.values);
+        }
       }
     },
     getSameAsId(control_id, contact_fld) {
       return `same_as_${control_id}_${contact_fld}`
-      //return `same_as_${control_id < contact_fld ? control_id : contact_fld}_${control_id < contact_fld ? contact_fld : control_id}`
     },
     sameAsSelected(control_id, contact_fld) {
-      //let matchRegExp = new RegExp(`^same_as_${control_id < contact_fld ? control_id : contact_fld}_`)
       let matchRegExp = new RegExp(`^same_as_${control_id}_`)
       for (let ea in this.values) {
         if (matchRegExp.test(ea) && (typeof contact_fld == 'undefined' || ea != this.getSameAsId(control_id, contact_fld))) {
@@ -968,116 +967,11 @@ export default {
       return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
     },
     // @vuese
-    // Copies over contact information from the 'same as' checkbox for contact
-    // @id_to - The id of the element to set to
-    // @contact - The value of the element to set to
-    setContact2: function (fld_to, fld_from, contact_key) {
-      // this is triggering before the DOM updates
-      let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
-      //console.log(fld_to, fld_from, contact_key, checked);
-      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-
-      /*
-      let ids_matched = [];
-      let questions = this.questions[0];
-      for (var ea in this.values) {
-        if (!ea.toLowerCase().match(/name/g)) {
-          continue;
-        }
-        if(typeof questions != 'undefined'){
-          for (let section of questions) {
-            let inputs = section["inputs"];
-            let long_name = section["long_name"];
-            if (long_name.match(long_name_to_match_on)){
-              for (let i in inputs) {
-                if(typeof inputs[i].control_id != 'undefined' && 
-                ids_matched.includes(inputs[i].control_id) == false) {
-                  ids_matched.push(inputs[i].control_id)
-                }
-              }
-            }
-            if (
-              typeof $(`#${to_name}`) != "undefined" &&
-              $(`#${to_name}`).val() == ""
-            ) {
-              $(`#${to_name}`).focus();
-            } else if (
-              typeof $(`#${to_org_id}`) != "undefined" &&
-              $(`#${to_org_id}`).val() == ""
-            ) {
-              $(`#${to_org_id}`).focus();
-            } else if (
-              typeof $(`#${to_email_id}`) != "undefined" &&
-              $(`#${to_email_id}`).val() == ""
-            ) {
-              `#${to_email_id}`.focus();
-            } else if (
-              typeof $(`#${to_orcid_id}`) != "undefined" &&
-              $(`#${to_orcid_id}`).val() == ""
-            ) {
-              $(`#${to_orcid_id}`).focus();
-            }
-            this.setContacts(this.values);
-            this.$store.commit(
-              "pushQuestionsState",
-              Object.assign({}, this.values)
-            );
-          }
-        }
-      }
-      return ids_matched
-      */
-      
-
-      if (checked) {
-        for (let ea in this.values) {
-          if (new RegExp(`^${from_base_name}_`).test(ea)) {
-            //this.values[ea.replace(`${from_base_name}_`, `${to_base_name}_`)] = this.values[ea];
-            this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
-          }
-        }
-      } else {
-        for (let ea in this.values) {
-          if (new RegExp(`^${to_base_name}_`).test(ea)) {
-            //this.values[ea] = '';
-            this.$set(this.values, ea, '')
-          }
-        }
-      }
-      /*
-      let nameIDs = this.getNameIdByLongName(contact);
-      let unchecked = $(`#same_as_${id_to}_${contact_key}`).is(":checked");
-      let name_from;
-      for (const id in nameIDs) {
-        let current_id = nameIDs[id]
-        let from_base_name = current_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-        let to_base_name = id_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-        let to = nameIDs[id].replace(`${from_base_name}_`, `${to_base_name}_`)
-        if (current_id.match(/name/g)) {
-          name_from = current_id
-        }
-        if (unchecked) {
-          if (typeof $(`#${to}`) != "undefined") {
-            this.values[to] = "";
-          }
-        } else {
-          if (
-            typeof $(`#${from_base_name}`) != "undefined" &&
-            typeof $(`#${to}`) != "undefined"
-          ) {
-            this.values[to] = this.values[current_id];
-          }
-        } 
-        this.setContacts(this.values);
-      }
-      */
-    },
-    // @vuese
     // Gets contacts and builds options for checkbox
     // @values - The forms values to look for contacts in
     setContacts: function (values) {
       this.contacts = [];
+      this.contact_fields = [];
       let questions = this.questions[0];
       for (var ea in values) {
         if (!ea.toLowerCase().match(/name/g)) {
@@ -1107,11 +1001,11 @@ export default {
                     (typeof help != "undefined" &&
                       help.toLowerCase().match(/contact/g))) &&
                   label.toLowerCase().match(/name/g) &&
-                  this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
-                    false &&
-                  this.values[inputs[i]["control_id"]] != ""
+                  this.contacts.includes(long_name) ==
+                    false
                 ) {
-                  this.contacts.push(this.values[inputs[i]["control_id"]]);
+                  this.contacts.push(long_name);
+                  this.contact_fields.push(inp["control_id"]);
                 }
               }
             }
@@ -1466,15 +1360,12 @@ export default {
     loadAnswers() {
       if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
         $.getJSON(
-        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
         (answers) => {
           if(answers.error){
             return {}
           }
-          setTimeout(() => {
-            this.done = []
-            this.undone = []
-          }, 400);
+          this.valueHistory = []
           this.values = answers.form_data;
         })
       }
@@ -1673,39 +1564,17 @@ export default {
     // @vuese
     // Undos the form to its previous state.
     undoToPreviousState() {
-      if(Object.keys(this.values).length===0){
-        this.$bvModal
-          .msgBoxConfirm(
-            `This will undo your Daac selection.  Are you sure you want to do this?`,
-            {
-              title: "Please Confirm",
-              size: "lg",
-              buttonSize: "sm",
-              okVariant: "danger",
-              okTitle: "YES",
-              cancelTitle: "NO",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            }
-          )
-          .then((value) => {
-            if (value){
-              this.undo();
-              this.reApplyValues();
-              window.headerComponent.goToComponent('daacs')
-            }
-          });
-      } else {
-        this.undo();
-        this.reApplyValues();
-      }
+      this.valueHistoryUndoIdx++
+      this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
     },
     // @vuese
     // Redo the form state
     redoToPreviousState() {
-      this.redo();
-      this.reApplyValues();
+      //this.redo();
+      //this.reApplyValues();
+      this.valueHistoryUndoIdx--
+      this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
+      //this.values = this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx]
     },
   },
   // This is equivalent to js document.ready
@@ -1741,8 +1610,6 @@ export default {
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
       this.loadAnswers()
     }
-    this.done = []
-    this.undone = []
   },
 };
 </script>
