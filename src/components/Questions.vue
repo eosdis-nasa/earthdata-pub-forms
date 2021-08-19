@@ -928,7 +928,6 @@ export default {
     setContact: function (id_to, contact, contact_key) {
       let nameIDs = this.getNameIdByLongName(contact);
       let unchecked = $(`#same_as_${id_to}_${contact_key}`).is(":checked");
-      let inputes = ''
       for (const id in nameIDs) {
         let current_id = nameIDs[id]
         let from_base_name = current_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
