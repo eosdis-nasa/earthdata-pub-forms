@@ -205,25 +205,7 @@
                                 </template>
                               </div>
                               <!-- Table Type of Input -->
-                              <div v-if="input.type == 'table'" class="w-100">
-                                <template v-for="(e, d_key) in question.inputs[c_key]['enums']">
-                                  <span :key="`${b_key}_${d_key}`">
-                                    <label class="eui-label-nopointer">{{e.label}}:</label>
-                                    <b-form-input 
-                                        :class="{ 'btable': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${e.key}`] || {}).$error }"
-                                        :type="e.type" 
-                                        :id="`${input.control_id}_${e.key}`" 
-                                        :name="`${input.control_id}_${e.key}`" 
-                                        v-model="values[`${input.control_id}_${e.key}`]"
-                                        size="lg"
-                                        :maxlength="getAttribute('maxlength', question.inputs[c_key])"
-                                        :minlength="getAttribute('minlength', question.inputs[c_key])"
-                                        :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                        :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                        >
-                                    </b-form-input>
-                                  </span>
-                                </template>
+                              <div v-if="input.type == 'table'" class="table-div w-100">
                                 <div style="float:right;">
                                   <b-button 
                                     class="button" 
@@ -235,27 +217,29 @@
                                     <font-awesome-icon icon="plus"/>
                                   </b-button>
                                 </div>
-                                <b-table 
-                                  :class="{ 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  responsive 
-                                  bordered
-                                  sticky-header 
-                                  show-empty
-                                  :items="values[input.control_id]"
-                                  :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
-                                  <!-- as I'm parsing add in items -->
-                                  <!-- additional table slots here if needed -->
-                                  <!-- A custom formatted column -->
-                                  <template #cell(X)="data">
-                                    <b-button 
-                                      class="button" 
-                                      aria-label="remove row button" 
-                                      style="margin:0px"
-                                      @click="removeRow(input.control_id, data.item)">
-                                      <font-awesome-icon icon="trash-alt"/>
-                                    </b-button>
-                                  </template>
-                                </b-table>
+                                <template>
+                                  <b-editable-table 
+                                    :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                    bordered 
+                                    :small="true" 
+                                    fixed
+                                    responsive 
+                                    sticky-header 
+                                    show-empty
+                                    @input-change="handleInput"
+                                    :items="values[input.control_id]"
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    <template #cell(X)="data">
+                                      <b-button 
+                                        class="button" 
+                                        aria-label="remove row button" 
+                                        style="margin:0px"
+                                        @click="removeRow(input.control_id, data.item)">
+                                        <font-awesome-icon icon="trash-alt"/>
+                                      </b-button>
+                                    </template>
+                                  </b-editable-table>
+                                </template>
                               </div>
                               <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
@@ -406,6 +390,7 @@ import {
 // Jquery javascript
 import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
+import BEditableTable from 'bootstrap-vue-editable-table';
 
 // This questions component gets the questions data for the selected daac and
 // sets the above template properties, methods, and custom validation used.
@@ -490,6 +475,7 @@ export default {
   created() {},
   components: {
     FixedHeader,
+    BEditableTable
   },
   validations() {
     let val_fields = {
@@ -699,6 +685,13 @@ export default {
   },
   methods: {
     // @vuese
+    // Event for on click of a table object
+    // @value - The value passed in
+    // @data - The data passed in
+    handleInput(value, data) {
+      console.log('value is ' + value + ' data is ' + data)
+    },
+    // @vuese
     // Activate header daac link
     goToDaacs(){
       document.getElementById('daacs_nav_link').click()
@@ -719,7 +712,9 @@ export default {
                   enum_arr[`${en.key}`] = this.values[`${tableId}_${en.key}`]
                 }
                 if (!this.values[tableId]) {
+                  console.log('addRow', tableId);
                   this.$set(this.values, tableId, [])
+                  console.log('data producers table', this.values['data_producers_table'])
                 }
                 this.values[tableId].push(enum_arr)
                 break
@@ -1686,6 +1681,12 @@ export default {
 };
 </script>
 <style scoped>
+.table-div {
+  margin-top: -40px;
+}
+.editable-table .data-cell {
+  min-height: 2rem;
+} 
 #daac_selection {
   margin-bottom:1rem;
 }

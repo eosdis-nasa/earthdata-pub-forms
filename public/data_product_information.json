@@ -217,20 +217,20 @@
                 {
                   "key": "organization",
                   "label": "Organization",
-                  "sortable": false,
-                  "type":"text"
+                  "type":"text",
+                  "editable": true
                 },
                 {
                   "key": "first_name",
                   "label": "First Name",
-                  "sortable": false,
-                  "type":"text"
+                  "type":"text",
+                  "editable": true
                 },
                 {
                   "key": "last_name",
                   "label": "Last Name",
-                  "sortable": false,
-                  "type":"text"
+                  "type":"text",
+                  "editable": true
                 }
               ],
               "required":true
@@ -1004,8 +1004,8 @@
                 {
                   "key": "doi",
                   "label": "DOIs",
-                  "sortable": false,
-                  "type":"text"
+                  "type":"text",
+                  "editable": true
                 }
               ],
               "required":true
