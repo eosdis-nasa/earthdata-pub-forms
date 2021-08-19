@@ -105,8 +105,8 @@
                               <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
                                 ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                               </span>
-                              <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                <span id="contact_span" v-if="contact != values[input.control_id] && contact != ''">
+                              <span v-for="(contact, contact_key) in contacts" :key="contact_key">
+                                <span id="contact_span" v-if="contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
                                   <label 
                                     :id="`same_as_${input.control_id}_label`"
                                     :for="`same_as_${input.control_id}`" 
@@ -117,7 +117,8 @@
                                     <b-form-checkbox 
                                       class="eui-checkbox"
                                       v-if="input.contact == true"
-                                      :id="`same_as_${input.control_id}`"
+                                      v-model="values[getSameAsId(input.control_id, contact_fields[contact_key])]"
+                                      :id="`same_as_${input.control_id}_${contact_key}`"
                                       value="true"
                                       unchecked-value="false"
                                       @change.native="setContact(input.control_id, contact)"
@@ -143,8 +144,8 @@
                                   input.type == 'range' ||
                                   input.type == 'tel' || 
                                   input.type == 'time'"
-                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
+                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :pattern="getAttribute('pattern', question.inputs[c_key])"
                                   :maxLength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minLength="getAttribute('minlength', question.inputs[c_key])"
@@ -448,18 +449,27 @@ export default {
           if(typeof this.values != 'undefined'){
             if (!this.values.fromUndo) {
               this.setContacts(this.values);
+              // try to handle items going from '' to undefined
+              let saveValues = JSON.parse(JSON.stringify(this.values))
+              let saveKeys = Object.keys(saveValues)
+              for (let ea of saveKeys) {
+                if (!(saveValues[ea]) && saveValues[ea] != 'false') {
+                  delete saveValues[ea]
+                }
+              }
               this.$store.commit(
                 "pushQuestionsState",
-                Object.assign({}, this.values)
+                Object.assign({}, this.values),
+                saveValues
               );
               this.$log.debug(
                 "pushQuestionsState",
-                Object.assign({}, this.values)
+                saveValues
               );
               var string_logging_object = this.$log.debug("pushQuestionsState");
               this.$logging_object[Date(Date.now()).toString()] = {
                 log_string: string_logging_object,
-                answers: Object.assign({}, this.values),
+                answers: saveValues,
               };
             }
             delete this.values.fromUndo;
@@ -1411,6 +1421,10 @@ export default {
           if(answers.error){
             return {}
           }
+          setTimeout(() => {
+            this.done = []
+            this.undone = []
+          }, 400);
           this.values = answers.form_data;
         })
       }
@@ -1677,6 +1691,8 @@ export default {
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
       this.loadAnswers()
     }
+    this.done = []
+    this.undone = []
   },
 };
 </script>
