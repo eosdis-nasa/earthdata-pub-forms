@@ -925,72 +925,77 @@ export default {
     // Copies over contact information from the 'same as' checkbox for contact
     // @id_to - The id of the element to set to
     // @contact - The value of the element to set to
-    setContact: function (id_to, contact) {
-      let inputs = $("#questions_container input");
-      for (let i in inputs) {
-        if (
-          typeof inputs[i].id != "undefined" &&
-          inputs[i].id.toLowerCase().match(/name/g)
-        ) {
+    setContact: function (id_to, contact, contact_key) {
+      let nameIDs = this.getNameIdByLongName(contact);
+      let unchecked = $(`#same_as_${id_to}_${contact_key}`).is(":checked");
+      let inputes = ''
+      for (const id in nameIDs) {
+        let current_id = nameIDs[id]
+        let from_base_name = current_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+        let to_base_name = id_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+        let to = nameIDs[id].replace(`${from_base_name}_`, `${to_base_name}_`)
+        if (unchecked) {
+          if (typeof $(`#${to}`) != "undefined") {
+            this.values[to] = "";
+          }
+        } else {
           if (
             typeof $(`#same_as_${inputs[i].id}_label`) != "undefined" &&
             this.values[inputs[i].id] === contact
           ) {
-            let unchecked = $(`#same_as_${id_to}`).is(":checked");
-            let get_id_from = inputs[i].id;
-            let from_name = get_id_from.toLowerCase();
-            let to_name = id_to.toLowerCase();
-            let from_org_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "organization");
-            let to_org_id = id_to
-              .toLowerCase()
-              .replace(/name/g, "organization");
-            let from_email_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "email");
-            let to_email_id = id_to.toLowerCase().replace(/name/g, "email");
-            let from_orcid_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "orcid");
-            let to_orcid_id = id_to.toLowerCase().replace(/name/g, "orcid");
-            if (unchecked) {
-              if (typeof $(`#${to_name}`) != "undefined") {
-                this.values[to_name] = "";
-              }
-              if (typeof $(`#${to_org_id}`) != "undefined") {
-                this.values[to_org_id] = "";
-              }
-              if (typeof $(`#${to_email_id}`) != "undefined") {
-                this.values[to_email_id] = "";
-              }
-              if (typeof $(`#${to_orcid_id}`) != "undefined") {
-                this.values[to_orcid_id] = "";
-              }
-            } else {
-              if (
-                typeof $(`#${from_name}`) != "undefined" &&
-                typeof $(`#${to_name}`) != "undefined"
-              ) {
-                this.values[to_name] = this.values[from_name];
-              }
-              if (
-                typeof $(`#${from_org_id}`) != "undefined" &&
-                typeof $(`#${to_org_id}`) != "undefined"
-              ) {
-                this.values[to_org_id] = this.values[from_org_id];
-              }
-              if (
-                typeof $(`#${from_email_id}`) != "undefined" &&
-                typeof $(`#${to_email_id}`) != "undefined"
-              ) {
-                this.values[to_email_id] = this.values[from_email_id];
-              }
-              if (
-                typeof $(`#${from_orcid_id}`) != "undefined" &&
-                typeof $(`#${to_orcid_id}`) != "undefined"
-              ) {
-                this.values[to_orcid_id] = this.values[from_orcid_id];
+            this.values[to] = this.values[current_id];
+          }
+        } 
+        this.setContacts(this.values);
+      }
+    },
+    getSameAsId(control_id, contact_fld) {
+      return `same_as_${control_id}_${contact_fld}`
+      //return `same_as_${control_id < contact_fld ? control_id : contact_fld}_${control_id < contact_fld ? contact_fld : control_id}`
+    },
+    sameAsSelected(control_id, contact_fld) {
+      //let matchRegExp = new RegExp(`^same_as_${control_id < contact_fld ? control_id : contact_fld}_`)
+      let matchRegExp = new RegExp(`^same_as_${control_id}_`)
+      for (let ea in this.values) {
+        if (matchRegExp.test(ea) && (typeof contact_fld == 'undefined' || ea != this.getSameAsId(control_id, contact_fld))) {
+          if (this.values[ea] && this.values[ea] != 'false') {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    anySameAsSelected(control_id) {
+      return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
+    },
+    // @vuese
+    // Copies over contact information from the 'same as' checkbox for contact
+    // @id_to - The id of the element to set to
+    // @contact - The value of the element to set to
+    setContact2: function (fld_to, fld_from, contact_key) {
+      // this is triggering before the DOM updates
+      let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
+      //console.log(fld_to, fld_from, contact_key, checked);
+      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+
+      /*
+      let ids_matched = [];
+      let questions = this.questions[0];
+      for (var ea in this.values) {
+        if (!ea.toLowerCase().match(/name/g)) {
+          continue;
+        }
+        if(typeof questions != 'undefined'){
+          for (let section of questions) {
+            let inputs = section["inputs"];
+            let long_name = section["long_name"];
+            if (long_name.match(long_name_to_match_on)){
+              for (let i in inputs) {
+                if(typeof inputs[i].control_id != 'undefined' && 
+                ids_matched.includes(inputs[i].control_id) == false) {
+                  ids_matched.push(inputs[i].control_id)
+                }
               }
             }
             if (
@@ -1022,6 +1027,52 @@ export default {
           }
         }
       }
+      return ids_matched
+      */
+      
+
+      if (checked) {
+        for (let ea in this.values) {
+          if (new RegExp(`^${from_base_name}_`).test(ea)) {
+            //this.values[ea.replace(`${from_base_name}_`, `${to_base_name}_`)] = this.values[ea];
+            this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
+          }
+        }
+      } else {
+        for (let ea in this.values) {
+          if (new RegExp(`^${to_base_name}_`).test(ea)) {
+            //this.values[ea] = '';
+            this.$set(this.values, ea, '')
+          }
+        }
+      }
+      /*
+      let nameIDs = this.getNameIdByLongName(contact);
+      let unchecked = $(`#same_as_${id_to}_${contact_key}`).is(":checked");
+      let name_from;
+      for (const id in nameIDs) {
+        let current_id = nameIDs[id]
+        let from_base_name = current_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+        let to_base_name = id_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+        let to = nameIDs[id].replace(`${from_base_name}_`, `${to_base_name}_`)
+        if (current_id.match(/name/g)) {
+          name_from = current_id
+        }
+        if (unchecked) {
+          if (typeof $(`#${to}`) != "undefined") {
+            this.values[to] = "";
+          }
+        } else {
+          if (
+            typeof $(`#${from_base_name}`) != "undefined" &&
+            typeof $(`#${to}`) != "undefined"
+          ) {
+            this.values[to] = this.values[current_id];
+          }
+        } 
+        this.setContacts(this.values);
+      }
+      */
     },
     // @vuese
     // Gets contacts and builds options for checkbox
