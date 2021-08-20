@@ -955,8 +955,13 @@ export default {
     sameAsSelected(control_id, contact_fld) {
       let matchRegExp = new RegExp(`^same_as_${control_id}_`)
       for (let ea in this.values) {
+        let from_has_name = false
+        let from_name = ea.split('name_')[1]
+        if(typeof from_name != 'undefined' && this.values[from_name] != ''){
+          from_has_name = true
+        }
         if (matchRegExp.test(ea) && (typeof contact_fld == 'undefined' || ea != this.getSameAsId(control_id, contact_fld))) {
-          if (this.values[ea] && this.values[ea] != 'false') {
+          if (this.values[ea] && this.values[ea] != 'false' && from_has_name) {
             return true;
           }
         }
