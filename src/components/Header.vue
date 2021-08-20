@@ -103,9 +103,7 @@ export default {
           `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
-              let lookupSorted = Object.keys(answers.form_data).sort(function(a,b){return answers.form_data[a]-answers.form_data[b]})
-              let currentSorted = Object.keys(window.questionsComponent.values).sort(function(a,b){return window.questionsComponent.values[a]-window.questionsComponent.values[b]})
-              if (!this.shallowEqual(lookupSorted, currentSorted)){
+              if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
                 this.$bvModal
                   .msgBoxConfirm(
                     `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
@@ -161,26 +159,6 @@ export default {
       } else {
         this.changeLocation(comp)
       }
-    },
-    // @vuese
-    // Go the component page specified with all the params needed
-    // @object1 - object 1 to compare
-    // @object2 - object 2 to compare
-    shallowEqual(object1, object2) {
-      const keys1 = Object.keys(object1);
-      const keys2 = Object.keys(object2);
-
-      if (keys1.length !== keys2.length) {
-        return false;
-      }
-
-      for (let key of keys1) {
-        if (object1[key] !== object2[key]) {
-          return false;
-        }
-      }
-
-      return true;
     },
     // @vuese
     // Go the component page specified with all the params needed

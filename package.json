@@ -49,6 +49,7 @@
     "@inotom/vue-go-top": "^1.3.0",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.19.0",
+    "bootstrap-vue-editable-table": "0.1.0-beta.9",
     "eslint-loader": "^4.0.2",
     "help": "^3.0.2",
     "jquery": "^3.5.1",

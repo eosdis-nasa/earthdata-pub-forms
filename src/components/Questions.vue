@@ -8,7 +8,7 @@
               <!-- Button Options -->
               <div class="button_bar">
                   <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" v-if="canRedo" @click="redoToPreviousState()" aria-label="redo button">
+                      <b-button class="button" type="redo" id="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
@@ -16,7 +16,7 @@
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-if="canUndo" @click="undoToPreviousState()" aria-label="undo button">
+                      <b-button class="button" type="undo" id="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
                         <font-awesome-icon v-bind:icon="undoLabel"/>
                         {{ undoLabel }}
                       </b-button>
@@ -105,24 +105,23 @@
                               <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
                                 ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                               </span>
-                              <span v-for="(contact,contact_key) in contacts" :key="contact_key">
-                                <span id="contact_span" v-if="contact != values[input.control_id] && contact != ''">
+                              <span v-for="(contact, contact_key) in contacts" :key="contact_key">
+                                <span id="contact_span" v-if="contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
                                   <label 
-                                    :id="`same_as_${input.control_id}_label`"
-                                    :for="`same_as_${input.control_id}`" 
+                                    :id="`same_as_${input.control_id}_${contact_key}_label`"
+                                    :for="`same_as_${input.control_id}_${contact_key}`" 
                                     v-if="input.contact == true" 
-                                    @click="setContact(input.control_id, contact)"
+                                    @click="setContact(input.control_id, contact_fields[contact_key], contact_key)"
                                     class="eui-label"> 
                                     Same as {{contact}} </label>
                                     <b-form-checkbox 
                                       class="eui-checkbox"
                                       v-if="input.contact == true"
-                                      :id="`same_as_${input.control_id}`"
+                                      v-model="values[getSameAsId(input.control_id, contact_fields[contact_key])]"
+                                      :id="`same_as_${input.control_id}_${contact_key}`"
                                       value="true"
                                       unchecked-value="false"
-                                      @change.native="setContact(input.control_id, contact)"
-                                      @click.native="setContact(input.control_id, contact)"
-                                      @keyup.space.native="setContact(input.control_id, contact)">
+                                      @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
                                     </b-form-checkbox>
                                 </span>
                               </span>
@@ -143,8 +142,8 @@
                                   input.type == 'range' ||
                                   input.type == 'tel' || 
                                   input.type == 'time'"
-                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
+                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :pattern="getAttribute('pattern', question.inputs[c_key])"
                                   :maxLength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minLength="getAttribute('minlength', question.inputs[c_key])"
@@ -205,26 +204,9 @@
                                 </template>
                               </div>
                               <!-- Table Type of Input -->
-                              <div v-if="input.type == 'table'" class="w-100">
-                                <template v-for="(e, d_key) in question.inputs[c_key]['enums']">
-                                  <span :key="`${b_key}_${d_key}`">
-                                    <label class="eui-label-nopointer">{{e.label}}:</label>
-                                    <b-form-input 
-                                        :class="{ 'btable': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${e.key}`] || {}).$error }"
-                                        :type="e.type" 
-                                        :id="`${input.control_id}_${e.key}`" 
-                                        :name="`${input.control_id}_${e.key}`" 
-                                        v-model="values[`${input.control_id}_${e.key}`]"
-                                        size="lg"
-                                        :maxlength="getAttribute('maxlength', question.inputs[c_key])"
-                                        :minlength="getAttribute('minlength', question.inputs[c_key])"
-                                        :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                        :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                        >
-                                    </b-form-input>
-                                  </span>
-                                </template>
+                              <div v-if="input.type == 'table'" class="table-div w-100">
                                 <div style="float:right;">
+                                  <label>Click in the center of the table cell to enter data</label>
                                   <b-button 
                                     class="button" 
                                     type="add_row" 
@@ -235,27 +217,27 @@
                                     <font-awesome-icon icon="plus"/>
                                   </b-button>
                                 </div>
-                                <b-table 
-                                  :class="{ 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  responsive 
-                                  bordered
-                                  sticky-header 
-                                  show-empty
-                                  :items="values[input.control_id]"
-                                  :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
-                                  <!-- as I'm parsing add in items -->
-                                  <!-- additional table slots here if needed -->
-                                  <!-- A custom formatted column -->
-                                  <template #cell(X)="data">
-                                    <b-button 
-                                      class="button" 
-                                      aria-label="remove row button" 
-                                      style="margin:0px"
-                                      @click="removeRow(input.control_id, data.item)">
-                                      <font-awesome-icon icon="trash-alt"/>
-                                    </b-button>
-                                  </template>
-                                </b-table>
+                                <template>
+                                  <b-editable-table 
+                                    :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                    bordered 
+                                    fixed
+                                    responsive 
+                                    sticky-header 
+                                    show-empty
+                                    :items="values[input.control_id]"
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    <template #cell(X)="data">
+                                      <b-button 
+                                        class="button" 
+                                        aria-label="remove row button" 
+                                        style="margin:0px"
+                                        @click="removeRow(input.control_id, data.item)">
+                                        <font-awesome-icon icon="trash-alt"/>
+                                      </b-button>
+                                    </template>
+                                  </b-editable-table>
+                                </template>
                               </div>
                               <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
@@ -406,6 +388,7 @@ import {
 // Jquery javascript
 import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
+import BEditableTable from 'bootstrap-vue-editable-table';
 
 // This questions component gets the questions data for the selected daac and
 // sets the above template properties, methods, and custom validation used.
@@ -416,6 +399,7 @@ export default {
       values: {},
       questions: [],
       contacts: [],
+      contact_fields: [],
       bboxs: [],
       dirty: false,
       formTitle: "",
@@ -427,7 +411,9 @@ export default {
       validation_errors: {},
       formId: "",
       requestId: "",
-      daac_name: ""
+      daac_name: "",
+      valueHistory: [{fromUndo: true}],
+      valueHistoryUndoIdx: 0
     };
   },
   props: {
@@ -463,18 +449,42 @@ export default {
           if(typeof this.values != 'undefined'){
             if (!this.values.fromUndo) {
               this.setContacts(this.values);
-              this.$store.commit(
-                "pushQuestionsState",
-                Object.assign({}, this.values)
-              );
+              for (let sameAs of Object.keys(this.values).filter(item => /^same_as_/.test(item))) {
+                if (this.values[sameAs].toString() == 'true') {
+                  for (let v in this.values) {
+                    if (new RegExp(`^same_as_.*_${v}$`).test(sameAs)) {
+                      let to_base_name = sameAs.replace(/^same_as_/, '').replace(new RegExp(`_${v}$`), '').replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      let from_base_name = v.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      for (let ea in this.values) {
+                        if (new RegExp(`^${from_base_name}_`).test(ea)) {
+                          this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              // try to handle items going from '' to undefined
+              let saveValues = JSON.parse(JSON.stringify(this.values))
+              for (let ea in saveValues) {
+                if (!(saveValues[ea]) && saveValues[ea] != 'false') {
+                  delete saveValues[ea]
+                }
+              }
+              saveValues.fromUndo = true
+              if (this.valueHistory.length == 0 || JSON.stringify(saveValues, Object.keys(saveValues).sort()) != JSON.stringify(this.valueHistory[this.valueHistory.length - 1], Object.keys(this.valueHistory[this.valueHistory.length - 1]).sort())) {
+                this.valueHistory.splice(this.valueHistory.length - this.valueHistoryUndoIdx)
+                this.valueHistory.push(saveValues)
+                this.valueHistoryUndoIdx = 0
+              }
               this.$log.debug(
                 "pushQuestionsState",
-                Object.assign({}, this.values)
+                saveValues
               );
               var string_logging_object = this.$log.debug("pushQuestionsState");
               this.$logging_object[Date(Date.now()).toString()] = {
                 log_string: string_logging_object,
-                answers: Object.assign({}, this.values),
+                answers: saveValues,
               };
             }
             delete this.values.fromUndo;
@@ -490,6 +500,7 @@ export default {
   created() {},
   components: {
     FixedHeader,
+    BEditableTable
   },
   validations() {
     let val_fields = {
@@ -918,111 +929,55 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
-    // @id_to - The id of the element to set to
-    // @contact - The value of the element to set to
-    setContact: function (id_to, contact) {
-      let inputs = $("#questions_container input");
-      for (let i in inputs) {
-        if (
-          typeof inputs[i].id != "undefined" &&
-          inputs[i].id.toLowerCase().match(/name/g)
-        ) {
-          if (
-            typeof $(`#same_as_${inputs[i].id}_label`) != "undefined" &&
-            this.values[inputs[i].id] === contact
-          ) {
-            let unchecked = $(`#same_as_${id_to}`).is(":checked");
-            let get_id_from = inputs[i].id;
-            let from_name = get_id_from.toLowerCase();
-            let to_name = id_to.toLowerCase();
-            let from_org_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "organization");
-            let to_org_id = id_to
-              .toLowerCase()
-              .replace(/name/g, "organization");
-            let from_email_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "email");
-            let to_email_id = id_to.toLowerCase().replace(/name/g, "email");
-            let from_orcid_id = get_id_from
-              .toLowerCase()
-              .replace(/name/g, "orcid");
-            let to_orcid_id = id_to.toLowerCase().replace(/name/g, "orcid");
-            if (unchecked) {
-              if (typeof $(`#${to_name}`) != "undefined") {
-                this.values[to_name] = "";
-              }
-              if (typeof $(`#${to_org_id}`) != "undefined") {
-                this.values[to_org_id] = "";
-              }
-              if (typeof $(`#${to_email_id}`) != "undefined") {
-                this.values[to_email_id] = "";
-              }
-              if (typeof $(`#${to_orcid_id}`) != "undefined") {
-                this.values[to_orcid_id] = "";
-              }
-            } else {
-              if (
-                typeof $(`#${from_name}`) != "undefined" &&
-                typeof $(`#${to_name}`) != "undefined"
-              ) {
-                this.values[to_name] = this.values[from_name];
-              }
-              if (
-                typeof $(`#${from_org_id}`) != "undefined" &&
-                typeof $(`#${to_org_id}`) != "undefined"
-              ) {
-                this.values[to_org_id] = this.values[from_org_id];
-              }
-              if (
-                typeof $(`#${from_email_id}`) != "undefined" &&
-                typeof $(`#${to_email_id}`) != "undefined"
-              ) {
-                this.values[to_email_id] = this.values[from_email_id];
-              }
-              if (
-                typeof $(`#${from_orcid_id}`) != "undefined" &&
-                typeof $(`#${to_orcid_id}`) != "undefined"
-              ) {
-                this.values[to_orcid_id] = this.values[from_orcid_id];
-              }
-            }
-            if (
-              typeof $(`#${to_name}`) != "undefined" &&
-              $(`#${to_name}`).val() == ""
-            ) {
-              $(`#${to_name}`).focus();
-            } else if (
-              typeof $(`#${to_org_id}`) != "undefined" &&
-              $(`#${to_org_id}`).val() == ""
-            ) {
-              $(`#${to_org_id}`).focus();
-            } else if (
-              typeof $(`#${to_email_id}`) != "undefined" &&
-              $(`#${to_email_id}`).val() == ""
-            ) {
-              `#${to_email_id}`.focus();
-            } else if (
-              typeof $(`#${to_orcid_id}`) != "undefined" &&
-              $(`#${to_orcid_id}`).val() == ""
-            ) {
-              $(`#${to_orcid_id}`).focus();
-            }
-            this.setContacts(this.values);
-            this.$store.commit(
-              "pushQuestionsState",
-              Object.assign({}, this.values)
-            );
+    // @fld_to - The id of the element to set to
+    // @fld_from - The id of the element it's coming from
+    // @contact_key - The contact key needed to object checkbox state
+    setContact(fld_to, fld_from, contact_key) {
+      let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
+      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      if (checked) {
+        for (let ea in this.values) {
+          if (new RegExp(`^${from_base_name}_`).test(ea)) {
+            this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
+          }
+        }
+      } else {
+        for (let ea in this.values) {
+          if (new RegExp(`^${to_base_name}_`).test(ea)) {
+            this.$set(this.values, ea, '')
           }
         }
       }
+    },
+    getSameAsId(control_id, contact_fld) {
+      return `same_as_${control_id}_${contact_fld}`
+    },
+    sameAsSelected(control_id, contact_fld) {
+      let matchRegExp = new RegExp(`^same_as_${control_id}_`)
+      for (let ea in this.values) {
+        let from_has_name = false
+        let from_name = ea.split('name_')[1]
+        if(typeof from_name != 'undefined' && this.values[from_name] != ''){
+          from_has_name = true
+        }
+        if (matchRegExp.test(ea) && (typeof contact_fld == 'undefined' || ea != this.getSameAsId(control_id, contact_fld))) {
+          if (this.values[ea] && this.values[ea] != 'false' && from_has_name) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    anySameAsSelected(control_id) {
+      return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
     },
     // @vuese
     // Gets contacts and builds options for checkbox
     // @values - The forms values to look for contacts in
     setContacts: function (values) {
       this.contacts = [];
+      this.contact_fields = [];
       let questions = this.questions[0];
       for (var ea in values) {
         if (!ea.toLowerCase().match(/name/g)) {
@@ -1052,11 +1007,11 @@ export default {
                     (typeof help != "undefined" &&
                       help.toLowerCase().match(/contact/g))) &&
                   label.toLowerCase().match(/name/g) &&
-                  this.contacts.includes(this.values[inputs[i]["control_id"]]) ==
-                    false &&
-                  this.values[inputs[i]["control_id"]] != ""
+                  this.contacts.includes(long_name) ==
+                    false
                 ) {
-                  this.contacts.push(this.values[inputs[i]["control_id"]]);
+                  this.contacts.push(long_name);
+                  this.contact_fields.push(inp["control_id"]);
                 }
               }
             }
@@ -1411,11 +1366,12 @@ export default {
     loadAnswers() {
       if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
         $.getJSON(
-        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
         (answers) => {
           if(answers.error){
             return {}
           }
+          this.valueHistory = []
           this.values = answers.form_data;
         })
       }
@@ -1614,39 +1570,17 @@ export default {
     // @vuese
     // Undos the form to its previous state.
     undoToPreviousState() {
-      if(Object.keys(this.values).length===0){
-        this.$bvModal
-          .msgBoxConfirm(
-            `This will undo your Daac selection.  Are you sure you want to do this?`,
-            {
-              title: "Please Confirm",
-              size: "lg",
-              buttonSize: "sm",
-              okVariant: "danger",
-              okTitle: "YES",
-              cancelTitle: "NO",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            }
-          )
-          .then((value) => {
-            if (value){
-              this.undo();
-              this.reApplyValues();
-              window.headerComponent.goToComponent('daacs')
-            }
-          });
-      } else {
-        this.undo();
-        this.reApplyValues();
-      }
+      this.valueHistoryUndoIdx++
+      this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
     },
     // @vuese
     // Redo the form state
     redoToPreviousState() {
-      this.redo();
-      this.reApplyValues();
+      //this.redo();
+      //this.reApplyValues();
+      this.valueHistoryUndoIdx--
+      this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
+      //this.values = this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx]
     },
   },
   // This is equivalent to js document.ready
@@ -1686,6 +1620,12 @@ export default {
 };
 </script>
 <style scoped>
+.table-div {
+  margin-top: -40px;
+}
+.editable-table .data-cell {
+  min-height: 2rem;
+} 
 #daac_selection {
   margin-bottom:1rem;
 }

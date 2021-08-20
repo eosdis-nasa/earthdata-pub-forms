@@ -266,7 +266,7 @@ export default {
       },
       // @vuese
       // Set active nav element
-      setActiveNav(activeElement, navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
+      setActiveNav(activeElement, navs = ['daacs', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
         setTimeout(() => {
           for(var n in navs){
             if((!window.headerComponent.showDaacs && navs[n] == 'daacs')){ continue }
