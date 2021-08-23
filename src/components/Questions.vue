@@ -1197,8 +1197,9 @@ export default {
                     var options = [];
                     if (
                       contact &&
-                      questions_section[q].inputs[input].label.toLowerCase() ==
-                        "name"
+                      typeof questions_section[q].inputs[input].label != 
+                      "undefined" && 
+                      questions_section[q].inputs[input].label.match(/name/gi)
                     ) {
                       questions_section[q].inputs[input].contact = true;
                       contact = false;
