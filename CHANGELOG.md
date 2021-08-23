@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.5 - 2021-08-23
 
+- [Add temporary Feedback link to header. This is meant to be removed after testing.](d289a69a68b)
 - [Updated object compare so it will only warn user on new data when navigating away](6d559a601fcedc60412229e866fcd790719c58a9)
 - [Fixed same as checkbox not always showing](48f58105baa4a98507d44d3d7a153cda4255fe55)
 - [Moved editable table cell style to global space to allow for editing in tables.](5a6ddf0c0f504a3ac7bdaee63f296c50512a1e11)
