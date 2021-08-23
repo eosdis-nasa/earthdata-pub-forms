@@ -206,7 +206,7 @@
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <div style="float:right;">
-                                  <label>Click in the center of the table cell to enter data</label>
+                                  <label @click="addRow(input.control_id)">Click in the center of the table cell to enter data</label>
                                   <b-button 
                                     class="button" 
                                     type="add_row" 
@@ -1623,9 +1623,6 @@ export default {
 .table-div {
   margin-top: -40px;
 }
-.editable-table .data-cell {
-  min-height: 2rem;
-} 
 #daac_selection {
   margin-bottom:1rem;
 }
