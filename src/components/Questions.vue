@@ -1197,8 +1197,9 @@ export default {
                     var options = [];
                     if (
                       contact &&
-                      questions_section[q].inputs[input].label.toLowerCase() ==
-                        "name"
+                      typeof questions_section[q].inputs[input].label != 
+                      "undefined" && 
+                      questions_section[q].inputs[input].label.match(/name/gi)
                     ) {
                       questions_section[q].inputs[input].contact = true;
                       contact = false;
@@ -1623,9 +1624,6 @@ export default {
 .table-div {
   margin-top: -40px;
 }
-.editable-table .data-cell {
-  min-height: 2rem;
-} 
 #daac_selection {
   margin-bottom:1rem;
 }
