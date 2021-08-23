@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.5 - 2021-08-23
+
+- [Fixed same as checkbox not always showing](48f58105baa4a98507d44d3d7a153cda4255fe55)
+
 ## 1.0.4 - 2021-08-19
 
 - [Updated same as checkboxes to display title name instead of value.  Changed contact fields to be readonly if same as is checked. Tweaked undo redo functionality to reset store after loading answers.](0727a2eb3ecbd2c0c1ba6e0f8b7238639435395e)
