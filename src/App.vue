@@ -70,6 +70,9 @@
     }
 </script>
 <style>
+    .editable-table .data-cell {
+        min-height: 2rem!important;
+    } 
     .eui-link {
         cursor:pointer;
     }
