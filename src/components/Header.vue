@@ -21,6 +21,7 @@
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
+          <span>  | <a @click="compareDataAskLeave('feedback')" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -91,6 +92,8 @@ export default {
           location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
         } else if (comp.match(/overview/g)){
           location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+        } else if (comp.match(/feedback/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}/feedback`
         }
     },
     // @vuese
