@@ -103,7 +103,8 @@ export default {
           `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
-              if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
+              //if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
+                if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                 this.$bvModal
                   .msgBoxConfirm(
                     `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
