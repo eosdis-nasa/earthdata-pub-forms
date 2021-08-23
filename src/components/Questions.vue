@@ -1623,9 +1623,6 @@ export default {
 .table-div {
   margin-top: -40px;
 }
-.editable-table .data-cell {
-  min-height: 2rem;
-} 
 #daac_selection {
   margin-bottom:1rem;
 }
