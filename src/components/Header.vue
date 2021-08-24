@@ -21,7 +21,7 @@
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
-          <span>  | <a @click="compareDataAskLeave('feedback')" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
+          <span>  | <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
