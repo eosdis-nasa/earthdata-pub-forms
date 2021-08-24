@@ -266,9 +266,9 @@ export default {
         }
         let component_name_prefix = ''
         if(form.match(/questionnaire/g)){
-          component_name_prefix = 'Data Product Information - '
-        } else {
           component_name_prefix = 'Data Publication Request - '
+        } else {
+          component_name_prefix = 'Data Accession Request - '
         }
         return [form, component_name_prefix]
       },
