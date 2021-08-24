@@ -45,15 +45,15 @@ localVue.component('font-awesome-icon', FontAwesomeIcon)
 localVue.component('font-awesome-layers', FontAwesomeLayers)
 localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
-const routes = [  { path: '/interest/daacs/:group', name: 'Data Publication Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
-                  { path: '/interest/questions/:group', name: 'Data Publication Request - Questions', component: Questions },
-                  { path: '/interest/questions/:group/:formId', name: 'Data Publication Request - Questions with FormId', component: Questions },
-                  { path: '/interest/questions/:group/:formId/:requestId', name: 'Data Publication Request - Questions with formId and requestId', component: Questions },
-                  { path: '/interest/help', name: 'Data Publication Request - Help', component: Help },
-                  { path: '/questionnaire/questions', name: 'Data Product Information - Questions', component: Questions },
-                  { path: '/questionnaire/questions:formId', name: 'Data Product Information - Questions with FormId', component: Questions },
-                  { path: '/questionnaire/questions/:formId/:requestId', name: 'Data Product Information - Questions with formId and requestId', component: Questions },
-                  { path: '/questionnaire/help', name: 'Data Product Information - Help', component: Help },
+const routes = [  { path: '/interest/daacs/:group', name: 'Data Accession Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:group', name: 'Data Accession Request - Questions', component: Questions },
+                  { path: '/interest/questions/:group/:formId', name: 'Data Accession Request - Questions with FormId', component: Questions },
+                  { path: '/interest/questions/:group/:formId/:requestId', name: 'Data Accession Request - Questions with formId and requestId', component: Questions },
+                  { path: '/interest/help', name: 'Data Accession Request - Help', component: Help },
+                  { path: '/questionnaire/questions', name: 'Data Publication Request - Questions', component: Questions },
+                  { path: '/questionnaire/questions:formId', name: 'Data Publication Request - Questions with FormId', component: Questions },
+                  { path: '/questionnaire/questions/:formId/:requestId', name: 'Data Publication Request - Questions with formId and requestId', component: Questions },
+                  { path: '/questionnaire/help', name: 'Data Publication Request - Help', component: Help },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
@@ -168,7 +168,7 @@ describe("App", () => {
   });
   
   test("tests the daac selection route", async () => {
-    // This test will warn 'missing param for named route "Data Publication Request - Daacs": Expected "group" to be defined
+    // This test will warn 'missing param for named route "Data Accession Request - Daacs": Expected "group" to be defined
     // This test is verifying that when the group is undefined, the user is routed to the 'Choose your DAAC' page to make group selection
     const router = new VueRouter({ routes })
     const wrapper = mount(App, { 
