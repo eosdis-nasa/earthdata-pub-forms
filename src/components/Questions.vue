@@ -207,15 +207,6 @@
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <div>
                                   <label>Click in the center of the table cell to enter data</label>
-                                  <b-button 
-                                    class="button" 
-                                    type="add_row" 
-                                    id="add_row_button" 
-                                    aria-label="add row button" 
-                                    style="margin-right:0px;"
-                                    @click="addRow(input.control_id)">
-                                    <font-awesome-icon icon="plus"/>
-                                  </b-button>
                                 </div>
                                 <template>
                                   <b-editable-table 
@@ -226,7 +217,18 @@
                                     sticky-header 
                                     show-empty
                                     :items="values[input.control_id]"
-                                    :fields="question.inputs[c_key]['enums'].concat([{key:'+'}])" >
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    <template #head(X)="">
+                                      <b-button 
+                                        class="" 
+                                        type="add_row" 
+                                        id="add_row_button" 
+                                        aria-label="add row button" 
+                                        style="margin: 0px;"
+                                        @click="addRow(input.control_id)">
+                                        <font-awesome-icon icon="plus"/>
+                                      </b-button>
+                                    </template>
                                     <template #cell(X)="data">
                                       <b-button 
                                         class="button" 
