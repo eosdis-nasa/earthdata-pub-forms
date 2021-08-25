@@ -185,7 +185,6 @@
     }
     .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
         min-height: 1.75rem!important;
-        padding-right:1rem;
     }
     .checkboxes {
         display:-webkit-box;

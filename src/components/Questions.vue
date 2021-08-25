@@ -76,8 +76,6 @@
                           <template v-for="(input, c_key) in question.inputs">
                             <span  :key="c_key">
                               <span v-if="input.type == 'checkbox'" class="checkbox">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <!-- Checkbox Type of Input -->
                                 <b-form-checkbox 
                                   :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
@@ -90,6 +88,8 @@
                                   unchecked-value="false"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                 </b-form-checkbox>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}</label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}</label>
                                 <!-- End of Checkbox Type of Input -->
                               </span>
                           <b-row v-else>
@@ -1661,6 +1661,7 @@ export default {
 span.checkbox label {
   margin-left: 0px;
   font-weight:bold;
+  padding-right: 1rem;
 }
 span span label {
   margin-left: 2rem;
@@ -1675,10 +1676,6 @@ span span:nth-child(-n+1) label {
 }
 .question_section {
   margin-bottom: 2rem;
-}
-h2 {
-  text-decoration: underline;
-  border-bottom: unset;
 }
 #reset_data {
   background-color: #db1400;
