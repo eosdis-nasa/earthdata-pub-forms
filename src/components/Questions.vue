@@ -98,7 +98,7 @@
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                               <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
-                              <span class="date_formats" v-if="input.type == 'date'"><b>Preferred format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
+                              <span class="date_formats" v-if="input.type == 'date'"><b>Format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
                               <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </span>
