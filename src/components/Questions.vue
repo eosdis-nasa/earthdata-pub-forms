@@ -66,18 +66,17 @@
                         :key="b_key"
                       >
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:</label>
-                      <span :id="question.short_name || a_key">{{question.text}}</span>
-                      <span class="required" v-if="question.required == true">* required</span>
-                      <p class="help" v-if="question.help != 'undefined'">{{question.help}}</p>
+                      <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
+                        <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
+                      </h3>
+                      <span class="required col text-right" v-if="question.required == true">* required</span>
+                      <p class="text-muted" v-if="question.help != 'undefined'">{{question.help}}</p>
                       <!-- Input -->
                       <b-row>
                         <b-col :lg="question.size || 12" class="question_size">
                           <template v-for="(input, c_key) in question.inputs">
                             <span  :key="c_key">
                               <span v-if="input.type == 'checkbox'" class="checkbox">
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}: </label>
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                                 <!-- Checkbox Type of Input -->
                                 <b-form-checkbox 
                                   :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
@@ -90,15 +89,16 @@
                                   unchecked-value="false"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                 </b-form-checkbox>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}</label>
+                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}</label>
                                 <!-- End of Checkbox Type of Input -->
                               </span>
                           <b-row v-else>
-                            <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
+                            <span :id="input.control_id" class="required col text-right" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
-                              <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
-                              <span class="date_formats" v-if="input.type == 'date'"><b>Preferred format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
+                              <span class="date_formats" v-if="input.type == 'date'"><b>Format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
                               <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </span>
@@ -125,6 +125,7 @@
                                     </b-form-checkbox>
                                 </span>
                               </span>
+                              <span class="required col text-right" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <!-- Text Type of Input -->
                               <b-form-input 
                                   :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -205,17 +206,8 @@
                               </div>
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
-                                <div style="float:right;">
+                                <div>
                                   <label>Click in the center of the table cell to enter data</label>
-                                  <b-button 
-                                    class="button" 
-                                    type="add_row" 
-                                    id="add_row_button" 
-                                    aria-label="add row button" 
-                                    style="margin-right:0px;"
-                                    @click="addRow(input.control_id)">
-                                    <font-awesome-icon icon="plus"/>
-                                  </b-button>
                                 </div>
                                 <template>
                                   <b-editable-table 
@@ -227,6 +219,17 @@
                                     show-empty
                                     :items="values[input.control_id]"
                                     :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    <template #head(X)="">
+                                      <b-button 
+                                        class="" 
+                                        type="add_row" 
+                                        id="add_row_button" 
+                                        aria-label="add row button" 
+                                        style="margin: 0px;"
+                                        @click="addRow(input.control_id)">
+                                        <font-awesome-icon icon="plus"/>
+                                      </b-button>
+                                    </template>
                                     <template #cell(X)="data">
                                       <b-button 
                                         class="button" 
@@ -1659,6 +1662,7 @@ export default {
 span.checkbox label {
   margin-left: 0px;
   font-weight:bold;
+  padding-right: 1rem;
 }
 span span label {
   margin-left: 2rem;
@@ -1673,10 +1677,6 @@ span span:nth-child(-n+1) label {
 }
 .question_section {
   margin-bottom: 2rem;
-}
-h2 {
-  text-decoration: underline;
-  border-bottom: unset;
 }
 #reset_data {
   background-color: #db1400;
@@ -1698,14 +1698,6 @@ h2 {
 .col-form-label {
   font-weight: bold;
 }
-.radio_div {
-  width: 25%;
-  float: left;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
 .required {
   color: red !important;
   padding-top: 7px;
@@ -1721,8 +1713,13 @@ h2 {
   padding-left:10px;
 }
 label {
-  margin-right: .5rem;
+  margin: .5rem;
+  margin-left: 15px;
+  margin-bottom: -1px;
   cursor: pointer;
+}
+h3 {
+  padding-top: 10px;
 }
 p {
   margin-bottom: unset;

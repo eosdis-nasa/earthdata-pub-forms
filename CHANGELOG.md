@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.5 - 2021-08-23
 
+- [Update styling based on feedback](2c2409cd011)
 - [Replace form names with content update](07047e5ea6ab34bedd4c1914221c67c22737f672)
 - [Add temporary Feedback link to header. This is meant to be removed after testing.](d289a69a68b)
 - [Updated object compare so it will only warn user on new data when navigating away](6d559a601fcedc60412229e866fcd790719c58a9)

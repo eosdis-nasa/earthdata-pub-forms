@@ -4,12 +4,12 @@
   <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
     <b-container name="daacs-container">
       <div>
-        <b-form-group name="form-group" id="form-group" label="Choose your DAAC:">
+        <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
           <br />
           <!-- Radio Div with Description -->
           <div>
-            <div class="desc_div" v-if="selected" id="selected_description"></div>
-            <div class="radio_div">
+            <div class="radio_div table">
+              <div class="radio_head_div font-weight-bold"><span>DAAC</span><span>Discipline</span></div>
               <b-form-radio
                 v-for="(item, index) in daacs"
                 :key="index"
@@ -18,16 +18,15 @@
                 :value="item.long_name"
                 @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
                 v-model="selected"
-              >{{ item.short_name }}</b-form-radio>
+              ><span>{{ item.short_name }}</span><span>{{item.discipline}}</span></b-form-radio>
             </div>
           </div>
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
             <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
-              You have selected:
-              <br />
               <strong>{{ selected }}</strong>
+              <div v-if="selected" id="selected_description"></div>
             </div>
             <div class="mt-3" v-if="selected">
               For more information, visit
@@ -278,26 +277,23 @@ export default {
   #selected_daac, .external-link-alt, #selected_daac_link {
     color: #2275AA;
   }
-  .radio_div {
-    width: 25%;
-    float: left;
-    margin-bottom: 1rem;
+  .radio_head_div {
+    padding-left: 24px;
+    border-top: none!important;
+    border-bottom: 2px solid #dee2e6;
   }
-  .desc_div {
-    width: 75%;
-    float: right;
+  .radio_div span, .radio_div input {
+    display: table-cell;
+    min-width: 120px;
+  }
+  .radio_div div {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #dee2e6;
   }
   .button_div {
     margin-top: 1rem;
     text-align: left;
     float: left;
-  }
-  .radio_div {
-    width: 25%;
-    float: left;
-  }
-  .desc_div {
-    width: 75%;
-    float: right;
   }
 </style>
