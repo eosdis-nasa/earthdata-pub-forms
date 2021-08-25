@@ -66,10 +66,11 @@
                         :key="b_key"
                       >
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:</label>
-                      <span :id="question.short_name || a_key">{{question.text}}</span>
+                      <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
+                        <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
+                      </h3>
                       <span class="required col text-right" v-if="question.required == true">* required</span>
-                      <p class="help" v-if="question.help != 'undefined'">{{question.help}}</p>
+                      <p class="text-muted" v-if="question.help != 'undefined'">{{question.help}}</p>
                       <!-- Input -->
                       <b-row>
                         <b-col :lg="question.size || 12" class="question_size">
