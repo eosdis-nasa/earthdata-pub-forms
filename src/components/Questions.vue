@@ -1698,14 +1698,6 @@ span span:nth-child(-n+1) label {
 .col-form-label {
   font-weight: bold;
 }
-.radio_div {
-  width: 25%;
-  float: left;
-}
-.desc_div {
-  width: 75%;
-  float: right;
-}
 .required {
   color: red !important;
   padding-top: 7px;
