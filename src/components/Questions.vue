@@ -1721,8 +1721,13 @@ span span:nth-child(-n+1) label {
   padding-left:10px;
 }
 label {
-  margin-right: .5rem;
+  margin: .5rem;
+  margin-left: 15px;
+  margin-bottom: -1px;
   cursor: pointer;
+}
+h3 {
+  padding-top: 10px;
 }
 p {
   margin-bottom: unset;

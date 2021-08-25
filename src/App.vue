@@ -168,9 +168,6 @@
         font-weight: bold;
         text-decoration:underline;
     }
-    label{
-        font-weight:bold;
-    }
     .b-custom-control-lg.custom-file, .b-custom-control-lg .custom-file-input, .b-custom-control-lg .custom-file-label, .input-group-lg.custom-file, .input-group-lg .custom-file-input, .input-group-lg .custom-file-label {
         margin-bottom: 1.25rem;
     }
@@ -193,9 +190,6 @@
     input[type=radio   ]:not(old) + label{
         cursor: pointer;
         padding-top: 4px;
-    }
-    label {
-        margin-top: 0.5rem;
     }
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
