@@ -68,7 +68,7 @@
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
                       <label :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:</label>
                       <span :id="question.short_name || a_key">{{question.text}}</span>
-                      <span class="required" v-if="question.required == true">* required</span>
+                      <span class="required col text-right" v-if="question.required == true">* required</span>
                       <p class="help" v-if="question.help != 'undefined'">{{question.help}}</p>
                       <!-- Input -->
                       <b-row>
@@ -93,11 +93,10 @@
                                 <!-- End of Checkbox Type of Input -->
                               </span>
                           <b-row v-else>
-                            <span :id="input.control_id" class="required" v-if="input.required == true && input.type == 'checkbox'">* required</span>
+                            <span :id="input.control_id" class="required col text-right" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
-                              <span class="required" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <span class="date_formats" v-if="input.type == 'date'"><b>Format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
                               <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -125,6 +124,7 @@
                                     </b-form-checkbox>
                                 </span>
                               </span>
+                              <span class="required col text-right" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <!-- Text Type of Input -->
                               <b-form-input 
                                   :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -205,7 +205,7 @@
                               </div>
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
-                                <div style="float:right;">
+                                <div>
                                   <label>Click in the center of the table cell to enter data</label>
                                   <b-button 
                                     class="button" 
@@ -226,7 +226,7 @@
                                     sticky-header 
                                     show-empty
                                     :items="values[input.control_id]"
-                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'+'}])" >
                                     <template #cell(X)="data">
                                       <b-button 
                                         class="button" 
