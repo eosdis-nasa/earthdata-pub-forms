@@ -97,7 +97,7 @@
                             <span :id="input.control_id" class="required col text-right" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
-                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}:aaa </label>
+                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                               <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
                               <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:340px;">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -1726,10 +1726,9 @@ h3 span label {
   float:right;
 }
 .date_formats {
-  padding-top: 7px;
-  padding-left:20px;
-  color: light-grey;
-  float:right
+  padding-top: 8px;
+  position: absolute;
+  left: 70px;
 }
 .date_formats_required {
   padding-top: 7px;
