@@ -70,6 +70,9 @@
     }
 </script>
 <style>
+    .custom-control-label {
+        margin-top: 5.5px!important;
+    }
     .editable-table .data-cell {
         min-height: 2rem!important;
     } 
@@ -171,8 +174,11 @@
     .b-custom-control-lg.custom-file, .b-custom-control-lg .custom-file-input, .b-custom-control-lg .custom-file-label, .input-group-lg.custom-file, .input-group-lg .custom-file-input, .input-group-lg .custom-file-label {
         margin-bottom: 1.25rem;
     }
-    div.row{
+    div.row {
         margin:0rem;
+    }
+    .nofloat {
+        margin:unset!important;
     }
     .checkbox{
         padding-left:0px!important;
@@ -186,6 +192,7 @@
     .checkboxes {
         display:-webkit-box;
         display:inline-flex!important;
+        margin-right: -8px!important;
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;

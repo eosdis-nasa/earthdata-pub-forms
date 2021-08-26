@@ -542,7 +542,6 @@
           "long_name": "Horizontal Spatial Coverage",
           "text": "What are the coordinates for the geographic area(s) covered by the entire data product?",
           "help": "If more than three distinct spatial coverage bounding boxes exist for this data product, please add a comment to the Spatial Coverage Notes.",
-          "required": true,
           "inputs": [
             {
               "type": "bbox",
@@ -677,7 +676,6 @@
           "long_name": "Data Processing Level",
           "text": "What is the NASA Data Processing Level <https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy/data-levels> of this data product?",
           "help": "",
-          "required": true,
           "inputs": [
             {
               "type": "radio",
@@ -691,7 +689,8 @@
                 "Level 3",
                 "Level 4",
                 "Other"
-              ]
+              ],
+              "required": true
             },
             {
               "type": "text",

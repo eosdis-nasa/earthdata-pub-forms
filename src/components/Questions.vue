@@ -46,9 +46,9 @@
     <b-container name="questions_container" id="questions_container">
         <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
-        <div v-if="daac_name!=''" id="daac_selection"><b>DAAC Selected</b>: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
+        <h3 v-if="daac_name!=''" id="daac_selection">DAAC Selected: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
           <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span>
-        </div>
+        </h3>
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
               <li class="eui-banner--danger same-as-html5" v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
@@ -66,10 +66,10 @@
                         :key="b_key"
                       >
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
+                      <span class="col text-right section_required" v-if="question.required == true">* required</span>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                       </h3>
-                      <span class="required col text-right" v-if="question.required == true">* required</span>
                       <p class="text-muted" v-if="question.help != 'undefined'">{{question.help}}</p>
                       <!-- Input -->
                       <b-row>
@@ -98,31 +98,32 @@
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
-                              <span class="date_formats" v-if="input.type == 'date'"><b>Format: </b><span class="date_formats_required">YYYY-MM-DD</span></span>
-                              <span v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:300px;">
+                              <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
+                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:340px;">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
-                              </span>
-                              <span v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
+                              </label>
+                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
                                 ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
-                              </span>
+                              </label>
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
                                 <span id="contact_span" v-if="contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
+                                  <b-form-checkbox 
+                                    class="eui-checkbox"
+                                    v-if="input.contact == true"
+                                    v-model="values[getSameAsId(input.control_id, contact_fields[contact_key])]"
+                                    :id="`same_as_${input.control_id}_${contact_key}`"
+                                    value="true"
+                                    unchecked-value="false"
+                                    @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
+                                  </b-form-checkbox>
                                   <label 
                                     :id="`same_as_${input.control_id}_${contact_key}_label`"
                                     :for="`same_as_${input.control_id}_${contact_key}`" 
                                     v-if="input.contact == true" 
                                     @click="setContact(input.control_id, contact_fields[contact_key], contact_key)"
                                     class="eui-label"> 
-                                    Same as {{contact}} </label>
-                                    <b-form-checkbox 
-                                      class="eui-checkbox"
-                                      v-if="input.contact == true"
-                                      v-model="values[getSameAsId(input.control_id, contact_fields[contact_key])]"
-                                      :id="`same_as_${input.control_id}_${contact_key}`"
-                                      value="true"
-                                      unchecked-value="false"
-                                      @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
-                                    </b-form-checkbox>
+                                    Same as {{contact}} 
+                                  </label>
                                 </span>
                               </span>
                               <span class="required col text-right" v-if="input.required == true && input.type!='checkbox'">* required</span>
@@ -206,9 +207,7 @@
                               </div>
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
-                                <div>
-                                  <label>Click in the center of the table cell to enter data</label>
-                                </div>
+                                <label class="eui-label table-label">Click in the center of the table cell to enter data</label>
                                 <template>
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -1624,6 +1623,15 @@ export default {
 };
 </script>
 <style scoped>
+.no_margin {
+  margin:unset!important
+}
+.table-label{
+  padding-top: 7px!important;
+  margin-bottom:-10px!important;
+  padding-right: 9.5px!important;
+  font-size: 16px!important;
+}
 .table-div {
   margin-top: -40px;
 }
@@ -1638,7 +1646,8 @@ export default {
   margin-left:2rem; 
 }
 .eui-label-nopointer {
-  cursor: auto;
+  cursor: auto!important;
+  
 }
 .bbox {
   min-width: 100px;
@@ -1658,15 +1667,15 @@ export default {
 }
 .eui-checkbox {
   display: inherit;
+  margin-right: -8px!important;
 }
 span.checkbox label {
   margin-left: 0px;
-  font-weight:bold;
+  /* font-weight:bold; */
   padding-right: 1rem;
 }
 span span label {
   margin-left: 2rem;
-  font-weight: normal;
 }
 span span:nth-child(-n+1) label {
   margin-left:0rem;
@@ -1692,31 +1701,44 @@ span span:nth-child(-n+1) label {
 }
 .warning {
   color: red;
-  font-weight: bold;
+  /* font-weight: bold; */
   text-decoration: None;
 }
 .col-form-label {
-  font-weight: bold;
+  /* font-weight: bold; */
+}
+h3 span label {
+  font-size: 16px!important;
+}
+.section_required {
+  color: red !important;
+  padding-top: 7px!important;
+  font-size: 16px!important;
+  padding-right: 0px!important;
+  float:right;
+  margin-top: -20px!important;
 }
 .required {
   color: red !important;
-  padding-top: 7px;
+  padding-top: 7px!important;
+  padding-right: 9.5px!important;
+  font-size: 16px!important;
+  float:right;
 }
 .date_formats {
-  padding-top: 7px;
-  padding-left:20px;
-  color: light-grey;
-  float:right
+  padding-top: 8px;
+  position: absolute;
+  left: 70px;
 }
 .date_formats_required {
   padding-top: 7px;
   padding-left:10px;
 }
 label {
-  margin: .5rem;
-  margin-left: 15px;
-  margin-bottom: -1px;
-  cursor: pointer;
+  margin: .5rem!important;
+  margin-left: 9.5px!important;
+  margin-bottom: -1px!important;
+  cursor: pointer!important;
 }
 h3 {
   padding-top: 10px;
