@@ -70,6 +70,12 @@
     }
 </script>
 <style>
+    .custom-control-label {
+        margin-top: 5.5px!important;
+    }
+    .editable-table .data-cell {
+        min-height: 2rem!important;
+    } 
     .eui-link {
         cursor:pointer;
     }
@@ -165,14 +171,14 @@
         font-weight: bold;
         text-decoration:underline;
     }
-    label{
-        font-weight:bold;
-    }
     .b-custom-control-lg.custom-file, .b-custom-control-lg .custom-file-input, .b-custom-control-lg .custom-file-label, .input-group-lg.custom-file, .input-group-lg .custom-file-input, .input-group-lg .custom-file-label {
         margin-bottom: 1.25rem;
     }
-    div.row{
+    div.row {
         margin:0rem;
+    }
+    .nofloat {
+        margin:unset!important;
     }
     .checkbox{
         padding-left:0px!important;
@@ -182,18 +188,15 @@
     }
     .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
         min-height: 1.75rem!important;
-        padding-right:1rem;
     }
     .checkboxes {
         display:-webkit-box;
         display:inline-flex!important;
+        margin-right: -8px!important;
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;
         padding-top: 4px;
-    }
-    label {
-        margin-top: 0.5rem;
     }
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;

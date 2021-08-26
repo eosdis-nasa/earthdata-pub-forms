@@ -8,9 +8,9 @@
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
           <span id="title" v-if="formTitle" style="background:blue">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request&nbsp;
+          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Accession Request&nbsp;
           <span v-if="this.$testing">(TESTING MODE)</span></span>
-          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information&nbsp;
+          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Publication Request&nbsp;
           <span v-if="this.$testing">(TESTING MODE)</span></span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
@@ -21,6 +21,7 @@
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
+          <span>  | <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -91,6 +92,8 @@ export default {
           location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
         } else if (comp.match(/overview/g)){
           location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+        } else if (comp.match(/feedback/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}/feedback`
         }
     },
     // @vuese
@@ -103,7 +106,8 @@ export default {
           `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
-              if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
+              //if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
+                if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                 this.$bvModal
                   .msgBoxConfirm(
                     `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,

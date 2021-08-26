@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.6 - 2021-08-25
+
+- [Updated styling tweaks based on feedback](c848a8239eff0fc8c054682efae8ba1ba186f6a9)
+
+## 1.0.5 - 2021-08-23
+
+- [Update styling based on feedback](2c2409cd011)
+- [Replace form names with content update](07047e5ea6ab34bedd4c1914221c67c22737f672)
+- [Add temporary Feedback link to header. This is meant to be removed after testing.](d289a69a68b)
+- [Updated object compare so it will only warn user on new data when navigating away](6d559a601fcedc60412229e866fcd790719c58a9)
+- [Fixed same as checkbox not always showing](48f58105baa4a98507d44d3d7a153cda4255fe55)
+- [Moved editable table cell style to global space to allow for editing in tables.](5a6ddf0c0f504a3ac7bdaee63f296c50512a1e11)
+
 ## 1.0.4 - 2021-08-19
 
 - [Updated same as checkboxes to display title name instead of value.  Changed contact fields to be readonly if same as is checked. Tweaked undo redo functionality to reset store after loading answers.](0727a2eb3ecbd2c0c1ba6e0f8b7238639435395e)
