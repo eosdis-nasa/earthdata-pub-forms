@@ -6,10 +6,12 @@
       <!-- Logo and menu -->
       <div class="eui-application-logo">
         <h1>
-          <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg" />
-          <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Publication Request</span>
-          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Product Information</span>
+          <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
+          <span id="title" v-if="formTitle" style="background:blue">{{formTitle}}</span>
+          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Accession Request&nbsp;
+          <span v-if="this.$testing">(TESTING MODE)</span></span>
+          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Publication Request&nbsp;
+          <span v-if="this.$testing">(TESTING MODE)</span></span>
           <span id="title" v-else>Earthdata Publication</span>
         </h1>
         <div id="nav">
@@ -17,10 +19,9 @@
           <div v-if="showDaacs" class="inline">  |  </div>
           <a id="questions_nav_link" v-if="showDaacs && daac =='selection' || daac == ''" href="#" @click="requireDaacSelection()">Questions</a>
           <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
-          <div class="inline" >  |  </div>
-          <a @click="compareDataAskLeave('help')" id="help_nav_link" alt="go the EDPub Help" title="go the EDPub Help">Help</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
+          <span>  | <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -83,21 +84,33 @@ export default {
   },
   methods: {
     // @vuese
+    // Changes location 
+    changeLocation(comp) {
+      if (comp.match(/help/g) || comp.match(/daacs/g)){
+          this.goToComponent(comp)
+        } else if (comp.match(/dashboard/g)){
+          location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+        } else if (comp.match(/overview/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+        } else if (comp.match(/feedback/g)){
+          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}/feedback`
+        }
+    },
+    // @vuese
     // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
     compareDataAskLeave(comp){
-      if(typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0){
+      if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
           (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
           $.getJSON(
-          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.requestId}`,
+          `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
-              let lookupSorted = Object.keys(answers.form_data).sort(function(a,b){return answers.form_data[a]-answers.form_data[b]})
-              let currentSorted = Object.keys(window.questionsComponent.values).sort(function(a,b){return window.questionsComponent.values[a]-window.questionsComponent.values[b]})
-              if (!this.shallowEqual(lookupSorted, currentSorted)){
+              //if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
+                if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                 this.$bvModal
                   .msgBoxConfirm(
-                    `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+                    `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
                     {
                       title: "Please Confirm",
                       size: "lg",
@@ -112,27 +125,17 @@ export default {
                   )
                   .then((value) => {
                     if (value){
-                      if (comp.match(/help/g) || comp.match(/daacs/g)){
-                        this.goToComponent(comp)
-                      } else if (comp.match(/dashboard/g)){
-                        location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-                      } else if (comp.match(/overview/g)){
-                        location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-                      }
+                      this.changeLocation(comp)
                     }
                   });
               } else {
-                if (comp.match(/help/g) || comp.match(/daacs/g)){
-                  this.goToComponent(comp)
-                } else if (comp.match(/dashboard/g)){
-                  location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-                } else if (comp.match(/overview/g)){
-                  location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-                }
+                this.changeLocation(comp)
               }
             }
           })
-        } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+        } 
+        else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
+          (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
           this.$bvModal
           .msgBoxConfirm(
             `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
@@ -150,53 +153,24 @@ export default {
           )
           .then((value) => {
             if (value){
-              if (comp.match(/help/g) || comp.match(/daacs/g)){
-                this.goToComponent(comp)
-              } else if (comp.match(/dashboard/g)){
-                location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-              } else if (comp.match(/overview/g)){
-                location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-              }
+              this.changeLocation(comp)
             }
           });
+        }  
+        else {
+          this.changeLocation(comp)
         }
       } else {
-        if (comp.match(/help/g) || comp.match(/daacs/g)){
-          this.goToComponent(comp)
-        } else if (comp.match(/dashboard/g)){
-          location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
-        } else if (comp.match(/overview/g)){
-          location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
-        }
+        this.changeLocation(comp)
       }
-    },
-    // @vuese
-    // Go the component page specified with all the params needed
-    // @object1 - object 1 to compare
-    // @object2 - object 2 to compare
-    shallowEqual(object1, object2) {
-      const keys1 = Object.keys(object1);
-      const keys2 = Object.keys(object2);
-
-      if (keys1.length !== keys2.length) {
-        return false;
-      }
-
-      for (let key of keys1) {
-        if (object1[key] !== object2[key]) {
-          return false;
-        }
-      }
-
-      return true;
     },
     // @vuese
     // Go the component page specified with all the params needed
     // @comp - component to switch too (string)
     goToComponent(comp){
       let form, prefix, formId, requestId, group, showDaacs;
+      form = this.getForm();
       if(typeof this.$store === 'undefined'){
-        form = this.getForm();
         prefix = this.getFormNamePrefix();
         formId = undefined;
         requestId = undefined;
@@ -247,7 +221,7 @@ export default {
     // @vuese
     // Requires daac to be selected before progressing to the questions component
     requireDaacSelection() {
-      if (!location.href.match(/help/g)) {
+      if (!location.href.match(/help/g) || (location.href.match(/help/g) || (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection'))) {
         if(typeof this.values === 'undefined' || Object.keys(this.values).length === 0){
           this.$bvModal.msgBoxOk('Please select a daac to continue.', {
             title: 'No DAAC',
@@ -255,11 +229,14 @@ export default {
             buttonSize: 'sm',
             okTitle: 'OK',
             footerClass: 'p-2',
-            hideHeaderClose: false,
+            hideHeaderClose: true,
             centered: true
+          }).then((value) => {
+            if (value && (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection') && (typeof this.values === 'undefined' || Object.keys(this.values).length === 0)){
+              this.changeLocation('daacs')
+            }
           })
         }
-        return false;
       } 
     }
   },

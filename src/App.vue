@@ -70,6 +70,29 @@
     }
 </script>
 <style>
+    .custom-control-label {
+        margin-top: 5.5px!important;
+    }
+    .editable-table .data-cell {
+        min-height: 2rem!important;
+    } 
+    .eui-link {
+        cursor:pointer;
+    }
+    .form-control {
+        border-radius:5px!important;
+        height: unset!important;
+    }
+    .same-as-html5{
+        border-radius:5px!important;
+        list-style-type: none;
+    }
+    input, textarea {
+        margin: unset!important;
+    }
+    textarea {
+        padding-left:8px!important;
+    }
     ul {
         list-style-type: none;
         margin: 0;
@@ -148,14 +171,14 @@
         font-weight: bold;
         text-decoration:underline;
     }
-    label{
-        font-weight:bold;
-    }
     .b-custom-control-lg.custom-file, .b-custom-control-lg .custom-file-input, .b-custom-control-lg .custom-file-label, .input-group-lg.custom-file, .input-group-lg .custom-file-input, .input-group-lg .custom-file-label {
         margin-bottom: 1.25rem;
     }
-    div.row{
+    div.row {
         margin:0rem;
+    }
+    .nofloat {
+        margin:unset!important;
     }
     .checkbox{
         padding-left:0px!important;
@@ -165,18 +188,15 @@
     }
     .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
         min-height: 1.75rem!important;
-        padding-right:1rem;
     }
     .checkboxes {
         display:-webkit-box;
         display:inline-flex!important;
+        margin-right: -8px!important;
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;
         padding-top: 4px;
-    }
-    label {
-        margin-top: 0.5rem;
     }
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
@@ -192,7 +212,7 @@
     .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, ..eui-btn--green.btn-secondary:disabled {
+    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, .eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
     }
     .default_background {

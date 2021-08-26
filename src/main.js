@@ -11,6 +11,9 @@ import VueLogger from 'vuejs-logger';
 import GoTop from '@inotom/vue-go-top';
 import mixin from "./mixins/mixin";
 
+// global prototype to set to local jsons instead of calling api
+Vue.prototype.$testing = false;
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 const logOptions = {
@@ -24,7 +27,6 @@ const logOptions = {
 };
 
 // global prototypes for input
-// Vue.prototype.$questions = {}
 Vue.prototype.$required = {}
 // Collection object of input prototypes
 Vue.prototype.$input_object = {}

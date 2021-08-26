@@ -1,4 +1,5 @@
 // Jquery javascript
+import $ from "jquery";
 export default {
     props:{
     },
@@ -8,6 +9,9 @@ export default {
       // @vuese
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
+        if(this.$testing){
+          return;
+        }
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
@@ -30,6 +34,61 @@ export default {
             return 'undefined'
         }
         return str.join(' ');
+      },
+      // @vuese
+      // Fetchs the DAAC data
+      async fetchDaacs() {
+        return new Promise((resolve) => {
+          // Gets DAAC data for template
+          var items = [];
+          $.ajaxSetup({
+            headers : {
+              'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
+            }
+          });
+          let url;
+          if(this.$testing){
+            url = "../../daacs.json"
+          } else {
+            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
+          }
+          $.getJSON(url, daacs => {
+            for (var dict in daacs) {
+              items.push(daacs[dict]);
+            }
+            this.daacs = items
+            resolve(items);
+          });
+        })
+      },
+      // @vuese
+      // Fetchs DAAC specific metadata
+      // @daac_specific - current hash to look for
+      getDaac(daac_specific) {
+        // Gets DAAC data for template
+        if (typeof daac_specific === "undefined") {
+          return { id: "", short_name: "", long_name: "", url: "", description: "" };
+        }
+        for (var dict in this.daacs) {
+          let id = this.daacs[dict]["id"];
+          let long_name = this.daacs[dict]["long_name"];
+          let short_name = this.daacs[dict]["short_name"];
+          if (
+            daac_specific === long_name ||
+            daac_specific === short_name ||
+            daac_specific === id
+          ) {
+            let url = this.daacs[dict]["url"];
+            let description = this.daacs[dict]["description"];
+            return {
+              id:id,
+              short_name: short_name,
+              long_name: long_name,
+              url: url,
+              description: description
+            };
+          }
+        }
       },
       // @vuese
       // Returns form global params or looks it up by the path
@@ -112,6 +171,45 @@ export default {
         }
       },
       // @vuese
+      // Compares objects @x @y
+      object_equals( x, y ) {
+        if ( x === y ) return true;
+          // if both x and y are null or undefined and exactly the same
+      
+        if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
+          // if they are not strictly equal, they both need to be Objects
+      
+        if ( x.constructor !== y.constructor ) return false;
+          // they must have the exact same prototype chain, the closest we can do is
+          // test there constructor.
+      
+        for ( var p in x ) {
+          // eslint-disable-next-line no-prototype-builtins
+          if ( ! x.hasOwnProperty( p ) ) continue;
+            // other properties were tested using x.constructor === y.constructor
+          // eslint-disable-next-line no-prototype-builtins
+          if ( ! y.hasOwnProperty( p ) ) return false;
+            // allows to compare x[ p ] and y[ p ] when set to undefined
+      
+          if ( x[ p ] === y[ p ] ) continue;
+            // if they have the same strict value or identity then they are equal
+      
+          if ( typeof( x[ p ] ) !== "object" ) return false;
+            // Numbers, Strings, Functions, Booleans must be strictly equal
+      
+          if ( ! this.object_equals( x[ p ],  y[ p ] ) ) return false;
+            // Objects and Arrays must be tested recursively
+        }
+      
+        for ( p in y )
+          // eslint-disable-next-line no-prototype-builtins
+          if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
+            return false;
+              // allows x[ p ] to be set to undefined
+      
+        return true;
+      },
+      // @vuese
       // Set store global parameters from route
       setGlobalParameters(){
         let form_components = this.getPath()
@@ -168,9 +266,9 @@ export default {
         }
         let component_name_prefix = ''
         if(form.match(/questionnaire/g)){
-          component_name_prefix = 'Data Product Information - '
-        } else {
           component_name_prefix = 'Data Publication Request - '
+        } else {
+          component_name_prefix = 'Data Accession Request - '
         }
         return [form, component_name_prefix]
       },
@@ -207,7 +305,7 @@ export default {
       },
       // @vuese
       // Set active nav element
-      setActiveNav(activeElement, navs = ['daacs', 'help', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
+      setActiveNav(activeElement, navs = ['daacs', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
         setTimeout(() => {
           for(var n in navs){
             if((!window.headerComponent.showDaacs && navs[n] == 'daacs')){ continue }
@@ -226,10 +324,10 @@ export default {
       },
       // @vuese
       // Set / Resets active location.href value without updating state
-      setActiveLocationWithoutReload(shortName){
-        if(typeof shortName !='undefined' && shortName != null){
+      setActiveLocationWithoutReload(id){
+        if(typeof id !='undefined' && id != null){
           let after_protocol, new_url;
-          let to_href = decodeURIComponent(shortName).replace(/ /g,'_').toLowerCase()
+          let to_href = decodeURIComponent(id).replace(/ /g,'_').toLowerCase()
           let next_url = `${to_href}`
           if(typeof next_url.split('http://')[1] != 'undefined'){
             after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
@@ -238,6 +336,12 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
+          this.fetchDaacs().then(() => {
+            let daacData = this.getDaac(id)
+            if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
+              window.questionsComponent.daac_name = daacData.short_name
+            }
+          });
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       }

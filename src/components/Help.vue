@@ -6,9 +6,9 @@
         <div>
             <b-form-group v-for="(help_tip, index) in help_tips" :key=index>
                 <!-- Help Card -->
-                <b-card :id=help_tip.help_id >
-                    <label for:=help_tip.help>{{help_tip.label}}</label>
-                    <b-card-text>{{help_tip.help}}</b-card-text>
+                <b-card :id=help_tip.help_id>
+                    <label for:=help_tip.help>{{help_tip.label}}</label> - {{help_tip.text}}
+                    <b-card-text><font-awesome-icon icon="info-circle" name="info icon"/> {{help_tip.help}}</b-card-text>
                 </b-card>
                 <!-- End of Help Card -->
             </b-form-group>
@@ -53,13 +53,12 @@
             // help object from that.
             // @help_id - the id to the question's specific help for individual lookup
             fetchHelp(help_id){
-                var help_tips = []
                 $.ajaxSetup({
-                    headers : {
-                        'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
-                    }
+                        headers: {
+                        Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
+                    },
                 });
-                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
+                let url;
                 let form = this.getForm();
                 let json_name = ''
                 if(form.match(/interest/g)){
@@ -67,31 +66,76 @@
                 } else {
                     json_name = 'data_product_information' 
                 }
-                $.getJSON( `../${form}/${json_name}.json`, ( questions ) => {
-                // TODO - TESTING ONLY /////////////////////////////////////////////////////////////////////////////////////
-                    for(var section in questions['sections']) {
-                        var questions_section = questions['sections'][section]['questions']
-                        for(var q in questions_section){
-                            var question_id = questions_section[q]['id']
-                            var title = questions_section[q]['title']
-                            if(typeof help_id != 'undefined' && help_id != null && question_id != help_id){ continue }
-                            var help = questions_section[q]['help']
-                            var help_json = {
-                                'help_id':question_id,
-                                'help':help
+                if (this.$testing){
+                    url = `../../${json_name}.json`
+                } else {
+                    url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
+                }
+                $.getJSON(url, (forms) => {
+                    let form = this.getForm();
+                    if (
+                        typeof this.$store !== 'undefined' && 
+                        this.$store.state.global_params['formId'] == "" &&
+                        (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
+                    ) {
+                        for (let f in forms) {
+                            if (
+                                form.toLowerCase().match(/interest/g) &&
+                                typeof forms[f].short_name != "undefined" &&
+                                forms[f].short_name
+                                .toLowerCase()
+                                .match(/data_publication_request/g)
+                            ) {
+                                this.$store.state.global_params['formId'] = forms[f]["id"];
+                                this.formTitle = forms[f]["long_name"];
+                                break;
+                            } else if (
+                                form.toLowerCase().match(/questionnaire/g) &&
+                                typeof forms[f].short_name != "undefined" &&
+                                forms[f].short_name
+                                .toLowerCase()
+                                .match(/data_product_information/g)
+                            ) {
+                                this.$store.state.global_params['formId'] = forms[f]["id"];
+                                this.formTitle = forms[f]["long_name"];
+                                break;
                             }
-                            var label;
-                            if (help_id == null){
-                                label = title
-                            } else {
-                                label = 'Help Tip'
-                            }
-                            help_json['label'] = label
-                            help_tips.push(help_json)
                         }
                     }
+                    if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
+                        url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
+                    }
+                    $.getJSON(url, (questions) => {
+                        for(var section in questions['sections']) {
+                            var questions_section = questions['sections'][section]['questions']
+                            for(var q in questions_section){
+                                var question_id = questions_section[q]['id']
+                                var title = questions_section[q]['long_name']
+                                var text = questions_section[q]['text']
+                                var help = questions_section[q]['help']
+                                if(typeof help_id != 'undefined' && help_id != null && question_id != help_id){ continue }
+                                if (typeof help == 'undefined' || help == 'undefined' || help == ''){ 
+                                    continue;
+                                }
+                                var help_json = {
+                                    'help_id':question_id,
+                                    'help':help
+                                }
+                                var label;
+                                if (help_id == null){
+                                    label = title
+                                } else {
+                                    label = 'Help Tip'
+                                }
+                                help_json['label'] = label
+                                help_json['text'] = text
+                                this.help_tips.push(help_json)
+                            }
+                        }
+                    })
+                    return this.help_tips
                 })
-                return help_tips
+                return this.help_tips
             }
         },
         // This is equivalent to document.ready

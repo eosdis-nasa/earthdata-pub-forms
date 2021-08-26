@@ -4,12 +4,12 @@
   <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
     <b-container name="daacs-container">
       <div>
-        <b-form-group name="form-group" id="form-group" label="Choose your DAAC:">
+        <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
           <br />
           <!-- Radio Div with Description -->
           <div>
-            <div class="desc_div" v-if="selected" id="selected_description"></div>
-            <div class="radio_div">
+            <div class="radio_div table">
+              <div class="radio_head_div font-weight-bold"><span>DAAC</span><span>Discipline</span></div>
               <b-form-radio
                 v-for="(item, index) in daacs"
                 :key="index"
@@ -18,18 +18,17 @@
                 :value="item.long_name"
                 @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
                 v-model="selected"
-              >{{ item.short_name }}</b-form-radio>
+              ><span>{{ item.short_name }}</span><span>{{item.discipline}}</span></b-form-radio>
             </div>
           </div>
           <!-- End of Radio Div with Description -->
           <!-- Selected Info -->
           <div style="clear:both">
-            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
-              You have selected:
-              <br />
+            <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
               <strong>{{ selected }}</strong>
+              <div v-if="selected" id="selected_description"></div>
             </div>
-            <div class="mt-3" v-if="selected && selected !== 'I don\'t know'">
+            <div class="mt-3" v-if="selected">
               For more information, visit
               <a href="#" id="selected_daac_link" target="_blank">
                 <span id="selected_daac"></span>'s website
@@ -110,57 +109,6 @@ export default {
   },
   methods: {
     // @vuese
-    // Fetchs the DAAC data
-    async fetchDaacs() {
-      return new Promise((resolve) => {
-        // Gets DAAC data for template
-        var items = [];
-        $.ajaxSetup({
-          headers : {
-            'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
-          }
-        });
-        // TESTING ONLY
-        //$.getJSON("../daacs.json", daacs => {
-        $.getJSON(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`, ( daacs ) => {
-          for (var dict in daacs) {
-            items.push(daacs[dict]);
-          }
-          this.daacs = items
-          resolve(items);
-        });
-      })
-    },
-    // @vuese
-    // Fetchs DAAC specific metadata
-    // @daac_specific - current hash to look for
-    getDaac(daac_specific) {
-      // Gets DAAC data for template
-      if (typeof daac_specific === "undefined") {
-        return { id: "", short_name: "", long_name: "", url: "", description: "" };
-      }
-      for (var dict in this.daacs) {
-        let id = this.daacs[dict]["id"];
-        let long_name = this.daacs[dict]["long_name"];
-        let short_name = this.daacs[dict]["short_name"];
-        if (
-          daac_specific === long_name ||
-          daac_specific === short_name ||
-          daac_specific === id
-        ) {
-          let url = this.daacs[dict]["url"];
-          let description = this.daacs[dict]["description"];
-          return {
-            id:id,
-            short_name: short_name,
-            long_name: long_name,
-            url: url,
-            description: description
-          };
-        }
-      }
-    },
-    // @vuese
     // On selected, sets current daac objects from values
     // @current_daac - currently a hash
     // @url - daac url
@@ -201,7 +149,10 @@ export default {
       if (typeof description == "undefined") {
         description = daac_specific_data["description"];
       }
-      $("#selected_daac").html(short_name.toUpperCase());
+      if(short_name.match(/Unknown/g)){
+        short_name = `${process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}`
+      } 
+      $("#selected_daac").html(short_name);
       $("#selected_daac_link").attr("href", url);
       $("#selected_description").html(description);
       this.setActiveNav("daacs");
@@ -326,26 +277,23 @@ export default {
   #selected_daac, .external-link-alt, #selected_daac_link {
     color: #2275AA;
   }
-  .radio_div {
-    width: 25%;
-    float: left;
-    margin-bottom: 1rem;
+  .radio_head_div {
+    padding-left: 24px;
+    border-top: none!important;
+    border-bottom: 2px solid #dee2e6;
   }
-  .desc_div {
-    width: 75%;
-    float: right;
+  .radio_div span, .radio_div input {
+    display: table-cell;
+    min-width: 120px;
+  }
+  .radio_div div {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #dee2e6;
   }
   .button_div {
     margin-top: 1rem;
     text-align: left;
     float: left;
-  }
-  .radio_div {
-    width: 25%;
-    float: left;
-  }
-  .desc_div {
-    width: 75%;
-    float: right;
   }
 </style>

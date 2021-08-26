@@ -8,6 +8,54 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased -->
 
+## 1.0.6 - 2021-08-25
+
+- [Updated styling tweaks based on feedback](c848a8239eff0fc8c054682efae8ba1ba186f6a9)
+
+## 1.0.5 - 2021-08-23
+
+- [Update styling based on feedback](2c2409cd011)
+- [Replace form names with content update](07047e5ea6ab34bedd4c1914221c67c22737f672)
+- [Add temporary Feedback link to header. This is meant to be removed after testing.](d289a69a68b)
+- [Updated object compare so it will only warn user on new data when navigating away](6d559a601fcedc60412229e866fcd790719c58a9)
+- [Fixed same as checkbox not always showing](48f58105baa4a98507d44d3d7a153cda4255fe55)
+- [Moved editable table cell style to global space to allow for editing in tables.](5a6ddf0c0f504a3ac7bdaee63f296c50512a1e11)
+
+## 1.0.4 - 2021-08-19
+
+- [Updated same as checkboxes to display title name instead of value.  Changed contact fields to be readonly if same as is checked. Tweaked undo redo functionality to reset store after loading answers.](0727a2eb3ecbd2c0c1ba6e0f8b7238639435395e)
+- [Updated tables for inline editing](da8cf30995d15bfebd85e3a64b35fd46e56989cb)
+
+## 1.0.3 - 2021-08-16
+
+- [Altered help to show on forms automatically instead of by link](9e2d6fc60ebfb33f734a707f9dfa03e58759be4d)
+- [Fixed header links so they work correctly from each view and altered logic so there is no warning to save when on just daac selection and navigating away.](14f1bfc4e3b1901a330f35944324cfb52c2943c3)
+
+## 1.0.2 - 2021-08-12
+
+- [Added config option for unknown website link label override (VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR)](ed92ed8e5235764abcf004acee1d6b6028e0d7a7)
+- [Added link to daac name selected in questions](7a7e7b3e80075266272b8e323fd3eb45fed55827)
+- [Added daac name selected to questions (being set from mixin in setting the active location)](c752ac0373b0561d0bf4381bb83d0a4f2b8ca075)
+- [Updated jsons for publication_dois to be table format for multirow](26bfbd65dc6c514aebbc833493eb254e1442affa)
+
+## 1.0.1 - 2021-07-22
+
+- [Updated jsons from api and moved them to public folder](e5f2359446313fde12120b6bb19918f01f31c8d8)
+- [Added var for testing and code to use json instead of api; fixed help page error](80e820043703263d471bdb3f14c05abbef4370bd)
+- [Some style tweaks and cleanup from after message move.](393b4679571743b84e94d74da5d19d8391ccd723)
+- [Removed error message block and moved errors to corresponding inputs](fca3b988f1a2c53852fbe120dc3eb872d2316056)
+- [Added styling for group type inputs that were newly implemented to group to an input with a calander object](fb36198845670b27c8bfb2ec44cdcef4405a4bfb)
+- [Separated out date to text input and calendar to allow for text entry](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added min and max attributes one can optionally apply to new text input for date and calendar for date](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added calendar button button-only and dropleft attributes to make calendar stand out and force the calendar position so that the calendar buttons never shift up and down](4dfde56b4a8030fe9a251c3e0bcd229d45e38192)
+- [Added fixDate function to work on blur of date field, to attempt to reformat to browser default of YYYY-MM-DD](891afe49a725900e2e97809e7c10a99ea0cfb0d8)
+- [Moved Date Validation to isDateValid function to allow for adding a call to that to use in both templates and validation.](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Altered Date validation to check individual field requirements and rules, as well as check if the date is in a valid format](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Altered template message that checked for Start Date to be greater or equal to End Date to include isDateValid function call](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added template message for when a date is in an invalid format](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added label to hint at ideal format above date fields.](7e449c3c6c3597168de6e66d58b653762545e2f1)
+- [Added format date hint styling](7e449c3c6c3597168de6e66d58b653762545e2f1)
+
 ## 1.0.0 - 2021-06-29
 
 - [Open source release version 1.0.0](46bdfcd3bbf12c4090f3948374395b7c07de884c)
