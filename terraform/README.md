@@ -11,11 +11,12 @@ terraform plan    # continue if plan is successful
 terraform apply   # actually creates AWS resources
 ```
 
-_TODO: Remove `var.stage` to a different location to vacilitate deployment to other environments._
+_TODO: Remove `var.stage` to a different location to vacillate deployment to
+other environments._
 
 ## Deploy code to AWS
 
-_(This is temporary. TODO: automate deployment through Bamboo.)_
+(This is temporary. TODO: automate deployment through Bamboo.)
 
 To deploy artifacts:
 
