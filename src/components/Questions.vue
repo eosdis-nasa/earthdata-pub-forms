@@ -1072,12 +1072,6 @@ export default {
       }
     },
     // @vuese
-    // Hides errors banner on clicking x
-    // @id - The id of the element to hide
-    dismiss(id) {
-      document.getElementById(id).style.display = "none";
-    },
-    // @vuese
     // Fetchs the questions data
     fetchQuestions() {
       $.ajaxSetup({
@@ -1265,106 +1259,6 @@ export default {
       this.saveFile("draft");
     },
     // @vuese
-    // Sends data to the API
-    // @bvModal - the alert object to modify if an alert is necessary
-    // @DAAC - hash string of the group to set in the json
-    // @operation - string action (save, draft, submit)
-    sendDataToApi(bvModal, DAAC, operation = "save") {
-      let action;
-      let form = this.getForm();
-      let was_draft = false
-      let json = {
-        data: JSON.parse(this.$store.state.global_params[`${form}_outputs`])[
-          "data"
-        ],
-        log: JSON.parse(this.$store.state.global_params[`${form}_outputs`])["log"],
-      };
-      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
-        json["form_id"] = this.$store.state.global_params['formId'];
-      }
-      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] != "") {
-        json["id"] = this.$store.state.global_params['requestId'];
-      }
-      if (typeof DAAC !== "undefined" && DAAC != "" && DAAC != null) {
-        json["daac_id"] = DAAC;
-      }
-      if (operation == "save" || operation == "draft") {
-        if (operation == "draft") {
-          was_draft = true
-          operation = "save";
-        }
-        action = "saved";
-      } else {
-        action = "submitted";
-      }
-      if(!this.$testing){
-        $.ajax({
-          type: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-          },
-          url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
-          data: JSON.stringify(json),
-          dataType: "json",
-          contentType: "application/json; charset=utf-8",
-          success: (response) => {
-            this.requestId = response.id;
-            this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
-            let message = `Your data have been ${action}.`
-            if (operation == "submit") {
-              this.$values = {};
-              this.confirm = false;
-              if (!this.$v.$anyError && (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION))) {
-                this.redirectNotification(bvModal, message, operation)
-              } else {
-                this.exitForm(bvModal, message)
-              }
-            } else if (was_draft){
-              if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
-                this.redirectNotification(bvModal, message, 'draft')
-              } else {
-                this.exitForm(bvModal, message)
-              }
-            } else {
-                bvModal.msgBoxOk(message, {
-                title: "Success!",
-                size: "sm",
-                buttonSize: "sm",
-                okTitle: "OK",
-                footerClass: "p-2",
-                hideHeaderClose: false,
-                centered: true,
-              })
-            }
-          },
-          error: (XMLHttpRequest, textStatus, errorThrown) => {
-            bvModal.msgBoxOk(
-              `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
-              {
-                title: "Error!",
-                size: "sm",
-                buttonSize: "sm",
-                okTitle: "OK",
-                footerClass: "p-2",
-                hideHeaderClose: false,
-                centered: true,
-              }
-            );
-          },
-        });
-      } else {
-        bvModal.msgBoxOk('Data did not save.  Testing is set to true.', {
-          title: "Success!",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "OK",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-      }
-    },
-    // @vuese
     // Loads answers using request id
     loadAnswers() {
       if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
@@ -1381,105 +1275,6 @@ export default {
       return this.values
     },
     // @vuese
-    // Used to save file
-    // @operation - string action (save, draft, submit)
-    saveFile(operation = "save") {
-      let DAAC;
-      if (this.daac == null && 
-        typeof this.$store !== 'undefined' && 
-        this.$store.state.global_params['group'] != "") {
-        DAAC = this.$store.state.global_params['group']
-      } else {
-        DAAC = this.daac;
-      }
-      if(operation != 'draft'){
-        this.$v.$touch();
-      }
-      const data = this.values;
-      let form = this.getForm();
-      if (data !== JSON.stringify({})) {
-        this.$values = data;
-        this.$output_object["data"] = this.$values;
-        this.$output_object["log"] = this.$logging_object;
-        this.$input_object["questions"] = this.questions[0];
-        this.$input_object["required"] = this.$required;
-        this.$store.commit("pushGlobalParams", [`${form}_inputs`,`${JSON.stringify(this.$input_object)}`]);
-        this.$store.commit("pushGlobalParams", [`${form}_outputs`,`${JSON.stringify(this.$output_object)}`]);
-        // @vuese
-        // Example log messages, this.$log.debug|info|warn|error|fatal('test', property|function, 'some error') -> see https://github.com/justinkames/vuejs-logger
-        // If production level set (see main.js), will be at different level automatically.
-        // Additonal options (can be set in main.js), stringifyArguments|showLogLevel|showMethodName|separator|showConsoleColors
-        if (
-          (!this.$v.$anyError && operation == "submit") ||
-          operation != "submit"
-        ) {
-          this.sendDataToApi(this.$bvModal, DAAC, operation);
-        } else {
-          this.errorsNotification(this.$bvModal);
-        }
-      }
-    },
-    // @vuese
-    // Alerts the user to errors and goes to top of page for messages to help.
-    // @bvModal - the alert object to modify if an alert is necessary
-    errorsNotification(bvModal) {
-      bvModal.msgBoxOk(
-        "You have errors to correct before you can submit data.  You can save data.",
-        {
-          title: "Errors",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "OK",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        }
-      );
-      if ($(".vue-go-top__content").is(":visible")) {
-        $(".vue-go-top__content").click();
-      }
-    },
-    // @vuese
-    // Asks the user if they want to be redirected to the dashboard requests page.
-    // @bvModal - the alert object to modify if an alert is necessary
-    // @message - any other function messages to include
-    // @operation - string action (save, draft, submit)
-    async redirectNotification(bvModal, message, operation) {
-      if(operation == "submit"){
-        const value = await bvModal.msgBoxOk(
-        `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`, 
-        {
-          title: "Success!",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "OK",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        if (value) {
-          this.exitForm();
-        }
-    } else {
-        const value = await bvModal.msgBoxConfirm(
-        `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
-        {
-          title: "Confirmation",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "danger",
-          okTitle: "YES",
-          cancelTitle: "NO",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        if (value) {
-          this.exitForm();
-        }
-      }
-    },
-    // @vuese
     // Cancels current edits and exits the form
     okToCancel() {
       $("#eui-banner").addClass("hidden");
@@ -1491,69 +1286,6 @@ export default {
       $("#reset_data").focus();
       this.confirm = false;
       this.exitForm();
-    },
-    // @vuese
-    // Resets form and local storage to empty entries
-    // @evt - the event to prevent before checks
-    cancelForm() {
-      if (!this.confirm) {
-        event.preventDefault();
-      }
-      // Resets form to blank entries
-      if (this.confirm == false) {
-        this.confirm = "";
-        this.$bvModal
-          .msgBoxConfirm(
-            `This will cancel any input and redirect you to Earthdata Dashboard Requests.  Are you sure?`,
-            {
-              title: "Please Confirm",
-              size: "lg",
-              buttonSize: "sm",
-              okVariant: "danger",
-              okTitle: "YES",
-              cancelTitle: "NO",
-              footerClass: "p-2",
-              hideHeaderClose: false,
-              centered: true,
-            }
-          )
-          .then((value) => {
-            this.confirm = value;
-            if (value) {
-              this.okToCancel();
-            } else {
-              return;
-            }
-          });
-      } else {
-        this.confirm = false;
-        this.okToCancel();
-      }
-    },
-    // @vuese
-    // Removes the store from storage and exits the form to requests page
-    // @bvModal - the alert object to modify if an alert is necessary
-    // @message - any other function messages to include
-    exitForm(bvModal, message) {
-      let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
-      if(typeof bvModal != 'undefined' && typeof message != 'undefined'){
-        bvModal.msgBoxOk(message, {
-          title: "Success!",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "OK",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        .then(() => {
-          $("#eui-banner").addClass("hidden");
-          window.location.href = url;
-        })
-      } else {
-        $("#eui-banner").addClass("hidden");
-        window.location.href = url;
-      }
     },
     // @vuese
     // Re-applies the data entry values from values from the store for on undo and redo
@@ -1579,11 +1311,8 @@ export default {
     // @vuese
     // Redo the form state
     redoToPreviousState() {
-      //this.redo();
-      //this.reApplyValues();
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
-      //this.values = this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx]
     },
   },
   // This is equivalent to js document.ready
