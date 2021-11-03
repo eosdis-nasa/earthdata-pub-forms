@@ -16,9 +16,8 @@
         </h1>
         <div id="nav">
           <a v-if="showDaacs" @click="compareDataAskLeave('daacs')" id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a>
-          <div v-if="showDaacs" class="inline">  |  </div>
-          <a id="questions_nav_link" v-if="showDaacs && daac =='selection' || daac == ''" href="#" @click="requireDaacSelection()">Questions</a>
-          <a v-else @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
+          <div v-if="!showDaacs && daac !=='selection' && daac !== ''" class="inline">  |  </div>
+          <a v-if="!showDaacs && daac !=='selection' && daac !== ''" @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
           <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
           <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
           <span>  | <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
@@ -106,7 +105,6 @@ export default {
           `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
           (answers) => {
             if(!answers.error){
-              //if(JSON.stringify(answers.form_data, Object.keys(answers.form_data).sort()) != JSON.stringify(window.questionsComponent.values, Object.keys(window.questionsComponent.values).sort())) {
                 if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                 this.$bvModal
                   .msgBoxConfirm(
@@ -217,27 +215,6 @@ export default {
           }
         });
       }
-    },
-    // @vuese
-    // Requires daac to be selected before progressing to the questions component
-    requireDaacSelection() {
-      if (!location.href.match(/help/g) || (location.href.match(/help/g) || (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection'))) {
-        if(typeof this.values === 'undefined' || Object.keys(this.values).length === 0){
-          this.$bvModal.msgBoxOk('Please select a daac to continue.', {
-            title: 'No DAAC',
-            size: 'sm',
-            buttonSize: 'sm',
-            okTitle: 'OK',
-            footerClass: 'p-2',
-            hideHeaderClose: true,
-            centered: true
-          }).then((value) => {
-            if (value && (this.daac == null || typeof this.daac == 'undefined' || this.daac == 'selection') && (typeof this.values === 'undefined' || Object.keys(this.values).length === 0)){
-              this.changeLocation('daacs')
-            }
-          })
-        }
-      } 
     }
   },
   // This is equivalent to document.ready

@@ -209,10 +209,7 @@ export default {
       }
       if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
-        this.$router.push({
-          name: `${this.getFormNamePrefix()}Questions`,
-          params: { args }
-        });
+        this.saveFile();
       } else {
         args['group'] = 'selection'
         this.$router.push({ name: `${this.getFormNamePrefix()}Daacs`, params: args });

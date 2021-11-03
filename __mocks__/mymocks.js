@@ -1,5 +1,4 @@
 module.exports = {
-    requireDaacSelection: () => true,
     fetchDaacs: () => [
         {
             "long_name": "Oak Ridge National Laboratory (ORNL) Distributed Active Archive Center (DAAC)",

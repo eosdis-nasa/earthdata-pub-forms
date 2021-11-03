@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Updated CONTRIBUTING.md
 
+## 1.0.7 - 2021-10-29
+
+- Decoupled daac selection page
+
 ## 1.0.6 - 2021-08-25
 
 - Updated styling tweaks based on feedback
