@@ -7,20 +7,21 @@
       <div class="eui-application-logo">
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
-          <span id="title" v-if="formTitle" style="background:blue">{{formTitle}}</span>
-          <span id="title" v-else-if="showDaacs && getForm().toLowerCase().match(/interest/g)">Data Accession Request&nbsp;
-          <span v-if="this.$testing">(TESTING MODE)</span></span>
-          <span id="title" v-else-if="getForm().toLowerCase().match(/questionnaire/g)">Data Publication Request&nbsp;
-          <span v-if="this.$testing">(TESTING MODE)</span></span>
-          <span id="title" v-else>Earthdata Publication</span>
+          <span id="title" v-if="formTitle">{{formTitle}}</span>
+          <span id="title" v-else-if="this.$route.path.match(/daacs/g)">Earthdata Publication Forms</span>
+          <span id="title" v-else-if="this.$route.path.match(/interest/g)">Data Accession Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
+          <span id="title" v-else-if="this.$route.path.match(/questions/g)">Data Publication Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
         </h1>
         <div id="nav">
-          <a v-if="showDaacs" @click="compareDataAskLeave('daacs')" id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a>
-          <div v-if="!showDaacs && daac !=='selection' && daac !== ''" class="inline">  |  </div>
-          <a v-if="!showDaacs && daac !=='selection' && daac !== ''" @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>
-          <span>  | <a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a></span>
-          <span>  | <a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a></span>
-          <span>  | <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
+          <span v-if="this.$route.path.match(/daacs/g)" @click="compareDataAskLeave('daacs')">
+            <a id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a> |
+          </span>
+          <span v-if="this.$route.path.match(/questions/g)">
+            <a @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
+          </span>
+          <span><a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a>  | </span>
+          <span><a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a>  | </span>
+          <span><a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
@@ -36,7 +37,7 @@ export default {
   name: "Header",
   data() {
     return {
-      daac: "selection",
+      daac: "",
       showDaacs: '',
       formId:'',
       requestId: ''
@@ -195,10 +196,8 @@ export default {
           this.$store.commit("pushGlobalParams", ['showDaacs',`${showDaacs}`]);
         }
         formId = this.$store.state.global_params['formId'];
-        if(typeof formId == 'undefined' && form.match(/interest/g)){
-          this.$store.commit("pushGlobalParams", ['formId',`${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`]);
-        } else if (typeof formId == 'undefined'){
-          this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`]);
+        if(typeof formId == 'undefined'){
+          console.error('formID is undefined (header)')
         }
         requestId = this.$store.state.global_params['requestId'];
       }

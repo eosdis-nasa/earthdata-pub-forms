@@ -120,26 +120,42 @@ export default {
         let form = this.getForm();
         this.setShowDaacs()
         // Automatically redirect to questions if daac selected or sent in
-        if(this.$route && this.$route.query && this.$route.query.group){
-          redirect=`/${form}/questions/${this.$route.query.group}`
-          if(typeof this.$store !=='undefined'){
-            this.$store.commit("pushGlobalParams", ['group',`${this.$route.query.group}`]);
-          }
-        // Set path to form and questions for interest form
-        } else if (form.toLowerCase().match(/interest/g)){
-          redirect=`/${form}/daacs/selection`
-          if(typeof this.$store !=='undefined'){
-            this.$store.commit("pushGlobalParams", ['group',`selection`]);
-          }
-        // Set path to form and questions for questionnaire
-        } else if (form.toLowerCase().match(/questionnaire/g)){
-          redirect=`/${form}/questions`
+        if(this.$route){
+          if((this.$route.query && typeof this.$route.query.group != 'undefined') ||
+            (this.$route.params && typeof this.$route.params.group != 'undefined')){
+            if(typeof this.$store !=='undefined'){
+              if (typeof this.$route.query.group !== 'undefined') {
+                redirect=`/${form}/questions/${this.$route.query.group}`
+                this.$store.commit("pushGlobalParams", ['group',`${this.$route.query.group}`]);
+              } else if (this.$route.params.group != 'selection') {
+                redirect=`/${form}/questions/${this.$route.params.group}`
+                this.$store.commit("pushGlobalParams", ['group',`${this.$route.params.group}`]);
+              }
+            }
+          // Set path to form and questions for interest form
+          } 
+          /* else if (form.toLowerCase().match(/interest/g)){
+            redirect=`/${form}/daacs/selection`
+            if(typeof this.$store !=='undefined'){
+              this.$store.commit("pushGlobalParams", ['group',`selection`]);
+            }
+          // Set path to form and questions for questionnaire
+          } 
+        }
+        else if (form.toLowerCase().match(/questionnaire/g)){
+          // TODO should redirect to dashboard with a message that a request has not yet started
+          console.error('TODO should redirect to dashboard with a message that a request has not yet started')
+          /* redirect=`/${form}/questions`
           if(typeof this.$store !=='undefined'){
             this.$store.commit("pushGlobalParams", ['group', null]);
-          }
-        }
+          }*/
+        } 
+        // console.log('fullPath', this.$route.fullPath)
+        // console.log('this.$route.path', this.$route.path)
+        // console.log('redirect', redirect)
+        // console.log('windows.location.href', window.location.href);
         this.setGlobalParameters();
-        if(this.$route.fullPath != redirect){
+        if(this.$route.path != redirect && redirect != ''){
           let prefix, formId, requestId, group, loc
           if(typeof this.$store === 'undefined'){
             prefix = this.getFormNamePrefix();
@@ -219,11 +235,7 @@ export default {
           this.$store.commit("pushGlobalParams", ['form',`${form}`]);
           if(typeof this.$route.query.formId != 'undefined'){
             this.$store.commit("pushGlobalParams",['formId',`${this.$route.query.formId}`]);
-          } else if (form == 'questionnaire'){
-            this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`]);
-          } else {
-            this.$store.commit("pushGlobalParams",['formId',`${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`]);
-          }
+          } 
           if(typeof this.$route.query.requestId != 'undefined'){
             this.$store.commit("pushGlobalParams",['requestId',`${this.$route.query.requestId}`]);
           }
@@ -232,6 +244,13 @@ export default {
               this.$store.commit("pushGlobalParams",['group', null]);
             } else {
               this.$store.commit("pushGlobalParams",['group',`${this.$route.query.group}`]);
+            }
+          }
+          if(typeof this.$route.params.group != 'undefined'){
+            if (form == 'questionnaire'){
+              this.$store.commit("pushGlobalParams",['group', null]);
+            } else {
+              this.$store.commit("pushGlobalParams",['group',`${this.$route.params.group}`]);
             }
           }
           if(typeof this.$route.query.showDaacs != 'undefined'){
@@ -243,19 +262,7 @@ export default {
       // get Path via parameters, form title (json), then route path
       getPath(){
         let form = ''
-        if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}` ||
-          typeof this.$route !== 'undefined' && this.$route.query.formId == `${process.env.VUE_APP_PRODUCT_INFO_FORM_ID}`){
-          form = 'questionnaire'
-        } else if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}` ||
-          typeof this.$route !== 'undefined' && this.$route.query.formId == `${process.env.VUE_APP_PUBLICATION_REQ_FORM_ID}`){
-          form = 'interest'
-        } else if (typeof window.formTitle != 'undefined' && window.formTitle != ''){
-          if (window.formTitle.toLowerCase().match(/publication/g)){
-            form = 'interest'
-          } else {
-            form = 'questionnaire'
-          }
-        } else if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
+        if (typeof this.$route != 'undefined' && typeof this.$route.path != 'undefined'){
           if(this.$route.path.toLowerCase().match(/interest/g)){
             form = 'interest'
           } else if (this.$route.path.toLowerCase().match(/questionnaire/g)){
@@ -275,16 +282,23 @@ export default {
       // @vuese
       // get Path via parameters then form, then saves whether daacs should show to the store
       setShowDaacs(){
-        let form = this.getForm()
+        if (this.$route.path.match(/daacs/g) || this.$route.path.match(/selection/g)){
+          window.headerComponent.showDaacs = true
+        } else {
+          window.headerComponent.showDaacs = false
+        }
+        /* let form = this.getForm()
         if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
           window.headerComponent.showDaacs = (this.$store.state.global_params['showDaacs'] == 'true' || this.$store.state.global_params['showDaacs'])
-        } else if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined' && form.toLowerCase().match(/interest/g)){
-          window.headerComponent.showDaacs = true
+        } else if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] !== 'undefined' && this.$store.state.global_params['group'] !== 'selection' && form.toLowerCase().match(/interest/g)){
+          console.log(this.$store.state.global_params['group'])
+          window.headerComponent.showDaacs = false
         } else if (form.match(/questionnaire/g)){
           window.headerComponent.showDaacs = false
         } else if (form.match(/interest/g)){
           window.headerComponent.showDaacs = true
-        }
+        } */
+
         if (window.headerComponent.showDaacs && typeof this.$store !=='undefined'){
           this.$store.commit("pushGlobalParams", ['showDaacs',`${window.headerComponent.showDaacs}`]);
         }
@@ -294,7 +308,6 @@ export default {
       setDaacs(){
         let form = this.getForm()
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group']!= ''){
-          this.$store.commit("pushGlobalParams", ['group',`${this.$store.state.global_params['group']}`]);
           return this.$store.state.global_params['group']
         } else if (form.toLowerCase().match(/interest/g) && typeof this.$store !== 'undefined'){
           this.$store.commit("pushGlobalParams", ['group',`selection`]);
@@ -424,7 +437,6 @@ export default {
                   centered: true,
                 })
               } else {
-                console.log(typeof this.redirectNotification)
                 this.redirectNotification(bvModal, message, 'save', skip_modal);
               }
             }
@@ -514,9 +526,6 @@ export default {
           centered: true,
         }
       );
-      if ($(".vue-go-top__content").is(":visible")) {
-        $(".vue-go-top__content").click();
-      }
     },
     // @vuese
     // Resets form and local storage to empty entries
