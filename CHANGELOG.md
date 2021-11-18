@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.9 - 2021-11-18
+
+- Updated bootstrap to 5 and updated styling to fix
+
 ## 1.0.8 - 2021-11-17
 
 - Removed hardcoded forms data
