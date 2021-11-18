@@ -267,6 +267,7 @@ export default {
 <style scoped>
   #daac_select_button {
     margin-top:2rem;
+    margin-bottom:2rem;
   }
   .form-group {
     margin-top:2rem;
@@ -278,14 +279,15 @@ export default {
     padding-left: 24px;
     border-top: none!important;
     border-bottom: 2px solid #dee2e6;
+    font-weight: bold;
+    line-height: 2;
   }
   .radio_div span, .radio_div input {
     display: table-cell;
     min-width: 120px;
   }
   .radio_div div {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    display:flex;
     border-top: 1px solid #dee2e6;
   }
   .button_div {

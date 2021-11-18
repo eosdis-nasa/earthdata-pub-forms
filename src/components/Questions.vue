@@ -99,10 +99,10 @@
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                               <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
-                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:340px;">
+                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </label>
-                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
+                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                 ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                               </label>
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
@@ -234,7 +234,7 @@
                                         class="button" 
                                         aria-label="remove row button" 
                                         style="margin:0px"
-                                        @click="removeRow(input.control_id, data.item)">
+                                        @click="removeRow(input.control_id, data.item || {})">
                                         <font-awesome-icon icon="trash-alt"/>
                                       </b-button>
                                     </template>
@@ -1352,6 +1352,10 @@ export default {
 };
 </script>
 <style scoped>
+div.w-100 {
+  padding-left: unset;
+  padding-right: unset;
+}
 .no_margin {
   margin:unset!important
 }
@@ -1373,6 +1377,9 @@ export default {
 }
 #contact_span{
   margin-left:2rem; 
+}
+#contact_span .eui-label{
+  margin: 8px 8px -1px 9.5px;
 }
 .eui-label-nopointer {
   cursor: auto!important;
@@ -1406,6 +1413,7 @@ span.checkbox label {
 span span label {
   margin-left: 2rem;
 }
+/* checkbox labels */
 span span:nth-child(-n+1) label {
   margin-left:0rem;
 }
@@ -1451,8 +1459,8 @@ h3 span label {
   color: red !important;
   padding-top: 7px!important;
   padding-right: 9.5px!important;
-  font-size: 16px!important;
   float:right;
+  text-align: end;
 }
 .date_formats {
   padding-top: 8px;
