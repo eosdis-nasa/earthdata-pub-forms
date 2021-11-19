@@ -216,16 +216,17 @@
                                     responsive 
                                     sticky-header 
                                     show-empty
+                                    :value="values[input.control_id]"
                                     :items="values[input.control_id]"
                                     :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
-                                    <template #head(X)="">
+                                    <template #head(X)="data">
                                       <b-button 
                                         class="" 
                                         type="add_row" 
                                         id="add_row_button" 
                                         aria-label="add row button" 
                                         style="margin: 0px;"
-                                        @click="addRow(input.control_id)">
+                                        @click="addRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="plus"/>
                                       </b-button>
                                     </template>
@@ -234,7 +235,7 @@
                                         class="button" 
                                         aria-label="remove row button" 
                                         style="margin:0px"
-                                        @click="removeRow(input.control_id, data.item || {})">
+                                        @click="removeRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="trash-alt"/>
                                       </b-button>
                                     </template>
@@ -1352,10 +1353,6 @@ export default {
 };
 </script>
 <style scoped>
-div.w-100 {
-  padding-left: unset;
-  padding-right: unset;
-}
 .no_margin {
   margin:unset!important
 }
@@ -1377,9 +1374,6 @@ div.w-100 {
 }
 #contact_span{
   margin-left:2rem; 
-}
-#contact_span .eui-label{
-  margin: 8px 8px -1px 9.5px;
 }
 .eui-label-nopointer {
   cursor: auto!important;
@@ -1413,7 +1407,6 @@ span.checkbox label {
 span span label {
   margin-left: 2rem;
 }
-/* checkbox labels */
 span span:nth-child(-n+1) label {
   margin-left:0rem;
 }
@@ -1459,8 +1452,8 @@ h3 span label {
   color: red !important;
   padding-top: 7px!important;
   padding-right: 9.5px!important;
+  font-size: 16px!important;
   float:right;
-  text-align: end;
 }
 .date_formats {
   padding-top: 8px;

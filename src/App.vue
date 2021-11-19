@@ -137,7 +137,7 @@
     body{
         background:unset!important;
     }
-    #app, body > *, html > * {
+    #app {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -155,6 +155,9 @@
     }
     .form-group {
         margin-top:.5rem;
+    }
+    h1 {
+        margin: 0.67em 0;
     }
     #nav {
         padding: 5px;
@@ -174,10 +177,6 @@
     div.row {
         margin:0rem;
     }
-    .row > label, .row > span {
-        width:auto;
-        padding-left:unset!important;
-    }
     .nofloat {
         margin:unset!important;
     }
@@ -186,11 +185,9 @@
     }
     .custom-radio.b-custom-control-lg, .input-group-lg .custom-radio {
         font-size: unset!important;
-        display: table-cell;
-        padding-left: .65rem!important;
     }
-    .input-group {
-        padding-left:unset!important;
+    .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
+        min-height: 1.75rem!important;
     }
     .checkboxes {
         display:-webkit-box;
@@ -199,10 +196,7 @@
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;
-        /* padding-top: 4px; */
-    }
-    input[type="radio"], input[type="checkbox"] {
-       margin-right:8px!important;
+        padding-top: 4px;
     }
     .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
         height:unset;
