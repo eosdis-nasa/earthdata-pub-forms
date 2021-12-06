@@ -134,12 +134,11 @@ export default {
             }
           // Set path to form and questions for interest form
           } 
-          /* else if (form.toLowerCase().match(/interest/g)){
+           else if (form.toLowerCase().match(/interest/g)){
             redirect=`/${form}/daacs/selection`
             if(typeof this.$store !=='undefined'){
               this.$store.commit("pushGlobalParams", ['group',`selection`]);
             }
-          // Set path to form and questions for questionnaire
           } 
         }
         else if (form.toLowerCase().match(/questionnaire/g)){
