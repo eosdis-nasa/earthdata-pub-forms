@@ -143,7 +143,7 @@ export default {
         }
         else if (form.toLowerCase().match(/questionnaire/g)){
           // TODO should redirect to dashboard with a message that a request has not yet started
-          console.error('TODO should redirect to dashboard with a message that a request has not yet started')
+          // console.error('TODO should redirect to dashboard with a message that a request has not yet started')
           /* redirect=`/${form}/questions`
           if(typeof this.$store !=='undefined'){
             this.$store.commit("pushGlobalParams", ['group', null]);
