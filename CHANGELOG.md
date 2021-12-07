@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.1.0 - 2021-12-07
+
+- Fixed dev dependencies removal of lint and test tools and renamed components 
+according to lint allowing for build
+
 ## 1.0.9 - 2021-11-19
 
 - Removed unused libraries and upgraded dependencies but for bootstrap
