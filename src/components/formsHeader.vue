@@ -1,6 +1,6 @@
 <template>
   <!-- formsHeader with eui class -->
-  <formsHeader class="doc-mast header" role="banner">
+  <div class="doc-mast header formsHeader" role="banner">
   <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
@@ -26,7 +26,7 @@
         <!-- End of Logo and menu -->
       </div>
     </div>
-  </formsHeader>
+  </div>
   <!-- end of formsHeader with eui class -->
 </template>
 <script>
