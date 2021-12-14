@@ -1,16 +1,16 @@
 <template>
   <!-- formsHeader with eui class -->
-  <formsHeader class="doc-mast header" role="banner">
-  <div id="earthdata-tophat2"></div>
+  <div class="doc-mast header formsHeader" role="banner">
+    <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
           <span id="title" v-if="formTitle">{{formTitle}}</span>
-          <span id="title" v-else-if="this.$route.path.match(/daacs/g)">Earthdata Publication Forms</span>
           <span id="title" v-else-if="this.$route.path.match(/interest/g)">Data Accession Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
           <span id="title" v-else-if="this.$route.path.match(/questions/g)">Data Publication Request&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
+          <span id="title" v-else-if="this.$route.path.match(/daacs/g)">Earthdata Publication Forms&nbsp;<span v-if="this.$testing">(TESTING MODE)</span></span>
         </h1>
         <div id="nav">
           <span v-if="this.$route.path.match(/daacs/g)" @click="compareDataAskLeave('daacs')">
@@ -26,7 +26,7 @@
         <!-- End of Logo and menu -->
       </div>
     </div>
-  </formsHeader>
+  </div>
   <!-- end of formsHeader with eui class -->
 </template>
 <script>
