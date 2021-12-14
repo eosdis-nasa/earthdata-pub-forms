@@ -1,7 +1,11 @@
 <template>
   <!-- formsHeader with eui class -->
   <div class="doc-mast header formsHeader" role="banner">
+<<<<<<< HEAD
     <div id="earthdata-tophat2"></div>
+=======
+  <div id="earthdata-tophat2"></div>
+>>>>>>> fix/remove-unused-dependencies-cleanup
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
