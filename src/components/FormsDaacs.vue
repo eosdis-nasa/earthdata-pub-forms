@@ -57,15 +57,14 @@ import $ from "jquery";
 // On selection displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users more info and to move on.
 export default {
-  name: "formsDaacs",
+  name: "FormsDaacs",
   data() {
     return {
       selected: "",
       loaded: false,
       daacs: [],
       formId: '',
-      requestId: '',
-      showDaacs: ''
+      requestId: ''
     };
   },
   props: {},
@@ -102,9 +101,6 @@ export default {
     }
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
       this.requestId = this.$store.state.global_params['requestId']
-    }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
-      this.showDaacs = this.$store.state.global_params['showDaacs']
     }
   },
   methods: {
@@ -157,7 +153,6 @@ export default {
       $("#selected_description").html(description);
       this.setActiveNav("daacs");
       this.selected = long_name;
-      this.data = short_name;
       return [short_name, id];
     },
     // @vuese
@@ -168,24 +163,18 @@ export default {
     // @long_name - string
     // @description - string
     setSelectedValues(url, id, short_name, long_name, description) {
-      if (
-        typeof this.$store !== 'undefined' && 
-        typeof this.$store.state.global_params['group'] != "undefined" &&
-        this.$store.state.global_params['group'] != null
-      ) {
-        let current = this.setCurrentDaacObjects(
-          this.selected,
-          url,
-          id,
-          short_name,
-          long_name,
-          description
-        );
-        id = current[1]
-        this.$store.state.global_params['group'] = id
-      }
+      let current = this.setCurrentDaacObjects(
+        this.selected,
+        url,
+        id,
+        short_name,
+        long_name,
+        description
+      );
+      id = current[1]
+      this.$store.state.global_params['group'] = id
       this.setActiveLocationWithoutReload(id);
-      window.formsHeaderComponent.daac = id
+      window.headerComponent.daac = id
       return short_name;
     },
     // @vuese
@@ -212,7 +201,7 @@ export default {
         this.saveFile();
       } else {
         args['group'] = 'selection'
-        this.$router.push({ name: `${this.getFormNamePrefix()}Daacs`, params: args });
+        this.$router.replace({ name: `daacs`, params: args });
       }
     },
     // @vuese
@@ -287,10 +276,5 @@ export default {
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid #dee2e6;
-  }
-  .button_div {
-    margin-top: 1rem;
-    text-align: left;
-    float: left;
   }
 </style>

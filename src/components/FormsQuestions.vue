@@ -3,7 +3,7 @@
   <!-- Form -->
   <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
     <b-container>
-        <fixed-header :fixed.sync="isFixed" :threshold="168" style="z-index:2">
+        <fixed-header :threshold="168" style="z-index:2">
           <div class="navbar">
               <!-- Button Options -->
               <div class="button_bar">
@@ -44,7 +44,6 @@
       </fixed-header>
     </b-container>
     <b-container name="questions_container" id="questions_container">
-        <h2 v-if="warning" class="warning">{{warning}}</h2>
         <!-- Section -->
         <h3 v-if="daac_name!=''" id="daac_selection">DAAC Selected: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
           <a class="eui-link" @click="goToDaacs()" id="daac_name_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">{{daac_name}}</a></span>
@@ -207,7 +206,7 @@
                               </div>
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
-                                <label class="eui-label table-label">Click in the center of the table cell to enter data</label>
+                                <label class="eui-label table-label font-weight-bold"></label>
                                 <template>
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -393,23 +392,18 @@ import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 
-// This formsQuestions component gets the questions data for the selected daac and
+// This FormsQuestions component gets the questions data for the selected daac and
 // sets the above template properties, methods, and custom validation used.
 export default {
-  name: "formsQuestions",
+  name: "FormsQuestions",
   data() {
     return {
       values: {},
       questions: [],
       contacts: [],
       contact_fields: [],
-      bboxs: [],
-      dirty: false,
-      formTitle: "",
       saveTimeout: 0,
       daac: "",
-      warning: "",
-      isFixed: true,
       confirm: false,
       validation_errors: {},
       formId: "",
@@ -713,9 +707,19 @@ export default {
   },
   methods: {
     // @vuese
-    // Activate formsHeader daac link
+    // Activate FormsHeader daac link
     goToDaacs(){
-      document.getElementById('daacs_nav_link').click()
+      let args = {}
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != ''){
+        args['formId'] = this.$store.state.global_params['formId']
+      }
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] != ''){
+        args['requestId'] = this.$store.state.global_params['requestId']
+      }
+      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
+        args['group'] = this.$store.state.global_params['group']
+      } 
+      this.$router.replace({ name: `daacs`, params: args });
     },
     // @vuese
     // Filters the table
@@ -1073,175 +1077,6 @@ export default {
       }
     },
     // @vuese
-    // Fetchs the questions data
-    fetchQuestions() {
-      $.ajaxSetup({
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-      });
-      let url;
-      let form = this.getForm();
-      let json_name = ''
-      if(form.match(/interest/g)){
-        json_name = 'data_publication_request' 
-      } else {
-        json_name = 'data_product_information' 
-      }
-      if (this.$testing){
-        url = `../../${json_name}.json`
-      } else {
-        url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
-      }
-      $.getJSON(url, (forms) => {
-          var question = [];
-          this.contacts = [];
-          let contact = false;
-          let form = this.getForm();
-          if (
-            typeof this.$store !== 'undefined' && 
-            this.$store.state.global_params['formId'] == "" &&
-            (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
-          ) {
-            for (let f in forms) {
-              if (
-                form.toLowerCase().match(/interest/g) &&
-                typeof forms[f].short_name != "undefined" &&
-                forms[f].short_name
-                  .toLowerCase()
-                  .match(/data_publication_request/g)
-              ) {
-                this.$store.state.global_params['formId'] = forms[f]["id"];
-                this.formTitle = forms[f]["long_name"];
-                break;
-              } else if (
-                form.toLowerCase().match(/questionnaire/g) &&
-                typeof forms[f].short_name != "undefined" &&
-                forms[f].short_name
-                  .toLowerCase()
-                  .match(/data_product_information/g)
-              ) {
-                this.$store.state.global_params['formId'] = forms[f]["id"];
-                this.formTitle = forms[f]["long_name"];
-                break;
-              }
-            }
-          }
-          if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
-            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
-          }
-          $.getJSON(url, (questions) => {
-            if (this.formTitle == "" && questions["long_name"] != "") {
-              this.formTitle = questions["long_name"];
-            }
-            //The below line looks for custom css and applies it to the head (eui is done first)
-            $('head link[data-eui="yes"]').remove();
-            if (questions.style) {
-              $('head link[data-custom="yes"]').remove();
-            }
-            var head = window.document.head;
-            var link = window.document.createElement("link");
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            $(link).attr("data-eui", "yes");
-            link.href =
-              "https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css";
-            head.appendChild(link);
-            if (questions.style) {
-              head = window.document.head;
-              link = window.document.createElement("link");
-              link.type = "text/css";
-              link.rel = "stylesheet";
-              $(link).attr("data-custom", "yes");
-              link.href = questions.style;
-              head.appendChild(link);
-            }
-            for (var section in questions["sections"]) {
-              var heading = questions["sections"][section]["heading"];
-              var heading_required =
-                questions["sections"][section]["required"] || false;
-              var heading_show_if =
-                questions["sections"][section]["show_if"] || [];
-              var questions_section =
-                questions["sections"][section]["questions"];
-              questions_section["heading"] = heading;
-              questions_section["heading_required"] = heading_required;
-              questions_section["heading_show_if"] = heading_show_if;
-              for (var q in questions_section) {
-                if (typeof questions_section[q].long_name != "undefined") {
-                  let text = questions_section[q].text;
-                  let long_name = questions_section[q].long_name;
-                  let help = questions_section[q].help;
-                  if (
-                    (typeof text != "undefined" &&
-                      text.toLowerCase().match(/person/g)) ||
-                    (typeof text != "undefined" &&
-                      text.toLowerCase().match(/contact/g)) ||
-                    (typeof long_name != "undefined" &&
-                      long_name.toLowerCase().match(/person/g)) ||
-                    (typeof long_name != "undefined" &&
-                      long_name.toLowerCase().match(/contact/g)) ||
-                    (typeof help != "undefined" &&
-                      help.toLowerCase().match(/person/g)) ||
-                    (typeof help != "undefined" &&
-                      help.toLowerCase().match(/contact/g))
-                  ) {
-                    contact = true;
-                  }
-                }
-                if (typeof questions_section[q].inputs != "undefined") {
-                  for (var input in questions_section[q].inputs) {
-                    var options = [];
-                    if (
-                      contact &&
-                      typeof questions_section[q].inputs[input].label != 
-                      "undefined" && 
-                      questions_section[q].inputs[input].label.match(/name/gi)
-                    ) {
-                      questions_section[q].inputs[input].contact = true;
-                      contact = false;
-                    }
-                    if (
-                      typeof questions_section[q].inputs[input].enums !=
-                      "undefined"
-                    ) {
-                      for (var e in questions_section[q].inputs[input].enums) {
-                        var option =
-                          questions_section[q].inputs[input].enums[e];
-                        if (
-                          Array.isArray(
-                            questions_section[q].inputs[input].enums
-                          )
-                        ) {
-                          options.push({ value: option, text: option });
-                        } else if (
-                          typeof questions_section[q].inputs[input].enums
-                            .value != "undefined" &&
-                          typeof questions_section[q].inputs[input].enums
-                            .text != "undefined"
-                        ) {
-                          var text =
-                            questions_section[q].inputs[input].enums.text;
-                          var value =
-                            questions_section[q].inputs[input].enums.value;
-                          options.push({ value: value, text: text });
-                        }
-                      }
-                    }
-                    if (options.length > 0) {
-                      questions_section[q].inputs[input]["options"] = options;
-                    }
-                  }
-                }
-              }
-              question.push(questions_section);
-            }
-            this.questions = question;
-          });
-        }
-      );
-    },
-    // @vuese
     // Prevents submit to apply validation; 
     // @evt - the event
     enterSubmitForm() {
@@ -1320,26 +1155,19 @@ export default {
   mounted() {
     window.questionsComponent = this;
     this.setActiveNav("questions");
-    let form = this.getForm();
-    this.setShowDaacs();
     if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
       this.formId = this.$store.state.global_params['formId']
     }
     if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
       this.requestId = this.$store.state.global_params['requestId']
     }
-    if (form.toLowerCase().match(/questionnaire/g)) {
-      this.daac = null;
-    } else if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
+    if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
       this.daac = this.$store.state.global_params['group']
     }
     let set_loc = location.href;
-    let re = `/${form}/questions/`;
+    let re = `/questions/`;
     if (!set_loc.match(re, "g")) {
-      set_loc += `/${form}/questions/`;
-    }
-    if (set_loc.match(/selection/g) && (this.daac === '' || this.daac == null)) {
-      this.warning = "No daac has been selected";
+      set_loc += `/questions/`;
     }
     if (typeof window.headerComponent != "undefined") {
       window.headerComponent.daac = this.daac
@@ -1349,6 +1177,7 @@ export default {
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
       this.loadAnswers()
     }
+    
   },
 };
 </script>
@@ -1428,11 +1257,6 @@ span span:nth-child(-n+1) label {
 }
 .float_right {
   float: right;
-}
-.warning {
-  color: red;
-  /* font-weight: bold; */
-  text-decoration: None;
 }
 .col-form-label {
   /* font-weight: bold; */
@@ -1550,9 +1374,6 @@ fieldset {
   float: right;
   margin-top: 0px;
   height: 55px;
-}
-div.container {
-  padding-top: 0px;
 }
 .navbar {
   position: relative;

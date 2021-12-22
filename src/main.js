@@ -79,13 +79,13 @@ Vue.component('font-awesome-layers', FontAwesomeLayers)
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 // Custom components
-import formsDaacs from '@/components/formsDaacs.vue'
-import formsQuestions from '@/components/formsQuestions.vue'
+import FormsDaacs from '@/components/FormsDaacs.vue'
+import FormsQuestions from '@/components/FormsQuestions.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 
-Vue.component('formsDaacs', formsDaacs);
+Vue.component('FormsDaacs', FormsDaacs);
 Vue.component('PageNotFound', PageNotFound);
-Vue.component('formsQuestions', formsQuestions);
+Vue.component('FormsQuestions', FormsQuestions);
 
 Vue.config.productionTip = false
 
