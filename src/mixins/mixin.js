@@ -131,7 +131,7 @@ export default {
                 }
               }
             }).fail(function(err) { 
-              console.error(`error in getForm ${err}`)
+              // console.error(`error in getForm ${err}`)
             })
           }
         })
@@ -152,7 +152,6 @@ export default {
       // @vuese
       // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
       compareDataAskLeave(comp){
-        console.log('compare data ask')
         if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
           if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
             (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
@@ -189,7 +188,6 @@ export default {
           } 
           else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
             (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
-              console.log(5)
             this.$bvModal
             .msgBoxConfirm(
               `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
