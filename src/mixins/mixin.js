@@ -136,6 +136,109 @@ export default {
           }
         })
       },
+      // @vuese
+      // Changes location 
+      changeLocation(comp) {
+        if (comp.match(/daacs/g)){
+            this.goToComponent(comp)
+          } else if (comp.match(/dashboard/g)){
+            location.href=`${process.env.VUE_APP_DASHBOARD_ROOT}`
+          } else if (comp.match(/overview/g)){
+            location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}`
+          } else if (comp.match(/feedback/g)){
+            location.href=`${process.env.VUE_APP_OVERVIEW_ROOT}/feedback`
+          }
+      },
+      // @vuese
+      // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
+      compareDataAskLeave(comp){
+        console.log('compare data ask')
+        if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
+          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
+            (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
+            $.getJSON(
+            `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
+            (answers) => {
+              if(!answers.error){
+                  if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
+                  this.$bvModal
+                    .msgBoxConfirm(
+                      `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
+                      {
+                        title: "Please Confirm",
+                        size: "lg",
+                        buttonSize: "sm",
+                        okVariant: "danger",
+                        okTitle: "YES",
+                        cancelTitle: "NO",
+                        footerClass: "p-2",
+                        hideformsHeaderClose: false,
+                        centered: true,
+                      }
+                    )
+                    .then((value) => {
+                      if (value){
+                        this.changeLocation(comp)
+                      }
+                    });
+                } else {
+                  this.changeLocation(comp)
+                }
+              }
+            })
+          } 
+          else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
+            (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
+              console.log(5)
+            this.$bvModal
+            .msgBoxConfirm(
+              `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+              {
+                title: "Please Confirm",
+                size: "lg",
+                buttonSize: "sm",
+                okVariant: "danger",
+                okTitle: "YES",
+                cancelTitle: "NO",
+                footerClass: "p-2",
+                hideHeaderClose: false,
+                centered: true,
+              }
+            )
+            .then((value) => {
+              if (value){
+                this.changeLocation(comp)
+              }
+            });
+          }  
+          else {
+            this.changeLocation(comp)
+          }
+        } else {
+          this.changeLocation(comp)
+        }
+      },
+      // @vuese
+      // Go the component page specified with all the params needed
+      // @comp - component to switch too (string)
+      goToComponent(comp){
+        let formId, requestId, group;
+        group = this.$store.state.global_params['group'];
+        formId = this.$store.state.global_params['formId'];
+        requestId = this.$store.state.global_params['requestId'];
+        this.setActiveNav(comp.toLowerCase());
+        if(this.$router.history.current.path != `/${comp.toLowerCase()}/${group}`){
+          this.$router.replace({
+            name: comp,
+            path: `/${comp.toLowerCase()}/${group}`,
+            params: {
+              formId: formId,
+              requestId: requestId,
+              group: group
+            }
+          });
+        }
+      },
       routeToDefault(){
         let loc;
         if (process.env.VUE_APP_DEFAULT_ROUTE.match(/daacs/g)){

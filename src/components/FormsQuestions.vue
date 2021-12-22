@@ -709,17 +709,7 @@ export default {
     // @vuese
     // Activate FormsHeader daac link
     goToDaacs(){
-      let args = {}
-      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != ''){
-        args['formId'] = this.$store.state.global_params['formId']
-      }
-      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] != ''){
-        args['requestId'] = this.$store.state.global_params['requestId']
-      }
-      if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
-        args['group'] = this.$store.state.global_params['group']
-      } 
-      this.$router.replace({ name: `daacs`, params: args });
+      this.compareDataAskLeave('daacs') 
     },
     // @vuese
     // Filters the table
