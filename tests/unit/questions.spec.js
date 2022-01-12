@@ -17,10 +17,9 @@ import VueRouter from 'vue-router'
 import { BootstrapVue } from 'bootstrap-vue'
 import { LayoutPlugin } from 'bootstrap-vue'
 import Vuelidate from 'vuelidate'
-import Header from '@/components/Header.vue'
-import Daacs from '@/components/Daacs.vue'
-import Questions from '@/components/Questions.vue'
-import Help from '@/components/Help.vue'
+import formsHeader from '@/components/formsHeader.vue'
+import formsDaacs from '@/components/formsDaacs.vue'
+import formsQuestions from '@/components/formsQuestions.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
 import VuexUndoRedo from 'vuex-undo-redo';
@@ -45,15 +44,13 @@ localVue.component('font-awesome-icon', FontAwesomeIcon)
 localVue.component('font-awesome-layers', FontAwesomeLayers)
 localVue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
-const routes = [  { path: '/interest/daacs/:group', name: 'Data Accession Request - Daacs', component: Daacs, alias: '/interest/daacs/selection' },
-                  { path: '/interest/questions/:group', name: 'Data Accession Request - Questions', component: Questions },
-                  { path: '/interest/questions/:group/:formId', name: 'Data Accession Request - Questions with FormId', component: Questions },
-                  { path: '/interest/questions/:group/:formId/:requestId', name: 'Data Accession Request - Questions with formId and requestId', component: Questions },
-                  { path: '/interest/help', name: 'Data Accession Request - Help', component: Help },
-                  { path: '/questionnaire/questions', name: 'Data Publication Request - Questions', component: Questions },
-                  { path: '/questionnaire/questions:formId', name: 'Data Publication Request - Questions with FormId', component: Questions },
-                  { path: '/questionnaire/questions/:formId/:requestId', name: 'Data Publication Request - Questions with formId and requestId', component: Questions },
-                  { path: '/questionnaire/help', name: 'Data Publication Request - Help', component: Help },
+const routes = [  { path: '/interest/daacs/:group', name: 'Data Accession Request - Daacs', component: formsDaacs, alias: '/interest/daacs/selection' },
+                  { path: '/interest/questions/:group', name: 'Data Accession Request - Questions', component: formsQuestions },
+                  { path: '/interest/questions/:group/:formId', name: 'Data Accession Request - Questions with FormId', component: formsQuestions },
+                  { path: '/interest/questions/:group/:formId/:requestId', name: 'Data Accession Request - Questions with formId and requestId', component: formsQuestions },
+                  { path: '/questionnaire/questions', name: 'Data Publication Request - Questions', component: formsQuestions },
+                  { path: '/questionnaire/questions:formId', name: 'Data Publication Request - Questions with FormId', component: formsQuestions },
+                  { path: '/questionnaire/questions/:formId/:requestId', name: 'Data Publication Request - Questions with formId and requestId', component: formsQuestions },
                   { path: '/404*', name: '404', component: PageNotFound }
                 ]
 
@@ -94,7 +91,7 @@ describe('creating test store', () => {
   })
 })
 
-const wrapper = mount(Daacs, { store, localVue, router })
+const wrapper = mount(formsDaacs, { store, localVue, router })
 
 /*** SANITY TESTS ***/
 describe('Sanity and system checks', () => {
@@ -181,8 +178,8 @@ describe("App", () => {
   })
 })
 
-/*** HEADER TESTS ***/
-describe('Header', () => {
+/*** formsHeader TESTS ***/
+describe('formsHeader', () => {
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
@@ -221,7 +218,7 @@ describe('Header', () => {
   // UNIT TESTS
   test('showDaacs turns false, it should hide the DAACS link', async () => {
     // Default wrapper
-    const wrapper = mount(Header, { 
+    const wrapper = mount(formsHeader, { 
       store, 
       localVue, 
       router
@@ -235,7 +232,7 @@ describe('Header', () => {
 
   test('showDaacs turns true, it should show the DAACS link', async () => {
     // Default wrapper
-    const wrapper = mount(Header, { 
+    const wrapper = mount(formsHeader, { 
       store, 
       localVue, 
       router
@@ -248,7 +245,7 @@ describe('Header', () => {
   }),
 
   test('daac is blank, should remove the href in questions not allowing a user to click.', async () => {
-    const wrapper = mount(Header, { 
+    const wrapper = mount(formsHeader, { 
       store, 
       localVue, 
       router
@@ -261,8 +258,8 @@ describe('Header', () => {
     expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions')).toBe(true);
   }),
 
-  test('on form title change, should update the header title.', async () => {
-    const wrapper = mount(Header, {  store,  localVue, router, propsData: {
+  test('on form title change, should update the formsHeader title.', async () => {
+    const wrapper = mount(formsHeader, {  store,  localVue, router, propsData: {
       formTitle: 'Some Form Page'
     }})
     await wrapper.vm.$nextTick()
@@ -276,7 +273,7 @@ describe('Header', () => {
 /*** DAAC SELECTION TESTS ***/
 describe('Daacs selection', () => {
   // Default wrapper
-  const wrapper = mount(Daacs, {  store, localVue, router })
+  const wrapper = mount(formsDaacs, {  store, localVue, router })
   // Clear out instance storage
   beforeEach(() => {
     // values stored in tests will also be available in other tests unless you run
@@ -328,7 +325,7 @@ describe('Daacs selection', () => {
 });
 
 /*** QUESTIONS TESTS ***/
-describe('Questions', () => {
+describe('formsQuestions', () => {
   const { location } = window;
   beforeAll(() => {
       delete window.location;
@@ -371,7 +368,7 @@ describe('Questions', () => {
     const fetchQuestions = jest.fn()
     jest.spyOn(localStorage, 'setItem');
     window.localStorage.__proto__.setItem = jest.fn();
-    const wrapper = mount(Questions, {localVue, methods: { fetchQuestions }})
+    const wrapper = mount(formsQuestions, {localVue, methods: { fetchQuestions }})
     const relative_path = "/interest/questions/15df4fda-ed0d-417f-9124-558fb5e5b561"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
@@ -423,14 +420,14 @@ describe('Help', () => {
   });
   
   // UNIT TESTS
-  test('on going to the route help, it will go to the help page and render help data', async () => {
+  /* test('on going to the route help, it will go to the help page and render help data', async () => {
     const fetchHelp = jest.fn()
     const wrapper = mount(Help, {localVue, methods: { fetchHelp }})
     const relative_path = "/help"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(fetchHelp).toHaveBeenCalledTimes(1)
-  })
+  }) */
 	
   // END-TO-END TESTS
  

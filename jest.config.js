@@ -8,9 +8,10 @@ module.exports = {
     "json",
     "vue"
   ],
+  transformIgnorePatterns: ['/node_modules/'],
   "transform": {
     ".*\\.(vue)$": "vue-jest",
-    "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    "^.+\\.js$": "babel-jest",
   },
   "snapshotSerializers": ["jest-serializer-vue"],
   "setupFiles": ["jest-localstorage-mock","<rootDir>/__mocks__/client.js"],

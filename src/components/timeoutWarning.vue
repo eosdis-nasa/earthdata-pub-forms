@@ -1,5 +1,5 @@
 <template>
-  <b-modal ref="timeout-warning"
+  <b-modal ref="timeoutWarning"
     title="Session Expiring"
     ok-title="Extend Session"
     cancel-title="Logout Now"
@@ -20,7 +20,7 @@
 import { mapState } from 'vuex';
 import * as jwt from 'jsonwebtoken';
 export default {
-  name: 'Warning',
+  name: 'timeoutWarning',
   data() {
     return {
       expiration: 0,
@@ -64,13 +64,13 @@ export default {
       this.timeout = false;
       this.update();
       this.interval = setInterval(this.update, 1000);
-      this.$refs['timeout-warning'].show()
+      this.$refs['timeoutWarning'].show()
     },
     hide: function () {
       this.active = false;
       clearInterval(this.interval);
       this.interval = false;
-      this.$refs['timeout-warning'].hide()
+      this.$refs['timeoutWarning'].hide()
     },
     extend: function () {
       const options = {

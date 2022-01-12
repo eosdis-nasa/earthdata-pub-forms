@@ -57,7 +57,7 @@ import $ from "jquery";
 // On selection displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users more info and to move on.
 export default {
-  name: "Daacs",
+  name: "formsDaacs",
   data() {
     return {
       selected: "",
@@ -185,7 +185,7 @@ export default {
         this.$store.state.global_params['group'] = id
       }
       this.setActiveLocationWithoutReload(id);
-      window.headerComponent.daac = id
+      window.formsHeaderComponent.daac = id
       return short_name;
     },
     // @vuese

@@ -1,21 +1,21 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Warning />
-    <Header :formTitle="showFormTitle"/>
+    <timeoutWarning />
+    <formsHeader :formTitle="showFormTitle"/>
     <router-view ref="content"/>
     <go-top id="go_top" bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
   </div>
 </template>
 <!-- End of Main App -->
 <script>
-    // Imports header and footer as components.
+    // Imports formsHeader and footer as components.
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
-    import Header from '@/components/Header'
+    import formsHeader from '@/components/formsHeader'
     import GoTop from '@inotom/vue-go-top';
-    import Warning from '@/components/Warning'
-    // This questions component gets the questions data for the selected daac and
+    import timeoutWarning from '@/components/timeoutWarning'
+    // This formsQuestions component gets the questions data for the selected daac and
     // sets the above template properties, methods, and custom validation used.
     export default {
         name: 'app',
@@ -42,9 +42,9 @@
 
         },
         components: {
-            Header,
+            formsHeader,
             GoTop,
-            Warning
+            timeoutWarning
         },
         mounted() {
             if(typeof this.$refs.content !='undefined'){

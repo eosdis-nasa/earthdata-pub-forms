@@ -99,10 +99,10 @@
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
                               <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
-                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:340px;">
+                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </label>
-                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0" style="padding-left:5px;">
+                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                 ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
                               </label>
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
@@ -216,16 +216,17 @@
                                     responsive 
                                     sticky-header 
                                     show-empty
+                                    :value="values[input.control_id]"
                                     :items="values[input.control_id]"
                                     :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
-                                    <template #head(X)="">
+                                    <template #head(X)="data">
                                       <b-button 
                                         class="" 
                                         type="add_row" 
                                         id="add_row_button" 
                                         aria-label="add row button" 
                                         style="margin: 0px;"
-                                        @click="addRow(input.control_id)">
+                                        @click="addRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="plus"/>
                                       </b-button>
                                     </template>
@@ -392,10 +393,10 @@ import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 
-// This questions component gets the questions data for the selected daac and
+// This formsQuestions component gets the questions data for the selected daac and
 // sets the above template properties, methods, and custom validation used.
 export default {
-  name: "Questions",
+  name: "formsQuestions",
   data() {
     return {
       values: {},
@@ -712,7 +713,7 @@ export default {
   },
   methods: {
     // @vuese
-    // Activate header daac link
+    // Activate formsHeader daac link
     goToDaacs(){
       document.getElementById('daacs_nav_link').click()
     },

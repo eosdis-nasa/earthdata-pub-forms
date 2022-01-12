@@ -134,17 +134,16 @@ export default {
             }
           // Set path to form and questions for interest form
           } 
-          /* else if (form.toLowerCase().match(/interest/g)){
+           else if (form.toLowerCase().match(/interest/g)){
             redirect=`/${form}/daacs/selection`
             if(typeof this.$store !=='undefined'){
               this.$store.commit("pushGlobalParams", ['group',`selection`]);
             }
-          // Set path to form and questions for questionnaire
           } 
         }
         else if (form.toLowerCase().match(/questionnaire/g)){
           // TODO should redirect to dashboard with a message that a request has not yet started
-          console.error('TODO should redirect to dashboard with a message that a request has not yet started')
+          // console.error('TODO should redirect to dashboard with a message that a request has not yet started')
           /* redirect=`/${form}/questions`
           if(typeof this.$store !=='undefined'){
             this.$store.commit("pushGlobalParams", ['group', null]);

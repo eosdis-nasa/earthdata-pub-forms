@@ -1,6 +1,6 @@
 <template>
-  <!-- header with eui class -->
-  <header class="doc-mast header" role="banner">
+  <!-- formsHeader with eui class -->
+  <div class="doc-mast header formsHeader" role="banner">
   <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
@@ -17,7 +17,7 @@
             <a id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a> |
           </span>
           <span v-if="this.$route.path.match(/questions/g)">
-            <a @click="goToComponent('questions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
+            <a @click="goToComponent('formsQuestions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
           </span>
           <span><a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a>  | </span>
           <span><a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a>  | </span>
@@ -26,15 +26,15 @@
         <!-- End of Logo and menu -->
       </div>
     </div>
-  </header>
-  <!-- end of header with eui class -->
+  </div>
+  <!-- end of formsHeader with eui class -->
 </template>
 <script>
 // Jquery javascript
 import $ from "jquery";
-// Exports the header as a component
+// Exports the formsHeader as a component
 export default {
-  name: "Header",
+  name: "formsHeader",
   data() {
     return {
       daac: "",
@@ -43,9 +43,9 @@ export default {
       requestId: ''
     };
   },
-  // The property to be set by questions.vue
+  // The property to be set by formsQuestions.vue
   props: {
-    // The header
+    // The formsHeader
     formTitle: { default: "", type: String },
   },
   computed: {
@@ -118,7 +118,7 @@ export default {
                       okTitle: "YES",
                       cancelTitle: "NO",
                       footerClass: "p-2",
-                      hideHeaderClose: false,
+                      hideformsHeaderClose: false,
                       centered: true,
                     }
                   )
@@ -197,7 +197,7 @@ export default {
         }
         formId = this.$store.state.global_params['formId'];
         if(typeof formId == 'undefined'){
-          console.error('formID is undefined (header)')
+          // console.error('formID is undefined (formsHeader)')
         }
         requestId = this.$store.state.global_params['requestId'];
       }
@@ -265,7 +265,7 @@ export default {
     font-weight: 100;
     font-size: 2em;
   }
-  .header {
+  .formsHeader {
     width: 100%;
     background: #2276ac;
     box-shadow: 0 5px 5px rgba(189, 195, 199, 0.15);
