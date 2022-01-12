@@ -31,8 +31,6 @@
   <!-- end of FormsHeader with eui class -->
 </template>
 <script>
-// Jquery javascript
-import $ from "jquery";
 // Exports the FormsHeader as a component
 export default {
   name: "FormsHeader",
