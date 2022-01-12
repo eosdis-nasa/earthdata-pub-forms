@@ -130,7 +130,7 @@ export default {
                   break;
                 }
               }
-            }).fail(function(err) { 
+            }).fail(function() { 
               // console.error(`error in getForm ${err}`)
             })
           }
