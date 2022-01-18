@@ -38,7 +38,7 @@
     "start-forms-dev": "docker-compose -f docker-compose-dev.yml up -d",
     "stop-forms-dev": "docker-compose -f docker-compose-dev.yml down",
     "start": "npm run start-api; npm run start-dashboard; npm run start-forms",
-    "stop": "npm run stop-api; npm run stop-forms",
+    "stop": "npm run stop-api; npm run stop-dashboard; npm run stop-forms",
     "start-dev": "npm run start-api; npm run start-forms-dev",
     "stop-dev": "npm run stop-api; npm run stop-forms-dev",
     "view-logs": "npm run start-api; docker-compose -f docker-compose.yml up"
