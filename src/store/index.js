@@ -1,19 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VuexUndoRedo from 'vuex-undo-redo';
 
 // This is to use vuex for the state management
 Vue.use(Vuex)
-
-// Optionally install vuex-undo-redo plugin
-Vue.use(VuexUndoRedo);
 
 // Created new store
 export const store = new Vuex.Store({
   // State is the default obj and value
   state: {
     question_answers: [],
-    global_params: {},
+    global_params: {formTitle: 'Earthdata Publication Forms'},
     token: ''
   },
   getters: {
@@ -27,7 +23,7 @@ export const store = new Vuex.Store({
     pushGlobalParams(state, param){
       state.global_params[param[0]] = param[1]
     },
-    // .emptyState() is needed by VuexUndoRedo
+    // .emptyState() is needed
     emptyState() {
       this.replaceState({ question_answers: [], global_params: {} });
     },
