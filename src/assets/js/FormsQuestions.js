@@ -621,7 +621,7 @@ export default {
     // @vuese
     // Gets contacts and builds options for checkbox
     // @arg values [Object] the forms values to look for contacts in
-    setContacts: function (values) {
+    setContacts(values) {
       this.contacts = [];
       this.contact_fields = [];
       let questions = this.questions[0];
@@ -669,7 +669,7 @@ export default {
     // Gets characters remaining from textarea
     // @arg value [String] the current value, 
     // @arg maxlength [Number] the maxlength to compare against the value
-    charactersRemaining: function (value, maxlength) {
+    charactersRemaining(value, maxlength) {
       let left = maxlength;
       let chars = 0;
       if (typeof value == "string" && value != "") {

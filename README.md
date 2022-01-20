@@ -123,10 +123,11 @@ Vuese auto documentation scrapes the javascript comments out of vue files and mi
 file and builds markdown files for them. It creates the folder, 'autodocs', as
 depicted by it's config file .vueserc.
 
-- Documentation to vuese - [Quick & easy documentation generation for Vue.js components](https://dev.to/berniwittmann/quick--easy-documentation-generation-for-vuejs-components-7k6)
-- [NPM to vuese](https://www.npmjs.com/package/vuese/v/1.4.0?activeTab=readme)
+Documentation about Vuese can be found at their [NPM page](https://www.npmjs.com/package/vuese/v/1.4.0?activeTab=readme).
 
-To build documentation, install, generate then serve:
+To build documentation:
+
+install:
 
 ```bash
 npm install -g @vuese/cli 
@@ -138,13 +139,13 @@ or
 yarn global add vuese
 ```
 
-then build
+then build:
 
 ```bash
 npm run build-docs
 ```
 
-then serve
+then serve:
 
 ```bash
 npm run open-docs
