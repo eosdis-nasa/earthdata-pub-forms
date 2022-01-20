@@ -31,8 +31,12 @@
   <!-- end of FormsHeader with eui class -->
 </template>
 <script>
-// Exports the FormsHeader as a component
+import mixin from "@/mixins/mixin.js";
+
+// This is the header component that displays navigation links
+// for the user and remains the same across all components.
 export default {
+  mixins: [mixin],
   name: "FormsHeader",
   data() {
     return {
@@ -41,35 +45,37 @@ export default {
       requestId: ''
     };
   },
-  // The property to be set by FormsQuestions.vue
   props: {
     
   },
   computed: {
 
   },
-  // Here we are watching showDaacs for changes to then perform show hide on daac link and redirect to questions
   watch: {
     
   },
   created() {
    
   },
-  methods: {
-    
-  },
-  // This is equivalent to document.ready
   mounted() {
-    window.headerComponent = this;
-    this.setRoute()
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
-      this.formId = this.$store.state.global_params['formId']
-    }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
-      this.requestId = this.$store.state.global_params['requestId']
-    }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
-      this.daac = this.$store.state.global_params['group']
+    this.mounted;
+  },
+  methods: {
+    // @vuese
+    // Sets the main route based on incoming query string, then saves them to the store.
+    // This then sets local variables from the global_params
+    mounted(){
+      window.headerComponent = this;
+      this.setRoute()
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+        this.formId = this.$store.state.global_params['formId']
+      }
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+        this.requestId = this.$store.state.global_params['requestId']
+      }
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
+        this.daac = this.$store.state.global_params['group']
+      }
     }
   }
 };

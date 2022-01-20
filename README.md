@@ -119,27 +119,35 @@ that Bamboo is not available, follow instructions in [terraform/README](./terraf
 
 ## Documentation
 
-Vuese auto documentation scrapes the javascript comments out of vue files and builds
-markdown files for them. It creates the folder, website, and inside that, a folder
-named 'Components'.
+Vuese auto documentation scrapes the javascript comments out of vue files and mixin
+file and builds markdown files for them. It creates the folder, 'autodocs', as
+depicted by it's config file .vueserc.
 
 - Documentation to vuese - [Quick & easy documentation generation for Vue.js components](https://dev.to/berniwittmann/quick--easy-documentation-generation-for-vuejs-components-7k6)
-- API Documentation for [vuese](https://vuese.org/)
+- [NPM to vuese](https://www.npmjs.com/package/vuese/v/1.4.0?activeTab=readme)
 
-To build documentation, simply type:
-
-```bash
-vuese gen
-```
-
-Once can rename the folder 'website' as long as it is renamed before this step.
-At the time of this writing, it is now named 'autodocs'. We now need to serve the
-files as a website. Run the following from in the autodocs folder:
+To build documentation, install, generate then serve:
 
 ```bash
-cd website
-npm serve .
+npm install -g @vuese/cli 
 ```
 
-You should now be able to view the files on your [localhost](http://localhost:8081).
-[More documentation as well as an example, can be found here](https://docute.org/)
+or
+
+```bash
+yarn global add vuese
+```
+
+then build
+
+```bash
+npm run build-docs
+```
+
+then serve
+
+```bash
+npm run open-docs
+```
+
+It will launch a document server and automatically open the browser.

@@ -1,5 +1,7 @@
 // Jquery javascript
 import $ from "jquery";
+
+// This mixins file acts as a common js file and the functions are shared between components.
 export default {
     props:{
     },
@@ -26,7 +28,7 @@ export default {
       },
       // @vuese
       // Converts sentence string to title case
-      // @str - the string to make title case
+      // @arg str [String] the string to make title case
       titleCase(str) {
         if(typeof str != 'undefined'){
             str = str.toLowerCase().split(' ');
@@ -39,7 +41,7 @@ export default {
         return str.join(' ');
       },
       // @vuese
-      // Fetchs the DAAC data
+      // Gets the DAAC data
       async fetchDaacs() {
         return new Promise((resolve) => {
           // Gets DAAC data for template
@@ -68,8 +70,8 @@ export default {
         })
       },
       // @vuese
-      // Fetchs DAAC specific metadata
-      // @daac_specific - current hash to look for
+      // Gets DAAC specific metadata
+      // @arg daac_specific [String] current hash to look for
       getDaac(daac_specific) {
         // Gets DAAC data for template
         if (typeof daac_specific === "undefined") {
@@ -103,6 +105,9 @@ export default {
           }
         }
       },
+      // @vuese
+      // Gets form specific metadata
+      // @arg formId [String] the hash id to look up
       async getForm(formId){
         return new Promise((resolve) => {
           let url;
@@ -137,7 +142,8 @@ export default {
         })
       },
       // @vuese
-      // Changes location 
+      // Changes location on nav click
+      // @arg comp [String] can be 'daacs', 'dashboard', 'overview', or 'feedback'
       changeLocation(comp) {
         if (comp.match(/daacs/g)){
             this.goToComponent(comp)
@@ -150,7 +156,9 @@ export default {
           }
       },
       // @vuese
-      // Sorts the current value data and saved data, compares for any differences.  If there are differences, ask user to save before continuing to switch components or leaving
+      // Sorts the current value data and saved data, compares for any differences.  
+      // If there are differences, asks user to save before continuing to switch components or leaving
+      // @arg comp [String] can be 'daacs', 'dashboard', 'overview', or 'feedback'
       compareDataAskLeave(comp){
         if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
           if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
@@ -217,8 +225,8 @@ export default {
         }
       },
       // @vuese
-      // Go the component page specified with all the params needed
-      // @comp - component to switch too (string)
+      // Go the component page specified with all the updated params needed
+      // @arg comp [String] can be 'daacs', 'dashboard', 'overview', or 'feedback'
       goToComponent(comp){
         let formId, requestId, group;
         group = this.$store.state.global_params['group'];
@@ -237,6 +245,9 @@ export default {
           });
         }
       },
+      // @vuese
+      // This sets the route to the default route as indicated in the config file 
+      // under 'VUE_APP_DEFAULT_ROUTE'. This should happen if first routed to the domain itself.
       routeToDefault(){
         let loc;
         if (process.env.VUE_APP_DEFAULT_ROUTE.match(/daacs/g)){
@@ -467,7 +478,9 @@ export default {
         }
       },
       // @vuese
-      // Compares objects @x @y
+      // Compares objects 
+      // @arg x [Object], 
+      // @arg y [Object]
       object_equals( x, y ) {
         if ( x === y ) return true;
           // if both x and y are null or undefined and exactly the same
@@ -507,6 +520,9 @@ export default {
       },
       // @vuese
       // Set active nav element
+      // @arg activeElement [Object], 
+      // @arg navs [Array] defaults to ['daacs', 'questions'], 
+      // @arg activeClass [String] defaults to 'router-link-exact-active router-link-active'
       setActiveNav(activeElement, navs = ['daacs', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
         setTimeout(() => {
           for(var n in navs){
@@ -527,6 +543,7 @@ export default {
       },
       // @vuese
       // Set / Resets active location.href value without updating state
+      // @arg id [String] hash of daac
       setActiveLocationWithoutReload(id){
         if(typeof id !='undefined' && id != null){
           let after_protocol, new_url;
@@ -550,9 +567,9 @@ export default {
       },
       // @vuese
       // Sends data to the API
-      // @bvModal - the alert object to modify if an alert is necessary
-      // @DAAC - hash string of the group to set in the json
-      // @operation - string action (save, draft, submit)
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
+      // @arg DAAC [String] hash of the group to set in the json, 
+      // @arg operation [String] action optional and defaults to 'save' out of ('save', 'draft', 'submit')
       sendDataToApi(bvModal, DAAC, operation = "save") {
         let action;
         let skip_modal = false;
@@ -658,9 +675,10 @@ export default {
       },
       // @vuese
       // Asks the user if they want to be redirected to the dashboard requests page.
-      // @bvModal - the alert object to modify if an alert is necessary
-      // @message - any other function messages to include
-      // @operation - string action (save, draft, submit)
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
+      // @arg message [String] any other function messages to include, 
+      // @arg operation [String] action (save, draft, submit), 
+      // @arg skip_modal [Boolean] optional defaults to false
       async redirectNotification(bvModal, message, operation, skip_modal = false) {
         if(operation == "submit" && !skip_modal){
           const value = await bvModal.msgBoxOk(
@@ -699,8 +717,8 @@ export default {
         }
       },
       // @vuese
-      // Alerts the user to errors and goes to top of page for messages to help.
-      // @bvModal - the alert object to modify if an alert is necessary
+      // Alerts the user to errors and shows error messages
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary
       errorsNotification(bvModal) {
         bvModal.msgBoxOk(
           "You have errors to correct before you can submit data.  You can save data.",
@@ -716,8 +734,7 @@ export default {
         );
       },
       // @vuese
-      // Resets form and local storage to empty entries
-      // @evt - the event to prevent before checks
+      // Resets form
       cancelForm() {
         if (!this.confirm) {
           event.preventDefault();
@@ -754,9 +771,10 @@ export default {
         }
       },
       // @vuese
-      // Removes the store from storage and exits the form to requests page
-      // @bvModal - the alert object to modify if an alert is necessary
-      // @message - any other function messages to include
+      // Exits the form to requests page if user confirms
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
+      // @arg message [String] any other function messages to include, 
+      // @arg skip_modal [Boolean] optional defaults to false
       exitForm(bvModal, message, skip_modal = false) {
         let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
         if(typeof bvModal != 'undefined' && typeof message != 'undefined' && !skip_modal){
@@ -780,7 +798,7 @@ export default {
       },
       // @vuese
       // Used to save file
-      // @operation - string action (save, draft, submit)
+      // @arg operation [String] action (save, draft, submit)
       saveFile(operation = "save") {
         let DAAC;
         if (this.daac == null && 

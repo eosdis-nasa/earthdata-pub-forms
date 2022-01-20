@@ -14,7 +14,6 @@ Open source licenses:
 | `js-logger`        | `https://github.com/jonnyreeves/js-logger/blob/master/MIT-LICENSE.txt` |
 | `popper.js`        | `https://github.com/popperjs/popper-core/blob/master/LICENSE.md`       |
 | `serve`            | `https://github.com/vercel/serve/blob/master/LICENSE`                  |
-| `undo-redo-vuex`   | `https://github.com/factorial-io/undo-redo-vuex/blob/master/LICENSE`   |
 | `vee-validate`     | `https://github.com/logaretm/vee-validate/blob/master/LICENSE`         |
 | `vue-fixed-header` | `https://github.com/potato4d/vue-fixed-header/blob/master/LICENCE`     |
 | `vue-router`       | `https://github.com/vuejs/vue-router/blob/dev/LICENSE`                 |
