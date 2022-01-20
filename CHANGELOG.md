@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.1.2 - 2022-01-20
+
+- Updated vuese and comments for auto-documentation for better documentation
+maintenance. Some minor cleanup.
+
 ## 1.1.1 - 2021-12-22
 
 - Completed form decoupling for better maintenance. Some needed cleanup
