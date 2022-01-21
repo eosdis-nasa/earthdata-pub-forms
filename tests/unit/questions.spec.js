@@ -58,7 +58,8 @@ describe('creating test store', () => {
     // State is the default obj and value
     state: {
       question_answers: [],
-      global_params: {},
+      global_params: {formTitle: 'Earthdata Publication Forms'},
+      token: ''
     },
     mutations: {
       // push question state to save the payload to the store state question_answers
@@ -68,17 +69,20 @@ describe('creating test store', () => {
       pushGlobalParams(state, param){
         state.global_params[param[0]] = param[1]
       },
-      // .emptyState() is needed by VuexUndoRedo
+      // .emptyState() is needed
       emptyState() {
-        this.replaceState({ question_answers: [] });
-        this.replaceState({ global_params: [] });
+        this.replaceState({ question_answers: [], global_params: {} });
       },
+      // set JSON web token
+      setToken(state, token) {
+        localVue.set(state, 'token', token)
+      }
     },
     actions: {
   
     },
     getters: {
-  
+      token: state => state.token
     },
     modules: {
       

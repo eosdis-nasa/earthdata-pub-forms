@@ -8,7 +8,7 @@ module.exports = {
     "json",
     "vue"
   ],
-  transformIgnorePatterns: ['/node_modules/'],
+  transformIgnorePatterns: ['/node_modules/(?!lib-to-transform|other-lib)'],
   "transform": {
     ".*\\.(vue)$": "vue-jest",
     "^.+\\.js$": "babel-jest",
