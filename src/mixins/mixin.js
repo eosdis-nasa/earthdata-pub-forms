@@ -12,7 +12,6 @@ export default {
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
         let to_default = false
-        console.log('checkAuth')
         if(this.$testing){
           return to_default;
         }

@@ -10,16 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.1.2 - 2022-01-20
+## 1.0.12 - 2022-01-20
 
 - Updated vuese and comments for auto-documentation for better documentation
 maintenance. Some minor cleanup.
 
-## 1.1.1 - 2021-12-22
+## 1.0.11 - 2021-12-22
 
 - Completed form decoupling for better maintenance. Some needed cleanup
 
-## 1.1.0 - 2021-12-07
+## 1.0.10 - 2021-12-07
 
 - Fixed dev dependencies removal of lint and test tools and renamed components
 according to lint allowing for build
