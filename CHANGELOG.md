@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 1.0.12 - 2022-01-20
 
 - Updated vuese and comments for auto-documentation for better documentation
-maintenance. Some minor cleanup.
+maintenance. Some minor cleanup
 
 ## 1.0.11 - 2021-12-22
 
