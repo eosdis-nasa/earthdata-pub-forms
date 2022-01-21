@@ -87,7 +87,24 @@ export default {
     }
   },
   mounted() {
-    this.mounted;
+    // @vuese
+    // Sets local variables from the global_params in store
+    window.daacsComponent = this;
+    this.setActiveNav("daacs");
+    this.fetchDaacs().then(() => {
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
+        let daacData = this.getDaac(this.$store.state.global_params['group'])
+        if(typeof daacData!= 'undefined'){
+          this.selected = daacData.long_name;
+        }
+      }
+    });
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+      this.formId = this.$store.state.global_params['formId']
+    }
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
   },
   methods: {
     // @vuese
@@ -234,26 +251,6 @@ export default {
         }
       }
       this.setActiveNav("daacs");
-    },
-    // @vuese
-    // Sets local variables from the global_params in store
-    mounted(){
-      window.daacsComponent = this;
-      this.setActiveNav("daacs");
-      this.fetchDaacs().then(() => {
-        if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
-          let daacData = this.getDaac(this.$store.state.global_params['group'])
-          if(typeof daacData!= 'undefined'){
-            this.selected = daacData.long_name;
-          }
-        }
-      });
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
-        this.formId = this.$store.state.global_params['formId']
-      }
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
-        this.requestId = this.$store.state.global_params['requestId']
-      }
     }
   }
 };
