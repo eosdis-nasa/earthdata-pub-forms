@@ -9,10 +9,12 @@ import {
 import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
+import mixin from "@/mixins/mixin.js";
 
 // This FormsQuestions component gets the questions data for the selected daac and
-// sets the above template properties, methods, and custom validation used.
+// sets the template properties, methods, and custom validation used.
 export default {
+  mixins: [mixin],
   name: "FormsQuestions",
   data() {
     return {
@@ -55,6 +57,16 @@ export default {
   },
   computed: {},
   watch: {
+    // @vuese
+    // This watches for any changes in values to re-evaluate
+    // contacts so if a same as checkbox is checked, it will update
+    // the values.
+    //
+    // It also resets history to be correct, otherwise history will
+    // have each system correction and undo / redo will not work
+    // correctly.
+    //
+    // Then it resets the log.
     values: {
       handler() {
         if (this.saveTimeout) {
@@ -323,15 +335,18 @@ export default {
     }
     return val_fields;
   },
+  mounted() {
+    this.mounted;
+  },
   methods: {
     // @vuese
-    // Activate FormsHeader daac link
+    // Goes to daacs after asking if okay if new data present.
     goToDaacs(){
       this.compareDataAskLeave('daacs') 
     },
     // @vuese
-    // Filters the table
-    // @tableId - The id of the table in question
+    // Adds a new row to the table
+    // @arg tableId [String] the id of the table in question
     addRow(tableId) {
       let enum_arr = {}
       for (let group of this.questions) {
@@ -355,6 +370,10 @@ export default {
         }
       }
     },
+    // @vuese
+    // Removes the selected table row
+    // @arg tableId [String] the id of the table in question, 
+    // @arg item [Array] the item in question
     removeRow(tableId, item) {
       for (let r = 0;r < this.values[tableId].length;r++) {
         let row = this.values[tableId][r]
@@ -373,7 +392,7 @@ export default {
     },
     // @vuese
     // Formats any date text to YYYY-MM-DD
-    // @event - The event that executed
+    // @arg event [Object] the event that executed
     fixDate(event) {
       if(this.values[event.target.id] !== ''){
         try{
@@ -386,8 +405,9 @@ export default {
     },
     // @vuese
     // Checks if date text is valid
-    // @id - The id used to lookup the value
-    // @check_type - Optional string parameter, accepts "greater" or "validity" with "greater" being default
+    // Validates the the end date is > or = start
+    // @arg id [String] the hash id used to lookup the value, 
+    // @arg check_type [String] optional, accepts "greater" or "validity" with "greater" being default
     isDateValid(id, check_type = "greater") {
       let start, end;
       if (id.match(/start/g)) {
@@ -444,7 +464,7 @@ export default {
     },
     // @vuese
     // Validates required question inputs; returns true if valid
-    // @inputs - array of inputs to look for bbox in
+    // @arg inputs [Array] of inputs to look for bbox in
     validateQuestionInputsRequired(inputs) {
       for (let input of inputs) {
         if (input.type == "bbox") {
@@ -481,8 +501,8 @@ export default {
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
-    // @fld - the bbox field
-    // @direction - The direction of the fld
+    // @arg fld [Object] the bbox field, 
+    // @arg direction [String] The direction of the fld
     getBboxError(fld, direction) {
       if (
         typeof this.values[`${fld.control_id}_${direction}`] != "undefined" &&
@@ -524,7 +544,7 @@ export default {
     },
     // @vuese
     // Shows and Hides based of json show_if
-    // @config - validates for showif
+    // @arg config [Array] validates for showif
     showIf(config) {
       if (typeof config == "undefined" || config.length == 0) {
         return true;
@@ -544,9 +564,9 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
-    // @fld_to - The id of the element to set to
-    // @fld_from - The id of the element it's coming from
-    // @contact_key - The contact key needed to object checkbox state
+    // @arg fld_to [String] the id of the element to set to, 
+    // @arg fld_from [String] the id of the element it's coming from, 
+    // @arg contact_key [String] the contact key needed to check checkbox state
     setContact(fld_to, fld_from, contact_key) {
       let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
       let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
@@ -565,9 +585,17 @@ export default {
         }
       }
     },
+    // @vuese
+    // Returns the same as id as string
+    // @arg control_id [String] the control id, 
+    // @arg contact_fld [String] the contact field
     getSameAsId(control_id, contact_fld) {
       return `same_as_${control_id}_${contact_fld}`
     },
+    // @vuese
+    // Compares to see if same is checked
+    // @arg control_id [String] the control id to compare against, 
+    // @arg contact_fld [String] the contact field to compare against
     sameAsSelected(control_id, contact_fld) {
       let matchRegExp = new RegExp(`^same_as_${control_id}_`)
       for (let ea in this.values) {
@@ -584,13 +612,16 @@ export default {
       }
       return false;
     },
+    // @vuese
+    // Compares to see if any sameas is checked
+    // @arg control_id [String] the control id to compare against
     anySameAsSelected(control_id) {
       return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
     },
     // @vuese
     // Gets contacts and builds options for checkbox
-    // @values - The forms values to look for contacts in
-    setContacts: function (values) {
+    // @arg values [Object] the forms values to look for contacts in
+    setContacts(values) {
       this.contacts = [];
       this.contact_fields = [];
       let questions = this.questions[0];
@@ -636,9 +667,9 @@ export default {
     },
     // @vuese
     // Gets characters remaining from textarea
-    // @value - The current value 
-    // @maxlength - The maxlength to compare against the value
-    charactersRemaining: function (value, maxlength) {
+    // @arg value [String] the current value, 
+    // @arg maxlength [Number] the maxlength to compare against the value
+    charactersRemaining(value, maxlength) {
       let left = maxlength;
       let chars = 0;
       if (typeof value == "string" && value != "") {
@@ -651,8 +682,8 @@ export default {
     },
     // @vuese
     // Gets input attributes and filters out those that are undefined
-    // @attr - The input attribute value
-    // @input - The input the attribute belongs to
+    // @arg attr [String] the input attribute value, 
+    // @arg input [String] the input the attribute belongs to
     getAttribute(attr, input) {
       let attribute_value = undefined;
       if (
@@ -665,7 +696,7 @@ export default {
     },
     // @vuese
     // Handle html5 invalidity on form
-    // @evt - The event
+    // @arg evt [Object] the event
     handleInvalid(evt) {
       $("#" + evt.target.name + "_invalid").text(evt.target.validationMessage);
       if (evt.target.validationMessage != "") {
@@ -686,19 +717,19 @@ export default {
     },
     // @vuese
     // Prevents submit to apply validation; 
-    // @evt - the event
+    // @arg evt [Object] the event
     enterSubmitForm() {
       if (this.enterSubmit) {
         this.submitForm();
       }
     },
     // @vuese
-    // If there's no errors, submits, then exit form
+    // If there's no errors, submits
     submitForm() {
       this.saveFile("submit");
     },
     // @vuese
-    // If there's no errors, saves, then exit form
+    // If there's no errors, saves
     draftFile() {
       this.saveFile("draft");
     },
@@ -753,38 +784,41 @@ export default {
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
     },
     // @vuese
-    // Redo the form state
+    // Redos the form state
     redoToPreviousState() {
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
     },
-  },
-  // This is equivalent to js document.ready
-  mounted() {
-    window.questionsComponent = this;
-    this.setActiveNav("questions");
-    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
-      this.formId = this.$store.state.global_params['formId']
+    // @vuese
+    // On load it sets the local variables from the store,
+    // then it sets the address location with the daac,
+    // then it gets the questions,
+    // then finally loads the answers.
+    mounted(){
+      window.questionsComponent = this;
+      this.setActiveNav("questions");
+      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
+        this.formId = this.$store.state.global_params['formId']
+      }
+      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
+        this.requestId = this.$store.state.global_params['requestId']
+      }
+      if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
+        this.daac = this.$store.state.global_params['group']
+      }
+      let set_loc = location.href;
+      let re = `/questions/`;
+      if (!set_loc.match(re, "g")) {
+        set_loc += `/questions/`;
+      }
+      if (typeof window.headerComponent != "undefined") {
+        window.headerComponent.daac = this.daac
+      }
+      this.setActiveLocationWithoutReload(this.daac);
+      this.fetchQuestions();
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
+        this.loadAnswers()
+      }
     }
-    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
-      this.requestId = this.$store.state.global_params['requestId']
-    }
-    if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
-      this.daac = this.$store.state.global_params['group']
-    }
-    let set_loc = location.href;
-    let re = `/questions/`;
-    if (!set_loc.match(re, "g")) {
-      set_loc += `/questions/`;
-    }
-    if (typeof window.headerComponent != "undefined") {
-      window.headerComponent.daac = this.daac
-    }
-    this.setActiveLocationWithoutReload(this.daac);
-    this.fetchQuestions();
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
-      this.loadAnswers()
-    }
-    
-  },
+  }
 };

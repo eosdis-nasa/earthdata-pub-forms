@@ -22,8 +22,7 @@ import FormsDaacs from '@/components/FormsDaacs.vue'
 import FormsQuestions from '@/components/FormsQuestions.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
 import Vuex from 'vuex'
-import VuexUndoRedo from 'vuex-undo-redo';
-import mixin from "@/mixins/mixin.js";
+import mixins from './mixins'
 import { config } from '@vue/test-utils';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -36,9 +35,8 @@ localVue.use(VueRouter)
 localVue.use(BootstrapVue);
 localVue.use(Vuelidate)
 localVue.use(Vuex)
-localVue.use(VuexUndoRedo)
 localVue.use(LayoutPlugin)
-localVue.mixin(mixin)
+localVue.mixin(mixins)
 library.add(fas)
 localVue.component('font-awesome-icon', FontAwesomeIcon)
 localVue.component('font-awesome-layers', FontAwesomeLayers)

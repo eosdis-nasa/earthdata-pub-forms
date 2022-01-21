@@ -14,9 +14,7 @@
     // Add this to know how to import as such
     import FormsHeader from '@/components/FormsHeader'
     import GoTop from '@inotom/vue-go-top';
-    import TimeoutWarning from '@/components/TimeoutWarning'
-    // This FormsQuestions component gets the questions data for the selected daac and
-    // sets the above template properties, methods, and custom validation used.
+    import TimeoutWarning from '@/components/TimeoutWarning';
     export default {
         name: 'app',
         metaInfo: {
