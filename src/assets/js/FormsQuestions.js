@@ -336,7 +336,35 @@ export default {
     return val_fields;
   },
   mounted() {
-    this.mounted;
+    // @vuese
+    // On load it sets the local variables from the store,
+    // then it sets the address location with the daac,
+    // then it gets the questions,
+    // then finally loads the answers.
+    window.questionsComponent = this;
+    this.setActiveNav("questions");
+    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
+      this.formId = this.$store.state.global_params['formId']
+    }
+    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
+    if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
+      this.daac = this.$store.state.global_params['group']
+    }
+    let set_loc = location.href;
+    let re = `/questions/`;
+    if (!set_loc.match(re, "g")) {
+      set_loc += `/questions/`;
+    }
+    if (typeof window.headerComponent != "undefined") {
+      window.headerComponent.daac = this.daac
+    }
+    this.setActiveLocationWithoutReload(this.daac);
+    this.fetchQuestions();
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
+      this.loadAnswers()
+    }
   },
   methods: {
     // @vuese
@@ -788,37 +816,6 @@ export default {
     redoToPreviousState() {
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
-    },
-    // @vuese
-    // On load it sets the local variables from the store,
-    // then it sets the address location with the daac,
-    // then it gets the questions,
-    // then finally loads the answers.
-    mounted(){
-      window.questionsComponent = this;
-      this.setActiveNav("questions");
-      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
-        this.formId = this.$store.state.global_params['formId']
-      }
-      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
-        this.requestId = this.$store.state.global_params['requestId']
-      }
-      if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
-        this.daac = this.$store.state.global_params['group']
-      }
-      let set_loc = location.href;
-      let re = `/questions/`;
-      if (!set_loc.match(re, "g")) {
-        set_loc += `/questions/`;
-      }
-      if (typeof window.headerComponent != "undefined") {
-        window.headerComponent.daac = this.daac
-      }
-      this.setActiveLocationWithoutReload(this.daac);
-      this.fetchQuestions();
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
-        this.loadAnswers()
-      }
     }
   }
 };

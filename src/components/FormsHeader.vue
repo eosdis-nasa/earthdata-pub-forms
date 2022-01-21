@@ -58,25 +58,23 @@ export default {
    
   },
   mounted() {
-    this.mounted;
-  },
-  methods: {
     // @vuese
     // Sets the main route based on incoming query string, then saves them to the store.
     // This then sets local variables from the global_params
-    mounted(){
-      window.headerComponent = this;
-      this.setRoute()
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
-        this.formId = this.$store.state.global_params['formId']
-      }
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
-        this.requestId = this.$store.state.global_params['requestId']
-      }
-      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
-        this.daac = this.$store.state.global_params['group']
-      }
+    window.headerComponent = this;
+    this.setRoute()
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+      this.formId = this.$store.state.global_params['formId']
     }
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+      this.requestId = this.$store.state.global_params['requestId']
+    }
+    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
+      this.daac = this.$store.state.global_params['group']
+    }
+  },
+  methods: {
+    
   }
 };
 </script>
