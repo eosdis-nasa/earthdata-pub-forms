@@ -303,8 +303,9 @@ export default {
                   }
                 }
               }
-              if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
-                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
+              if(!this.$testing && typeof this.$store !== 'undefined'
+              && this.$store.state.global_params['formId'] !== "" && this.$store.state.global_params['group'] !== "") {
+                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
               $.getJSON(url, (questions) => {
                 //The below line looks for custom css and applies it to the head (eui is done first)
