@@ -15,7 +15,7 @@
             <a id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a> |
           </span>
           <span v-if="this.$route.path.match(/questions/g)">
-            <a @click="goToComponent('FormsQuestions')" id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
+            <a id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
           </span>
           <span><a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a>  | </span>
           <span><a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a>  | </span>

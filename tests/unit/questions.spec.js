@@ -241,7 +241,7 @@ describe('FormsHeader', () => {
     });
     await wrapper.vm.$nextTick()
     expect(wrapper.html()).toContain('daacs_nav_link')
-  }), */
+  }), 
 
   test('daac is blank, should remove the href in questions not allowing a user to click.', async () => {
     const wrapper = mount(FormsHeader, { 
@@ -254,7 +254,7 @@ describe('FormsHeader', () => {
     });
     await wrapper.vm.$nextTick()
     expect(wrapper.html().includes('id="questions_nav_link" href="#">Questions')).toBe(true);
-  }),
+  }),*/
 
   test('on form title change, should update the FormsHeader title.', async () => {
     const wrapper = mount(FormsHeader, {  store,  localVue, router, propsData: {
@@ -362,12 +362,12 @@ describe('FormsQuestions', () => {
   });
   // UNIT TESTS
   // This should be written better when the api call has been inserted because it will change the test entirely.
-  test('on going to the route /questions/15df4fda-ed0d-417f-9124-558fb5e5b561, it will go to the questions page then load the questions data"', async () => {
+  test('  ', async () => {
     const fetchQuestions = jest.fn()
     jest.spyOn(localStorage, 'setItem');
     window.localStorage.__proto__.setItem = jest.fn();
     const wrapper = mount(FormsQuestions, {localVue, methods: { fetchQuestions }})
-    const relative_path = "/questions/15df4fda-ed0d-417f-9124-558fb5e5b561"
+    const relative_path = "?formId=6c544723-241c-4896-a38c-adbc0a364293&requestId=20e78804-c171-4549-bdab-6c7cf8e0fc72&group=9e0628f1-0dde-4ed2-b1e3-690c70326f25"
     router.push(relative_path)
     await wrapper.vm.$nextTick()
     expect(fetchQuestions).toHaveBeenCalledTimes(1)
@@ -375,60 +375,6 @@ describe('FormsQuestions', () => {
   })
 	// END-TO-END TESTS
   // 
-});
-
-/*** HELP TESTS ***/
-// This should be written better when the api call has been inserted because it should change the test.
-describe('Help', () => {
-  const { location } = window;
-
-  beforeAll(() => {
-      delete window.location;
-      window.location = {
-          href: '',
-      };
-      Object.defineProperty(window, "matchMedia", {
-        writable: true,
-        value: jest.fn().mockImplementation(query => ({
-          matches: false,
-          media: query,
-          onchange: null,
-          addListener: jest.fn(), // Deprecated
-          removeListener: jest.fn(), // Deprecated
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        }))
-      });
-  });
-
-  afterAll(() => {
-      window.location = location;
-      wrapper.destroy();
-  });
-
-  beforeEach(() => {
-    // values stored in tests will also be available in other tests unless you run
-    localStorage.clear();
-    // you could also reset all mocks, but this could impact your other mocks
-    jest.resetAllMocks();
-    // or individually reset a mock used
-    localStorage.setItem.mockClear();
-    localStorage.setItem('auth-token','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiMTBhMDlkLWQzNDItNGVlZS1hOWViLWM5OWFjZDJkZGUxNyIsIm5hbWUiOiJFYXJ0aGRhdGEgUHViIFN5c3RlbSIsImVtYWlsIjoibm9fZW1haWwiLCJyZWdpc3RlcmVkIjoiMjAyMS0wMy0xNlQxNzowNDo1My4xMjRaIiwibGFzdF9sb2dpbiI6IjIwMjEtMDMtMTZUMTc6MDc6NDAuMjYxWiIsInVzZXJfZ3JvdXBzIjpbeyJpZCI6IjRkYWE2YjIyLWYwMTUtNGNlMi04ZGFjLThiMzUxMDAwNGZjYSIsImxvbmdfbmFtZSI6IlJvb3QgR3JvdXAiLCJzaG9ydF9uYW1lIjoicm9vdF9ncm91cCIsImRlc2NyaXB0aW9uIjoiRnVsbCBzeXN0ZW0gYWNjZXNzIGZvciBhZG1pbmlzdHJhdG9ycy4ifV0sInVzZXJfcm9sZXMiOlt7ImlkIjoiNzU2MDVhYzktYmY2NS00ZGVjLTg0NTgtOTNlMDE4ZGNjYTk3IiwibG9uZ19uYW1lIjoiRWFydGhkYXRhIFB1YiBBZG1pbmlzdHJhdG9yIiwic2hvcnRfbmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiJBbiBFYXJ0aGRhdGEgUHViIGFkbWluIGNhbiBzZWUgYW5kIGVkaXQgbW9zdCBhc3BlY3RzIG9mIEVhcnRoZGF0YSBQdWIuIn1dLCJwZXJtaXNzaW9ucyI6W10sInN1YnNjcmlwdGlvbnMiOnsiZm9ybSI6W10sImFjdGlvbiI6W10sInNlcnZpY2UiOltdLCJ3b3JrZmxvdyI6W10sInN1Ym1pc3Npb24iOltdfSwicmVmcmVzaF90b2tlbiI6bnVsbCwic3ViIjoiMWIxMGEwOWQtZDM0Mi00ZWVlLWE5ZWItYzk5YWNkMmRkZTE3Iiwic2NvcGUiOiJvcGVuaWQiLCJhdXRoX3RpbWUiOjE2MTU5MTQ0NjAwMDAsImlzcyI6IkVhcnRoZGF0YSBQdWIgRGV2IiwiZXhwIjoxNjE1OTE2MjYwMDAwLCJpYXQiOjE2MTU5MTQ0NjAwMDB9.QRM8fZOEEN-6nYQHSaD9n9Qn2TEZ8IEdGBA3eAONTxE')
-  });
-  
-  // UNIT TESTS
-  /* test('on going to the route help, it will go to the help page and render help data', async () => {
-    const fetchHelp = jest.fn()
-    const wrapper = mount(Help, {localVue, methods: { fetchHelp }})
-    const relative_path = "/help"
-    router.push(relative_path)
-    await wrapper.vm.$nextTick()
-    expect(fetchHelp).toHaveBeenCalledTimes(1)
-  }) */
-	
-  // END-TO-END TESTS
- 
 });
 
 afterAll(() => {
