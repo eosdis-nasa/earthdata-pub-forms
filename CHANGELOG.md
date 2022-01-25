@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.13 - 2022-01-25
+
+- Added VUE_APP_TESTING_MODE environment variable
+
 ## 1.0.12 - 2022-01-20
 
 - Updated vuese and comments for auto-documentation for better documentation
