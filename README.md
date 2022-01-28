@@ -103,14 +103,20 @@ You can run `vue run build` or other commands.
 
 ## Testing
 
-Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing. I used a
-[getting started](https://jestjs.io/docs/en/getting-started) guide for Jest.
+Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data) for e2e testing. I used the 
+[getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide for setup.
 
-To run Jest:
+For setup, follow the instructions in the [getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide.
+You may have a few system libraries to install.  After that it is done:
 
 ```bash
-npm run test:unit questions.spec.js
+npm run clean-modules
+npm install
+npm run cypress OR npx cypress open 
 ```
+
+The last command will open cypress tests in browser mode.  At the time of this writing,
+they have not been tested in headless mode yet.
 
 ## Deploying
 
