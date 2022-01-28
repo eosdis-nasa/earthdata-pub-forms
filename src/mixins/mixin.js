@@ -17,6 +17,7 @@ export default {
         }
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
+            window.stop()
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
           }
         } else {
@@ -557,12 +558,6 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
-          this.fetchDaacs().then(() => {
-            let daacData = this.getDaac(id)
-            if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
-              window.questionsComponent.daac_name = daacData.short_name
-            }
-          });
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       },

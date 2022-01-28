@@ -1,1 +1,21 @@
-{}
+{
+    "env":{
+        "username":"Earthdata Pub System",
+        "new_user_fullname":"New User",
+        "new_email":"example@edpub.com",
+        "email":"no_email",
+        "user_id":"1b10a09d-d342-4eee-a9eb-c99acd2dde17",
+        "nav_active_class":"router-link-exact-active router-link-active",
+        "api_test":"http://localhost:8080/docs",
+        "api_reseed":"http://localhost:8080/reseed",
+        "overview_root": "http://localhost:8082",
+        "forms_root":"http://localhost:8081",
+        "api_client_id":"1or0vuut22m9a5r9hd4s00er9k",
+        "api_secret":"1drni35hoa4tcp63jv9dr5pa8dfj8talscgv4m7e5fabc1qemsuv",
+        "postgres_user":"edpub",
+        "postgres_password":"edpub",
+        "postgres_email":"edpub@edpub.com"
+    },
+    "chromeWebSecurity": false,
+    "baseUrl": "http://localhost:8081"
+}
