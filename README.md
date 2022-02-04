@@ -103,8 +103,9 @@ You can run `vue run build` or other commands.
 
 ## Testing
 
-Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data) for e2e testing. I used the 
-[getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide for setup.
+Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data) for e2e testing. The 
+[getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide 
+was followed.
 
 For setup, follow the instructions in the [getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide.
 You may have a few system libraries to install.  After that it is done:
@@ -115,8 +116,15 @@ npm install
 npm run cypress OR npx cypress open 
 ```
 
-The last command will open cypress tests in browser mode.  At the time of this writing,
-they have not been tested in headless mode yet.
+The last command will open cypress tests in browser mode.  To run in headless mode:
+
+```bash
+npm run cypress-headless OR npx cypress run
+```
+
+Firefox does not have a bypass for CORS, so at the time of this writing, chrome / electron
+are the only browsers cypress tests can be run on. Cypress says firefox needs to
+add the equivalent to cypress.json/chromeWebSecurity.
 
 ## Deploying
 
