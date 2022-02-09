@@ -8,9 +8,6 @@ describe('sanity testing', () => {
   it('Verifies local Earthdata Pub Dashboard is live', () => {
     cy.visit(Cypress.env('dashboard_root'))
   })
-  it('Verifies local Earthdata Pub Overview is live', () => {
-    cy.visit(Cypress.env('overview_root'))
-  })
   it('Verifies local Earthdata Pub Forms is live', () => {
     cy.visit(Cypress.env('forms_root'))
   })
