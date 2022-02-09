@@ -10,26 +10,22 @@ before(() => {
 })
 describe('Header functionality', () => {
     beforeEach(() => {
-      /* 
-        At the time of adding tests, there is not a way to directly login to the API as cypress best practices advise.
-        https://docs.cypress.io/guides/references/best-practices#When-logging-in
-      */
-      cy.removeLocalStorage(`${Cypress.env('token_storage_variable')}`)
-      cy.visit(Cypress.env('forms_root'))
-      cy.getLocalStorage(`${Cypress.env('token_storage_variable')}`)
-          .then($token => {
-            if ($token == null){
-                cy.get(`${Cypress.env('login_modal_selector')}`).should('be.visible')
-                    .find('button').should('contain', `${Cypress.env('login_label')}`).click()
-                cy.get(`${Cypress.env('login_user_select_selector')}`)
-                    .should('have.value', `${Cypress.env('login_user_select_value')}`)
-                cy.get(`${Cypress.env('login_user_select_selector')}`)
-                    .select(`${Cypress.env('user_id')}`)
-                cy.get(`${Cypress.env('login_button_selector')}`)
-                    .should('be.visible').trigger("click")
-            }
-          })
-      cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
+        cy.removeLocalStorage(`${Cypress.env('token_storage_variable')}`)
+        cy.visit(Cypress.env('forms_root'))
+        cy.getLocalStorage(`${Cypress.env('token_storage_variable')}`)
+            .then($token => {
+                if ($token == null){
+                    cy.get(`${Cypress.env('login_modal_selector')}`).should('be.visible')
+                      .find('button').should('contain', `${Cypress.env('login_label')}`).click()
+                    cy.get(`${Cypress.env('login_user_select_selector')}`)
+                      .should('have.value', `${Cypress.env('login_user_select_value')}`)
+                    cy.get(`${Cypress.env('login_user_select_selector')}`)
+                      .select(`${Cypress.env('user_id')}`)
+                    cy.get(`${Cypress.env('login_button_selector')}`)
+                      .should('be.visible').trigger("click")
+                }
+            })
+        cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
     })
     it(`Test the nav links from daac selection page`, () => {
         // These links should have href attributes

@@ -25,3 +25,9 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 import 'cypress-localstorage-commands'
 
+/* Cypress.Commands.add("loginByApi", (username = Cypress.env("username"), password = '?') => {
+    return cy.request("POST", `${Cypress.env("api_root")}/login`, {
+      username,
+      password,
+    });
+}); */

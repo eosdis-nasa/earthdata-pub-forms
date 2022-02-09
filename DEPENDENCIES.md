@@ -8,8 +8,7 @@ Open source licenses:
 | `bootstrap`        | `https://github.com/twbs/bootstrap/blob/master/LICENSE`                |
 | `core-js`          | `https://github.com/zloirock/core-js/blob/master/LICENSE`              |
 | `eslint`           | `https://github.com/eslint/eslint/blob/master/LICENSE`                 |
-| `fontawesome`      | `https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt`  |
-| `jest`             | `https://github.com/facebook/jest/blob/master/LICENSE`                 |
+| `fontawesome`      | `https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt`  |               |
 | `jquery`           | `https://github.com/jquery/jquery/blob/master/LICENSE.txt`             |
 | `js-logger`        | `https://github.com/jonnyreeves/js-logger/blob/master/MIT-LICENSE.txt` |
 | `popper.js`        | `https://github.com/popperjs/popper-core/blob/master/LICENSE.md`       |

@@ -8,7 +8,7 @@ before(() => {
     })
   })
 })
-describe('Daac Selection Page', () => {
+describe('Questions Page', () => {
   beforeEach(() => {
     cy.removeLocalStorage(`${Cypress.env('token_storage_variable')}`)
     cy.visit(Cypress.env('forms_root'))
@@ -27,21 +27,12 @@ describe('Daac Selection Page', () => {
         })
     cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
   })
-  it(`Test the daac selection page route and that it loads`, () => {
-    cy.visit(`${Cypress.env('daac_selection_page')}`)
-    cy.contains(`${Cypress.env('daac_radio_label')}`) 
+  it(`Test form 1 route and that data loads`, () => {
+    cy.visit(`${Cypress.env('questions_1_url')}`)
+    cy.contains(`${Cypress.env('header_form1_title_value')}`)
   })
-  it(`Test daac selection populating data and then all functionality`, () => {
-    cy.visit(`${Cypress.env('daac_selection_page')}`)
-    cy.get('label').contains(`${Cypress.env('daac_radio_label')}`).click()
-    cy.url().should('eq', `${Cypress.env('daac_selection_url')}`)
-    cy.get(`${Cypress.env('daac_description_selector')}`).contains(`${Cypress.env('daac_description_match_text')}`)
-    cy.get(`${Cypress.env('daac_link_selector')}`)
-      .scrollIntoView()
-      .should('have.attr', 'href')
-      .and('match', new RegExp(`/${Cypress.env('daac_link_href')}/`, 'g'))
-    cy.get(`${Cypress.env('daac_select_button_selector')}`).should('not.be.disabled')
-    cy.get(`${Cypress.env('daac_select_button_selector')}`).click()
-    cy.url().should('eq', `${Cypress.env('dashboard_root')}/requests`)
+  it(`Test form 2 route and that data loads`, () => {
+    cy.visit(`${Cypress.env('questions_2_url')}`)
+    cy.contains(`${Cypress.env('header_form2_title_value')}`)
   })
 })

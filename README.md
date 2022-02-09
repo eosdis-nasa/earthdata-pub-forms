@@ -119,12 +119,12 @@ npm run cypress OR npx cypress open
 The last command will open cypress tests in browser mode.  To run in headless mode:
 
 ```bash
-npm run cypress-headless OR npx cypress run
+npm run cypress-headless OR npx cypress run OR cypress-headless-all (for all browsers supported)
 ```
 
-Firefox does not have a bypass for CORS, so at the time of this writing, chrome / electron
-are the only browsers cypress tests can be run on. Cypress says firefox needs to
-add the equivalent to cypress.json/chromeWebSecurity.
+Firefox does not have a bypass for CORS, so at the time of this writing, the browsers
+cypress tests can be run on are chrome, chromium, edge, and electron.
+Cypress says firefox needs to add the equivalent CORS bypass like cypress.json/chromeWebSecurity.
 
 ## Deploying
 
