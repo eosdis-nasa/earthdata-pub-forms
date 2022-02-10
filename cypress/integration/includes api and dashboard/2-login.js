@@ -50,22 +50,4 @@ describe('Logging in', () => {
         cy.url().should('eq', `${Cypress.env('dashboard_root')}/`)
         cy.get(`${Cypress.env('login_logout_selector')}`).should('be.visible').trigger("click")
     })
-    it(`Tests the auth script to get admin token`, () => {
-        cy.exec(Cypress.env('api_get_token_command_admin')).then((result) => {
-          const admin_token = result.stdout
-          expect(admin_token).to.contain('Bearer')
-        })
-    })
-    it(`Tests the auth script to get manager token`, () => {
-        cy.exec(Cypress.env('api_get_token_command_manager')).then((result) => {
-          const manager_token = result.stdout
-          expect(manager_token).to.contain('Bearer')
-        })
-    })
-    it(`Tests the auth script to get coordinator token`, () => {
-        cy.exec(Cypress.env('api_get_token_command_coordinator')).then((result) => {
-          const coordinator_token = result.stdout
-          expect(coordinator_token).to.contain('Bearer')
-        })
-    })
 })

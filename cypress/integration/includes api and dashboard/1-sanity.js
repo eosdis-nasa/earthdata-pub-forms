@@ -11,6 +11,9 @@ describe('sanity testing', () => {
   it('Verifies local Earthdata Pub Forms is live', () => {
     cy.visit(Cypress.env('forms_root'))
   })
+  it('Verifies local Earthdata Pub Overview is live', () => {
+    cy.visit(Cypress.env('overview_root'))
+  })
   it('Tests reseeding the database', () => {
     cy.request(Cypress.env('api_reseed'))
         .should((response) => {
