@@ -108,7 +108,15 @@ Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/test
 was followed.
 
 For setup, follow the instructions in the [getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide.
-You may have a few system libraries to install.  After that it is done:
+You may have a few system libraries to install.  
+
+Next view cypress.json to make sure your local dev settings match.  To run the overview app locally along with testing, run:
+
+```bash
+npm run start-forms-dev
+```
+
+After that it is done:
 
 ```bash
 npm run clean-modules
