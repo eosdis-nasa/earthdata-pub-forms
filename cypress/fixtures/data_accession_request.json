@@ -39,7 +39,7 @@
             {
               "type": "text",
               "control_id": "data_producer_info_orcid",
-              "label": "Orcid",
+              "label": "ORCID",
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
             }
           ],
@@ -76,7 +76,7 @@
             {
               "type": "text",
               "control_id": "publication_poc_orcid",
-              "label": "Orcid",
+              "label": "ORCID",
               "validation_error_msg": "An Open Researcher and Contributor Identifier (ORCID) provides a persistent digital identifier to distinguish researchers and properly attribute their research outputs. For more information, see the ORCID web site (https://support.orcid.org)."
             }
           ],
@@ -95,7 +95,7 @@
           "help": "",
           "inputs": [
             {
-              "type": "radio",
+              "type": "checkbox",
               "control_id": "funding_organization_name",
               "label": "Organization",
               "enums": [
