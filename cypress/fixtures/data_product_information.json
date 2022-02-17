@@ -133,6 +133,11 @@
           "inputs": [
             {
               "type": "checkbox",
+              "control_id": "funding_nasa",
+              "label": "NASA"
+            },
+            {
+              "type": "checkbox",
               "control_id": "funding_noaa",
               "label": "NOAA"
             },
