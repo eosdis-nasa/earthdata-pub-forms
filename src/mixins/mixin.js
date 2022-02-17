@@ -114,7 +114,8 @@ export default {
           let url;
           if (this.$testing){
             let json_name = 'data_accession_request' 
-            if(this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
+            if(typeof this.$store.state.global_params['formId'] !=='undefined' && 
+              this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
               json_name = 'data_product_information' 
             }
             this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])

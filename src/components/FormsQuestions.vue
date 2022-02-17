@@ -33,7 +33,7 @@
                       <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
                       <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
                       <!-- submit button -->
-                      <b-button v-if="this.$v.$anyError || Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
                       <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>

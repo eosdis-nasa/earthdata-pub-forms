@@ -96,17 +96,28 @@
           "inputs": [
             {
               "type": "checkbox",
-              "control_id": "funding_organization_name",
-              "label": "Organization",
-              "enums": [
-                "NASA",
-                "NOAA",
-                "NSF",
-                "USGS",
-                "University",
-                "Other"
-              ],
-              "required": true
+              "control_id": "funding_noaa",
+              "label": "NOAA"
+            },
+            {
+              "type": "checkbox",
+              "control_id": "funding_nsf",
+              "label": "NSF"
+            },
+            {
+              "type": "checkbox",
+              "control_id": "funding_usgs",
+              "label": "USGS"
+            },
+            {
+              "type": "checkbox",
+              "control_id": "funding_university",
+              "label": "University"
+            },
+            {
+              "type": "checkbox",
+              "control_id": "funding_other",
+              "label": "Other"
             },
             {
               "type": "text",
@@ -114,14 +125,14 @@
               "label": "If University or Other",
               "required_if": [
                 {
-                  "field": "funding_organization_name",
-                  "value": "University",
-                  "message":"Please provide a University or other text value for the funding organization."
+                  "field": "funding_university",
+                  "value": "true",
+                  "message":"Please provide a University organization."
                 },
                 {
-                  "field": "funding_organization_name",
-                  "value": "Other",
-                  "message":"Please provide a University or other text value for the funding organization."
+                  "field": "funding_other",
+                  "value": "true",
+                  "message":"Please provide a other text value for the funding organization."
                 }
               ]
             }
@@ -208,7 +219,7 @@
               "required_if":[
                 {
                   "field":"data_product_doi_exists",
-                  "value":"checked",
+                  "value":"true",
                   "message":"You checked that this data product has a DOI, please provide it in the textbox provided."
                 }
               ]
