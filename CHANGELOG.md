@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.15 - 2022-02-17
 
-- Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes.
+- Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
 
 ## 1.0.14 - 2022-02-09
 
