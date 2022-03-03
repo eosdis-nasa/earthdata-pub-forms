@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.15 - 2022-02-17
+
+- Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
+
+## 1.0.14 - 2022-02-09
+
+- Finished adding cypress base tests, removed jest files and libraries
+
+## 1.0.14 - 2022-01-28
+
+- Added Cypress testing suite and a few tests to run in browser mode
+
+## 1.0.13 - 2022-01-25
+
+- Added VUE_APP_TESTING_MODE environment variable
+
 ## 1.0.12 - 2022-01-20
 
 - Updated vuese and comments for auto-documentation for better documentation

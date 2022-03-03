@@ -103,14 +103,36 @@ You can run `vue run build` or other commands.
 
 ## Testing
 
-Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing. I used a
-[getting started](https://jestjs.io/docs/en/getting-started) guide for Jest.
+Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data) for e2e testing. The 
+[getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide 
+was followed.
 
-To run Jest:
+For setup, follow the instructions in the [getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide.
+You may have a few system libraries to install.  
+
+Next view cypress.json to make sure your local dev settings match.  To run the overview app locally along with testing, run:
 
 ```bash
-npm run test:unit questions.spec.js
+npm run start-forms-dev
 ```
+
+After that it is done:
+
+```bash
+npm run clean-modules
+npm install
+npm run cypress OR npx cypress open 
+```
+
+The last command will open cypress tests in browser mode.  To run in headless mode:
+
+```bash
+npm run cypress-headless OR npx cypress run OR cypress-headless-all (for all browsers supported)
+```
+
+Firefox does not have a bypass for CORS, so at the time of this writing, the browsers
+cypress tests can be run on are chrome, chromium, edge, and electron.
+Cypress says firefox needs to add the equivalent CORS bypass like cypress.json/chromeWebSecurity.
 
 ## Deploying
 

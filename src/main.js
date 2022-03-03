@@ -12,7 +12,7 @@ import GoTop from '@inotom/vue-go-top';
 import mixin from "@/mixins/mixin.js";
 
 // global prototype to set to local jsons instead of calling api
-Vue.prototype.$testing = false;
+Vue.prototype.$testing = (`${process.env.VUE_APP_TESTING_MODE}` == 'true');
 
 const isProduction = process.env.NODE_ENV === 'production';
 

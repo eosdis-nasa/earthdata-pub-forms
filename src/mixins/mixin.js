@@ -17,6 +17,7 @@ export default {
         }
         if(typeof this.$route.query.token == 'undefined') {
           if(localStorage.getItem('auth-token') == null){
+            window.stop()
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
           }
         } else {
@@ -113,7 +114,8 @@ export default {
           let url;
           if (this.$testing){
             let json_name = 'data_accession_request' 
-            if(this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
+            if(typeof this.$store.state.global_params['formId'] !=='undefined' && 
+              this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
               json_name = 'data_product_information' 
             }
             this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
@@ -303,8 +305,9 @@ export default {
                   }
                 }
               }
-              if(!this.$testing && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
-                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`;
+              if(!this.$testing && typeof this.$store !== 'undefined'
+              && this.$store.state.global_params['formId'] !== "" && this.$store.state.global_params['group'] !== "") {
+                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
               $.getJSON(url, (questions) => {
                 //The below line looks for custom css and applies it to the head (eui is done first)
@@ -556,12 +559,6 @@ export default {
             after_protocol = next_url.replace(/\/\//g,'/')
             new_url = `${after_protocol}`
           }
-          this.fetchDaacs().then(() => {
-            let daacData = this.getDaac(id)
-            if(typeof daacData != 'undefined' && typeof window.questionsComponent != 'undefined'){
-              window.questionsComponent.daac_name = daacData.short_name
-            }
-          });
           history.replaceState('updating daac in href', window.document.title, new_url);
         }
       },
