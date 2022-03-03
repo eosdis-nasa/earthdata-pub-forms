@@ -145,6 +145,10 @@ dist
 
 # Local documentation website
 website
+autodocs
 
 .snyk
 package-lock.json
+
+# Videos from testing
+videos/*.*

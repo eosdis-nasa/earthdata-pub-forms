@@ -4,41 +4,48 @@ This is the Forms code repository for Earthdata Pub (EDPub).
 
 ## Table of Contents
 
-- **[Contributing](#contributing)**
-- **[Framework: vue.js](#framework-vuejs)**
-- **[Styling](#Custom-styling)**
-- **[Develop using Docker](#develop-using-docker)**
-- **[Auto documentation using vuese plugin](#Auto-documentation-using-vuese-plugin)**
-- **[Testing with Jest](#testing-with-jest)**
+- [Contributing](#contributing)
+- [Installing](#Installing)
+- [Running locally](#running-locally)
+- [Styling](#Custom-styling)
+- [Developing](#Developing)
+- [Deploying](#deploying)
+- [Testing](#testing)
+- [Documentation](#documentation)
 
 ## Contributing
 
-The [`CONTRIBUTING.md`](./CONTRIBUTING.md) has instruction for contributing to
-the Earthdata Pub project. Be sure to read that before submitting pull requests.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for instruction for contributing to
+the EDPub project. Be sure to read that before submitting pull requests.
 
-## Building and Quickstarts
+## Installing
 
-EDPub Forms use node v12.18.0. To build/run the Forms on your local
+EDPub Forms use node v12.19.0. To build/run the Forms on your local
 machine, install nvm following the [nvm Install & Update Script](https://github.com/nvm-sh/nvm#install--update-script)
 instructions.
 
 We use npm for local package management, to install the requirements:
 
 ```bash
-nvm install v12.18.0
+nvm install v12.19.0
 nvm use
 npm install
 ```
 
-### Running locally
+## Running locally
+
+To run locally:
 
 ```bash
-npm run start
+npm run start-forms
 ```
 
-The Dashboard will available at <http://localhost:8081/>
+The vue app can also be run locally using:
 
-The API Swagger will available at <http://localhost:8080/docs/>
+```bash
+npm run build
+npm run serve
+```
 
 To view logs from the Docker container:
 
@@ -46,25 +53,22 @@ To view logs from the Docker container:
 npm run view-logs
 ```
 
-## Framework: vue.js
+### Dashboard and API
 
-Earthdata Pub Forms uses [Vue.js](https://vuejs.org/), the progressive JavaScript
-framework.
+The Forms application is dependent on the EDPub [Dashboard](https://git.earthdata.nasa.gov/projects/EDPUB/repos/dashboard)
+and [API](https://git.earthdata.nasa.gov/projects/EDPUB/repos/api). Follow
+instructions in each repo or the [EDPub core](https://git.earthdata.nasa.gov/projects/EDPUB/repos/earthdata-pub)
+repo.
 
-To deploy vue app, simply:
+The Dashboard will available at <http://localhost:3000/>
 
-```bash
-npm run build
-npm run serve
-```
+The API Swagger documentation will available at <http://localhost:8080/docs/>
 
-## Custom styling
+## Styling
 
-At a base, eui styling has been applied to the form automatically. If the questions.json
-has the tag "style" and then a "link" to a custom css sheet, that is appended to
-the end of the stylesheets as an override.
+EDPub uses [EUI](https://cdn.earthdata.nasa.gov/eui/latest/docs/eui/index.html) styling.
 
-## Develop using Docker
+## Developing
 
 Docker setup inspired by <https://daten-und-bass.io/blog/getting-started-with-vue-cli-on-docker/>
 
@@ -74,7 +78,7 @@ to serve the vue.js application. [docker-compose](https://docs.docker.com/compos
 makes container deployment simple. See the [Dockerfile](./Dockerfile) and
 [docker.compose.yml](./docker-compose.yml) for details.
 
-To deploy using docker-compose, simply:
+To deploy using docker-compose:
 
 ```bash
 docker-compose up
@@ -97,88 +101,76 @@ docker exec -it forms_forms_1 /bin/bash
 
 You can run `vue run build` or other commands.
 
-## Auto documentation using vuese plugin
+## Testing
 
-Vuese auto documentation scrapes the javascript comments out of vue files and builds
-markdown files for them. It creates the folder, website, and inside that, a folder
-named 'Components'.
+Earthdata Pub uses [Cypress](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data) for e2e testing. The 
+[getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide 
+was followed.
 
-- Documentation to vuese - [Quick & easy documentation generation for Vue.js components](https://dev.to/berniwittmann/quick--easy-documentation-generation-for-vuejs-components-7k6)
-- API Documentation for [vuese](https://vuese.org/)
+For setup, follow the instructions in the [getting started](https://docs.cypress.io/guides/getting-started/installing-cypress) guide.
+You may have a few system libraries to install.  
 
-To build documentation, simply type:
-
-```bash
-vuese gen
-```
-
-Once can rename the folder 'website' as long as it is renamed before this step.
-At the time of this writing, it is now named 'autodocs'. We now need to serve the
-files as a website. Run the following from in the autodocs folder:
+Next view cypress.json to make sure your local dev settings match.  To run the overview app locally along with testing, run:
 
 ```bash
-cd website
-npm serve .
+npm run start-forms-dev
 ```
 
-You should now be able to view the files on your [localhost](http://localhost:8081).
-[More documentation as well as an example, can be found here](https://docute.org/)
-
-## Testing with Jest
-
-Earthdata Pub uses [Jest](https://jestjs.io/) for unit testing. I used a
-[getting started](https://jestjs.io/docs/en/getting-started) guide for Jest.
-
-To run Jest:
+After that it is done:
 
 ```bash
-npm run test:unit questions.spec.js
+npm run clean-modules
+npm install
+npm run cypress OR npx cypress open 
 ```
 
-## Deploying to AWS with Terrafrom
-
-Earthdata Pub Forms deploys to AWS using Terraform through Bamboo. To create AWS
-resources, run:
+The last command will open cypress tests in browser mode.  To run in headless mode:
 
 ```bash
-terraform plan
-terraform apply
+npm run cypress-headless OR npx cypress run OR cypress-headless-all (for all browsers supported)
 ```
 
-To destroy all AWS resources, run:
+Firefox does not have a bypass for CORS, so at the time of this writing, the browsers
+cypress tests can be run on are chrome, chromium, edge, and electron.
+Cypress says firefox needs to add the equivalent CORS bypass like cypress.json/chromeWebSecurity.
+
+## Deploying
+
+Earthdata Pub Forms deploys to AWS using Terraform through Bamboo. In the case
+that Bamboo is not available, follow instructions in [terraform/README](./terraform/README.md).
+
+## Documentation
+
+Vuese auto documentation scrapes the javascript comments out of vue files and mixin
+file and builds markdown files for them. It creates the folder, 'autodocs', as
+depicted by it's config file .vueserc.
+
+Documentation about Vuese can be found at their [NPM page](https://www.npmjs.com/package/vuese/v/1.4.0?activeTab=readme).
+
+To build documentation:
+
+install:
 
 ```bash
-terraform destroy
+npm install -g @vuese/cli 
 ```
 
-## Open source licenses for dependencies
+or
 
-| Dependencies       | License                                                                |
-| ------------------ | ---------------------------------------------------------------------- |
-| `babel`            | `https://github.com/babel/babel/blob/master/LICENSE`                   |
-| `bootstrap`        | `https://github.com/twbs/bootstrap/blob/master/LICENSE`                |
-| `core-js`          | `https://github.com/zloirock/core-js/blob/master/LICENSE`              |
-| `eslint`           | `https://github.com/eslint/eslint/blob/master/LICENSE`                 |
-| `fontawesome`      | `https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt`  |
-| `jest`             | `https://github.com/facebook/jest/blob/master/LICENSE`                 |
-| `jquery`           | `https://github.com/jquery/jquery/blob/master/LICENSE.txt`             |
-| `js-logger`        | `https://github.com/jonnyreeves/js-logger/blob/master/MIT-LICENSE.txt` |
-| `popper.js`        | `https://github.com/popperjs/popper-core/blob/master/LICENSE.md`       |
-| `serve`            | `https://github.com/vercel/serve/blob/master/LICENSE`                  |
-| `undo-redo-vuex`   | `https://github.com/factorial-io/undo-redo-vuex/blob/master/LICENSE`   |
-| `vee-validate`     | `https://github.com/logaretm/vee-validate/blob/master/LICENSE`         |
-| `vue-fixed-header` | `https://github.com/potato4d/vue-fixed-header/blob/master/LICENCE`     |
-| `vue-router`       | `https://github.com/vuejs/vue-router/blob/dev/LICENSE`                 |
-| `vue-to-top`       | `https://github.com/inotom/vue-go-top/blob/master/LICENSE`             |
-| `vue`              | `https://github.com/vuejs/vue/blob/dev/LICENSE`                        |
-| `vuejs-logger`     | `https://github.com/justinkames/vuejs-logger/blob/master/LICENSE`      |
-| `vuelidate`        | `https://github.com/vuelidate/vuelidate/blob/master/LICENSE`           |
-| `vuex`             | `https://github.com/vuejs/vuex/blob/dev/LICENSE`                       |
+```bash
+yarn global add vuese
+```
 
-### Not open-source
+then build:
 
-NASA pays for a Snyk license.
+```bash
+npm run build-docs
+```
 
-| Dependencies | License                                            |
-| ------------ | -------------------------------------------------- |
-| `snyk`       | `https://github.com/snyk/snyk/blob/master/LICENSE` |
+then serve:
+
+```bash
+npm run open-docs
+```
+
+It will launch a document server and automatically open the browser.

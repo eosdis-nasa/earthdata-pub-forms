@@ -52,20 +52,21 @@
 <script>
 // Jquery javascript
 import $ from "jquery";
+import mixin from "../mixins/mixin.js";
 
-// This Daacs component gets DAAC data and displays abbreviations as a radio selection
-// On selection displays a link to the selected DAAC website, description and a 'Select
-// Button' is displayed to allow users more info and to move on.
+// This Daacs component gets DAAC data and displays abbreviations as a radio selection.  
+// On selection, it displays a link to the selected DAAC website, description and a 'Select 
+// Button' is displayed to allow users to move on.
 export default {
-  name: "Daacs",
+  mixins: [mixin],
+  name: "FormsDaacs",
   data() {
     return {
       selected: "",
       loaded: false,
       daacs: [],
       formId: '',
-      requestId: '',
-      showDaacs: ''
+      requestId: ''
     };
   },
   props: {},
@@ -75,7 +76,7 @@ export default {
     loaded: function(val) {
       setTimeout(() => {
         if (val) {
-          this.GetCurrentDaacAndUpdate();
+          this.getCurrentDaacAndUpdate();
         }
       }, 1);
     },
@@ -85,8 +86,9 @@ export default {
       }, 1);
     }
   },
-  // This is equivalent to document.ready
   mounted() {
+    // @vuese
+    // Sets local variables from the global_params in store
     window.daacsComponent = this;
     this.setActiveNav("daacs");
     this.fetchDaacs().then(() => {
@@ -103,19 +105,16 @@ export default {
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
       this.requestId = this.$store.state.global_params['requestId']
     }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['showDaacs'] != 'undefined'){
-      this.showDaacs = this.$store.state.global_params['showDaacs']
-    }
   },
   methods: {
     // @vuese
     // On selected, sets current daac objects from values
-    // @current_daac - currently a hash
-    // @url - daac url
-    // @id - currently a hash
-    // @short_name - string
-    // @long_name - string
-    // @description - string
+    // @arg current_daac [String] hash,  
+    // @arg url [String], 
+    // @arg id [String] hash, 
+    // @arg short_name [String], 
+    // @arg long_name [String], 
+    // @arg description [String]
     setCurrentDaacObjects(
       current_daac,
       url,
@@ -157,47 +156,39 @@ export default {
       $("#selected_description").html(description);
       this.setActiveNav("daacs");
       this.selected = long_name;
-      this.data = short_name;
       return [short_name, id];
     },
     // @vuese
     // On selected, builds dynamic text and sets html dynamically with the link
-    // @url - daac url
-    // @id - currently a hash
-    // @short_name - string
-    // @long_name - string
-    // @description - string
+    // @arg daac url [String], 
+    // @arg id [String] hash, 
+    // @arg short_name [String], 
+    // @arg long_name [String], 
+    // @arg description [String]
     setSelectedValues(url, id, short_name, long_name, description) {
-      if (
-        typeof this.$store !== 'undefined' && 
-        typeof this.$store.state.global_params['group'] != "undefined" &&
-        this.$store.state.global_params['group'] != null
-      ) {
-        let current = this.setCurrentDaacObjects(
-          this.selected,
-          url,
-          id,
-          short_name,
-          long_name,
-          description
-        );
-        id = current[1]
-        this.$store.state.global_params['group'] = id
-      }
+      let current = this.setCurrentDaacObjects(
+        this.selected,
+        url,
+        id,
+        short_name,
+        long_name,
+        description
+      );
+      id = current[1]
+      this.$store.state.global_params['group'] = id
       this.setActiveLocationWithoutReload(id);
       window.headerComponent.daac = id
       return short_name;
     },
     // @vuese
-    // @arg The event to prevent for checking validity first
+    // Calls submit form via enter key
     enterSubmitForm() {
-      // Calls submit form via enter key
       if (this.enterSubmit) {
         this.submitForm();
       }
     },
     // @vuese
-    // Used to submit the form data and move on to questions, if daac valid
+    // Used to submit the form data and move on
     submitForm() {
       this.$v.$touch();
       let args = {}
@@ -209,18 +200,15 @@ export default {
       }
       if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
-        this.$router.push({
-          name: `${this.getFormNamePrefix()}Questions`,
-          params: { args }
-        });
+        this.saveFile();
       } else {
         args['group'] = 'selection'
-        this.$router.push({ name: `${this.getFormNamePrefix()}Daacs`, params: args });
+        this.$router.replace({ name: `daacs`, params: args });
       }
     },
     // @vuese
-    // Gets the current daac selected and updates
-    GetCurrentDaacAndUpdate() {
+    // Gets the current daac selected from the store and updates
+    getCurrentDaacAndUpdate() {
       if (
         (typeof this.$store !== 'undefined' && 
         this.$store.state.global_params['group'] == "") &&
@@ -290,10 +278,5 @@ export default {
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid #dee2e6;
-  }
-  .button_div {
-    margin-top: 1rem;
-    text-align: left;
-    float: left;
   }
 </style>

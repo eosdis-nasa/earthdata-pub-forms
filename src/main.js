@@ -9,10 +9,10 @@ import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fort
 import Vuelidate from 'vuelidate'
 import VueLogger from 'vuejs-logger';
 import GoTop from '@inotom/vue-go-top';
-import mixin from "./mixins/mixin";
+import mixin from "@/mixins/mixin.js";
 
 // global prototype to set to local jsons instead of calling api
-Vue.prototype.$testing = false;
+Vue.prototype.$testing = (`${process.env.VUE_APP_TESTING_MODE}` == 'true');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -79,15 +79,11 @@ Vue.component('font-awesome-layers', FontAwesomeLayers)
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 // Custom components
-import Daacs from '@/components/Daacs.vue'
-import Questions from '@/components/Questions.vue'
-import Help from '@/components/Help.vue'
-import PageNotFound from '@/components/PageNotFound.vue'
+import FormsDaacs from '@/components/FormsDaacs.vue'
+import FormsQuestions from '@/components/FormsQuestions.vue'
 
-Vue.component('Daacs', Daacs);
-Vue.component('PageNotFound', PageNotFound);
-Vue.component('Questions', Questions);
-Vue.component('Help', Help);
+Vue.component('FormsDaacs', FormsDaacs);
+Vue.component('FormsQuestions', FormsQuestions);
 
 Vue.config.productionTip = false
 

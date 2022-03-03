@@ -1,22 +1,20 @@
 <template>
   <!-- Main App -->
   <div id="app">
-    <Warning />
-    <Header :formTitle="showFormTitle"/>
+    <TimeoutWarning />
+    <FormsHeader />
     <router-view ref="content"/>
     <go-top id="go_top" bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
   </div>
 </template>
 <!-- End of Main App -->
 <script>
-    // Imports header and footer as components.
+    // Imports FormsHeader and footer as components.
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
-    import Header from '@/components/Header'
+    import FormsHeader from '@/components/FormsHeader'
     import GoTop from '@inotom/vue-go-top';
-    import Warning from '@/components/Warning'
-    // This questions component gets the questions data for the selected daac and
-    // sets the above template properties, methods, and custom validation used.
+    import TimeoutWarning from '@/components/TimeoutWarning';
     export default {
         name: 'app',
         metaInfo: {
@@ -34,32 +32,18 @@
             ]
         },
         computed:{
-            showFormTitle: function(){
-                return window.formTitle
-            }
+
         },
         props:{
 
         },
         components: {
-            Header,
+            FormsHeader,
             GoTop,
-            Warning
+            TimeoutWarning
         },
         mounted() {
-            if(typeof this.$refs.content !='undefined'){
-                this.$watch(
-                    () => {
-                        if(typeof this.$refs.content !=='undefined'){
-                            return this.$refs.content.formTitle
-                        }
-                    },
-                    val => {
-                        window.formTitle = val
-                    }
-                )
-                window.formTitle = this.$refs.content.formTitle
-            }
+            
         },
         watch: {
 
@@ -71,16 +55,19 @@
 </script>
 <style>
     .custom-control-label {
-        margin-top: 5.5px!important;
+        margin-top: 5.5px;
     }
     .editable-table .data-cell {
-        min-height: 2rem!important;
-    } 
-    .eui-link {
+        min-height: 2rem;
+        border-radius:5px;
+        padding: 5px;
+        border: 1px solid #cac8c8;
+    }
+    a {
         cursor:pointer;
     }
     .form-control {
-        border-radius:5px!important;
+        border-radius:5px;
         height: unset!important;
     }
     .same-as-html5{
@@ -93,17 +80,50 @@
     textarea {
         padding-left:8px!important;
     }
-    ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-    }
     #go_top {
         max-width:50px;
         max-height:50px;
     }
-    .modal-footer {
-        background-color: #ebebeb!important;
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: left;
+        color: #2c3e50;
+    }
+    .form-group {
+        margin-top:.5rem;
+    }
+    a:hover {
+        text-decoration: underline !important;
+    }
+    div.row {
+        margin:0rem;
+    }
+    .checkboxes {
+        display:-webkit-box;
+        display:inline-flex!important;
+        margin-right: -8px!important;
+    }
+    .custom-radio.b-custom-control-lg, 
+    .input-group-lg .custom-radio {
+        font-size: unset!important;
+    }
+    .custom-checkbox.b-custom-control-lg, 
+    .input-group-lg .custom-checkbox {
+        min-height: 1.75rem;
+    }
+    input[type=radio   ]:not(old) + label{
+        cursor: pointer;
+        padding-top: 4px;
+    }
+    .custom-file-label, 
+    .custom-file-input ~ .custom-file-label[data-browse]::after {
+        height:unset;
+    }
+    /* eui overrides  */
+    .eui-link {
+        cursor:pointer;
     }
     .eui-btn--green,
     .eui-btn--green:disabled:hover {
@@ -130,92 +150,46 @@
     .eui-btn--blue:hover {
         background-color: #2c3e50;
     }
+    .modal-footer,
+    .modal-header {
+        background-color: #ebebeb!important;
+    }
+    .eui-btn--green,
+    .eui-btn--green:disabled:hover {
+        background-color: #158749!important;
+    }
+    .eui-btn--green:hover,
+    footer button.btn-primary:hover {
+        background-color:#12713d!important;
+    }
     footer button.btn-primary {
         background-color:#158749;
         color:white;
     }
-    body{
-        background:unset!important;
-    }
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: left;
-        color: #2c3e50;
-    }
-    a, a:visited, a span {
-        color:#2275AA;
-    }
-    .selector-for-some-widget {
-        box-sizing: content-box;
-    }
-    .bv-no-focus-ring .row label:nth-last-child {
-        margin-top:calc(1.5em + 1rem + 2px) + 1rem;
-    }
-    .form-group {
-        margin-top:.5rem;
-    }
-    h1 {
-        margin: 0.67em 0;
-    }
-    #nav {
-        padding: 5px;
-        text-align:right;
-        padding-bottom: 1.75rem;
-    }
-    #nav a {
-        color:white;
-    }
-    #nav a.router-link-exact-active {
-        font-weight: bold;
-        text-decoration:underline;
-    }
-    .b-custom-control-lg.custom-file, .b-custom-control-lg .custom-file-input, .b-custom-control-lg .custom-file-label, .input-group-lg.custom-file, .input-group-lg .custom-file-input, .input-group-lg .custom-file-label {
-        margin-bottom: 1.25rem;
-    }
-    div.row {
-        margin:0rem;
-    }
-    .nofloat {
-        margin:unset!important;
-    }
-    .checkbox{
-        padding-left:0px!important;
-    }
-    .custom-radio.b-custom-control-lg, .input-group-lg .custom-radio {
-        font-size: unset!important;
-    }
-    .custom-checkbox.b-custom-control-lg, .input-group-lg .custom-checkbox {
-        min-height: 1.75rem!important;
-    }
-    .checkboxes {
-        display:-webkit-box;
-        display:inline-flex!important;
-        margin-right: -8px!important;
-    }
-    input[type=radio   ]:not(old) + label{
-        cursor: pointer;
-        padding-top: 4px;
-    }
-    .custom-file-label,.custom-file-input ~ .custom-file-label[data-browse]::after {
-        height:unset;
-    }
-    /* undo_button */
     #undo_button.disabled,
     #redo_button.disabled {
         background-color: #6c757d;
     }
-    .btn.eui-btn--red.btn-secondary:hover, .btn.eui-btn--red.btn-secondary:active, .btn.eui-btn--red.btn-secondary:focus, .btn.eui-btn--red.btn-secondary:visited, .eui-btn--red.btn-secondary:disabled {
+    .btn.eui-btn--red.btn-secondary:hover, 
+    .btn.eui-btn--red.btn-secondary:active, 
+    .btn.eui-btn--red.btn-secondary:focus, 
+    .btn.eui-btn--red.btn-secondary:visited, 
+    .eui-btn--red.btn-secondary:disabled {
         background-color: #d62c1a;
     }
-    .btn.eui-btn--blue.btn-secondary:hover, .btn.eui-btn--blue.btn-secondary:active, .btn.eui-btn--blue.btn-secondary:focus, .btn.eui-btn--blue.btn-secondary:visited, .eui-btn--blue.btn-secondary:disabled {
+    .btn.eui-btn--blue.btn-secondary:hover, 
+    .btn.eui-btn--blue.btn-secondary:active, 
+    .btn.eui-btn--blue.btn-secondary:focus, 
+    .btn.eui-btn--blue.btn-secondary:visited, 
+    .eui-btn--blue.btn-secondary:disabled {
         background-color: #1a5981;
     }
-    .btn.eui-btn--green.btn-secondary:hover, .btn.eui-btn--green.btn-secondary:active, .btn.eui-btn--green.btn-secondary:focus, .btn.eui-btn--green.btn-secondary:visited, .eui-btn--green.btn-secondary:disabled {
+    .btn.eui-btn--green.btn-secondary:hover, 
+    .btn.eui-btn--green.btn-secondary:active, 
+    .btn.eui-btn--green.btn-secondary:focus, 
+    .btn.eui-btn--green.btn-secondary:visited, 
+    .eui-btn--green.btn-secondary:disabled {
         background-color: #1baf5e;
     }
-    .default_background {
-        background-color: #ebebeb;
-    }
+    /* ******************* */
 </style>

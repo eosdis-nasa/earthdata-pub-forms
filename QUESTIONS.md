@@ -81,12 +81,7 @@ as the 'validation_error_msg' is meant to override html5 and vuelidate messages.
 
 ### Messages
 
-The following messages may be shown at the top of the form.  
-
-It is good to know that if there is a "required_if" / "show_if" section, the message
-from it takes presidence. Otherwise, the "validation_error_msg" in the input takes
-presidence. After those, default vuelidate validator messages.  Any html5 messages
-should appear near the input itself.
+The following messages may be shown near the input violation.  
 
 - "Section {{ heading }} is required"
 - "{{ heading }} - {{ question.title }} section is required"
@@ -111,6 +106,6 @@ More information on requiredif and [vuelidate validators](https://vuelidate.js.o
 
 Files that were used during development are available in the repo and can be viewed:
 
-- [Data Accession Request](public/interest/data_publication_request.json)
-- [Daacs](public/interest/daacs.json)
-- [Data Publication Request](public/questionnaire/data_product_information.json)
+- [Data Accession Request](public/data_accession_request.json)
+- [Daacs](public/daacs.json)
+- [Data Publication Request](public/data_product_information.json)

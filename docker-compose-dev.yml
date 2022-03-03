@@ -8,6 +8,7 @@ services:
         environment: 
             API_ROOT: "http://localhost:8080"
             DASHBOARD_ROOT: "http://localhost:3000"
+            OVERVIEW_ROOT: "http://localhost:8082"
         ports:
             - "8081:8080"
         volumes:
