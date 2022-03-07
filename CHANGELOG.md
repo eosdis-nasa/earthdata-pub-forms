@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.16 - 2022-03-07
+
+- Added spinner to prevent forms header appearing before authorization.
+
 ## 1.0.15 - 2022-02-17
 
 - Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
