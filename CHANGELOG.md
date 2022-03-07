@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.16 - 2022-03-03
+
+- Moved eui css to outside of code and after all other css is processed.
+
 ## 1.0.15 - 2022-02-17
 
 - Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
