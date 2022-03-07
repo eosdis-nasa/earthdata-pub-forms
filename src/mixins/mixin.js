@@ -108,8 +108,7 @@ export default {
       },
       // @vuese
       // Gets form specific metadata
-      // @arg formId [String] the hash id to look up
-      async getForm(formId){
+      async getForm(){
         return new Promise((resolve) => {
           let url;
           if (this.$testing){
@@ -130,7 +129,7 @@ export default {
             });
             $.getJSON(url, (forms) => {
               for (let f in forms) {
-                if (forms[f]['id'].match(formId)){
+                if (forms[f]['id'].match(this.$store.state.global_params['formId'])){
                   this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
                   this.$store.commit("pushGlobalParams", ['form_short_name', forms[f]["short_name"]])
                   resolve(this.$store.state.global_params['form_short_name'])
@@ -427,7 +426,9 @@ export default {
         let route_to_default = this.checkAuth()
         let params = {}
         if (this.$route.query.formId) {
-          this.getForm(this.$route.query.formId)
+          params['formId'] = this.$route.query.formId
+          this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
+          this.getForm()
         }
         if (route_to_default){
           this.routeToDefault();
