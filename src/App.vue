@@ -1,9 +1,10 @@
 <template>
   <!-- Main App -->
   <div id="app">
+    <div class="loading" id="loading"><div class="spinner"></div></div>
     <TimeoutWarning />
-    <FormsHeader />
-    <router-view ref="content"/>
+    <FormsHeader ref="header" />
+    <router-view ref="content" />
     <go-top id="go_top" bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
   </div>
 </template>
@@ -42,18 +43,65 @@
             GoTop,
             TimeoutWarning
         },
+        beforeMount(){
+            this.setRoute()
+        },
         mounted() {
-            
+            setTimeout(() => {
+                const loading = document.getElementById('loading')
+                if (loading !== null && localStorage.getItem('auth-token') != null){
+                    loading.classList.add("hidden");
+                }
+            }, 1000);
         },
         watch: {
 
         },
         methods: {
-
+            
         }
     }
 </script>
 <style>
+    /* loader */
+    .spinner {
+        width: 40px;
+        height: 40px;
+        background-color: #8C8C8C;
+        -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+        animation: sk-rotateplane 1.2s infinite ease-in-out;
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .loading{
+        background-color:#fff;
+        height:100%;
+        width:100%;
+        z-index:1000;
+        position: absolute;
+    }
+    @-webkit-keyframes sk-rotateplane {
+        0% { -webkit-transform: perspective(120px) }
+        50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+        100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+    }
+    @keyframes sk-rotateplane {
+        0% {
+            transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+        } 50% {
+            transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+        } 100% {
+            transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+        }
+    }
+    .hidden {
+        display: none;
+    }
     .custom-control-label {
         margin-top: 5.5px;
     }
