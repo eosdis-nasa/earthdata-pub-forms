@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.17 - 2022-03-08
+
+- Updated scripts in package.json to include new overview docker container.
+
 ## 1.0.16 - 2022-03-03
 
 - Moved eui css to outside of code and after all other css is processed.
