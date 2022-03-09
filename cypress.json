@@ -24,7 +24,6 @@
         "header_title_default_value":"Earthdata Publication Forms",
         "header_form1_title_value":"Data Accession Request",
         "header_form2_title_value":"Data Publication Request",
-        "daac_selection_page":"http://localhost:8081/daac/selection",
         "daac_radio_label":"ORNL DAAC",
         "daac_description_selector":"div#selected_description",
         "daac_link_selector":"a#selected_daac_link",
@@ -32,14 +31,16 @@
         "daac_link_href":"daac.ornl.gov",
         "daac_select_button_selector":"button#daac_select_button",
         "daac_nav_href_checks":"Dashboard, Overview, Feedback",
-        "daac_selection_url":"http://localhost:8081/daacs/15df4fda-ed0d-417f-9124-558fb5e5b561",
-        "questions_1_url":"http://localhost:8081/?formId=6c544723-241c-4896-a38c-adbc0a364293&requestId=20e78804-c171-4549-bdab-6c7cf8e0fc72&group=15df4fda-ed0d-417f-9124-558fb5e5b561",
-        "questions_2_url":"http://localhost:8081/?formId=19025579-99ca-4344-8610-704dae626343&requestId=20e78804-c171-4549-bdab-6c7cf8e0fc72&group=15df4fda-ed0d-417f-9124-558fb5e5b561",
+        "daac_selection_url":"/daacs/15df4fda-ed0d-417f-9124-558fb5e5b561",
+        "forms_default_route":"/daacs/selection",
         "api_get_token_command_admin":"python3 /home/5kb/git/earthdatapub/get_edpub_token.py",
         "api_get_token_command_manager":"python3 /home/5kb/git/earthdatapub/get_edpub_token.py -r manager -g asdc",
-        "api_get_token_command_coordinator":"python3 /home/5kb/git/earthdatapub/get_edpub_token.py -r coordinator -g asdc"
-
+        "api_get_token_command_coordinator":"python3 /home/5kb/git/earthdatapub/get_edpub_token.py -r coordinator -g asdc",
+        "forms_pages":{
+            "daac_selection_page":"/daacs/selection",
+            "questions_1_url":"/?formId=6c544723-241c-4896-a38c-adbc0a364293&requestId=20e78804-c171-4549-bdab-6c7cf8e0fc72&group=15df4fda-ed0d-417f-9124-558fb5e5b561",
+            "questions_2_url":"/?formId=19025579-99ca-4344-8610-704dae626343&requestId=20e78804-c171-4549-bdab-6c7cf8e0fc72&group=15df4fda-ed0d-417f-9124-558fb5e5b561"
+        }
     },
-    "chromeWebSecurity": false,
-    "baseUrl": "http://localhost:8081"
+    "chromeWebSecurity": false
 }
