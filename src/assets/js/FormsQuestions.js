@@ -583,6 +583,19 @@ export default {
         if (direction == "north" && this_val <= -90.0) {
           return `${label} must be greater than -90.0`;
         }
+
+        if (direction == "west" && this_val < -180.0) {
+          return `${label} is out of range. ${label} must be greater than -180.0`;
+        }
+        if (direction == "east" && this_val > 180.0) {
+          return `${label} is out of range. ${label} must be less than 180.0`;
+        }
+        if (direction == "south" && this_val < -90.0) {
+          return `${label} is out of range. ${label} must be greater than -90.0`;
+        }
+        if (direction == "north" && this_val > 90.0) {
+          return `${label} is out of range. ${label} must be less than 90.0`;
+        }
       }
       return "";
     },

@@ -26,12 +26,12 @@
                       </b-button>
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
-                      <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" name="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" name="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- save button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" name="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" name="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <!-- draft button -->
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- submit button -->
                       <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>

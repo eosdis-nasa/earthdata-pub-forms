@@ -1,52 +1,52 @@
 <template>
-<div role="main">
-  <!-- Form -->
-  <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
-    <b-container name="daacs-container">
-      <div>
-        <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
-          <br />
-          <!-- Radio Div with Description -->
-          <div>
-            <div class="radio_div table">
-              <div class="radio_head_div font-weight-bold"><span>DAAC</span><span>Discipline</span></div>
-              <b-form-radio
-                v-for="(item, index) in daacs"
-                :key="index"
-                :name="item.short_name.replace(' ', '_')"
-                :id="`${item.id}`"
-                :value="item.long_name"
-                @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
-                v-model="selected"
-              ><span>{{ item.short_name }}</span><span>{{item.discipline}}</span></b-form-radio>
+  <div role="main">
+    <!-- Form -->
+    <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
+      <b-container name="daacs-container">
+        <div>
+          <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
+            <br />
+            <!-- Radio Div with Description -->
+            <div>
+              <div class="radio_div table">
+                <div class="radio_head_div font-weight-bold"><span>DAAC</span><span>Discipline</span></div>
+                <b-form-radio
+                  v-for="(item, index) in daacs"
+                  :key="index"
+                  :name="item.short_name.replace(' ', '_')"
+                  :id="`${item.id}`"
+                  :value="item.long_name"
+                  @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
+                  v-model="selected"
+                ><span>{{ item.short_name }}</span><span>{{item.discipline}}</span></b-form-radio>
+              </div>
             </div>
-          </div>
-          <!-- End of Radio Div with Description -->
-          <!-- Selected Info -->
-          <div style="clear:both">
-            <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
-              <strong>{{ selected }}</strong>
-              <div v-if="selected" id="selected_description"></div>
+            <!-- End of Radio Div with Description -->
+            <!-- Selected Info -->
+            <div style="clear:both">
+              <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
+                <strong>{{ selected }}</strong>
+                <div v-if="selected" id="selected_description"></div>
+              </div>
+              <div class="mt-3" v-if="selected">
+                For more information, visit
+                <a href="#" id="selected_daac_link" target="_blank">
+                  <span id="selected_daac"></span>'s website
+                  <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
+                </a>
+              </div>
+              <!-- Submit Button -->
+              <div v-if="selected">
+                <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
+              </div>
+              <!-- End of Submit Button -->
             </div>
-            <div class="mt-3" v-if="selected">
-              For more information, visit
-              <a href="#" id="selected_daac_link" target="_blank">
-                <span id="selected_daac"></span>'s website
-                <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
-              </a>
-            </div>
-            <!-- Submit Button -->
-            <div v-if="selected">
-              <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
-            </div>
-            <!-- End of Submit Button -->
-          </div>
-          <!-- End of Selected Info -->
-        </b-form-group>
-      </div>
-    </b-container>
-  </b-form>
-  <!-- End of Form -->
+            <!-- End of Selected Info -->
+          </b-form-group>
+        </div>
+      </b-container>
+    </b-form>
+    <!-- End of Form -->
   </div>
 </template>
 <script>
