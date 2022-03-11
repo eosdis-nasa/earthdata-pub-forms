@@ -1,6 +1,6 @@
 <template>
   <!-- FormsHeader with eui class -->
-  <div class="doc-mast header .header" role="banner">
+  <div class="doc-mast header" role="banner">
     <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
@@ -69,7 +69,6 @@ export default {
     // Sets the main route based on incoming query string, then saves them to the store.
     // This then sets local variables from the global_params
     window.headerComponent = this;
-    this.setRoute()
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
       this.formId = this.$store.state.global_params['formId']
     }
