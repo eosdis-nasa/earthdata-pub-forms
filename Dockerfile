@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:12.19.0-slim
 
 # apt update -y
 # RUN apt-get -y update \
