@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.17 - 2022-03-07
+## 1.0.17 - 2022-03-08
 
+- Updated scripts in package.json to include new overview docker container.
 - Minor tweaks, Reordered buttons, Code formatting, Fixed squished required label.
 - Added range validation to coordinates
 - Added spinner to prevent forms header appearing before authorization.
