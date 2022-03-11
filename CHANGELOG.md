@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.17 - 2022-03-07
 
+- Minor tweaks, Reordered buttons, Code formatting, Fixed squished required label.
 - Added range validation to coordinates
 - Added spinner to prevent forms header appearing before authorization.
 
