@@ -28,11 +28,11 @@ describe('Questions Page', () => {
     cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
   })
   it(`Test form 1 route and that data loads`, () => {
-    cy.visit(`${Cypress.env('questions_1_url')}`)
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['questions_1_url']}`)
     cy.contains(`${Cypress.env('header_form1_title_value')}`)
   })
   it(`Test form 2 route and that data loads`, () => {
-    cy.visit(`${Cypress.env('questions_2_url')}`)
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['questions_2_url']}`)
     cy.contains(`${Cypress.env('header_form2_title_value')}`)
   })
 })

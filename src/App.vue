@@ -6,6 +6,9 @@
     <FormsHeader ref="header" />
     <router-view ref="content" />
     <go-top id="go_top" bg-color="#ebebeb" fg-color="#323232" :has-outline="true" radius="3%" aria-label="go to top button" role="contentinfo"></go-top>
+    <noscript>
+      <strong>We're sorry but earthdata-pub-forms pages will not work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
   </div>
 </template>
 <!-- End of Main App -->

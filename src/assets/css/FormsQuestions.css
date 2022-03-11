@@ -44,10 +44,14 @@
     display: inherit;
     margin-right: -8px!important;
   }
-  span.checkbox label {
+  span.checkbox label, .checkbox-label {
     margin-left: 0px;
     /* font-weight:bold; */
     padding-right: 1rem;
+  }
+  .checkbox-label {
+    font-size: smaller;
+    margin: .2rem!important
   }
   span span label {
     margin-left: 2rem;
@@ -81,7 +85,7 @@
     font-size: 16px!important;
   }
   .section_required {
-    color: red !important;
+    color: #DB1400!important;
     padding-top: 7px!important;
     font-size: 16px!important;
     padding-right: 0px!important;
@@ -89,7 +93,7 @@
     margin-top: -20px!important;
   }
   .required {
-    color: red !important;
+    color: #DB1400 !important;
     padding-top: 7px!important;
     padding-right: 9.5px!important;
     font-size: 16px!important;
@@ -108,6 +112,9 @@
     margin: .5rem!important;
     margin-left: 9.5px!important;
     margin-bottom: -1px!important;
+    cursor: pointer!important;
+  }
+  .checkbox-label {
     cursor: pointer!important;
   }
   h3 {
@@ -142,7 +149,7 @@
   .form-group-error,
   .form-section-error,
   .form-table-error {
-    border-color: red;
+    border-color: #DB1400;
   }
   .form-group-error,
   .form-radio-group-error,
@@ -170,7 +177,7 @@
     border-color:#b2b2b2
   }
   .radio_checkbox_group_error {
-    border-color: red;
+    border-color: #DB1400;
     border-radius: 5px;
   }
   fieldset {

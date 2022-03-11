@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 import 'cypress-localstorage-commands'
-
+import 'cypress-axe'
 /* Cypress.Commands.add("loginByApi", (username = Cypress.env("username"), password = '?') => {
     return cy.request("POST", `${Cypress.env("api_root")}/login`, {
       username,

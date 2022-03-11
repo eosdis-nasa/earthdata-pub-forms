@@ -28,13 +28,13 @@ describe('Daac Selection Page', () => {
     cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
   })
   it(`Test the daac selection page route and that it loads`, () => {
-    cy.visit(`${Cypress.env('daac_selection_page')}`)
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['daac_selection_page']}`)
     cy.contains(`${Cypress.env('daac_radio_label')}`) 
   })
   it(`Test daac selection populating data and then all functionality`, () => {
-    cy.visit(`${Cypress.env('daac_selection_page')}`)
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['daac_selection_page']}`)
     cy.get('label').contains(`${Cypress.env('daac_radio_label')}`).click()
-    cy.url().should('eq', `${Cypress.env('daac_selection_url')}`)
+    cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('daac_selection_url')}`)
     cy.get(`${Cypress.env('daac_description_selector')}`).contains(`${Cypress.env('daac_description_match_text')}`)
     cy.get(`${Cypress.env('daac_link_selector')}`)
       .scrollIntoView()
