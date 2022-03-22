@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.18 - 2022-03-09
+
+- Added accessibility testing module. Applied accessibilty updates found through axe automated testing in cypress.
+
+## 1.0.17 - 2022-03-08
+
+- Updated scripts in package.json to include new overview docker container.
+- Minor tweaks, Reordered buttons, Code formatting, Fixed squished required label.
+- Added range validation to coordinates
+- Added spinner to prevent forms header appearing before authorization.
+
+## 1.0.16 - 2022-03-03
+
+- Moved eui css to outside of code and after all other css is processed.
+
 ## 1.0.15 - 2022-02-17
 
 - Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
