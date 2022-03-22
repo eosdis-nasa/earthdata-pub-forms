@@ -8,36 +8,36 @@
               <!-- Button Options -->
               <div class="button_bar">
                   <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
+                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
-                      <b-button class="button" type="redo" id="redo_button" v-else disabled aria-label="redo button">
+                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-else disabled aria-label="redo button">
                         <font-awesome-icon v-bind:icon="redoLabel"/>
                         {{ redoLabel }}
                       </b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
+                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
                         <font-awesome-icon v-bind:icon="undoLabel"/>
                         {{ undoLabel }}
                       </b-button>
-                      <b-button class="button" type="undo" id="undo_button" v-else disabled aria-label="undo button">
+                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-else disabled aria-label="undo button">
                         <font-awesome-icon v-bind:icon="undoLabel"/>
                         {{ undoLabel }}
                       </b-button>
                   </div>
                   <div align=right v-if="!readonly" class="right_button_bar">
-                      <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- save button -->
                       <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
                       <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                      <!-- draft button -->
+                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
                       <!-- submit button -->
-                      <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
                       <!-- cancel button -->
-                      <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
-                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
+                      <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
                   </div>
               </div>
           </div>
@@ -64,8 +64,9 @@
                         :readonly="readonly"
                         :key="b_key"
                       >
+                      <legend class="hidden">Fill out the form input fields.</legend>
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <span class="col text-right section_required" v-if="question.required == true">* required</span>
+                      <span class="col text-right section_required" v-if="question.required == true">* required </span>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                       </h3>
@@ -87,16 +88,13 @@
                                   value="true"
                                   unchecked-value="false"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
+                                  <div class="eui-label checkbox-label">{{input.label}}</div>
                                 </b-form-checkbox>
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox'">{{input.label}}</label>
-                                <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}</label>
                                 <!-- End of Checkbox Type of Input -->
                               </span>
                           <b-row v-else>
-                            <span :id="input.control_id" class="required col text-right" v-if="input.required == true && input.type == 'checkbox'">* required</span>
                             <template v-if="showIf(input.show_if)">
-                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label-nopointer" v-if="input.label !== undefined && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
-                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.type == 'checkbox'">{{input.label}}: </label>
+                              <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.label !== '' && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
                               <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
@@ -171,6 +169,13 @@
                                 ></b-form-input>
                                 <b-input-group-append>
                                   <b-form-datepicker 
+                                    :id="`${input.control_id}_button`"
+                                    :name="`${input.control_id}_button`"
+                                    :aria-controls="`date button`"
+                                    :aria-labelledby="`${input.control_id}_button`"
+                                    :aria-describedby="`${input.control_id}_button`"
+                                    :label-nav="`Date Picker`"
+                                    :label-calendar="`Date Picker`"
                                     v-model="values[input.control_id]"
                                     size="lg" 
                                     v-if="input.type == 'date'"
@@ -189,7 +194,7 @@
                               <div v-if="input.type == 'bbox'" class="w-100">
                                 <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
                                   <span :key="`${b_key}_${d_key}`">
-                                    <label class="eui-label-nopointer">{{direction.substring(0, 1).toUpperCase()}}:</label>
+                                    <label :for="`${input.control_id}_${direction}`" class="eui-label-nopointer">{{direction.substring(0, 1).toUpperCase()}}:</label>
                                     <b-form-input 
                                         :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${direction}`] || {}).$error }"
                                         type="text" 
@@ -206,7 +211,6 @@
                               </div>
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
-                                <label class="eui-label table-label font-weight-bold"></label>
                                 <template>
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"

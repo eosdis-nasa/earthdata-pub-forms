@@ -361,12 +361,28 @@ export default {
       window.headerComponent.daac = this.daac
     }
     this.setActiveLocationWithoutReload(this.daac);
-    this.fetchQuestions();
+    this.fetchQuestions().then(
+      this.accessibilityHack()
+    );
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
       this.loadAnswers()
     }
   },
   methods: {
+    accessibilityHack(){
+      setTimeout(() => {
+        let buttons = document.getElementsByTagName('button')
+        for (const ea in buttons){
+          if (buttons[ea].ariaLabel == null && typeof buttons[ea].id !== 'undefined') {
+            try {
+              buttons[ea].ariaLabel = buttons[ea].id
+            } catch(err) {
+              // console.error(err);
+            }
+          }
+        }
+      }, 4000);
+    },
     // @vuese
     // Goes to daacs after asking if okay if new data present.
     goToDaacs(){
@@ -566,6 +582,19 @@ export default {
         }
         if (direction == "north" && this_val <= -90.0) {
           return `${label} must be greater than -90.0`;
+        }
+
+        if (direction == "west" && this_val < -180.0) {
+          return `${label} is out of range. ${label} must be greater than -180.0`;
+        }
+        if (direction == "east" && this_val > 180.0) {
+          return `${label} is out of range. ${label} must be less than 180.0`;
+        }
+        if (direction == "south" && this_val < -90.0) {
+          return `${label} is out of range. ${label} must be greater than -90.0`;
+        }
+        if (direction == "north" && this_val > 90.0) {
+          return `${label} is out of range. ${label} must be less than 90.0`;
         }
       }
       return "";

@@ -108,8 +108,7 @@ export default {
       },
       // @vuese
       // Gets form specific metadata
-      // @arg formId [String] the hash id to look up
-      async getForm(formId){
+      async getForm(){
         return new Promise((resolve) => {
           let url;
           if (this.$testing){
@@ -130,7 +129,7 @@ export default {
             });
             $.getJSON(url, (forms) => {
               for (let f in forms) {
-                if (forms[f]['id'].match(formId)){
+                if (forms[f]['id'].match(this.$store.state.global_params['formId'])){
                   this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
                   this.$store.commit("pushGlobalParams", ['form_short_name', forms[f]["short_name"]])
                   resolve(this.$store.state.global_params['form_short_name'])
@@ -310,28 +309,6 @@ export default {
                 url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
               $.getJSON(url, (questions) => {
-                //The below line looks for custom css and applies it to the head (eui is done first)
-                $('head link[data-eui="yes"]').remove();
-                if (questions.style) {
-                  $('head link[data-custom="yes"]').remove();
-                }
-                var head = window.document.head;
-                var link = window.document.createElement("link");
-                link.type = "text/css";
-                link.rel = "stylesheet";
-                $(link).attr("data-eui", "yes");
-                link.href =
-                  "https://cdn.earthdata.nasa.gov/eui/1.1.7/stylesheets/application.css";
-                head.appendChild(link);
-                if (questions.style) {
-                  head = window.document.head;
-                  link = window.document.createElement("link");
-                  link.type = "text/css";
-                  link.rel = "stylesheet";
-                  $(link).attr("data-custom", "yes");
-                  link.href = questions.style;
-                  head.appendChild(link);
-                }
                 for (var section in questions["sections"]) {
                   var heading = questions["sections"][section]["heading"];
                   var heading_required =
@@ -427,7 +404,9 @@ export default {
         let route_to_default = this.checkAuth()
         let params = {}
         if (this.$route.query.formId) {
-          this.getForm(this.$route.query.formId)
+          params['formId'] = this.$route.query.formId
+          this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
+          this.getForm()
         }
         if (route_to_default){
           this.routeToDefault();
