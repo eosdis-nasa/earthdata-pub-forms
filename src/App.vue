@@ -52,7 +52,7 @@
         mounted() {
             setTimeout(() => {
                 const loading = document.getElementById('loading')
-                if (loading !== null && localStorage.getItem('auth-token') != null){
+                if (loading !== null && (localStorage.getItem('auth-token') != null || this.$testing)){
                     loading.classList.add("hidden");
                 }
             }, 1000);

@@ -70,7 +70,7 @@
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                       </h3>
-                      <p class="text-muted" v-if="question.help != 'undefined'">{{question.help}}</p>
+                      <p class="text-muted" v-if="question.help != 'undefined'" v-html="question.help"></p>
                       <!-- Input -->
                       <b-row>
                         <b-col :lg="question.size || 12" class="question_size">
@@ -325,12 +325,12 @@
                                       <template v-for="(req_if, e_key) in input.required_if">
                                         <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}_${e_key}`" v-if="values[req_if.field] == req_if.value">
                                           <template v-if="req_if.message !== undefined">{{ req_if.message }}</template>
-                                          <template v-else-if="input.validation_error_msg !== undefined">{{ input.validation_error_msg }}</template>
+                                          <span v-else-if="input.validation_error_msg !== undefined" v-html="input.validation_error_msg"></span>
                                           <template v-else>is required</template>
                                         </span>
                                       </template>
                                     </template> 
-                                    <template v-else-if="input.validation_error_msg !== undefined">{{ input.validation_error_msg }}</template>
+                                    <span v-else-if="input.validation_error_msg !== undefined" v-html="input.validation_error_msg"></span>
                                     <template v-else-if="$v.values[`${input.control_id}_${direction}`].required !== undefined && !$v.values[`${input.control_id}_${direction}`].required">is required</template>
                                     <template v-else>{{  getBboxError(input, direction) }}</template>
                                   </li>
@@ -342,12 +342,12 @@
                                     <template v-for="(req_if, d_key) in input.required_if">
                                       <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
                                         <template v-if="req_if.message !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ req_if.message }}</template>
-                                        <template v-else-if="input.validation_error_msg !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                                        <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.label} : ${input.validation_error_msg}`"></span>
                                         <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
                                       </span>
                                     </template>
                                   </template>
-                                  <template v-else-if="input.validation_error_msg !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ input.validation_error_msg }}</template>
+                                  <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.label} : ${input.validation_error_msg}`"></span>
                                   <template v-else>
                                     {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
