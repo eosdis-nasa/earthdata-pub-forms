@@ -9,13 +9,15 @@
     <noscript>
       <strong>We're sorry but earthdata-pub-forms pages will not work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <FormsFooter ref="footer" />
   </div>
 </template>
 <!-- End of Main App -->
 <script>
-    // Imports FormsHeader and footer as components.
+    // Imports FormsHeader and FormsFooter as components.
     // Vue files that are not routes should go in components.
     // Add this to know how to import as such
+    import FormsFooter from '@/components/FormsFooter'
     import FormsHeader from '@/components/FormsHeader'
     import GoTop from '@inotom/vue-go-top';
     import TimeoutWarning from '@/components/TimeoutWarning';
@@ -42,6 +44,7 @@
 
         },
         components: {
+            FormsFooter,
             FormsHeader,
             GoTop,
             TimeoutWarning
@@ -243,4 +246,30 @@
         background-color: #1baf5e;
     }
     /* ******************* */
+    /* footer styling */
+    footer {
+        background: #2276ac;
+        color: white;
+        padding: 1em 2em;
+        font-size: 0.8em;
+    }
+    footer a:link, footer a:visited {
+        color: white;
+    }
+    footer ul {
+        margin: 0.25em 0;
+        padding: 0;
+    }
+    footer ul li {
+        display: inline;
+    }
+    footer ul li:not(:first-child):before {
+        content: "\b7";
+        margin: 0 0.5em;
+    }
+    footer .badge {
+        background-color: #2c3e50;
+        position: relative;
+        top: -2px;
+    }
 </style>
