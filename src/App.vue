@@ -251,7 +251,6 @@
         background: #2276ac;
         color: white;
         padding: 1em 2em;
-        font-size: 0.8em;
     }
     footer a:link, footer a:visited {
         color: white;
