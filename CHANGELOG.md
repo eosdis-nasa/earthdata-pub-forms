@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.19 - 2022-03-25
+## 1.0.19 - 2022-03-23
 
+- Updated to render links using vhtml attribute for help and custom validation messages
 - Turn on Earthdata Feedback Module
 
 ## 1.0.18 - 2022-03-09
