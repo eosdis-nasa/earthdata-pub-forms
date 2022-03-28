@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.19 - 2022-03-25
+
+- Turn on Earthdata Feedback Module
+
 ## 1.0.18 - 2022-03-09
 
 - Added accessibility testing module. Applied accessibilty updates found through axe automated testing in cypress.

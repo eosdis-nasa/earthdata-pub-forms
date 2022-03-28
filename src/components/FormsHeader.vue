@@ -12,19 +12,15 @@
         </h1>
         <div id="nav">
           <span v-if="this.$route.path.match(/daacs/g)" @click="compareDataAskLeave('daacs')">
-            <a id="daacs_nav_link" alt="go the EDPub Group Selection" title="go the EDPub Group Selection">DAACS</a> |
+            <a id="daacs_nav_link" alt="go EDPub DAAC Selection" title="go EDPub DAAC Selection">DAAC Selection</a> |
           </span>
           <span v-if="this.$route.path.match(/questions/g)">
-            <a id="questions_nav_link" alt="go the EDPub Questions" title="go the EDPub Questions">Questions</a>  | 
+            <a id="questions_nav_link" alt="go EDPub Questions" title="go EDPub Questions">Questions</a>  | 
           </span>
-          <span v-if="this.$route.path.match(/questions/g)"><a @click="compareDataAskLeave('dashboard')" alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a>  | </span>
-          <span v-else><a :href=dashboardRoot alt="go the EDPub Dashboard" title="go the EDPub Dashboard">Dashboard</a>  | </span>
-          <span v-if="this.$route.path.match(/questions/g)"><a @click="compareDataAskLeave('overview')" alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a>  | </span>
-          <span v-else><a :href=overviewRoot alt="go the EDPub Overview Pages" title="go the EDPub Overview Pages">Overview</a>  | </span>
-          <span>
-            <a href="https://app.smartsheet.com/b/form/4978cb9677ad4198a96afd40102e9f2d" target="_blank" alt="go the EDPub Overview Pages" title="go the EDPub Feedback Page">Feedback
-            <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon></a>&nbsp;
-          </span>
+          <span v-if="this.$route.path.match(/questions/g)"><a @click="compareDataAskLeave('dashboard')" alt="go EDPub Dashboard" title="go EDPub Dashboard">Dashboard</a>  | </span>
+          <span v-else><a :href=dashboardRoot alt="go EDPub Dashboard" title="go EDPub Dashboard">Dashboard</a>  | </span>
+          <span v-if="this.$route.path.match(/questions/g)"><a @click="compareDataAskLeave('overview')" alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Overview</a></span>
+          <span v-else><a :href=overviewRoot alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Overview</a></span>
         </div>
         <!-- End of Logo and menu -->
       </div>
