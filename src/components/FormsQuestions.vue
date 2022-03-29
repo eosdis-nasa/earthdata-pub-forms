@@ -1,7 +1,7 @@
 <template>
 <div role="main">
   <!-- Form -->
-  <b-form ref="form" name="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
+  <b-form ref="form" name="questions_form" id="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
     <b-container>
         <fixed-header :threshold="168" style="z-index:2">
           <div class="navbar">
