@@ -251,6 +251,7 @@
         background: #2276ac;
         color: white;
         padding: 1em 2em;
+        box-shadow: 0 50vh 0 50vh #000;
     }
     footer a:link, footer a:visited {
         color: white;
@@ -270,5 +271,8 @@
         background-color: #2c3e50;
         position: relative;
         top: -2px;
+    }
+    #daacs-container, #questions_form {
+        min-height:1240px;
     }
 </style>
