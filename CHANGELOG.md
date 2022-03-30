@@ -10,75 +10,79 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.19 - 2022-03-23
+## 1.0.0 - 2022-03-29
+
+- EDPub MVP release
+
+## 0.3.19 - 2022-03-23
 
 - Updated to render links using vhtml attribute for help and custom validation messages
 - Turn on Earthdata Feedback Module
 
-## 1.0.18 - 2022-03-09
+## 0.3.18 - 2022-03-09
 
 - Added accessibility testing module. Applied accessibilty updates found through axe automated testing in cypress.
 
-## 1.0.17 - 2022-03-08
+## 0.3.17 - 2022-03-08
 
 - Updated scripts in package.json to include new overview docker container.
 - Minor tweaks, Reordered buttons, Code formatting, Fixed squished required label.
 - Added range validation to coordinates
 - Added spinner to prevent forms header appearing before authorization.
 
-## 1.0.16 - 2022-03-03
+## 0.3.16 - 2022-03-03
 
 - Moved eui css to outside of code and after all other css is processed.
 
-## 1.0.15 - 2022-02-17
+## 0.3.15 - 2022-02-17
 
 - Content changes.  Changed orcid to all uppercase and funding orgs to checkboxes. 
 
-## 1.0.14 - 2022-02-09
+## 0.3.14 - 2022-02-09
 
 - Finished adding cypress base tests, removed jest files and libraries
 
-## 1.0.14 - 2022-01-28
+## 0.3.14 - 2022-01-28
 
 - Added Cypress testing suite and a few tests to run in browser mode
 
-## 1.0.13 - 2022-01-25
+## 0.3.13 - 2022-01-25
 
 - Added VUE_APP_TESTING_MODE environment variable
 
-## 1.0.12 - 2022-01-20
+## 0.3.12 - 2022-01-20
 
 - Updated vuese and comments for auto-documentation for better documentation
 maintenance. Some minor cleanup
 
-## 1.0.11 - 2021-12-22
+## 0.3.11 - 2021-12-22
 
 - Completed form decoupling for better maintenance. Some needed cleanup
 
-## 1.0.10 - 2021-12-07
+## 0.3.10 - 2021-12-07
 
 - Fixed dev dependencies removal of lint and test tools and renamed components
 according to lint allowing for build
 
-## 1.0.9 - 2021-11-19
+## 0.3.9 - 2021-11-19
 
 - Removed unused libraries and upgraded dependencies but for bootstrap
 
-## 1.0.8 - 2021-11-17
+## 0.3.8 - 2021-11-17
 
 - Removed hardcoded forms data
 - Added NASA Apache 2.0 license
 - Updated CONTRIBUTING.md
 
-## 1.0.7 - 2021-10-29
+## 0.3.7 - 2021-10-29
 
 - Decoupled daac selection page
 
-## 1.0.6 - 2021-08-25
+## 0.3.6 - 2021-08-25
 
 - Updated styling tweaks based on feedback
 
-## 1.0.5 - 2021-08-23
+## 0.3.5 - 2021-08-23
 
 - Update styling based on feedback
 - Replace form names with content update
@@ -87,24 +91,24 @@ according to lint allowing for build
 - Fixed same as checkbox not always showing
 - Moved editable table cell style to global space to allow for editing in tables.
 
-## 1.0.4 - 2021-08-19
+## 0.3.4 - 2021-08-19
 
 - Updated same as checkboxes to display title name instead of value.  Changed contact fields to be readonly if same as is checked. Tweaked undo redo functionality to reset store after loading answers.
 - Updated tables for inline editing
 
-## 1.0.3 - 2021-08-16
+## 0.3.3 - 2021-08-16
 
 - Altered help to show on forms automatically instead of by link
 - Fixed header links so they work correctly from each view and altered logic so there is no warning to save when on just daac selection and navigating away.
 
-## 1.0.2 - 2021-08-12
+## 0.3.2 - 2021-08-12
 
 - Added config option for unknown website link label override (VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR)
 - Added link to daac name selected in questions
 - Added daac name selected to questions (being set from mixin in setting the active location)
 - Updated jsons for publication_dois to be table format for multirow
 
-## 1.0.1 - 2021-07-22
+## 0.3.1 - 2021-07-22
 
 - Updated jsons from api and moved them to public folder
 - Added var for testing and code to use json instead of api; fixed help page error
@@ -122,9 +126,9 @@ according to lint allowing for build
 - Added label to hint at ideal format above date fields.
 - Added format date hint styling
 
-## 1.0.0 - 2021-06-29
+## 0.3.0 - 2021-06-29
 
-- Open source release version 1.0.0
+- Open source release version 0.3.0 [note: retroactively renumbered to 0.3 to allow numbering of MVP release]
 
 ## 0.2.2 - 2021-06-09
 
@@ -196,7 +200,7 @@ according to lint allowing for build
 
 - Added auth token function in mixin.js to redirect when none
 
-## 0.1.0 - 2020-12-04
+## 0.0.3 - 2020-12-04
 
 - Bbox validation message templates added
 - Post data to API
