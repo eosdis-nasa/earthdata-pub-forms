@@ -603,7 +603,7 @@ export default {
     // Shows and Hides based of json show_if
     // @arg config [Array] validates for showif
     showIf(config) {
-      if (typeof config == "undefined" || config.length == 0) {
+      if (typeof config == "undefined" || config.length == 0 || typeof config === 'object') {
         return true;
       }
       for (let fld of config) {
