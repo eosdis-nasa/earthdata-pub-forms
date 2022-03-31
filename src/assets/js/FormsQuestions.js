@@ -566,7 +566,7 @@ export default {
           this.values[`${fld.control_id}_${comp_direction[direction]}`]
         );
         let label = `${direction.substring(0, 1).toUpperCase()}`;
-        if (/west|south/.test(direction) && this_val >= comp_val) {
+        if (/west|south/.test(direction) && this_val > comp_val) {
           return `${label} must be less than ${comp_direction[direction]
             .substring(0, 1)
             .toUpperCase()}`;
@@ -603,7 +603,7 @@ export default {
     // Shows and Hides based of json show_if
     // @arg config [Array] validates for showif
     showIf(config) {
-      if (typeof config == "undefined" || config.length == 0) {
+      if (typeof config == "undefined" || config.length == 0 || typeof config === 'object') {
         return true;
       }
       for (let fld of config) {
