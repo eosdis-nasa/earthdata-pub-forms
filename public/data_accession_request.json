@@ -152,7 +152,7 @@
             {
               "type": "text",
               "control_id": "funding_program_name",
-              "label": "Program",
+              "label": "",
               "validation_error_msg": "Please enter a name for the program.",
               "required": true
             }
@@ -174,7 +174,6 @@
             {
               "type": "text",
               "control_id": "data_product_name_value",
-              "label": "Name",
               "validation_error_msg": "Please enter a name for the data product.",
               "required": true
             }
@@ -191,7 +190,6 @@
             {
               "type": "textarea",
               "control_id": "data_product_description",
-              "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
@@ -217,7 +215,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "label": "If yes, provide DOI",
               "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if":[
                 {
@@ -240,7 +237,6 @@
             {
               "type": "textarea",
               "control_id": "science_value_description",
-              "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
@@ -261,7 +257,6 @@
             {
               "type": "textarea",
               "control_id": "data_submission_reason_description",
-              "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 5,
@@ -278,13 +273,12 @@
         {
           "short_name": "data_submission_approval_dependencies",
           "long_name": "Dependencies for Data Accession Approval",
-          "text": "Do you have any dependencies related to this data product being approved to be published at the DAAC? If Yes, please provide a brief explanation.",
+          "text": "Do you have any dependencies related to this data product being approved to be published at the DAAC?",
           "help": "For example, are you hoping to have this data product approved to be published at the DAAC prior publishing a paper or presenting at a conference? Does your project have a defined timeline in which this data product needs to be published?",
           "inputs": [
             {
               "type": "radio",
               "control_id": "data_submission_approval_dependencies_radios",
-              "label": "Has Dependencies",
               "enums": [
                 "Yes",
                 "No"
@@ -294,7 +288,7 @@
             {
               "type": "text",
               "control_id": "data_submission_approval_dependencies_explanation",
-              "label": "If Yes, provide explanation",
+              "label": "If Yes, please provide a brief explanation",
               "required_if": [
                 {
                   "field": "data_submission_approval_dependencies_radios",
@@ -310,13 +304,12 @@
         {
           "short_name": "data_product_restrictions",
           "long_name": "Data Product Restrictions",
-          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy? If No or Not sure, please provide a brief explanation.",
+          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "For a description of the open data policy, please refer to the <a href='https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy' target=_blank>NASA Earthdata Data and Information Policy web page <i class='fas fa-external-link-alt'></i></a>.",
           "inputs": [
             {
               "type": "radio",
               "control_id": "data_product_restrictions_public",
-              "label": "Releasable to public",
               "enums": [
                 "Yes",
                 "No",
@@ -327,7 +320,7 @@
             {
               "type": "text",
               "control_id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation",
+              "label": "If No or Not sure, please provide a brief explanation",
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
@@ -348,8 +341,7 @@
           "inputs": [
             {
               "type": "text",
-              "control_id": "data_product_documentation_url",
-              "label": "Additional Documentation URL"
+              "control_id": "data_product_documentation_url"
             }
           ],
           "id": "ad568b2f-89fe-4afd-a0bf-9e5832b71ce9",
@@ -410,7 +402,7 @@
             {
               "type": "text",
               "control_id": "data_format_other_info",
-              "label": "If Other, please provide the data format(s).",
+              "label": "If Other, please provide the data format(s)",
               "required_if": [
                 {
                   "field": "data_format_other",
@@ -431,7 +423,6 @@
             {
               "type": "text",
               "control_id": "spatial_general_region",
-              "label": "Coverage",
               "validation_error_msg": "Please enter spatial coverage.",
               "required": true
             }
@@ -470,7 +461,6 @@
             {
               "type": "radio",
               "control_id": "data_product_status",
-              "label": "Product Status",
               "enums": [
                 "Yes",
                 "No"
@@ -495,7 +485,6 @@
             {
               "type": "radio",
               "control_id": "data_delivery_frequency",
-              "label": "Unit",
               "enums": [
                 "Daily",
                 "Weekly",
@@ -518,14 +507,12 @@
             {
               "type": "number",
               "control_id": "data_product_volume_amount",
-              "label": "Amount",
               "required": true,
               "validation_error_msg": "Volume must be positive."
             },
             {
               "type": "radio",
               "control_id": "data_product_volume_units",
-              "label": "Unit",
               "enums": [
                 "KB",
                 "MB",
@@ -544,12 +531,11 @@
           "long_name": "Sample Data File(s)",
           "text": "Please provide a URL to a sample file(s).",
           "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
-          "required": true,
           "inputs": [
             {
               "type": "text",
               "control_id": "example_file_url",
-              "label": "Sample File URL"
+              "required": true
             }
           ],
           "id": "53a0faa7-f7d4-4ce9-a9dc-a13cef44e1f3",

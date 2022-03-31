@@ -66,7 +66,7 @@
                       >
                       <legend class="hidden">Fill out the form input fields.</legend>
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <span class="col text-right section_required" v-if="question.required == true">* required </span>
+                      <span class="col text-right section_required" v-if="question.required == true">required </span>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                       </h3>
@@ -123,7 +123,6 @@
                                   </label>
                                 </span>
                               </span>
-                              <span class="required col text-right" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <!-- Text Type of Input -->
                               <b-form-input 
                                   :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
@@ -148,6 +147,8 @@
                                   :minLength="getAttribute('minlength', question.inputs[c_key])"
                                   :max="getAttribute('max', question.inputs[c_key])"
                                   :min="getAttribute('min', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
+                                  :required="Boolean(input.required)"
                                   >
                               </b-form-input>
                               <!-- Date Type of Input -->
@@ -164,6 +165,8 @@
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                   :max="getAttribute('max', question.inputs[c_key])"
                                   :min="getAttribute('min', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
+                                  :required="Boolean(input.required)"
                                   type="text"
                                   autocomplete="off"
                                 ></b-form-input>
@@ -183,6 +186,8 @@
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
+                                    :placeholder="input.required ? 'required' : ''"
+                                    :required="Boolean(input.required)"
                                     button-only
                                     dropleft
                                   >
@@ -204,6 +209,8 @@
                                         size="lg"
                                         :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                         :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                        :placeholder="input.required ? 'required' : ''"
+                                        :required="Boolean(input.required)"
                                         >
                                     </b-form-input>
                                   </span>
@@ -260,7 +267,8 @@
                                   :rows="getAttribute('rows', question.inputs[c_key])"
                                   :maxlength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minlength="getAttribute('minlength', question.inputs[c_key])"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
+                                  :required="Boolean(input.required)"
                                   v-if="input.type == 'textarea'">
                               </b-form-textarea>
                               <!-- End of Textarea Type of Input -->
@@ -277,7 +285,9 @@
                                   unchecked-value="false"
                                   v-if="input.type == 'radio'" 
                                   :options="input.options"
+                                  :required="Boolean(input.required)"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
+                                  <span class='required' v-if='input.required'>required</span>
                               </b-form-radio-group>
                               <!-- End of Radio Group Type of Input -->
                               <!-- Select Type of Input -->
@@ -291,7 +301,8 @@
                                   v-if="input.type == 'select'" 
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
+                                  :required="Boolean(input.required)"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-select>
                               <!-- End of Select Type of Input -->
@@ -306,7 +317,8 @@
                                   size="lg" 
                                   v-if="input.type == 'file'"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
+                                  :required="Boolean(input.required)"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-file>
                               <!-- End of File Type of Input -->
