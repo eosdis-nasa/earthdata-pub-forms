@@ -2,7 +2,7 @@
   <div role="main">
     <!-- Form -->
     <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
-      <b-container name="daacs-container">
+      <b-container name="daacs-container" id="daacs-container">
         <div>
           <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
             <br />
