@@ -66,9 +66,9 @@
                       >
                       <legend class="hidden">Fill out the form input fields.</legend>
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <span class="col text-right section_required" v-if="question.required == true">required </span>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
+                        <span class="col text-right section_required" v-if="question.required == true">required </span>
                       </h3>
                       <p class="text-muted" v-if="question.help != 'undefined'" v-html="question.help"></p>
                       <!-- Input -->

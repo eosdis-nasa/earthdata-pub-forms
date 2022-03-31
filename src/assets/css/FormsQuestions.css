@@ -86,11 +86,7 @@
   }
   .section_required {
     color: #DB1400!important;
-    padding-top: 7px!important;
     font-size: 16px!important;
-    padding-right: 0px!important;
-    margin-top: -20px!important;
-    float: right;
   }
   .required {
     color: #DB1400 !important;
