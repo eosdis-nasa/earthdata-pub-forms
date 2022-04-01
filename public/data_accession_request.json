@@ -325,7 +325,12 @@
                 {
                   "field": "data_product_restrictions_public",
                   "value": "No",
-                  "message":"Please provide an explanation of the data product's restrictions."
+                  "message": "Please provide an explanation of the data product's restrictions."
+                },
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "Not sure",
+                  "message": "Please provide an explanation of the data product's restrictions."
                 }
               ]
             }

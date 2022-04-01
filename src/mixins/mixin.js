@@ -408,7 +408,7 @@ export default {
           this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
           this.getForm()
         }
-        if (route_to_default){
+        if (route_to_default && !this.$testing){
           this.routeToDefault();
         } else {
           let path = '';

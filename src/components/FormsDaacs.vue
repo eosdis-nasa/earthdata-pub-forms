@@ -261,6 +261,8 @@ export default {
   }
   .form-group {
     margin-top:2rem;
+    margin-left:8px;
+    margin-right:8px;
   }
   #selected_daac, .external-link-alt, #selected_daac_link {
     color: #2275AA;

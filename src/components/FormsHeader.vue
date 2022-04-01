@@ -5,7 +5,7 @@
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
-        <h1>
+        <h1 class="header">
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
           <span id="title">{{$store.state.global_params['formTitle']}}&nbsp;<span v-if="this.$testing">(TESTING MODE)</span>
           </span>
@@ -85,6 +85,7 @@ export default {
     padding: 5px;
     text-align:right;
     padding-bottom: 1.75rem;
+    margin-right: 18px;
   }
   #nav a {
     color:white;
