@@ -123,7 +123,7 @@
                               </span>
                               <!-- Text Type of Input -->
                               <b-form-input 
-                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
                                   :type="input.type" 
                                   :id="input.control_id" 
                                   :name="input.control_id" 
@@ -249,7 +249,7 @@
                               <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
                               <b-form-textarea 
-                                  :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                  :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
                                   :type="input.type" 
                                   :id="input.control_id" 
                                   :name="input.control_id" 

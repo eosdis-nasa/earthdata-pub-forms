@@ -22,7 +22,9 @@
   }
   .eui-label-nopointer {
     cursor: auto!important;
-    
+  }
+  .extra_space {
+    margin-top: 1rem!important;
   }
   .bbox {
     min-width: 100px;
