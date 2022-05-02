@@ -5,7 +5,7 @@
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo">
-        <h1 class="header">
+        <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
           <span id="title">{{$store.state.global_params['formTitle']}}&nbsp;<span v-if="this.$testing">(TESTING MODE)</span>
           </span>

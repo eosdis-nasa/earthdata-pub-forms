@@ -110,28 +110,19 @@
         margin-left:5px;
     }
     .nav, .header, div#nav, .eui-application-logo {
-        padding-left: 8px;
+        /* padding-left: 8px; */
     }
     .vue-fixed-header {
-        margin-right:8px;
-        margin-left:8px;
-        width:1073px;
+        width:1110px;
     }
     .navbar {
-        margin-left: 18px;
-        margin-right: 4px;
-    }
-    .heading {
-        margin-left: 8px;
-        margin-right: 8px;
+        margin-left: 1px;
     }
     .form-group, .form-section {
         border-color:white;
         border-radius: 5px;
         border-style: solid;
         border-width: 1px;
-        padding-left: 9px;
-        padding-right: 9px;
         padding-top: 8px;
         padding-bottom: 5px;
     }

@@ -236,8 +236,8 @@
       position: fixed;
       left: 20;
       top: 1rem;
-      min-width: 1073px;
-      max-width: 1073px;
+      min-width: 1107px;
+      max-width: 1107px;
     }
   }
   @media (max-width: 1200px) {
