@@ -60,6 +60,7 @@ export default {
           }
           $.getJSON(url, daacs => {
             for (var dict in daacs) {
+              if (daacs[dict].hidden) continue;
               items.push(daacs[dict]);
             }
             this.daacs = items
