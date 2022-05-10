@@ -51,9 +51,9 @@
         <section>
             <b-row v-for="(heading, a_key) in questions" :key="a_key">
               <li class="eui-banner--danger same-as-html5" v-bind:key="a_key" v-if="($v.values[`section_${a_key}`] || {}).$error">Section {{ heading.heading }} is required</li>
-              <div :class="{ 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
+              <div :class="{ 'form-section': true, 'form-section-error': ($v.values[`section_${a_key}`] || {}).$error }" class="w-100" v-if="showIf(heading.heading_show_if)">
                 <input type="hidden" :id="`section_${a_key}`" v-if="heading.heading_required" />
-                <h2>{{heading.heading}}</h2>
+                <h2 class="heading">{{heading.heading}}</h2>
                 <div :id="a_key" class="question_section w-100">
                     <!-- Question -->
                     <template v-for="(question, b_key) in heading"  >
@@ -66,9 +66,9 @@
                       >
                       <legend class="hidden">Fill out the form input fields.</legend>
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
-                      <span class="col text-right section_required" v-if="question.required == true">* required </span>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
+                        <span class="col text-right section_required" v-if="question.required == true">required </span>
                       </h3>
                       <p class="text-muted" v-if="question.help != 'undefined'" v-html="question.help"></p>
                       <!-- Input -->
@@ -91,19 +91,17 @@
                                   <div class="eui-label checkbox-label">{{input.label}}</div>
                                 </b-form-checkbox>
                                 <!-- End of Checkbox Type of Input -->
+                                <span class='required' v-if='input.required || checkRequiredIf(input)'>required</span>
                               </span>
                           <b-row v-else>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.label !== '' && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
                               <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
-                              <label v-if="input.type == 'textarea' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
-                                {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
-                              </label>
-                              <label v-else-if="input.type == 'text' && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
-                                ({{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left)
+                              <label v-if="(input.type == 'textarea' || input.type == 'text') && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
+                                 {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </label>
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
-                                <span id="contact_span" v-if="contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
+                                <span id="contact_span" v-if="input.contact == true && contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
                                   <b-form-checkbox 
                                     class="eui-checkbox"
                                     v-if="input.contact == true"
@@ -123,10 +121,9 @@
                                   </label>
                                 </span>
                               </span>
-                              <span class="required col text-right" v-if="input.required == true && input.type!='checkbox'">* required</span>
                               <!-- Text Type of Input -->
                               <b-form-input 
-                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
                                   :type="input.type" 
                                   :id="input.control_id" 
                                   :name="input.control_id" 
@@ -148,6 +145,7 @@
                                   :minLength="getAttribute('minlength', question.inputs[c_key])"
                                   :max="getAttribute('max', question.inputs[c_key])"
                                   :min="getAttribute('min', question.inputs[c_key])"
+                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   >
                               </b-form-input>
                               <!-- Date Type of Input -->
@@ -164,6 +162,7 @@
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                   :max="getAttribute('max', question.inputs[c_key])"
                                   :min="getAttribute('min', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
                                   type="text"
                                   autocomplete="off"
                                 ></b-form-input>
@@ -183,6 +182,7 @@
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
+                                    :placeholder="input.required ? 'required' : ''"
                                     button-only
                                     dropleft
                                   >
@@ -204,6 +204,7 @@
                                         size="lg"
                                         :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                         :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
+                                        :placeholder="input.required ? 'required' : ''"
                                         >
                                     </b-form-input>
                                   </span>
@@ -248,7 +249,7 @@
                               <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
                               <b-form-textarea 
-                                  :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                  :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
                                   :type="input.type" 
                                   :id="input.control_id" 
                                   :name="input.control_id" 
@@ -260,7 +261,7 @@
                                   :rows="getAttribute('rows', question.inputs[c_key])"
                                   :maxlength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minlength="getAttribute('minlength', question.inputs[c_key])"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
                                   v-if="input.type == 'textarea'">
                               </b-form-textarea>
                               <!-- End of Textarea Type of Input -->
@@ -278,6 +279,7 @@
                                   v-if="input.type == 'radio'" 
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
+                                  <span class='required' v-if='input.required'>required</span>
                               </b-form-radio-group>
                               <!-- End of Radio Group Type of Input -->
                               <!-- Select Type of Input -->
@@ -291,7 +293,7 @@
                                   v-if="input.type == 'select'" 
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-select>
                               <!-- End of Select Type of Input -->
@@ -306,7 +308,7 @@
                                   size="lg" 
                                   v-if="input.type == 'file'"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="getAttribute('placeholder', question.inputs[c_key])"
+                                  :placeholder="input.required ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-file>
                               <!-- End of File Type of Input -->
@@ -341,15 +343,15 @@
                                   <template v-if="input.required_if !== undefined && input.required_if.length > 0">
                                     <template v-for="(req_if, d_key) in input.required_if">
                                       <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                                        <template v-if="req_if.message !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ input.label }}: {{ req_if.message }}</template>
-                                        <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.label} : ${input.validation_error_msg}`"></span>
-                                        <template v-else>{{ heading.heading }} - {{ question.title }} - {{ input.label }} is required</template>
+                                        <template v-if="req_if.message !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ typeof input.label !== 'undefined' ? input.label : ''}}: {{ req_if.message }}</template>
+                                        <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name}: ${input.validation_error_msg}`"></span>
+                                        <template v-else>{{ heading.heading }} - {{ question.title }} - {{ typeof input.label !== 'undefined' ? input.label : ''}} is required</template>
                                       </span>
                                     </template>
                                   </template>
-                                  <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.label} : ${input.validation_error_msg}`"></span>
+                                  <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name}: ${input.validation_error_msg}`"></span>
                                   <template v-else>
-                                    {{ heading.heading }} - {{ question.long_name }} - {{ input.label }}
+                                    {{ heading.heading }} - {{ question.long_name }} - {{ typeof input.label !== 'undefined' ? input.label : ''}}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                                     <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
                                     <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>

@@ -46,7 +46,6 @@ The following input attributes are accepted and are evaluated in forms:
   - Inputs can be disabled by the form, however, individual inputs may be disabled.
 - readonly (text, textarea)
   - Inputs can be disabled by the form, however, individual inputs may be sent readonly.
-- placeholder (text, textarea, select, file)
 - pattern (text)
 - maxLength (text, textarea)
 - minLength (text, textarea)

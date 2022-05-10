@@ -3,7 +3,7 @@
     <!-- Form -->
     <b-form name="daacs_form" @submit="enterSubmitForm" id="daac-selection">
       <b-container name="daacs-container" id="daacs-container">
-        <div>
+        <div class="daac-div">
           <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
             <br />
             <!-- Radio Div with Description -->
@@ -23,7 +23,7 @@
             </div>
             <!-- End of Radio Div with Description -->
             <!-- Selected Info -->
-            <div style="clear:both">
+            <div>
               <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
                 <strong>{{ selected }}</strong>
                 <div v-if="selected" id="selected_description"></div>
@@ -261,6 +261,8 @@ export default {
   }
   .form-group {
     margin-top:2rem;
+    margin-left:8px;
+    margin-right:8px;
   }
   #selected_daac, .external-link-alt, #selected_daac_link {
     color: #2275AA;
@@ -278,5 +280,12 @@ export default {
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid #dee2e6;
+  }
+  fieldset#form-group.form-group {
+    margin-left: unset;
+    margin-right: unset;
+    padding-left: unset;
+    padding-right: unset;
+    min-width:1110px;
   }
 </style>

@@ -334,6 +334,11 @@
                   "field": "data_product_restrictions_public",
                   "value": "No",
                   "message": "Please provide an explanation of the data product's restrictions."
+                },
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "Not sure",
+                  "message": "Please provide an explanation of the data product's restrictions."
                 }
               ]
             }
@@ -931,12 +936,12 @@
           "long_name": "Sample Data File(s)",
           "text": "Please provide a URL to a sample file(s).",
           "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
-          "required": true,
           "inputs": [
             {
               "type": "text",
               "control_id": "example_file_url",
-              "label": "Sample File URL"
+              "label": "Sample File URL",
+              "required": true
             }
           ],
           "id": "53a0faa7-f7d4-4ce9-a9dc-a13cef44e1f3",

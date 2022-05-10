@@ -185,20 +185,7 @@ export default {
                   val_fields.values[
                     `${fld.control_id}_${direction}`
                   ].required = requiredIf(() => {
-                    for (let req_fld of fld.required_if) {
-                      try {
-                        if (
-                          typeof this.values[req_fld.field] != "undefined" &&
-                          this.values[req_fld.field].toString() ===
-                            req_fld.value.toString()
-                        ) {
-                          return true;
-                        }
-                      } catch (e) {
-                        // test
-                      }
-                    }
-                    return false;
+                    return this.checkRequiredIf(fld)
                   });
                 }
               }
@@ -369,6 +356,24 @@ export default {
     }
   },
   methods: {
+    checkRequiredIf(fld) {
+      if (fld.required_if) {
+        for (let req_fld of fld.required_if) {
+          try {
+            if (
+              typeof this.values[req_fld.field] != "undefined" &&
+              this.values[req_fld.field].toString() ===
+                req_fld.value.toString()
+            ) {
+              return true;
+            }
+          } catch (e) {
+            // test
+          }
+        }
+      }
+      return false;
+    },
     accessibilityHack(){
       setTimeout(() => {
         let buttons = document.getElementsByTagName('button')
@@ -603,7 +608,7 @@ export default {
     // Shows and Hides based of json show_if
     // @arg config [Array] validates for showif
     showIf(config) {
-      if (typeof config == "undefined" || config.length == 0 || typeof config === 'object') {
+      if (typeof config == "undefined" || config.length == 0 || !Array.isArray(config)) {
         return true;
       }
       for (let fld of config) {

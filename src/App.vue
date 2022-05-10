@@ -105,11 +105,35 @@
             -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
         }
     }
+    h1.header {
+        width:1073px!important;
+        margin-left:5px;
+    }
+    .nav, .header, div#nav, .eui-application-logo {
+        /* padding-left: 8px; */
+    }
+    .vue-fixed-header {
+        width:1110px;
+    }
+    .navbar {
+        margin-left: 1px;
+    }
+    .form-group, .form-section {
+        border-color:white;
+        border-radius: 5px;
+        border-style: solid;
+        border-width: 1px;
+        padding-top: 8px;
+        padding-bottom: 5px;
+    }
     .hidden {
         display: none;
     }
     .custom-control-label {
         margin-top: 5.5px;
+    }
+    .editable-table {
+        margin-top:3rem;
     }
     .editable-table .data-cell {
         min-height: 2rem;
@@ -251,7 +275,7 @@
         background: #2276ac;
         color: white;
         padding: 1em 2em;
-        box-shadow: 0 50vh 0 50vh #000;
+        /* box-shadow: 0 50vh 0 50vh #000; */
     }
     footer a:link, footer a:visited {
         color: white;
