@@ -266,7 +266,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if": [
                 {
                   "field": "data_product_doi_exists",
@@ -327,13 +326,11 @@
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "No"
                 },
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "Not sure",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "Not sure"
                 }
               ]
             }

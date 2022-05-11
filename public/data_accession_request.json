@@ -215,7 +215,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if":[
                 {
                   "field":"data_product_doi_exists",
@@ -237,7 +236,6 @@
             {
               "type": "textarea",
               "control_id": "science_value_description",
-              "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
                 "cols": 20
@@ -257,12 +255,10 @@
             {
               "type": "textarea",
               "control_id": "data_submission_reason_description",
-              "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 5,
                 "cols": 20,
-                "maxlength":1000,
-                "placeholder":""
+                "maxlength":1000
               },
               "required": true
             }
@@ -292,8 +288,7 @@
               "required_if": [
                 {
                   "field": "data_submission_approval_dependencies_radios",
-                  "value": "Yes",
-                  "message":"Please provide an explanation of the data product's dependencies."
+                  "value": "Yes"
                 }
               ]
             }
@@ -324,13 +319,11 @@
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "No"
                 },
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "Not sure",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "Not sure"
                 }
               ]
             }

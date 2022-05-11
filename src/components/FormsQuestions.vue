@@ -343,15 +343,15 @@
                                   <template v-if="input.required_if !== undefined && input.required_if.length > 0">
                                     <template v-for="(req_if, d_key) in input.required_if">
                                       <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                                        <template v-if="req_if.message !== undefined">{{ heading.heading }} - {{ question.long_name }} - {{ typeof input.label !== 'undefined' ? input.label : ''}}: {{ req_if.message }}</template>
-                                        <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name}: ${input.validation_error_msg}`"></span>
-                                        <template v-else>{{ heading.heading }} - {{ question.title }} - {{ typeof input.label !== 'undefined' ? input.label : ''}} is required</template>
+                                        <template v-if="req_if.message !== undefined">{{ heading.heading }}{{ typeof question.long_name !== 'undefined' ? ` - ${question.long_name}` : ''}}{{ typeof input.label !== 'undefined' && input.label !=='' ? ` - ${input.label}` : ''}} - {{req_if.message}}</template>
+                                        <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.validation_error_msg}`"></span>
+                                        <template v-else>{{ heading.heading }} - {{ question.long_name }} is required</template>
                                       </span>
                                     </template>
                                   </template>
-                                  <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name}: ${input.validation_error_msg}`"></span>
+                                  <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.validation_error_msg}`"></span>
                                   <template v-else>
-                                    {{ heading.heading }} - {{ question.long_name }} - {{ typeof input.label !== 'undefined' ? input.label : ''}}
+                                    {{ heading.heading }} - {{ question.long_name }} {{ typeof input.label !== 'undefined' && input.label !=='' ? ` - ${input.label}` : ''}}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                                     <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
                                     <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
