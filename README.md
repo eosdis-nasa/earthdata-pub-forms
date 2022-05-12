@@ -65,7 +65,7 @@ npm run stop-dev
 To run forms locally:
 
 ```bash
-npm run start-forms
+npm run start-forms-dev
 ```
 
 The vue app can also be run locally using:
