@@ -62,6 +62,8 @@ You can spin down all containers, by running this command:
 npm run stop-dev
 ```
 
+If forms was ever previously opened, you may need to clear the localStorage in the browser. (Do this if the page is blank).
+
 To run forms locally:
 
 ```bash
