@@ -56,7 +56,13 @@ After being authenticated, you can test forms is working by navigating to 'http:
 
 Finally, test that the overview is working by clicking the forms 'Overview' link in the header.
 
-To run locally:
+You can spin down all containers, by running this command:
+
+```bash
+npm run stop-dev
+```
+
+To run forms locally:
 
 ```bash
 npm run start-forms
@@ -65,6 +71,8 @@ npm run start-forms
 The vue app can also be run locally using:
 
 ```bash
+npm use
+npm install
 npm run build
 npm run serve
 ```
