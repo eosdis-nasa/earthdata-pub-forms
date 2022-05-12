@@ -25,7 +25,7 @@ the EDPub project. Be sure to read that before submitting pull requests.
 
 ## Installing
 
-EDPub Forms use node v14.19.1. To build/run the Forms on your local
+EDPub Forms use node v14.19.1. EDPub Forms use npm version 6.14.16.  To build/run the Forms on your local
 machine, install nvm following the [nvm Install & Update Script](https://github.com/nvm-sh/nvm#install--update-script)
 instructions.
 
