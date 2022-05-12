@@ -4,14 +4,19 @@ This is the Forms code repository for Earthdata Pub (EDPub).
 
 ## Table of Contents
 
-- [Contributing](#contributing)
-- [Installing](#Installing)
-- [Running locally](#running-locally)
-- [Styling](#Custom-styling)
-- [Developing](#Developing)
-- [Deploying](#deploying)
-- [Testing](#testing)
-- [Documentation](#documentation)
+- [Earthdata Pub Forms](#earthdata-pub-forms)
+  - [Table of Contents](#table-of-contents)
+  - [Contributing](#contributing)
+  - [Installing](#installing)
+  - [Running locally](#running-locally)
+    - [Dashboard and API](#dashboard-and-api)
+  - [Styling](#styling)
+  - [Developing](#developing)
+    - [Edits to code](#edits-to-code)
+    - [Vue builds inside Docker](#vue-builds-inside-docker)
+  - [Testing](#testing)
+  - [Deploying](#deploying)
+  - [Documentation](#documentation)
 
 ## Contributing
 
@@ -33,6 +38,23 @@ npm install
 ```
 
 ## Running locally
+
+To start and build all containers (api, dashboard, forms and overview):
+
+```bash
+npm run start-dev
+```
+
+Currently the most current branches of each repo are the 'develop' branches.
+
+You can navigate to 'http://localhost:8080/docs' to verify the api is running.
+
+You can navigate to 'http://localhost:3000' to verify the dashboard is working.
+Log in initially by choosing 'Earthdata Pub System'.
+
+After being authenticated, you can test forms is working by navigating to 'http://localhost:8081'.
+
+Finally, test that the overview is working by clicking the forms 'Overview' link in the header.
 
 To run locally:
 
@@ -114,13 +136,12 @@ Next view cypress.json to make sure your local dev settings match.  To run the o
 
 ```bash
 npm run start-forms-dev
+npm run start-overview-dev
 ```
 
 After that it is done:
 
 ```bash
-npm run clean-modules
-npm install
 npm run cypress OR npx cypress open 
 ```
 
