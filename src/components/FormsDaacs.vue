@@ -286,6 +286,6 @@ export default {
     margin-right: unset;
     padding-left: unset;
     padding-right: unset;
-    min-width:1110px;
+    /*min-width:1110px;*/
   }
 </style>
