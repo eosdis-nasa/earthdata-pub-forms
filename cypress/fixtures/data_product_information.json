@@ -428,7 +428,9 @@
               "type": "number",
               "control_id": "data_production_latency_amount",
               "label": "Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -461,7 +463,9 @@
               "control_id": "file_temporal_coverage_answer",
               "label": "Time",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -493,7 +497,9 @@
               "control_id": "value_temporal_resolution_answer",
               "label": "Value",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -612,7 +618,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_upper",
               "label": "Upper Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -624,7 +632,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_lower",
               "label": "Lower Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -879,7 +889,9 @@
               "control_id": "data_product_volume_amount",
               "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -920,7 +932,9 @@
               "control_id": "data_product_number_of_files",
               "label": "Files",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b979e",
