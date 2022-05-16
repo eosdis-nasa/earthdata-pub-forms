@@ -512,7 +512,9 @@
               "control_id": "data_product_volume_amount",
               "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",

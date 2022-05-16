@@ -93,6 +93,7 @@
     "url": "http://sedac.ciesin.columbia.edu/",
     "short_name": "SEDAC",
     "description": "NASA's Socioeconomic Data and Applications Center (SEDAC) is operated by the Center for International Earth Science Information Network (CIESIN), a unit of the Earth Institute at Columbia University based at the Lamont-Doherty Earth Observatory in Palisades, New York.\nSEDAC’s missions are to synthesize Earth science and socioeconomic data and information in ways useful to a wide range of decision makers and other applied users, and to provide an “Information Gateway” between the socioeconomic and Earth science data and information domains.\nSEDAC datasets can be accessed via the dataset section of the SEDAC web site.",
-    "discipline": "Synthesized Earth science and socio-economic data"
+    "discipline": "Synthesized Earth science and socio-economic data",
+    "hidden": true
   }
 ]
