@@ -120,11 +120,13 @@
     }
     .form-group, .form-section {
         border-color:white;
-        border-radius: 5px;
-        border-style: solid;
-        border-width: 1px;
-        padding-top: 8px;
-        padding-bottom: 5px;
+        border-radius: 5px!important;
+        border-style: solid!important;
+        border-width: 1px!important;
+        padding-top: 8px!important;
+        padding-left: 5px!important;
+        padding-bottom: 5px!important;
+        padding-right: 5px!important;
     }
     .hidden {
         display: none;

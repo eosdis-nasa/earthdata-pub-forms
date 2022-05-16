@@ -269,8 +269,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "label": "If yes, provide DOI",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if": [
                 {
                   "field": "data_product_doi_exists",
@@ -315,30 +313,27 @@
         {
           "short_name": "data_product_restrictions",
           "long_name": "Data Product Restrictions",
-          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy? If No or Not sure, please provide a brief explanation.",
+          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "For a description of the open data policy, please refer to the <a href='https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy' target=_blank>NASA Earthdata Data and Information Policy web page <i class='fas fa-external-link-alt'></i></a>.",
           "inputs": [
             {
               "type": "radio",
               "control_id": "data_product_restrictions_public",
-              "label": "Releasable to public",
               "enums": ["Yes", "No", "Not sure"],
               "required": true
             },
             {
               "type": "text",
               "control_id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation",
+              "label": "If No or Not sure, please provide a brief explanation.",
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "No"
                 },
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "Not sure",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "Not sure"
                 }
               ]
             }
@@ -433,7 +428,9 @@
               "type": "number",
               "control_id": "data_production_latency_amount",
               "label": "Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -466,7 +463,9 @@
               "control_id": "file_temporal_coverage_answer",
               "label": "Time",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -498,7 +497,9 @@
               "control_id": "value_temporal_resolution_answer",
               "label": "Value",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -617,7 +618,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_upper",
               "label": "Upper Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -629,7 +632,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_lower",
               "label": "Lower Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -884,7 +889,9 @@
               "control_id": "data_product_volume_amount",
               "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -925,7 +932,9 @@
               "control_id": "data_product_number_of_files",
               "label": "Files",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b979e",

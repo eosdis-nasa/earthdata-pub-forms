@@ -10,9 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.2 - 2022-05-05
+## 1.0.3 - 2022-05-05
 
 - Added hide daac feature for daac selection page
+## 1.0.2 - 2022-05-11
+
+- Fixed section required shifting and some message tweaks for missing data.
 
 ## 1.0.1 - 2022-04-13
 

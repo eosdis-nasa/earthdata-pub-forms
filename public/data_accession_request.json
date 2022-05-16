@@ -152,7 +152,7 @@
             {
               "type": "text",
               "control_id": "funding_program_name",
-              "label": "",
+              "label": "Program",
               "validation_error_msg": "Please enter a name for the program.",
               "required": true
             }
@@ -174,6 +174,7 @@
             {
               "type": "text",
               "control_id": "data_product_name_value",
+              "label": "Name",
               "validation_error_msg": "Please enter a name for the data product.",
               "required": true
             }
@@ -190,6 +191,7 @@
             {
               "type": "textarea",
               "control_id": "data_product_description",
+              "label": "Description",
               "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
@@ -215,7 +217,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if":[
                 {
                   "field":"data_product_doi_exists",
@@ -237,7 +238,6 @@
             {
               "type": "textarea",
               "control_id": "science_value_description",
-              "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
                 "cols": 20
@@ -257,12 +257,10 @@
             {
               "type": "textarea",
               "control_id": "data_submission_reason_description",
-              "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 5,
                 "cols": 20,
-                "maxlength":1000,
-                "placeholder":""
+                "maxlength":1000
               },
               "required": true
             }
@@ -292,8 +290,7 @@
               "required_if": [
                 {
                   "field": "data_submission_approval_dependencies_radios",
-                  "value": "Yes",
-                  "message":"Please provide an explanation of the data product's dependencies."
+                  "value": "Yes"
                 }
               ]
             }
@@ -324,13 +321,11 @@
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "No"
                 },
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "Not sure",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "Not sure"
                 }
               ]
             }
@@ -407,7 +402,7 @@
             {
               "type": "text",
               "control_id": "data_format_other_info",
-              "label": "If Other, please provide the data format(s)",
+              "label": "If Other, please provide the data format(s).",
               "required_if": [
                 {
                   "field": "data_format_other",
@@ -428,6 +423,7 @@
             {
               "type": "text",
               "control_id": "spatial_general_region",
+              "label": "Coverage",
               "validation_error_msg": "Please enter spatial coverage.",
               "required": true
             }
@@ -466,6 +462,7 @@
             {
               "type": "radio",
               "control_id": "data_product_status",
+              "label": "Product Status",
               "enums": [
                 "Yes",
                 "No"
@@ -490,6 +487,7 @@
             {
               "type": "radio",
               "control_id": "data_delivery_frequency",
+              "label": "Unit",
               "enums": [
                 "Daily",
                 "Weekly",
@@ -512,12 +510,17 @@
             {
               "type": "number",
               "control_id": "data_product_volume_amount",
+              "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "validation_error_msg": "Volume must be positive.",
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
               "control_id": "data_product_volume_units",
+              "label": "Unit",
               "enums": [
                 "KB",
                 "MB",
@@ -540,6 +543,7 @@
             {
               "type": "text",
               "control_id": "example_file_url",
+              "label": "Sample File URL",
               "required": true
             }
           ],
