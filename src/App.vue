@@ -106,17 +106,17 @@
         }
     }
     h1.header {
-        width:1073px!important;
+        /*width:1073px!important;*/
         margin-left:5px;
     }
     .nav, .header, div#nav, .eui-application-logo {
         /* padding-left: 8px; */
     }
     .vue-fixed-header {
-        width:1110px;
-    }
-    .navbar {
-        margin-left: 1px;
+        width:1105px;
+        background-color:rgb(235, 235, 235);
+        border:1px solid darkgrey;
+        border-radius:5px;
     }
     .form-group, .form-section {
         border-color:white;
@@ -127,6 +127,9 @@
         padding-left: 5px!important;
         padding-bottom: 5px!important;
         padding-right: 5px!important;
+    }
+    .form-section {
+        /*min-width: 1115px;*/
     }
     .hidden {
         display: none;
@@ -173,6 +176,8 @@
     }
     .form-group {
         margin-top:.5rem;
+        /*min-width: 1110px;*/
+        margin-left: -10px
     }
     a:hover {
         text-decoration: underline !important;
@@ -192,6 +197,16 @@
     .custom-checkbox.b-custom-control-lg, 
     .input-group-lg .custom-checkbox {
         min-height: 1.75rem;
+    }
+    h2 {
+        border-bottom: 1px solid #cbcbcb;
+        padding-bottom: 0.2em;
+        font-size: 1.6em;
+        font-weight: normal;
+        /*min-width: 1109px;
+        max-width: 1109px; */
+        padding-left: 8px;
+        margin-left: -10px;
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;

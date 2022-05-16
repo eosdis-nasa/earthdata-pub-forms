@@ -135,7 +135,7 @@ p {
 button {
   margin-left: 1rem;
   margin-right: 1rem;
-  margin-bottom: 1rem;
+  min-height: 45px;
 }
 .left_button_bar button:first-child {
   margin-left: 0 !important;
@@ -200,13 +200,11 @@ fieldset {
   display: inline;
   float: left;
   margin-top: 0px;
-  height: 55px;
 }
 .right_button_bar {
   display: inline;
   float: right;
   margin-top: 0px;
-  height: 55px;
 }
 .navbar {
   position: relative;
@@ -222,8 +220,8 @@ fieldset {
   -ms-flex-pack: justify;
   -webkit-box-pack: justify;
   justify-content: space-between;
-  padding: 0rem 0rem;
-  padding-top: 1rem;
+  padding: 1rem;
+  margin-bottom:1rem;
 }
 .console_container {
   height: 1em;
@@ -236,9 +234,15 @@ fieldset {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
     left: 20;
-    top: 1rem;
-    min-width: 1107px;
-    max-width: 1107px;
+    top: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    border:1px solid darkgrey;
+    min-width: 1100px;
+    max-width: 1100px;
+    background-color: rgb(235, 235, 235);
+    margin-bottom:1rem;
+    border-radius:5px;
   }
 }
 @media (max-width: 1200px) {
