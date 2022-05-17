@@ -85,6 +85,7 @@ export default {
     padding: 5px;
     text-align:right;
     padding-bottom: 1.75rem;
+    margin-right: 5px;
   }
   #nav a {
     color:white;

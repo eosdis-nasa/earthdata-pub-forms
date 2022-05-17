@@ -105,11 +105,40 @@
             -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
         }
     }
+    h1.header {
+        /*width:1073px!important;*/
+        margin-left:5px;
+    }
+    .nav, .header, div#nav, .eui-application-logo {
+        /* padding-left: 8px; */
+    }
+    .vue-fixed-header {
+        width:1105px;
+        background-color:rgb(235, 235, 235);
+        border:1px solid darkgrey;
+        border-radius:5px;
+    }
+    .form-group, .form-section {
+        border-color:white;
+        border-radius: 5px!important;
+        border-style: solid!important;
+        border-width: 1px!important;
+        padding-top: 8px!important;
+        padding-left: 5px!important;
+        padding-bottom: 5px!important;
+        padding-right: 5px!important;
+    }
+    .form-section {
+        /*min-width: 1115px;*/
+    }
     .hidden {
         display: none;
     }
     .custom-control-label {
         margin-top: 5.5px;
+    }
+    .editable-table {
+        margin-top:3rem;
     }
     .editable-table .data-cell {
         min-height: 2rem;
@@ -147,6 +176,8 @@
     }
     .form-group {
         margin-top:.5rem;
+        /*min-width: 1110px;*/
+        margin-left: -10px
     }
     a:hover {
         text-decoration: underline !important;
@@ -166,6 +197,16 @@
     .custom-checkbox.b-custom-control-lg, 
     .input-group-lg .custom-checkbox {
         min-height: 1.75rem;
+    }
+    h2 {
+        border-bottom: 1px solid #cbcbcb;
+        padding-bottom: 0.2em;
+        font-size: 1.6em;
+        font-weight: normal;
+        /*min-width: 1109px;
+        max-width: 1109px; */
+        padding-left: 8px;
+        margin-left: -10px;
     }
     input[type=radio   ]:not(old) + label{
         cursor: pointer;
@@ -251,7 +292,7 @@
         background: #2276ac;
         color: white;
         padding: 1em 2em;
-        box-shadow: 0 50vh 0 50vh #000;
+        /* box-shadow: 0 50vh 0 50vh #000; */
     }
     footer a:link, footer a:visited {
         color: white;

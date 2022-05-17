@@ -46,7 +46,6 @@ The following input attributes are accepted and are evaluated in forms:
   - Inputs can be disabled by the form, however, individual inputs may be disabled.
 - readonly (text, textarea)
   - Inputs can be disabled by the form, however, individual inputs may be sent readonly.
-- placeholder (text, textarea, select, file)
 - pattern (text)
 - maxLength (text, textarea)
 - minLength (text, textarea)
@@ -108,4 +107,4 @@ Files that were used during development are available in the repo and can be vie
 
 - [Data Accession Request](public/data_accession_request.json)
 - [Daacs](public/daacs.json)
-- [Data Publication Request](public/data_product_information.json)
+- [Data Publication Request](public/data_publication_request.json)
