@@ -2,7 +2,7 @@
   "id": "19025579-99ca-4344-8610-704dae626343",
   "version": 1,
   "long_name": "Data Publication Request",
-  "short_name": "data_product_information",
+  "short_name": "data_publication_request",
   "description": "This form is used to get high level information about a dataset, typically this will be submitted by the data provider or an appropriate agent.",
   "text": "To express interest in submitting a data product, please fill out the following form.",
   "sections": [
@@ -46,35 +46,35 @@
           "version": 1
         },
         {
-          "short_name": "publication_point_of_contact",
+          "short_name": "point_of_contact",
           "long_name": "Data Accession Point of Contact",
           "text": "Who should the DAAC contact with questions regarding this Data Accession request?",
           "help": "This person should have in-depth knowledge of this data product, allowing them to provide additional information as needed.",
           "inputs": [
             {
               "type": "text",
-              "control_id": "publication_poc_name",
+              "control_id": "poc_name",
               "label": "First and Last Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
               "required": true
             },
             {
               "type": "text",
-              "control_id": "publication_poc_organization",
+              "control_id": "poc_organization",
               "label": "Organization",
               "validation_error_msg": "Please enter an organization.",
               "required": true
             },
             {
               "type": "email",
-              "control_id": "publication_poc_email",
+              "control_id": "poc_email",
               "label": "Email",
               "validation_error_msg": "Please enter an email.",
               "required": true
             },
             {
               "type": "text",
-              "control_id": "publication_poc_orcid",
+              "control_id": "poc_orcid",
               "label": "ORCID"
             }
           ],
@@ -269,8 +269,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "label": "If yes, provide DOI",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if": [
                 {
                   "field": "data_product_doi_exists",
@@ -315,25 +313,27 @@
         {
           "short_name": "data_product_restrictions",
           "long_name": "Data Product Restrictions",
-          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy? If No or Not sure, please provide a brief explanation.",
+          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "For a description of the open data policy, please refer to the <a href='https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy' target=_blank>NASA Earthdata Data and Information Policy web page <i class='fas fa-external-link-alt'></i></a>.",
           "inputs": [
             {
               "type": "radio",
               "control_id": "data_product_restrictions_public",
-              "label": "Releasable to public",
               "enums": ["Yes", "No", "Not sure"],
               "required": true
             },
             {
               "type": "text",
               "control_id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation",
+              "label": "If No or Not sure, please provide a brief explanation.",
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message": "Please provide an explanation of the data product's restrictions."
+                  "value": "No"
+                },
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "Not sure"
                 }
               ]
             }
@@ -428,7 +428,9 @@
               "type": "number",
               "control_id": "data_production_latency_amount",
               "label": "Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -461,7 +463,9 @@
               "control_id": "file_temporal_coverage_answer",
               "label": "Time",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -493,7 +497,9 @@
               "control_id": "value_temporal_resolution_answer",
               "label": "Value",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -612,7 +618,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_upper",
               "label": "Upper Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -624,7 +632,9 @@
               "type": "number",
               "control_id": "spatial_vertical_details_lower",
               "label": "Lower Amount",
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -879,7 +889,10 @@
               "control_id": "data_product_volume_amount",
               "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "validation_error_msg": "Volume must be positive.",
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -920,7 +933,9 @@
               "control_id": "data_product_number_of_files",
               "label": "Files",
               "required": true,
-              "validation_error_msg": "Must be a positive value"
+              "attributes": {
+                "min": "1"
+              }
             }
           ],
           "id": "40672516-2220-4edc-8c1b-fd9f7e0b979e",
@@ -931,12 +946,12 @@
           "long_name": "Sample Data File(s)",
           "text": "Please provide a URL to a sample file(s).",
           "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
-          "required": true,
           "inputs": [
             {
               "type": "text",
               "control_id": "example_file_url",
-              "label": "Sample File URL"
+              "label": "Sample File URL",
+              "required": true
             }
           ],
           "id": "53a0faa7-f7d4-4ce9-a9dc-a13cef44e1f3",

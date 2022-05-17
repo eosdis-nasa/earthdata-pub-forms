@@ -60,6 +60,7 @@ export default {
           }
           $.getJSON(url, daacs => {
             for (var dict in daacs) {
+              if (daacs[dict].hidden) continue;
               items.push(daacs[dict]);
             }
             this.daacs = items
@@ -115,7 +116,7 @@ export default {
             let json_name = 'data_accession_request' 
             if(typeof this.$store.state.global_params['formId'] !=='undefined' && 
               this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
-              json_name = 'data_product_information' 
+              json_name = 'data_publication_request' 
             }
             this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
             this.$store.commit("pushGlobalParams", ['form_short_name', json_name])
@@ -294,9 +295,9 @@ export default {
                     this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
                     break;
                   } else if (
-                    this.$store.state.global_params['form_short_name'].match(/data_product_information/g) &&
+                    this.$store.state.global_params['form_short_name'].match(/data_publication_request/g) &&
                     typeof forms[f].short_name != "undefined" &&
-                    forms[f].short_name.toLowerCase().match(/data_product_information/g)
+                    forms[f].short_name.toLowerCase().match(/data_publication_request/g)
                   ) {
                     this.$store.state.global_params['formId'] = forms[f]["id"];
                     this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
@@ -408,7 +409,7 @@ export default {
           this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
           this.getForm()
         }
-        if (route_to_default){
+        if (route_to_default && !this.$testing){
           this.routeToDefault();
         } else {
           let path = '';

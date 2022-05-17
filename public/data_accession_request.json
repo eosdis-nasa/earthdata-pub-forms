@@ -46,35 +46,35 @@
           "version": 1
         },
         {
-          "short_name": "publication_point_of_contact",
+          "short_name": "point_of_contact",
           "long_name": "Data Accession Point of Contact",
           "text": "Who should the DAAC contact with questions regarding this Data Accession request?",
           "help": "This person should have in-depth knowledge of this data product, allowing them to provide additional information as needed.",
           "inputs": [
             {
               "type": "text",
-              "control_id": "publication_poc_name",
+              "control_id": "poc_name",
               "label": "First and Last Name",
               "validation_error_msg": "Please enter a name for the point of contact.",
               "required": true
             },
             {
               "type": "text",
-              "control_id": "publication_poc_organization",
+              "control_id": "poc_organization",
               "label": "Organization",
               "validation_error_msg": "Please enter an organization.",
               "required":true
             },
             {
               "type": "email",
-              "control_id": "publication_poc_email",
+              "control_id": "poc_email",
               "label": "Email",
               "validation_error_msg": "Please enter an email.",
               "required": true
             },
             {
               "type": "text",
-              "control_id": "publication_poc_orcid",
+              "control_id": "poc_orcid",
               "label": "ORCID"
             }
           ],
@@ -217,8 +217,6 @@
             {
               "type": "text",
               "control_id": "data_product_doi_value",
-              "label": "If yes, provide DOI",
-              "validation_error_msg": "Please enter Digital Object Identifiers.",
               "required_if":[
                 {
                   "field":"data_product_doi_exists",
@@ -240,8 +238,6 @@
             {
               "type": "textarea",
               "control_id": "science_value_description",
-              "label": "Description",
-              "validation_error_msg": "Please enter a description.",
               "attributes": {
                 "rows": 3,
                 "cols": 20
@@ -253,21 +249,18 @@
           "version": 1
         },
         {
-          "short_name": "data_submission_reason",
+          "short_name": "data_accession_reason",
           "long_name": "Reason for Data Accession Request",
           "text": "Please briefly explain your reasons for requesting to have this data product archived and distributed at the DAAC.",
           "help": "For example, are you attempting to publish a paper which requires data to be archived in a trusted repository? Have you been instructed by a NASA program manager to archive your data at a DAAC? Do you want this data product distributed with related data?",
           "inputs": [
             {
               "type": "textarea",
-              "control_id": "data_submission_reason_description",
-              "label": "Description",
-              "validation_error_msg": "Please enter a description.",
+              "control_id": "data_accession_reason_description",
               "attributes": {
                 "rows": 5,
                 "cols": 20,
-                "maxlength":1000,
-                "placeholder":""
+                "maxlength":1000
               },
               "required": true
             }
@@ -276,15 +269,14 @@
           "version": 1
         },
         {
-          "short_name": "data_submission_approval_dependencies",
+          "short_name": "data_accession_approval_dependencies",
           "long_name": "Dependencies for Data Accession Approval",
-          "text": "Do you have any dependencies related to this data product being approved to be published at the DAAC? If Yes, please provide a brief explanation.",
+          "text": "Do you have any dependencies related to this data product being approved to be published at the DAAC?",
           "help": "For example, are you hoping to have this data product approved to be published at the DAAC prior publishing a paper or presenting at a conference? Does your project have a defined timeline in which this data product needs to be published?",
           "inputs": [
             {
               "type": "radio",
-              "control_id": "data_submission_approval_dependencies_radios",
-              "label": "Has Dependencies",
+              "control_id": "data_accession_approval_dependencies_radios",
               "enums": [
                 "Yes",
                 "No"
@@ -293,13 +285,12 @@
             },
             {
               "type": "text",
-              "control_id": "data_submission_approval_dependencies_explanation",
-              "label": "If Yes, provide explanation",
+              "control_id": "data_accession_approval_dependencies_explanation",
+              "label": "If Yes, please provide a brief explanation",
               "required_if": [
                 {
-                  "field": "data_submission_approval_dependencies_radios",
-                  "value": "Yes",
-                  "message":"Please provide an explanation of the data product's dependencies."
+                  "field": "data_accession_approval_dependencies_radios",
+                  "value": "Yes"
                 }
               ]
             }
@@ -310,13 +301,12 @@
         {
           "short_name": "data_product_restrictions",
           "long_name": "Data Product Restrictions",
-          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy? If No or Not sure, please provide a brief explanation.",
+          "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "For a description of the open data policy, please refer to the <a href='https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy' target=_blank>NASA Earthdata Data and Information Policy web page <i class='fas fa-external-link-alt'></i></a>.",
           "inputs": [
             {
               "type": "radio",
               "control_id": "data_product_restrictions_public",
-              "label": "Releasable to public",
               "enums": [
                 "Yes",
                 "No",
@@ -327,12 +317,15 @@
             {
               "type": "text",
               "control_id": "data_product_restrictions_explanation",
-              "label": "If No, provide explanation",
+              "label": "If No or Not sure, please provide a brief explanation",
               "required_if": [
                 {
                   "field": "data_product_restrictions_public",
-                  "value": "No",
-                  "message":"Please provide an explanation of the data product's restrictions."
+                  "value": "No"
+                },
+                {
+                  "field": "data_product_restrictions_public",
+                  "value": "Not sure"
                 }
               ]
             }
@@ -348,8 +341,7 @@
           "inputs": [
             {
               "type": "text",
-              "control_id": "data_product_documentation_url",
-              "label": "Additional Documentation URL"
+              "control_id": "data_product_documentation_url"
             }
           ],
           "id": "ad568b2f-89fe-4afd-a0bf-9e5832b71ce9",
@@ -520,7 +512,10 @@
               "control_id": "data_product_volume_amount",
               "label": "Amount",
               "required": true,
-              "validation_error_msg": "Volume must be positive."
+              "validation_error_msg": "Volume must be positive.",
+              "attributes": {
+                "min": "1"
+              }
             },
             {
               "type": "radio",
@@ -544,12 +539,12 @@
           "long_name": "Sample Data File(s)",
           "text": "Please provide a URL to a sample file(s).",
           "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
-          "required": true,
           "inputs": [
             {
               "type": "text",
               "control_id": "example_file_url",
-              "label": "Sample File URL"
+              "label": "Sample File URL",
+              "required": true
             }
           ],
           "id": "53a0faa7-f7d4-4ce9-a9dc-a13cef44e1f3",
