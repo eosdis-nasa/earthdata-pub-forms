@@ -113,10 +113,8 @@
         /* padding-left: 8px; */
     }
     .vue-fixed-header {
-        width:1105px;
         background-color:rgb(235, 235, 235);
         border:1px solid darkgrey;
-        border-radius:5px;
     }
     .form-group, .form-section {
         border-color:white;
@@ -205,7 +203,7 @@
         font-weight: normal;
         /*min-width: 1109px;
         max-width: 1109px; */
-        padding-left: 8px;
+        padding-left: 6px;
         margin-left: -10px;
     }
     input[type=radio   ]:not(old) + label{

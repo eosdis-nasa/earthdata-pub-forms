@@ -2,47 +2,45 @@
 <div role="main">
   <!-- Form -->
   <b-form ref="form" name="questions_form" id="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
-    <b-container>
-        <fixed-header :threshold="168" style="z-index:5;">
-          <div class="navbar">
-              <!-- Button Options -->
-              <div class="button_bar">
-                  <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
-                        <font-awesome-icon v-bind:icon="redoLabel"/>
-                        {{ redoLabel }}
-                      </b-button>
-                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-else disabled aria-label="redo button">
-                        <font-awesome-icon v-bind:icon="redoLabel"/>
-                        {{ redoLabel }}
-                      </b-button>
-                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
-                        <font-awesome-icon v-bind:icon="undoLabel"/>
-                        {{ undoLabel }}
-                      </b-button>
-                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-else disabled aria-label="undo button">
-                        <font-awesome-icon v-bind:icon="undoLabel"/>
-                        {{ undoLabel }}
-                      </b-button>
-                  </div>
-                  <div align=right v-if="!readonly" class="right_button_bar">
-                      <!-- save button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
-                      <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <!-- submit button -->
-                      <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <!-- cancel button -->
-                      <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
-                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
-                  </div>
-              </div>
-          </div>
+    <fixed-header :threshold="168" style="z-index:5;">
+        <div class="navbar">
+            <!-- Button Options -->
+            <div class="button_bar">
+                <div align=left v-if="!readonly" class="left_button_bar">
+                    <b-button class="button" type="redo" id="redo_button" name="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
+                      <font-awesome-icon v-bind:icon="redoLabel"/>
+                      {{ redoLabel }}
+                    </b-button>
+                    <b-button class="button" type="redo" id="redo_button" name="redo_button" v-else disabled aria-label="redo button">
+                      <font-awesome-icon v-bind:icon="redoLabel"/>
+                      {{ redoLabel }}
+                    </b-button>
+                    <b-button class="button" type="undo" id="undo_button" name="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
+                      <font-awesome-icon v-bind:icon="undoLabel"/>
+                      {{ undoLabel }}
+                    </b-button>
+                    <b-button class="button" type="undo" id="undo_button" name="undo_button" v-else disabled aria-label="undo button">
+                      <font-awesome-icon v-bind:icon="undoLabel"/>
+                      {{ undoLabel }}
+                    </b-button>
+                </div>
+                <div align=right v-if="!readonly" class="right_button_bar">
+                    <!-- save button -->
+                    <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                    <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                    <!-- draft button -->
+                    <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                    <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                    <!-- submit button -->
+                    <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                    <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                    <!-- cancel button -->
+                    <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                    <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
+                </div>
+            </div>
+        </div>
       </fixed-header>
-    </b-container>
     <b-container name="questions_container" id="questions_container">
         <!-- Section -->
         <h3 v-if="daac_name!=''" id="daac_selection">DAAC Selected: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">

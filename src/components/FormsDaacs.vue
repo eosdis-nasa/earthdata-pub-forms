@@ -37,6 +37,7 @@
               </div>
               <!-- Submit Button -->
               <div v-if="selected">
+                <b-button class="eui-btn--secondary" @click="cancelForm()" aria-label="cancel button" id="daac_cancel_button">Cancel</b-button>
                 <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
               </div>
               <!-- End of Submit Button -->
@@ -189,6 +190,12 @@ export default {
     },
     // @vuese
     // Used to submit the form data and move on
+    cancelForm() {
+      this.$v.$touch();
+      this.$router.back()
+    },
+    // @vuese
+    // Used to submit the form data and move on
     submitForm() {
       this.$v.$touch();
       let args = {}
@@ -256,8 +263,13 @@ export default {
 };
 </script>
 <style scoped>
-  #daac_select_button {
+  #daac_select_button, 
+  #daac_cancel_button {
     margin-top:2rem;
+    padding: 0.5em 1em;
+  }
+  #daac_cancel_button {
+    margin-right: 2rem;
   }
   .form-group {
     margin-top:2rem;
