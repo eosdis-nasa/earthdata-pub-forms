@@ -310,6 +310,15 @@ export default {
                 url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
               $.getJSON(url, (questions) => {
+                if (typeof this.daacs === 'undefined') {
+                  this.fetchDaacs().then(() => {
+                    let daacData = this.getDaac(this.$store.state.global_params['group'])
+                    if(typeof daacData!= 'undefined'){
+                      this.selected = daacData.long_name;
+                      this.daac_name = daacData.long_name;
+                    }
+                  });
+                }
                 for (var section in questions["sections"]) {
                   var heading = questions["sections"][section]["heading"];
                   var heading_required =

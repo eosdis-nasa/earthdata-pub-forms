@@ -12,6 +12,7 @@
 }
 #daac_selection {
   margin-bottom:1rem;
+  padding-left: 4px;
 }
 .b-table-sticky-header, .table-responsive, [class*=table-responsive-] {
   margin-bottom: unset;
@@ -194,17 +195,21 @@ fieldset {
   /* border-left: unset; */
 }
 .button_bar {
-  display: inline;
+  display: flex;
+  justify-content: center;
+
 }
 .left_button_bar {
   display: inline;
   float: left;
   margin-top: 0px;
+  margin-right: 16.25rem;
 }
 .right_button_bar {
   display: inline;
   float: right;
   margin-top: 0px;
+  margin-right:.5rem;
 }
 .navbar {
   position: relative;
@@ -233,99 +238,132 @@ fieldset {
 @media (min-width: 1200px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    left: 20;
+    width: 100%;
+    left: 0;
     top: 0;
     padding-left: 15px;
     padding-right: 15px;
     border:1px solid darkgrey;
-    min-width: 1100px;
-    max-width: 1100px;
     background-color: rgb(235, 235, 235);
     margin-bottom:1rem;
-    border-radius:5px;
   }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1199px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 929px;
-    max-width: 929px;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+  .left_button_bar {
+    margin-right:5rem;
   }
 }
-@media (max-width: 992px) {
+@media (max-width: 991px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 929px;
-    max-width: 929px;
+    width: 100%;
+    left: 0;
+    top: 0;
+  }
+  button {
+    margin-right:unset;
+  }
+  .left_button_bar {
+    margin-right:0rem;
+  }
+  .right_button_bar {
+    margin-right:0rem;
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 868px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    left: 20;
-    top: 1rem;
-    min-width: 690px;
-    max-width: 690px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding-left:0;
+    padding-right:0;
+  }
+  button {
+    margin-right:unset;
+  }
+  .left_button_bar {
+    margin-right:0rem;
+  }
+  .right_button_bar {
+    margin-right:0rem;
   }
 }
-@media (max-width: 576px) {
+@media (max-width: 788px) {
+  .navbar.vue-fixed-header {
+    padding-left:0;
+    padding-right:0;
+  }
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    top: 1rem;
-    max-width: 509px;
-    min-width: 509px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding-left:0;
+    padding-right:0;
+  }
+  button {
+    margin-right:unset;
+    margin-left: 0.25rem;
+  }
+  .left_button_bar {
+    margin-right:0rem;
+  }
+  .right_button_bar {
+    margin-right:0rem;
   }
 }
-@media (max-width: 441px) {
+
+@media (max-width: 697px) {
+  .navbar.vue-fixed-header {
+    padding-top:5px;
+    padding-bottom:5px;
+  }
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    top: 1rem;
-    max-width: 380px;
-    min-width: 380px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding-left:0;
+    padding-right:0;
+  }
+  button {
+    margin-right:unset;
+    margin-left: 0.1rem;
+  }
+  .left_button_bar {
+    margin-right:0rem;
+  }
+  .right_button_bar {
+    margin-right:0rem;
   }
 }
-@media (max-width: 414px) {
+@media (max-width: 684px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
-    top: 1rem;
-    max-width: 385px;
-    min-width: 385px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding:5px;
   }
-}
-@media (max-width: 411px) {
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 380px;
-    min-width: 380px;
+  button {
+    margin-right:unset;
+    margin-left: 0.1rem;
+    font-size: 2.5vw;
   }
-}
-@media (max-width: 375px) {
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 345px;
-    min-width: 345px;
+  .left_button_bar button, 
+  .left_button_bar button:first-child {
+    margin:.25em!important;
   }
-}
-@media (max-width: 360px) {
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 330px;
-    min-width: 330px;
-  }
-}
-@media (max-width: 320px) {
-  .navbar.vue-fixed-header--isFixed {
-    position: fixed;
-    top: 1rem;
-    max-width: 290px;
-    min-width: 290px;
+  .right_button_bar button,
+  .right_button_bar button:last-child{
+    margin:.25em!important;
   }
 }
 /*@media screen and (max-width: 900px) and (min-width: 600px) {*/
