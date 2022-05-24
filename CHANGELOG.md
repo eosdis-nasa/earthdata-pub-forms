@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.5 - 2022-05-24
+
+- Removed custom routing and fixed routing issues. Request ID is in address bar instead of Group ID. Added a cancel button to the daac selection page.
+
 ## 1.0.4 - 2022-05-12
 
 - Updated old form name fragments to current.
