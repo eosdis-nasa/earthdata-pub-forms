@@ -50,12 +50,30 @@
             TimeoutWarning
         },
         beforeMount(){
-            this.setRoute()
+            this.checkAuth()
+            if (!window.location.href.match(/daacs/g)) {
+                if (this.$route.params.requestId || this.$testing) {
+                    if (this.$testing) {
+                        // The Data Publication Form has a third contact person
+                        const json_name = 'data_accession_request' 
+                        // const json_name = 'data_publication_request' 
+                        this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
+                        this.$store.commit("pushGlobalParams", ['formShortName', json_name])
+                        this.$store.commit("pushGlobalParams", ['requestId',`20e78804-c171-4549-bdab-6c7cf8e0fc72`]);
+                        this.$store.commit("pushGlobalParams", ['group',`15df4fda-ed0d-417f-9124-558fb5e5b561`]);
+                    } else {
+                        this.$store.commit("pushGlobalParams", ['requestId',`${this.$route.params.requestId}`]);
+                        this.getIDs()
+                    }
+                } else if (typeof this.$route.query.token == 'undefined') {
+                    this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+                }
+            }
         },
         mounted() {
             setTimeout(() => {
                 const loading = document.getElementById('loading')
-                if (loading !== null && (localStorage.getItem('auth-token') != null || this.$testing)){
+                if (loading !== null && (localStorage.getItem('auth-token') != null && typeof this.$route.query.token == 'undefined' || this.$testing)){
                     loading.classList.add("hidden");
                 }
             }, 1000);

@@ -27,7 +27,6 @@ module.exports = (on, config) => {
   config.env.api_requests_url = process.env.VUE_APP_REQUESTS_URL
   config.env.api_request_url = process.env.VUE_APP_REQUEST_URL
   config.env.api_questions_url = process.env.VUE_APP_QUESTIONS_URL
-  config.env.forms_default_route = process.env.VUE_APP_DEFAULT_ROUTE
   config.env.forms_unknown_website_link_singular = process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR
   config.env.forms_testing_mode = process.env.VUE_APP_TESTING_MODE
 

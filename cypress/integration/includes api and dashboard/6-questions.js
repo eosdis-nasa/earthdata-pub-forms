@@ -11,7 +11,7 @@ before(() => {
 describe('Questions Page', () => {
   beforeEach(() => {
     cy.removeLocalStorage(`${Cypress.env('token_storage_variable')}`)
-    cy.visit(Cypress.env('forms_root'))
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['daac_selection_page']}`)
     cy.getLocalStorage(`${Cypress.env('token_storage_variable')}`)
         .then($token => {
             if ($token == null){
@@ -25,7 +25,6 @@ describe('Questions Page', () => {
                   .should('be.visible').trigger("click")
             }
         })
-    cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
   })
   it(`Test form 1 route and that data loads`, () => {
     cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['questions_1_url']}`)

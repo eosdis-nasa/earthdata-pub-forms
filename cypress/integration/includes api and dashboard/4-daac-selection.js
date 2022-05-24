@@ -11,7 +11,7 @@ before(() => {
 describe('Daac Selection Page', () => {
   beforeEach(() => {
     cy.removeLocalStorage(`${Cypress.env('token_storage_variable')}`)
-    cy.visit(Cypress.env('forms_root'))
+    cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['daac_selection_page']}`)
     cy.getLocalStorage(`${Cypress.env('token_storage_variable')}`)
         .then($token => {
             if ($token == null){
@@ -25,7 +25,10 @@ describe('Daac Selection Page', () => {
                   .should('be.visible').trigger("click")
             }
         })
-    cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_default_route')}`)
+  })
+  it(`Test the forms root route and verify a modal with ok pops up redirecting you`, () => {
+    cy.visit(`${Cypress.env('forms_root')}`)
+    cy.get(`${Cypress.env('request_id_required_modal_selector')}`).should('be.visible')
   })
   it(`Test the daac selection page route and that it loads`, () => {
     cy.visit(`${Cypress.env('forms_root')}${Cypress.env('forms_pages')['daac_selection_page']}`)

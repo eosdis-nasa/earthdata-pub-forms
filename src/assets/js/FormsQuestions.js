@@ -339,21 +339,13 @@ export default {
     if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
       this.daac = this.$store.state.global_params['group']
     }
-    let set_loc = location.href;
-    let re = `/questions/`;
-    if (!set_loc.match(re, "g")) {
-      set_loc += `/questions/`;
-    }
     if (typeof window.headerComponent != "undefined") {
       window.headerComponent.daac = this.daac
     }
-    this.setActiveLocationWithoutReload(this.daac);
     this.fetchQuestions().then(
-      this.accessibilityHack()
-    );
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] !== 'undefined'){
+      this.accessibilityHack(),
       this.loadAnswers()
-    }
+    );
   },
   methods: {
     checkRequiredIf(fld) {
@@ -798,7 +790,7 @@ export default {
     // @vuese
     // Loads answers using request id
     loadAnswers() {
-      if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined') {
+      if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined' && !this.$testing) {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
         (answers) => {
@@ -807,9 +799,11 @@ export default {
           }
           this.valueHistory = []
           this.values = answers.form_data;
+          setTimeout(() => {
+            this.setContacts(this.values);
+          }, "3000")
         })
       }
-      return this.values
     },
     // @vuese
     // Cancels current edits and exits the form
