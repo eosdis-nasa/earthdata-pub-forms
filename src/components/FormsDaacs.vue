@@ -30,7 +30,7 @@
               </div>
               <div class="mt-3" v-if="selected">
                 For more information, visit
-                <a href="#" id="selected_daac_link" target="_blank">
+                <a href="#" id="selected_daac_link" target="_blank" aria-label="Link to selected DAAC">
                   <span id="selected_daac"></span>'s website
                   <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
                 </a>

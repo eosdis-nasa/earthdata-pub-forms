@@ -63,7 +63,7 @@
                         :key="b_key"
                       >
                       <legend class="hidden">Fill out the form input fields.</legend>
-                      <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
+                      <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" aria-label="Question Required Message"/>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                         <span class="col text-right section_required" v-if="question.required == true">required </span>
@@ -85,6 +85,7 @@
                                   size="lg" 
                                   value="true"
                                   unchecked-value="false"
+                                  :aria-label="input.label"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                   <div class="eui-label checkbox-label">{{input.label}}</div>
                                 </b-form-checkbox>
@@ -107,6 +108,7 @@
                                     :id="`same_as_${input.control_id}_${contact_key}`"
                                     value="true"
                                     unchecked-value="false"
+                                    aria-label="Set Contact"
                                     @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
                                   </b-form-checkbox>
                                   <label 
@@ -136,6 +138,7 @@
                                   input.type == 'range' ||
                                   input.type == 'tel' || 
                                   input.type == 'time'"
+                                  :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :pattern="getAttribute('pattern', question.inputs[c_key])"
@@ -163,6 +166,7 @@
                                   :placeholder="input.required ? 'required' : ''"
                                   type="text"
                                   autocomplete="off"
+                                  :aria-label="input.control_id"
                                 ></b-form-input>
                                 <b-input-group-append>
                                   <b-form-datepicker 
@@ -200,6 +204,7 @@
                                         :name="`${input.control_id}_${direction}`" 
                                         v-model="values[`${input.control_id}_${direction}`]"
                                         size="lg"
+                                        :aria-label="`${input.control_id}_${direction}`"
                                         :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                         :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                         :placeholder="input.required ? 'required' : ''"
@@ -253,6 +258,7 @@
                                   :name="input.control_id" 
                                   v-model="values[input.control_id]"
                                   size="lg" 
+                                  :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                   :cols="getAttribute('cols', question.inputs[c_key])"
@@ -275,6 +281,7 @@
                                   value="true"
                                   unchecked-value="false"
                                   v-if="input.type == 'radio'" 
+                                  :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                   <span class='required' v-if='input.required'>required</span>
@@ -289,6 +296,7 @@
                                   v-model="values[input.control_id]"
                                   size="lg" 
                                   v-if="input.type == 'select'" 
+                                  :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :placeholder="input.required ? 'required' : ''"

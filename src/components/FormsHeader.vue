@@ -4,7 +4,7 @@
     <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
-      <div class="eui-application-logo">
+      <div class="eui-application-logo" role="heading" aria-level="2">
         <h1>
           <img alt="NASA logo" class="logo" src="../assets/nasa-logo.svg"/>
           <span id="title">{{$store.state.global_params['formTitle']}}&nbsp;<span v-if="this.$testing">(TESTING MODE)</span>

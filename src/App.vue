@@ -40,8 +40,13 @@
         computed:{
 
         },
+        data() {
+            return {
+                hidden: false
+            };
+        }, 
         props:{
-
+            
         },
         components: {
             FormsFooter,
@@ -66,6 +71,8 @@
                         this.getIDs()
                     }
                 } else if (typeof this.$route.query.token == 'undefined') {
+                    this.hidden = true
+                    this.showHideForms('hide')
                     this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
                 }
             }
@@ -73,8 +80,13 @@
         mounted() {
             setTimeout(() => {
                 const loading = document.getElementById('loading')
-                if (loading !== null && (localStorage.getItem('auth-token') != null && typeof this.$route.query.token == 'undefined' || this.$testing)){
-                    loading.classList.add("hidden");
+                if (loading !== null && 
+                    (localStorage.getItem('auth-token') != null || typeof this.$route.query.token !== 'undefined') && 
+                    (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)) || 
+                    this.$testing){
+                    this.showHideForms('hide')
+                } else if (!this.hidden){
+                    this.showHideForms('show')
                 }
             }, 1000);
         },
@@ -155,6 +167,9 @@
     }
     .editable-table {
         margin-top:3rem;
+    }
+    footer {
+        background-color: #2276ac;
     }
     .editable-table .data-cell {
         min-height: 2rem;
@@ -331,5 +346,9 @@
     }
     #daacs-container, #questions_form {
         min-height:1240px;
+    }
+    .modal-open {
+        padding-right:unset!important;
+        overflow:unset!important;
     }
 </style>

@@ -13,11 +13,20 @@ export default {
       checkAuth(){
         if(typeof this.$route.query.token == 'undefined' && !this.$testing) {
           if(localStorage.getItem('auth-token') == null){
+            localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
             window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
           }
         } else {
           localStorage.setItem('auth-token', this.$route.query.token)
+          if(localStorage.getItem('forms-arrived-from') != null){
+            let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
+            localStorage.removeItem('forms-arrived-from')
+            window.location.href = formsArrivedFrom
+          } else if (Object.keys(this.$route.params).length === 0){
+            this.showHideForms('hide')
+            this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+          }
         }
         this.$store.commit("setToken", localStorage.getItem('auth-token'));
       },
@@ -104,6 +113,19 @@ export default {
         }
       },
       // @vuese
+      // Show or Hide forms (shows loading if hidden)
+      // @arg hide [String] The action to take place.  Should be 'hide' or 'show'. Defaults to 'hide'.
+      showHideForms(hide = 'hide'){
+        const loading = document.getElementById('loading')
+        if (loading != null) {
+          if(hide === 'hide') {
+            loading.classList.remove("hidden");
+          } else {
+            loading.classList.add("hidden");
+          }
+        }
+      },
+      // @vuese
       // Gets group id and form id from the API
       async getIDs(){
         return new Promise((resolve) => {
@@ -118,9 +140,17 @@ export default {
               },
             });
             $.getJSON(url, (request) => {
+              if (request.error){
+                this.showHideForms('hide')
+                this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
+              } else {
+                this.showHideForms('show')
+              }
               this.$store.commit("pushGlobalParams", ['group', request.daac_id])
-              this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
-              if (typeof request.step_data.form_id === 'undefined'){
+              if (typeof request.step_data != 'undefined') {
+                this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
+              }
+              if (typeof this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined'){
                 this.$store.commit("pushGlobalParams", ['formId', request.step_data.data.form_id])
               }
               if (this.$route.params.formId) {
@@ -578,9 +608,9 @@ export default {
             size: "sm",
             buttonSize: "sm",
             okTitle: "OK",
-            footerClass: "p-2",
+            footerClass: "p-2 redirect-modal",
             hideHeaderClose: false,
-            centered: true,
+            centered: true
           })
           if (value) {
             this.exitForm();
@@ -595,7 +625,7 @@ export default {
             okVariant: "danger",
             okTitle: "YES",
             cancelTitle: "NO",
-            footerClass: "p-2",
+            footerClass: "p-2 redirect-modal",
             hideHeaderClose: false,
             centered: true,
           })
