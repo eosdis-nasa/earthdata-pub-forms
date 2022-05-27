@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.6 - 2022-05-27
+
+- Changed daac selection header, added back hidden daacs, added a paragraph explaining why some daacs are disabled.
+
 ## 1.0.5 - 2022-05-24
 
 - Removed custom routing and fixed routing issues. Request ID is in address bar instead of Group ID. Added a cancel button to the daac selection page.
