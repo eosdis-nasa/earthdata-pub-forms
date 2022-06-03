@@ -30,7 +30,7 @@
               </div>
               <div class="mt-3" v-if="selected">
                 For more information, visit
-                <a href="#" id="selected_daac_link" target="_blank">
+                <a href="#" id="selected_daac_link" target="_blank" aria-label="Link to selected DAAC">
                   <span id="selected_daac"></span>'s website
                   <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
                 </a>
@@ -99,6 +99,7 @@ export default {
           this.selected = daacData.long_name;
         }
       }
+      this.showHideForms('show')
     });
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
       this.formId = this.$store.state.global_params['formId']
@@ -177,7 +178,6 @@ export default {
       );
       id = current[1]
       this.$store.state.global_params['group'] = id
-      this.setActiveLocationWithoutReload(id);
       window.headerComponent.daac = id
       return short_name;
     },
@@ -191,8 +191,7 @@ export default {
     // @vuese
     // Used to submit the form data and move on
     cancelForm() {
-      this.$v.$touch();
-      this.$router.back()
+      history.back()
     },
     // @vuese
     // Used to submit the form data and move on
@@ -208,27 +207,11 @@ export default {
       if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
         this.saveFile();
-      } else {
-        args['group'] = 'selection'
-        this.$router.replace({ name: `daacs`, params: args });
-      }
+      } 
     },
     // @vuese
     // Gets the current daac selected from the store and updates
     getCurrentDaacAndUpdate() {
-      if (
-        (typeof this.$store !== 'undefined' && 
-        this.$store.state.global_params['group'] == "") &&
-        !window.location.href.match(/daacs\/selection/g) &&
-        (typeof this.$store.state.global_params['group'] == "undefined" ||
-          this.$store.state.global_params['group'] == "")
-      ) {
-        history.replaceState(
-          "updating href",
-          window.document.title,
-          `${window.location.href.toLowerCase()}daacs/selection`
-        );
-      }
       if (
         (typeof this.$store !== 'undefined' && 
           this.$store.state.global_params['group'] != "undefined" &&

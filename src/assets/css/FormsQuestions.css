@@ -234,7 +234,6 @@ fieldset {
 .console_bar {
   float: right;
 }
-
 @media (min-width: 1200px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;
