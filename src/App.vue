@@ -42,7 +42,6 @@
         },
         data() {
             return {
-                hidden: false
             };
         }, 
         props:{
@@ -56,6 +55,11 @@
         },
         beforeMount(){
             this.checkAuth()
+            let version = "1.0.5"
+            if(localStorage.getItem("version") != version){
+                localStorage.clear();
+                localStorage.setItem("version", version);
+            }
             if (!window.location.href.match(/daacs/g)) {
                 if (this.$route.params.requestId || this.$testing) {
                     if (this.$testing) {
@@ -71,24 +75,13 @@
                         this.getIDs()
                     }
                 } else if (typeof this.$route.query.token == 'undefined') {
-                    this.hidden = true
                     this.showHideForms('hide')
                     this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
                 }
             }
         },
         mounted() {
-            setTimeout(() => {
-                const loading = document.getElementById('loading')
-                if (loading !== null && 
-                    (localStorage.getItem('auth-token') != null || typeof this.$route.query.token !== 'undefined') && 
-                    (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)) || 
-                    this.$testing){
-                    this.showHideForms('hide')
-                } else if (!this.hidden){
-                    this.showHideForms('show')
-                }
-            }, 1000);
+
         },
         watch: {
 
