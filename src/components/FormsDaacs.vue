@@ -116,6 +116,7 @@ export default {
           this.selected = daacData.long_name;
         }
       }
+      this.showHideForms('show')
     });
     if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
       this.formId = this.$store.state.global_params['formId']

@@ -11,19 +11,23 @@ export default {
       // @vuese
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
+        const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
         if(typeof this.$route.query.token == 'undefined' && !this.$testing) {
           if(localStorage.getItem('auth-token') == null){
             localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
-            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            window.location.href = url
           }
         } else {
+          if(this.$testing){
+            this.confirmExit(url)
+          }
           localStorage.setItem('auth-token', this.$route.query.token)
           if(localStorage.getItem('forms-arrived-from') != null){
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
             window.location.href = formsArrivedFrom
-          } else if (Object.keys(this.$route.params).length === 0){
+          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
             this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
           }
@@ -68,10 +72,11 @@ export default {
             this.daacs = items
             resolve(items);
           }).fail(function() { 
+            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
             if (!this.$testing){
               localStorage.removeItem('auth-token')
-              window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-            }
+              window.location.href = url
+            } else { this.confirmExit(url) }
           })
         })
       },
@@ -160,12 +165,13 @@ export default {
                 this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
                 this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
                 resolve(this.$store.state.global_params['formShortName'])
-              })
+              }) 
             }).fail(function() { 
+              const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
-                window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-              }
+                window.location.href = url
+              } else { this.confirmExit(url) }
             })
           }
         })
@@ -221,12 +227,7 @@ export default {
                   this.changeLocation(comp)
                 }
               }
-            }).fail(function() { 
-              if (!this.$testing){
-                localStorage.removeItem('auth-token')
-                window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-              }
-            });
+            })
           } 
           else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
             (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
@@ -410,11 +411,15 @@ export default {
                 }
                 this.questions = question;
                 resolve(question)
+                if(question.length > 0){
+                  this.showHideForms('show')
+                }
               }).fail(function() { 
+                const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                 if (!this.$testing){
                   localStorage.removeItem('auth-token')
-                  window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-                }
+                  window.location.href = url
+                } else { this.confirmExit(url) }
               });
             }
           );
@@ -690,6 +695,20 @@ export default {
         }
       },
       // @vuese
+      // Exit confirmed.
+      // @arg url [String] the url to be routed to.
+      confirmExit(url){
+        $("#eui-banner").addClass("hidden");
+        if (this.$testing) {
+          console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
+          setTimeout(() => {
+            this.showHideForms('show')
+          }, "100")
+        } else {
+          window.location.href = url;
+        }
+      },
+      // @vuese
       // Exits the form to requests page if user confirms
       // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
       // @arg message [String] any other function messages to include, 
@@ -707,16 +726,10 @@ export default {
             centered: true,
           })
           .then(() => {
-            $("#eui-banner").addClass("hidden");
-            if(!this.$testing){
-              window.location.href = url;
-            }
+            this.confirmExit(url)
           })
         } else {
-          $("#eui-banner").addClass("hidden");
-          if(!this.$testing){
-            window.location.href = url;
-          }
+          this.confirmExit(url)
         }
       },
       // @vuese

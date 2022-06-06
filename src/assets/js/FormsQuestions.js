@@ -790,7 +790,12 @@ export default {
     // @vuese
     // Loads answers using request id
     loadAnswers() {
-      if (JSON.stringify(this.values) == '{}' && typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined' && !this.$testing) {
+      if (JSON.stringify(this.values) == '{}' && 
+        typeof this.$store !== 'undefined' && 
+        this.$store.state.global_params['formId'] != "" && 
+        this.$store.state.global_params['requestId'] != '' && 
+        typeof this.$store.state.global_params['requestId'] !== 'undefined' && 
+        !this.$testing) {
         $.getJSON(
         `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
         (answers) => {
