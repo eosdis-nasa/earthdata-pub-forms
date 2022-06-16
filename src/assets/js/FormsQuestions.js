@@ -350,18 +350,22 @@ export default {
   methods: {
     checkRequiredIf(fld) {
       if (fld.required_if) {
-        for (let req_fld of fld.required_if) {
-          try {
-            if (
-              typeof this.values[req_fld.field] != "undefined" &&
-              this.values[req_fld.field].toString() ===
-                req_fld.value.toString()
-            ) {
-              return true;
+        try {
+          for (let req_fld of fld.required_if) {
+            try {
+              if (
+                typeof this.values[req_fld.field] != "undefined" &&
+                this.values[req_fld.field].toString() ===
+                  req_fld.value.toString()
+              ) {
+                return true;
+              }
+            } catch (e) {
+              // test
             }
-          } catch (e) {
-            // test
           }
+        } catch (e) {
+          // test
         }
       }
       return false;
