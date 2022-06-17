@@ -6,7 +6,7 @@
         <div class="daac-div">
           <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
             <div class="mt-3 disabled-daacs">
-              Some DAACs are not available in Earthdata Pub because they are onboarding. DAAC's will become selectable as they are onboarded. DAACs that are not selectable are not yet using Earthdata Pub for data publication. To publish data with a non-selectable DAAC, contact the DAAC. Contact information can be found on the <a :href=overviewRoot alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Earthdata Pub Overview</a> page.
+              Some DAACs are not available in Earthdata Pub because they are onboarding. DAACs will become selectable as they are onboarded. DAACs that are not selectable are not yet using Earthdata Pub for data publication. To publish data with a non-selectable DAAC, contact the DAAC. Contact information can be found on the <a :href=overviewRoot alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Earthdata Pub Overview</a> page.
             </div>
             <!-- Radio Div with Description -->
             <div>
