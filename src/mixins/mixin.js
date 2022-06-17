@@ -27,9 +27,12 @@ export default {
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
             window.location.href = formsArrivedFrom
-          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
+          } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
             this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
+            this.showHideForms('hide')
+            this.redirectNotification(this.$bvModal, '', 'submit', true)
           }
         }
         this.$store.commit("setToken", localStorage.getItem('auth-token'));
