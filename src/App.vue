@@ -55,7 +55,7 @@
         },
         beforeMount(){
             this.checkAuth()
-            let version = "1.0.5"
+            let version = "1.0.6"
             if(localStorage.getItem("version") != version){
                 localStorage.clear();
                 localStorage.setItem("version", version);
