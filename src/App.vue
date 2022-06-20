@@ -78,6 +78,12 @@
                     this.showHideForms('hide')
                     this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
                 }
+            } else {
+                if (this.$route.query.requestId){
+                    this.$store.commit("pushGlobalParams", ['formTitle', 'Earthdata Publication Forms '])
+                    this.$store.commit("pushGlobalParams", ['requestId',`${this.$route.query.requestId}`]);
+                    this.getIDs()
+                }
             }
         },
         mounted() {

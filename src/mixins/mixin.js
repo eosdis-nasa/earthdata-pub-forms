@@ -166,7 +166,9 @@ export default {
               }
               url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`
               $.getJSON(url, (form) => {
-                this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                if (!window.location.href.match(/selection/g)){
+                  this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                }
                 this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
                 resolve(this.$store.state.global_params['formShortName'])
               }) 
@@ -704,7 +706,7 @@ export default {
       confirmExit(url){
         $("#eui-banner").addClass("hidden");
         if (this.$testing) {
-          console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
+          // console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
           setTimeout(() => {
             this.showHideForms('show')
           }, "100")
