@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 1.0.7 - 2022-06-22
 
-- Changed content of DOI to table, added move up down feature
+- Changed content of DOI to table, added move up down feature.
 
 ## 1.0.5 - 2022-05-24
 
