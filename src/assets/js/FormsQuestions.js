@@ -440,6 +440,47 @@ export default {
       }
     },
     // @vuese
+    // Moves the selected table row
+    // @arg tableId [String] the id of the table in question, 
+    // @arg item [Array] the item in question
+    // @arg direction [String] which direction the item should move to.
+    moveUpDown(tableId, item, direction, canMove = false) {
+      for (let r = 0;r < this.values[tableId].length;r++) {
+        let row = this.values[tableId][r]
+        let found = true
+        for (let field of Object.keys(row)) {
+          if (row[field] != item[field]) {
+            found = false
+            break
+          }
+        }
+        if (found) {
+          if(direction === "up") {
+            if(r >= 1){
+              if (canMove){
+                return true
+              }
+              let other_row = this.values[tableId][r-1]
+              this.values[tableId].splice(r, 1, other_row)
+              this.values[tableId].splice(r-1, 1, row)
+              break
+            }
+          }
+          if(direction === "down") {
+            if(r < this.values[tableId].length -1){
+              if (canMove){
+                return true
+              }
+              let other_row = this.values[tableId][r+1]
+              this.values[tableId].splice(r, 1, other_row)
+              this.values[tableId].splice(r+1, 1, row)
+              break
+            }
+          }
+        }
+      }
+    },
+    // @vuese
     // Formats any date text to YYYY-MM-DD
     // @arg event [Object] the event that executed
     fixDate(event) {

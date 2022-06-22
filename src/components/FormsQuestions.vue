@@ -223,9 +223,10 @@
                                     responsive 
                                     sticky-header 
                                     show-empty
+                                    :id="input.control_id"
                                     :value="values[input.control_id]"
                                     :items="values[input.control_id]"
-                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])">
                                     <template #head(X)="data">
                                       <b-button 
                                         class="" 
@@ -245,6 +246,26 @@
                                         @click="removeRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="trash-alt"/>
                                       </b-button>
+                                      <template v-if="moveUpDown(input.control_id, data.item, 'up', true)">
+                                        &nbsp;
+                                        <b-button 
+                                          class="button" 
+                                          aria-label="move up button" 
+                                          style="margin:0px"
+                                          @click="moveUpDown(input.control_id, data.item, 'up')">
+                                          <font-awesome-icon icon="arrow-up"/>
+                                        </b-button>
+                                      </template>
+                                      <template v-if="moveUpDown(input.control_id, data.item, 'down', true)">
+                                        &nbsp;
+                                        <b-button 
+                                          class="button" 
+                                          aria-label="move down button" 
+                                          style="margin:0px"
+                                          @click="moveUpDown(input.control_id, data.item, 'down')">
+                                          <font-awesome-icon icon="arrow-down"/>
+                                        </b-button>
+                                      </template>
                                     </template>
                                   </b-editable-table>
                                 </template>
