@@ -16,6 +16,7 @@ export default {
           if(localStorage.getItem('auth-token') == null){
             localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
+            console.log(`setting to ${url} from checkauth 1`)
             window.location.href = url
           }
         } else {
@@ -26,6 +27,7 @@ export default {
           if(localStorage.getItem('forms-arrived-from') != null){
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
+            console.log(`setting to ${url} from checkauth 2`)
             window.location.href = formsArrivedFrom
           } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
@@ -79,6 +81,7 @@ export default {
             const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
             if (!this.$testing){
               localStorage.removeItem('auth-token')
+              console.log(`setting to ${url} on fail 1`)
               window.location.href = url
             } else { this.confirmExit(url) }
           })
@@ -174,6 +177,7 @@ export default {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
+                console.log(`setting to ${url} on fail 2`)
                 window.location.href = url
               } else { this.confirmExit(url) }
             })
@@ -422,6 +426,7 @@ export default {
                 const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                 if (!this.$testing){
                   localStorage.removeItem('auth-token')
+                  console.log(`setting to ${url} on fail 3`)
                   window.location.href = url
                 } else { this.confirmExit(url) }
               });
@@ -710,6 +715,7 @@ export default {
             this.showHideForms('show')
           }, "100")
         } else {
+          console.log(`setting to ${url} on confirm exit`)
           window.location.href = url;
         }
       },
