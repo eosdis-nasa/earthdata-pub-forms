@@ -217,7 +217,7 @@
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <template>
                                   <b-editable-table 
-                                    :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                    :class="{ 'editable-table': true, 'single-column':(question.inputs[c_key]['enums'].length === 1), 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     bordered 
                                     fixed
                                     responsive 

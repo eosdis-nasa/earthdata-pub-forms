@@ -170,8 +170,8 @@
         padding: 5px;
         border: 1px solid #cac8c8;
     }
-    .editable-table td,
-    .editable-table th:first-child {
+    .single-column td,
+    .single-column th:first-child {
         width:80%
     }
     a {
