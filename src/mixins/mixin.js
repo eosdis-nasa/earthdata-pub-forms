@@ -326,9 +326,9 @@ export default {
                     break;
                   }
                 }
-              } 
+              }
               if(!this.$testing && typeof this.$store !== 'undefined'
-              && this.$store.state.global_params['formId'] !== "" && this.$store.state.global_params['group'] !== "") {
+              && this.$store.state.global_params['formId'] && this.$store.state.global_params['group']) {
                 // eslint-disable-next-line
                 console.log('form id type', typeof this.$store.state.global_params['formId'], 'daac_id type', typeof this.$store.state.global_params['group'], 'formId', this.$store.state.global_params['formId'], 'daac_id', this.$store.state.global_params['group'])
                 url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
