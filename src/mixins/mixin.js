@@ -16,6 +16,7 @@ export default {
           if(localStorage.getItem('auth-token') == null){
             localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
+            // eslint-disable-next-line
             console.log(`setting to ${url} from checkauth 1`)
             window.location.href = url
           }
@@ -27,6 +28,7 @@ export default {
           if(localStorage.getItem('forms-arrived-from') != null){
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
+            // eslint-disable-next-line
             console.log(`setting to ${url} from checkauth 2`)
             window.location.href = formsArrivedFrom
           } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
@@ -81,6 +83,7 @@ export default {
             const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
             if (!this.$testing){
               localStorage.removeItem('auth-token')
+              // eslint-disable-next-line
               console.log(`setting to ${url} on fail 1`)
               window.location.href = url
             } else { this.confirmExit(url) }
@@ -177,6 +180,7 @@ export default {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
+                // eslint-disable-next-line
                 console.log(`setting to ${url} on fail 2`)
                 window.location.href = url
               } else { this.confirmExit(url) }
@@ -426,6 +430,7 @@ export default {
                 const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                 if (!this.$testing){
                   localStorage.removeItem('auth-token')
+                  // eslint-disable-next-line
                   console.log(`setting to ${url} on fail 3`)
                   window.location.href = url
                 } else { this.confirmExit(url) }
@@ -709,11 +714,13 @@ export default {
       confirmExit(url){
         $("#eui-banner").addClass("hidden");
         if (this.$testing) {
+          // eslint-disable-next-line
           console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
           setTimeout(() => {
             this.showHideForms('show')
           }, "100")
         } else {
+          // eslint-disable-next-line
           console.log(`setting to ${url} on confirm exit`)
           window.location.href = url;
         }
