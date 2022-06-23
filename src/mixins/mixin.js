@@ -704,6 +704,7 @@ export default {
       confirmExit(url){
         $("#eui-banner").addClass("hidden");
         if (this.$testing) {
+          // eslint-disable-next-line
           console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
           setTimeout(() => {
             this.showHideForms('show')
