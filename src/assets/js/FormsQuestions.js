@@ -380,18 +380,16 @@ export default {
       return false;
     },
     accessibilityHack(){
-      setTimeout(() => {
-        let buttons = document.getElementsByTagName('button')
-        for (const ea in buttons){
-          if (buttons[ea].ariaLabel == null && typeof buttons[ea].id !== 'undefined') {
-            try {
-              buttons[ea].ariaLabel = buttons[ea].id
-            } catch(err) {
-              // console.error(err);
-            }
+      let buttons = document.getElementsByTagName('button')
+      for (const ea in buttons){
+        if (buttons[ea].ariaLabel == null && typeof buttons[ea].id !== 'undefined') {
+          try {
+            buttons[ea].ariaLabel = buttons[ea].id
+          } catch(err) {
+            // console.error(err);
           }
         }
-      }, 4000);
+      }
     },
     // @vuese
     // Goes to daacs after asking if okay if new data present.
