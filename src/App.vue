@@ -55,7 +55,7 @@
         },
         beforeMount(){
             this.checkAuth()
-            let version = "1.0.6"
+            let version = "1.0.8"
             if(localStorage.getItem("version") != version){
                 localStorage.clear();
                 localStorage.setItem("version", version);
@@ -72,7 +72,6 @@
                         this.$store.commit("pushGlobalParams", ['group',`15df4fda-ed0d-417f-9124-558fb5e5b561`]);
                     } else {
                         this.$store.commit("pushGlobalParams", ['requestId',`${this.$route.params.requestId}`]);
-                        this.getIDs()
                     }
                 } else if (typeof this.$route.query.token == 'undefined') {
                     this.showHideForms('hide')
@@ -87,7 +86,7 @@
             }
         },
         mounted() {
-
+            
         },
         watch: {
 
