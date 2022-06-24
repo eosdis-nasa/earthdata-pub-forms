@@ -10,9 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.8 - 2022-06-23
+
+## 1.0.9 - 2022-06-23
 
 - Added getIDs to resolve before everything else to fix sometimes not loading on server
+
+## 1.0.8 - 2022-06-22
+
+- Changed content of DOI to table, added move up down feature.
 
 ## 1.0.7 - 2022-06-20
 

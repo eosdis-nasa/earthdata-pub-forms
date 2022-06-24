@@ -218,15 +218,16 @@
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <template>
                                   <b-editable-table 
-                                    :class="{ 'editable-table': true, 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
+                                    :class="{ 'editable-table': true, 'single-column':(question.inputs[c_key]['enums'].length === 1), 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     bordered 
                                     fixed
                                     responsive 
                                     sticky-header 
                                     show-empty
+                                    :id="input.control_id"
                                     :value="values[input.control_id]"
                                     :items="values[input.control_id]"
-                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])" >
+                                    :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])">
                                     <template #head(X)="data">
                                       <b-button 
                                         class="" 
@@ -246,6 +247,26 @@
                                         @click="removeRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="trash-alt"/>
                                       </b-button>
+                                      <template v-if="moveUpDown(input.control_id, data.item, 'up', true)">
+                                        &nbsp;
+                                        <b-button 
+                                          class="button" 
+                                          aria-label="move up button" 
+                                          style="margin:0px"
+                                          @click="moveUpDown(input.control_id, data.item, 'up')">
+                                          <font-awesome-icon icon="arrow-up"/>
+                                        </b-button>
+                                      </template>
+                                      <template v-if="moveUpDown(input.control_id, data.item, 'down', true)">
+                                        &nbsp;
+                                        <b-button 
+                                          class="button" 
+                                          aria-label="move down button" 
+                                          style="margin:0px"
+                                          @click="moveUpDown(input.control_id, data.item, 'down')">
+                                          <font-awesome-icon icon="arrow-down"/>
+                                        </b-button>
+                                      </template>
                                     </template>
                                   </b-editable-table>
                                 </template>
@@ -350,7 +371,7 @@
                                   <template v-if="input.required_if !== undefined && input.required_if.length > 0">
                                     <template v-for="(req_if, d_key) in input.required_if">
                                       <span v-bind:key="`${a_key}_${b_key}_${c_key}_${d_key}`" v-if="values[req_if.field] == req_if.value">
-                                        <template v-if="req_if.message !== undefined">{{ heading.heading }}{{ typeof question.long_name !== 'undefined' ? ` - ${question.long_name}` : ''}}{{ typeof input.label !== 'undefined' && input.label !=='' ? ` - ${input.label}` : ''}} - {{req_if.message}}</template>
+                                        <template v-if="req_if.message !== undefined">{{ heading.heading }}{{ typeof question.long_name !== 'undefined' ? ` - ${question.long_name}` : ''}}{{ typeof input.label !== 'undefined' && input.label !==''  && input.label !== 'undefined' ? ` - ${input.label}` : ''}} - {{req_if.message}}</template>
                                         <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.validation_error_msg}`"></span>
                                         <template v-else>{{ heading.heading }} - {{ question.long_name }} is required</template>
                                       </span>
@@ -358,7 +379,7 @@
                                   </template>
                                   <span v-else-if="input.validation_error_msg !== undefined" v-html="`${heading.heading} - ${question.long_name} - ${input.validation_error_msg}`"></span>
                                   <template v-else>
-                                    {{ heading.heading }} - {{ question.long_name }} {{ typeof input.label !== 'undefined' && input.label !=='' ? ` - ${input.label}` : ''}}
+                                    {{ heading.heading }} - {{ question.long_name }} {{ typeof input.label !== 'undefined' && input.label !=='' && input.label !== 'undefined' ? ` - ${input.label}` : ''}}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                                     <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
                                     <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
