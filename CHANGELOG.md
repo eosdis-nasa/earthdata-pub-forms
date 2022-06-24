@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added getIDs to resolve before everything else to fix sometimes not loading on server
 
+## 1.0.7 - 2022-06-20
+
+- Added in for direct route to selection page.
+
 ## 1.0.6 - 2022-05-27
 
 - Changed daac selection header, added back hidden daacs, added a paragraph explaining why some daacs are disabled.
