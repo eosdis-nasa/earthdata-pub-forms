@@ -175,6 +175,7 @@
                                     :aria-controls="`date button`"
                                     :aria-labelledby="`${input.control_id}_button`"
                                     :aria-describedby="`${input.control_id}_button`"
+                                    :aria-label="`${input.control_id}_button`"
                                     :label-nav="`Date Picker`"
                                     :label-calendar="`Date Picker`"
                                     v-model="values[input.control_id]"

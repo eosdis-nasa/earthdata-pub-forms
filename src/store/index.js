@@ -4,12 +4,19 @@ import Vuex from 'vuex'
 // This is to use vuex for the state management
 Vue.use(Vuex)
 
+let formTitle
+if(window.location.href.match(/daacs/g)) {
+  formTitle = "DAAC Selection"
+} else {
+  formTitle ='Earthdata Publication Forms'
+}
+
 // Created new store
 export const store = new Vuex.Store({
   // State is the default obj and value
   state: {
     question_answers: [],
-    global_params: {formTitle: 'Earthdata Publication Forms'},
+    global_params: {formTitle: formTitle},
     token: ''
   },
   getters: {
