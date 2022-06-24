@@ -92,17 +92,15 @@ export default {
     // Sets local variables from the global_params in store
     window.daacsComponent = this;
     this.setActiveNav("daacs");
-    this.getIDs().then(() => {
-      this.setLocalVars(),
-      this.fetchDaacs().then(() => {
-        if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
-          let daacData = this.getDaac(this.$store.state.global_params['group'])
-          if(typeof daacData!= 'undefined'){
-            this.selected = daacData.long_name;
-          }
+    this.setLocalVars(),
+    this.fetchDaacs().then(() => {
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
+        let daacData = this.getDaac(this.$store.state.global_params['group'])
+        if(typeof daacData!= 'undefined'){
+          this.selected = daacData.long_name;
         }
-        this.showHideForms('show')
-      })
+      }
+      this.showHideForms('show')
     })
   },
   methods: {

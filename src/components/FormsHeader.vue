@@ -65,9 +65,13 @@ export default {
     // Sets the main route based on incoming query string, then saves them to the store.
     // This then sets local variables from the global_params
     window.headerComponent = this;
-    this.getIDs().then(() => {
+    if (!window.location.href.match(/daacs/g)) {
+      this.getIDs().then(() => {
+        this.setLocalVars()
+      })
+    } else {
       this.setLocalVars()
-    })
+    }
   },
   methods: {
     setLocalVars(){

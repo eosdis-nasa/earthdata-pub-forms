@@ -16,8 +16,6 @@ export default {
           if(localStorage.getItem('auth-token') == null){
             localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
-            // eslint-disable-next-line
-            console.log(`setting to ${url} from checkauth 1`)
             window.location.href = url
           }
         } else {
@@ -28,8 +26,6 @@ export default {
           if(localStorage.getItem('forms-arrived-from') != null){
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
-            // eslint-disable-next-line
-            console.log(`setting to ${url} from checkauth 2`)
             window.location.href = formsArrivedFrom
           } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
@@ -83,8 +79,6 @@ export default {
             const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
             if (!this.$testing){
               localStorage.removeItem('auth-token')
-              // eslint-disable-next-line
-              console.log(`setting to ${url} on fail 1`)
               window.location.href = url
             } else { this.confirmExit(url) }
           })
@@ -146,7 +140,7 @@ export default {
           let url;
           if (this.$testing){
             resolve(this.$store.state.global_params['formShortName'])
-          } else {
+          } else if (typeof this.$store.state.global_params['requestId'] !=='undefined') {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`
             $.ajaxSetup({
               headers: {
@@ -182,8 +176,6 @@ export default {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
-                // eslint-disable-next-line
-                console.log(`setting to ${url} on fail 2`)
                 window.location.href = url
               } else { this.confirmExit(url) }
             })
@@ -435,8 +427,6 @@ export default {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
-                // eslint-disable-next-line
-                console.log(`setting to ${url} on fail 3`)
                 window.location.href = url
               } else { this.confirmExit(url) }
             });
@@ -444,8 +434,6 @@ export default {
             const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
             if (!this.$testing){
               localStorage.removeItem('auth-token')
-              // eslint-disable-next-line
-              console.log(`setting to ${url} on fail 4`)
               window.location.href = url
             } else { this.confirmExit(url) }
           });
@@ -732,8 +720,6 @@ export default {
             this.showHideForms('show')
           }, "100")
         } else {
-          // eslint-disable-next-line
-          console.log(`setting to ${url} on confirm exit`)
           window.location.href = url;
         }
       },
