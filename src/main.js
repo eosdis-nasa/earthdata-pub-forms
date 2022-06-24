@@ -98,6 +98,7 @@ new Vue({
   },
 
   mounted(){
+    
   },
 
   render: h => h(App)

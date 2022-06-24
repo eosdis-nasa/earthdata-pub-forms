@@ -109,6 +109,7 @@ export default {
     // Sets local variables from the global_params in store
     window.daacsComponent = this;
     this.setActiveNav("daacs");
+    this.setLocalVars(),
     this.fetchDaacs().then(() => {
       if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
         let daacData = this.getDaac(this.$store.state.global_params['group'])
@@ -117,15 +118,17 @@ export default {
         }
       }
       this.showHideForms('show')
-    });
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
-      this.formId = this.$store.state.global_params['formId']
-    }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
-      this.requestId = this.$store.state.global_params['requestId']
-    }
+    })
   },
   methods: {
+    setLocalVars(){
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+        this.formId = this.$store.state.global_params['formId']
+      }
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+        this.requestId = this.$store.state.global_params['requestId']
+      }
+    },
     // @vuese
     // On selected, sets current daac objects from values
     // @arg current_daac [String] hash,  

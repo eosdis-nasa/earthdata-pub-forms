@@ -229,20 +229,24 @@ export default {
               } else if (typeof fld.required_if != "undefined") {
                 val_fields.values[fld.control_id] = {
                   required: requiredIf(() => {
-                    for (let req_fld of fld.required_if) {
-                      try {
-                        if (
-                          typeof this.values[req_fld.field] != "undefined" &&
-                          this.values[req_fld.field].toString() ===
-                            req_fld.value.toString()
-                        ) {
-                          return true;
+                    try {
+                      for (let req_fld of fld.required_if) {
+                        try {
+                          if (
+                            typeof this.values[req_fld.field] != "undefined" &&
+                            this.values[req_fld.field].toString() ===
+                              req_fld.value.toString()
+                          ) {
+                            return true;
+                          }
+                        } catch (e) {
+                          // test
                         }
-                      } catch (e) {
-                        // test
                       }
+                      return false;
+                    } catch (e) {
+                      //test
                     }
-                    return false;
                   }),
                 };
               }
@@ -330,55 +334,62 @@ export default {
     // then finally loads the answers.
     window.questionsComponent = this;
     this.setActiveNav("questions");
-    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
-      this.formId = this.$store.state.global_params['formId']
-    }
-    if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
-      this.requestId = this.$store.state.global_params['requestId']
-    }
-    if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
-      this.daac = this.$store.state.global_params['group']
-    }
-    if (typeof window.headerComponent != "undefined") {
-      window.headerComponent.daac = this.daac
-    }
-    this.fetchQuestions().then(
-      this.accessibilityHack(),
-      this.loadAnswers()
-    );
+    this.getIDs().then(() => {
+      this.setLocalVars(),
+      this.fetchQuestions().then(() => {
+        this.accessibilityHack(),
+        this.loadAnswers()
+      })
+    })
   },
   methods: {
+    setLocalVars() {
+      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
+        this.formId = this.$store.state.global_params['formId']
+      }
+      if(typeof this.$store !== 'undefined' && this.$store.state.global_params['requestId'] !== ''){
+        this.requestId = this.$store.state.global_params['requestId']
+      }
+      if(typeof this.$store !=='undefined' && this.$store.state.global_params['group'] !== ''){
+        this.daac = this.$store.state.global_params['group']
+      }
+      if (typeof window.headerComponent != "undefined") {
+        window.headerComponent.daac = this.daac
+      }
+    },
     checkRequiredIf(fld) {
       if (fld.required_if) {
-        for (let req_fld of fld.required_if) {
-          try {
-            if (
-              typeof this.values[req_fld.field] != "undefined" &&
-              this.values[req_fld.field].toString() ===
-                req_fld.value.toString()
-            ) {
-              return true;
+        try {
+          for (let req_fld of fld.required_if) {
+            try {
+              if (
+                typeof this.values[req_fld.field] != "undefined" &&
+                this.values[req_fld.field].toString() ===
+                  req_fld.value.toString()
+              ) {
+                return true;
+              }
+            } catch (e) {
+              // test
             }
-          } catch (e) {
-            // test
           }
+        } catch (e) {
+          // test
         }
       }
       return false;
     },
     accessibilityHack(){
-      setTimeout(() => {
-        let buttons = document.getElementsByTagName('button')
-        for (const ea in buttons){
-          if (buttons[ea].ariaLabel == null && typeof buttons[ea].id !== 'undefined') {
-            try {
-              buttons[ea].ariaLabel = buttons[ea].id
-            } catch(err) {
-              // console.error(err);
-            }
+      let buttons = document.getElementsByTagName('button')
+      for (const ea in buttons){
+        if (buttons[ea].ariaLabel == null && typeof buttons[ea].id !== 'undefined') {
+          try {
+            buttons[ea].ariaLabel = buttons[ea].id
+          } catch(err) {
+            // console.error(err);
           }
         }
-      }, 4000);
+      }
     },
     // @vuese
     // Goes to daacs after asking if okay if new data present.

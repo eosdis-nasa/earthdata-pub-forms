@@ -27,9 +27,12 @@ export default {
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
             localStorage.removeItem('forms-arrived-from')
             window.location.href = formsArrivedFrom
-          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
+          } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
             this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
+            this.showHideForms('hide')
+            this.redirectNotification(this.$bvModal, '', 'submit', true)
           }
         }
         this.$store.commit("setToken", localStorage.getItem('auth-token'));
@@ -136,7 +139,7 @@ export default {
           let url;
           if (this.$testing){
             resolve(this.$store.state.global_params['formShortName'])
-          } else {
+          } else if (typeof this.$store.state.global_params['requestId'] !=='undefined') {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`
             $.ajaxSetup({
               headers: {
@@ -150,11 +153,13 @@ export default {
               } else {
                 this.showHideForms('show')
               }
-              this.$store.commit("pushGlobalParams", ['group', request.daac_id])
-              if (typeof request.step_data != 'undefined') {
+              if (typeof request.daac_id !== 'undefined') {
+                this.$store.commit("pushGlobalParams", ['group', request.daac_id])
+              }
+              if (typeof request.step_data != 'undefined' && typeof request.step_data.form_id !== 'undefined') {
                 this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
               }
-              if (typeof this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined'){
+              if (this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined' && typeof request.step_data.data.form_id !== 'undefined'){
                 this.$store.commit("pushGlobalParams", ['formId', request.step_data.data.form_id])
               }
               if (this.$route.params.formId) {
@@ -301,129 +306,137 @@ export default {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
           }
           $.getJSON(url, (forms) => {
-              var question = [];
-              this.contacts = [];
-              let contact = false;
-              if (this.$testing && 
-                typeof this.$store.state.global_params['formId'] == 'undefined' &&
-                (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
-              ) {
-                for (let f in forms) {
-                  if (this.$store.state.global_params['formShortName'] == forms[f].short_name) {
-                    this.$store.state.global_params['formId'] = forms[f]["id"];
-                    break;
-                  }
+            if (this.$testing && 
+              typeof this.$store.state.global_params['formId'] == 'undefined' &&
+              (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
+            ) {
+              for (let f in forms) {
+                if (this.$store.state.global_params['formShortName'] == forms[f].short_name) {
+                  this.$store.state.global_params['formId'] = forms[f]["id"];
+                  break;
                 }
-              } 
-              if(!this.$testing && typeof this.$store !== 'undefined'
-              && this.$store.state.global_params['formId'] !== "" && this.$store.state.global_params['group'] !== "") {
-                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
-              $.getJSON(url, (questions) => {
-                if (typeof this.daacs === 'undefined') {
-                  this.fetchDaacs().then(() => {
-                    let daacData = this.getDaac(this.$store.state.global_params['group'])
-                    if(typeof daacData!= 'undefined'){
-                      this.selected = daacData.long_name;
-                      this.daac_name = daacData.long_name;
+            }
+            var question = [];
+            this.contacts = [];
+            let contact = false;
+            if(!this.$testing 
+              && typeof this.$store !== 'undefined'
+              && this.$store.state.global_params['formId'] !== 'undefined'
+              && this.$store.state.global_params['formId'] !== "" 
+              && this.$store.state.global_params['group'] !== "") {
+              url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
+            }
+            $.getJSON(url, (questions) => {
+              if (typeof this.daacs === 'undefined') {
+                this.fetchDaacs().then(() => {
+                  let daacData = this.getDaac(this.$store.state.global_params['group'])
+                  if(typeof daacData!= 'undefined'){
+                    this.selected = daacData.long_name;
+                    this.daac_name = daacData.long_name;
+                  }
+                });
+              }
+              for (var section in questions["sections"]) {
+                var heading = questions["sections"][section]["heading"];
+                var heading_required =
+                  questions["sections"][section]["required"] || false;
+                var heading_show_if =
+                  questions["sections"][section]["show_if"] || [];
+                var questions_section =
+                  questions["sections"][section]["questions"];
+                questions_section["heading"] = heading;
+                questions_section["heading_required"] = heading_required;
+                questions_section["heading_show_if"] = heading_show_if;
+                for (var q in questions_section) {
+                  if (typeof questions_section[q].long_name != "undefined") {
+                    let text = questions_section[q].text;
+                    let long_name = questions_section[q].long_name;
+                    let help = questions_section[q].help;
+                    if (
+                      (typeof text != "undefined" &&
+                        text.toLowerCase().match(/person/g)) ||
+                      (typeof text != "undefined" &&
+                        text.toLowerCase().match(/contact/g)) ||
+                      (typeof long_name != "undefined" &&
+                        long_name.toLowerCase().match(/person/g)) ||
+                      (typeof long_name != "undefined" &&
+                        long_name.toLowerCase().match(/contact/g)) ||
+                      (typeof help != "undefined" &&
+                        help.toLowerCase().match(/person/g)) ||
+                      (typeof help != "undefined" &&
+                        help.toLowerCase().match(/contact/g))
+                    ) {
+                      contact = true;
                     }
-                  });
-                }
-                for (var section in questions["sections"]) {
-                  var heading = questions["sections"][section]["heading"];
-                  var heading_required =
-                    questions["sections"][section]["required"] || false;
-                  var heading_show_if =
-                    questions["sections"][section]["show_if"] || [];
-                  var questions_section =
-                    questions["sections"][section]["questions"];
-                  questions_section["heading"] = heading;
-                  questions_section["heading_required"] = heading_required;
-                  questions_section["heading_show_if"] = heading_show_if;
-                  for (var q in questions_section) {
-                    if (typeof questions_section[q].long_name != "undefined") {
-                      let text = questions_section[q].text;
-                      let long_name = questions_section[q].long_name;
-                      let help = questions_section[q].help;
+                  }
+                  if (typeof questions_section[q].inputs != "undefined") {
+                    for (var input in questions_section[q].inputs) {
+                      var options = [];
                       if (
-                        (typeof text != "undefined" &&
-                          text.toLowerCase().match(/person/g)) ||
-                        (typeof text != "undefined" &&
-                          text.toLowerCase().match(/contact/g)) ||
-                        (typeof long_name != "undefined" &&
-                          long_name.toLowerCase().match(/person/g)) ||
-                        (typeof long_name != "undefined" &&
-                          long_name.toLowerCase().match(/contact/g)) ||
-                        (typeof help != "undefined" &&
-                          help.toLowerCase().match(/person/g)) ||
-                        (typeof help != "undefined" &&
-                          help.toLowerCase().match(/contact/g))
+                        contact &&
+                        typeof questions_section[q].inputs[input].label != 
+                        "undefined" && 
+                        questions_section[q].inputs[input].label.match(/name/gi)
                       ) {
-                        contact = true;
+                        questions_section[q].inputs[input].contact = true;
+                        contact = false;
                       }
-                    }
-                    if (typeof questions_section[q].inputs != "undefined") {
-                      for (var input in questions_section[q].inputs) {
-                        var options = [];
-                        if (
-                          contact &&
-                          typeof questions_section[q].inputs[input].label != 
-                          "undefined" && 
-                          questions_section[q].inputs[input].label.match(/name/gi)
-                        ) {
-                          questions_section[q].inputs[input].contact = true;
-                          contact = false;
-                        }
-                        if (
-                          typeof questions_section[q].inputs[input].enums !=
-                          "undefined"
-                        ) {
-                          for (var e in questions_section[q].inputs[input].enums) {
-                            var option =
-                              questions_section[q].inputs[input].enums[e];
-                            if (
-                              Array.isArray(
-                                questions_section[q].inputs[input].enums
-                              )
-                            ) {
-                              options.push({ value: option, text: option });
-                            } else if (
-                              typeof questions_section[q].inputs[input].enums
-                                .value != "undefined" &&
-                              typeof questions_section[q].inputs[input].enums
-                                .text != "undefined"
-                            ) {
-                              var text =
-                                questions_section[q].inputs[input].enums.text;
-                              var value =
-                                questions_section[q].inputs[input].enums.value;
-                              options.push({ value: value, text: text });
-                            }
+                      if (
+                        typeof questions_section[q].inputs[input].enums !=
+                        "undefined"
+                      ) {
+                        for (var e in questions_section[q].inputs[input].enums) {
+                          var option =
+                            questions_section[q].inputs[input].enums[e];
+                          if (
+                            Array.isArray(
+                              questions_section[q].inputs[input].enums
+                            )
+                          ) {
+                            options.push({ value: option, text: option });
+                          } else if (
+                            typeof questions_section[q].inputs[input].enums
+                              .value != "undefined" &&
+                            typeof questions_section[q].inputs[input].enums
+                              .text != "undefined"
+                          ) {
+                            var text =
+                              questions_section[q].inputs[input].enums.text;
+                            var value =
+                              questions_section[q].inputs[input].enums.value;
+                            options.push({ value: value, text: text });
                           }
                         }
-                        if (options.length > 0) {
-                          questions_section[q].inputs[input]["options"] = options;
-                        }
+                      }
+                      if (options.length > 0) {
+                        questions_section[q].inputs[input]["options"] = options;
                       }
                     }
                   }
-                  question.push(questions_section);
                 }
-                this.questions = question;
-                resolve(question)
-                if(question.length > 0){
-                  this.showHideForms('show')
-                }
-              }).fail(function() { 
-                const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-                if (!this.$testing){
-                  localStorage.removeItem('auth-token')
-                  window.location.href = url
-                } else { this.confirmExit(url) }
-              });
-            }
-          );
-        })
+                question.push(questions_section);
+              }
+              this.questions = question;
+              resolve(question)
+              if(question.length > 0){
+                this.showHideForms('show')
+              }
+            }).fail(function() { 
+              const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+              if (!this.$testing){
+                localStorage.removeItem('auth-token')
+                window.location.href = url
+              } else { this.confirmExit(url) }
+            });
+          }).fail(function() { 
+            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            if (!this.$testing){
+              localStorage.removeItem('auth-token')
+              window.location.href = url
+            } else { this.confirmExit(url) }
+          });
+        });
       },
       // @vuese
       // Compares objects 
@@ -700,6 +713,7 @@ export default {
       confirmExit(url){
         $("#eui-banner").addClass("hidden");
         if (this.$testing) {
+          // eslint-disable-next-line
           console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
           setTimeout(() => {
             this.showHideForms('show')
