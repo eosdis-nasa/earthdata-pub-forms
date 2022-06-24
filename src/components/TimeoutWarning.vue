@@ -55,7 +55,7 @@
             const currentTime = Math.floor(Date.now() / 1000);
             const sessionLength = this.expiration - currentTime;
             const warningTime = (sessionLength - 30) * 1000;
-            if (sessionLength < 1) {
+            if (sessionLength < 1 && !this.$testing) {
               window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`;
             }
             this.timeout = setTimeout(this.show, warningTime);

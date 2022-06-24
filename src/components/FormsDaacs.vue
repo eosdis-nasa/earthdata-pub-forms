@@ -30,13 +30,14 @@
               </div>
               <div class="mt-3" v-if="selected">
                 For more information, visit
-                <a href="#" id="selected_daac_link" target="_blank">
+                <a href="#" id="selected_daac_link" target="_blank" aria-label="Link to selected DAAC">
                   <span id="selected_daac"></span>'s website
                   <font-awesome-icon icon="external-link-alt" name="external link">external link</font-awesome-icon>
                 </a>
               </div>
               <!-- Submit Button -->
               <div v-if="selected">
+                <b-button class="eui-btn--secondary" @click="cancelForm()" aria-label="cancel button" id="daac_cancel_button">Cancel</b-button>
                 <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
               </div>
               <!-- End of Submit Button -->
@@ -91,6 +92,7 @@ export default {
     // Sets local variables from the global_params in store
     window.daacsComponent = this;
     this.setActiveNav("daacs");
+    this.setLocalVars(),
     this.fetchDaacs().then(() => {
       if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['group'] != 'undefined'){
         let daacData = this.getDaac(this.$store.state.global_params['group'])
@@ -98,15 +100,18 @@ export default {
           this.selected = daacData.long_name;
         }
       }
-    });
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
-      this.formId = this.$store.state.global_params['formId']
-    }
-    if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
-      this.requestId = this.$store.state.global_params['requestId']
-    }
+      this.showHideForms('show')
+    })
   },
   methods: {
+    setLocalVars(){
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['formId'] != 'undefined'){
+        this.formId = this.$store.state.global_params['formId']
+      }
+      if(typeof this.$store !== 'undefined' && typeof this.$store.state.global_params['requestId'] != 'undefined'){
+        this.requestId = this.$store.state.global_params['requestId']
+      }
+    },
     // @vuese
     // On selected, sets current daac objects from values
     // @arg current_daac [String] hash,  
@@ -176,7 +181,6 @@ export default {
       );
       id = current[1]
       this.$store.state.global_params['group'] = id
-      this.setActiveLocationWithoutReload(id);
       window.headerComponent.daac = id
       return short_name;
     },
@@ -186,6 +190,11 @@ export default {
       if (this.enterSubmit) {
         this.submitForm();
       }
+    },
+    // @vuese
+    // Used to submit the form data and move on
+    cancelForm() {
+      history.back()
     },
     // @vuese
     // Used to submit the form data and move on
@@ -201,27 +210,11 @@ export default {
       if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
         this.saveFile();
-      } else {
-        args['group'] = 'selection'
-        this.$router.replace({ name: `daacs`, params: args });
-      }
+      } 
     },
     // @vuese
     // Gets the current daac selected from the store and updates
     getCurrentDaacAndUpdate() {
-      if (
-        (typeof this.$store !== 'undefined' && 
-        this.$store.state.global_params['group'] == "") &&
-        !window.location.href.match(/daacs\/selection/g) &&
-        (typeof this.$store.state.global_params['group'] == "undefined" ||
-          this.$store.state.global_params['group'] == "")
-      ) {
-        history.replaceState(
-          "updating href",
-          window.document.title,
-          `${window.location.href.toLowerCase()}daacs/selection`
-        );
-      }
       if (
         (typeof this.$store !== 'undefined' && 
           this.$store.state.global_params['group'] != "undefined" &&
@@ -256,8 +249,13 @@ export default {
 };
 </script>
 <style scoped>
-  #daac_select_button {
+  #daac_select_button, 
+  #daac_cancel_button {
     margin-top:2rem;
+    padding: 0.5em 1em;
+  }
+  #daac_cancel_button {
+    margin-right: 2rem;
   }
   .form-group {
     margin-top:2rem;

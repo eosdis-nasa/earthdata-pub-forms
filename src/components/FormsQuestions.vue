@@ -2,47 +2,45 @@
 <div role="main">
   <!-- Form -->
   <b-form ref="form" name="questions_form" id="questions_form" v-on:submit.stop.prevent @submit="enterSubmitForm" @invalid.capture.prevent="handleInvalid" @change="handleInvalid">
-    <b-container>
-        <fixed-header :threshold="168" style="z-index:5;">
-          <div class="navbar">
-              <!-- Button Options -->
-              <div class="button_bar">
-                  <div align=left v-if="!readonly" class="left_button_bar">
-                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
-                        <font-awesome-icon v-bind:icon="redoLabel"/>
-                        {{ redoLabel }}
-                      </b-button>
-                      <b-button class="button" type="redo" id="redo_button" name="redo_button" v-else disabled aria-label="redo button">
-                        <font-awesome-icon v-bind:icon="redoLabel"/>
-                        {{ redoLabel }}
-                      </b-button>
-                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
-                        <font-awesome-icon v-bind:icon="undoLabel"/>
-                        {{ undoLabel }}
-                      </b-button>
-                      <b-button class="button" type="undo" id="undo_button" name="undo_button" v-else disabled aria-label="undo button">
-                        <font-awesome-icon v-bind:icon="undoLabel"/>
-                        {{ undoLabel }}
-                      </b-button>
-                  </div>
-                  <div align=right v-if="!readonly" class="right_button_bar">
-                      <!-- save button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
-                      <!-- draft button -->
-                      <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
-                      <!-- submit button -->
-                      <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
-                      <!-- cancel button -->
-                      <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
-                      <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
-                  </div>
-              </div>
-          </div>
+    <fixed-header :threshold="168" style="z-index:5;">
+        <div class="navbar">
+            <!-- Button Options -->
+            <div class="button_bar">
+                <div align=left v-if="!readonly" class="left_button_bar">
+                    <b-button class="button" type="redo" id="redo_button" name="redo_button" v-if="valueHistoryUndoIdx > 0" @click="redoToPreviousState()" aria-label="redo button">
+                      <font-awesome-icon v-bind:icon="redoLabel"/>
+                      {{ redoLabel }}
+                    </b-button>
+                    <b-button class="button" type="redo" id="redo_button" name="redo_button" v-else disabled aria-label="redo button">
+                      <font-awesome-icon v-bind:icon="redoLabel"/>
+                      {{ redoLabel }}
+                    </b-button>
+                    <b-button class="button" type="undo" id="undo_button" name="undo_button" v-if="valueHistory.length - valueHistoryUndoIdx > 1" @click="undoToPreviousState()" aria-label="undo button">
+                      <font-awesome-icon v-bind:icon="undoLabel"/>
+                      {{ undoLabel }}
+                    </b-button>
+                    <b-button class="button" type="undo" id="undo_button" name="undo_button" v-else disabled aria-label="undo button">
+                      <font-awesome-icon v-bind:icon="undoLabel"/>
+                      {{ undoLabel }}
+                    </b-button>
+                </div>
+                <div align=right v-if="!readonly" class="right_button_bar">
+                    <!-- save button -->
+                    <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                    <b-button v-else disabled class="eui-btn--blue" type="save" id="save_data" @click="saveFile()" aria-label="save button">{{ saveLabel }}</b-button>
+                    <!-- draft button -->
+                    <b-button v-if="Object.keys(this.values).length > 0" class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                    <b-button v-else disabled class="eui-btn--blue" type="draft" id="draft_data" @click="draftFile()" aria-label="draft button">{{ draftLabel }}</b-button>
+                    <!-- submit button -->
+                    <b-button v-if="Object.keys(this.values).length == 0" class="eui-btn--green" type="submit" disabled id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                    <b-button v-else class="eui-btn--green" type="submit" id="submit_data" name="submit_data" @click="submitForm()" aria-label="submit button">{{ submitLabel }}</b-button>
+                    <!-- cancel button -->
+                    <b-button v-if="showCancelButton" class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()">{{ cancelLabel }}</b-button>
+                    <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
+                </div>
+            </div>
+        </div>
       </fixed-header>
-    </b-container>
     <b-container name="questions_container" id="questions_container">
         <!-- Section -->
         <h3 v-if="daac_name!=''" id="daac_selection">DAAC Selected: <span id="daac_name" v-if="daac_name!=''" class="question_section w-100">
@@ -65,7 +63,7 @@
                         :key="b_key"
                       >
                       <legend class="hidden">Fill out the form input fields.</legend>
-                      <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" />
+                      <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" aria-label="Question Required Message"/>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
                         <span class="col text-right section_required" v-if="question.required == true">required </span>
@@ -87,6 +85,7 @@
                                   size="lg" 
                                   value="true"
                                   unchecked-value="false"
+                                  :aria-label="input.label"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                   <div class="eui-label checkbox-label">{{input.label}}</div>
                                 </b-form-checkbox>
@@ -109,6 +108,7 @@
                                     :id="`same_as_${input.control_id}_${contact_key}`"
                                     value="true"
                                     unchecked-value="false"
+                                    aria-label="Set Contact"
                                     @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
                                   </b-form-checkbox>
                                   <label 
@@ -138,6 +138,7 @@
                                   input.type == 'range' ||
                                   input.type == 'tel' || 
                                   input.type == 'time'"
+                                  :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
                                   :pattern="getAttribute('pattern', question.inputs[c_key])"
@@ -165,6 +166,7 @@
                                   :placeholder="input.required ? 'required' : ''"
                                   type="text"
                                   autocomplete="off"
+                                  :aria-label="input.control_id"
                                 ></b-form-input>
                                 <b-input-group-append>
                                   <b-form-datepicker 
@@ -173,6 +175,7 @@
                                     :aria-controls="`date button`"
                                     :aria-labelledby="`${input.control_id}_button`"
                                     :aria-describedby="`${input.control_id}_button`"
+                                    :aria-label="`${input.control_id}_button`"
                                     :label-nav="`Date Picker`"
                                     :label-calendar="`Date Picker`"
                                     v-model="values[input.control_id]"
@@ -202,6 +205,7 @@
                                         :name="`${input.control_id}_${direction}`" 
                                         v-model="values[`${input.control_id}_${direction}`]"
                                         size="lg"
+                                        :aria-label="`${input.control_id}_${direction}`"
                                         :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                         :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                         :placeholder="input.required ? 'required' : ''"
@@ -255,6 +259,7 @@
                                   :name="input.control_id" 
                                   v-model="values[input.control_id]"
                                   size="lg" 
+                                  :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                   :cols="getAttribute('cols', question.inputs[c_key])"
@@ -277,6 +282,7 @@
                                   value="true"
                                   unchecked-value="false"
                                   v-if="input.type == 'radio'" 
+                                  :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
                                   <span class='required' v-if='input.required'>required</span>
@@ -291,6 +297,7 @@
                                   v-model="values[input.control_id]"
                                   size="lg" 
                                   v-if="input.type == 'select'" 
+                                  :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :placeholder="input.required ? 'required' : ''"

@@ -11,21 +11,31 @@ export default {
       // @vuese
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
-        let to_default = false
-        if(this.$testing){
-          return to_default;
-        }
-        if(typeof this.$route.query.token == 'undefined') {
+        const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+        if(typeof this.$route.query.token == 'undefined' && !this.$testing) {
           if(localStorage.getItem('auth-token') == null){
+            localStorage.setItem('forms-arrived-from', window.location.href)
             window.stop()
-            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            window.location.href = url
           }
         } else {
+          if(this.$testing){
+            this.confirmExit(url)
+          }
           localStorage.setItem('auth-token', this.$route.query.token)
-          to_default = true
+          if(localStorage.getItem('forms-arrived-from') != null){
+            let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
+            localStorage.removeItem('forms-arrived-from')
+            window.location.href = formsArrivedFrom
+          } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
+            this.showHideForms('hide')
+            this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+          } else if (Object.keys(this.$route.params).length === 0 && !window.location.href.match(/daacs/g)){
+            this.showHideForms('hide')
+            this.redirectNotification(this.$bvModal, '', 'submit', true)
+          }
         }
         this.$store.commit("setToken", localStorage.getItem('auth-token'));
-        return to_default
       },
       // @vuese
       // Converts sentence string to title case
@@ -53,7 +63,7 @@ export default {
             }
           });
           let url;
-          if(this.$testing){
+          if (this.$testing){
             url = "../../../daacs.json"
           } else {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
@@ -66,8 +76,11 @@ export default {
             this.daacs = items
             resolve(items);
           }).fail(function() { 
-            localStorage.removeItem('auth-token')
-            window.location.href = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            if (!this.$testing){
+              localStorage.removeItem('auth-token')
+              window.location.href = url
+            } else { this.confirmExit(url) }
           })
         })
       },
@@ -108,37 +121,63 @@ export default {
         }
       },
       // @vuese
-      // Gets form specific metadata
-      async getForm(){
+      // Show or Hide forms (shows loading if hidden)
+      // @arg hide [String] The action to take place.  Should be 'hide' or 'show'. Defaults to 'hide'.
+      showHideForms(hide = 'hide'){
+        const loading = document.getElementById('loading')
+        if (loading != null) {
+          if(hide === 'hide') {
+            loading.classList.remove("hidden");
+          } else {
+            loading.classList.add("hidden");
+          }
+        }
+      },
+      // @vuese
+      // Gets group id and form id from the API
+      async getIDs(){
         return new Promise((resolve) => {
           let url;
           if (this.$testing){
-            let json_name = 'data_accession_request' 
-            if(typeof this.$store.state.global_params['formId'] !=='undefined' && 
-              this.$store.state.global_params['formId'].match(/19025579-99ca-4344-8610-704dae626343/)){
-              json_name = 'data_publication_request' 
-            }
-            this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
-            this.$store.commit("pushGlobalParams", ['form_short_name', json_name])
-            resolve(this.$store.state.global_params['form_short_name'])
-          } else {
-            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
+            resolve(this.$store.state.global_params['formShortName'])
+          } else if (typeof this.$store.state.global_params['requestId'] !=='undefined') {
+            url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`
             $.ajaxSetup({
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
               },
             });
-            $.getJSON(url, (forms) => {
-              for (let f in forms) {
-                if (forms[f]['id'].match(this.$store.state.global_params['formId'])){
-                  this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
-                  this.$store.commit("pushGlobalParams", ['form_short_name', forms[f]["short_name"]])
-                  resolve(this.$store.state.global_params['form_short_name'])
-                  break;
-                }
+            $.getJSON(url, (request) => {
+              if (request.error){
+                this.showHideForms('hide')
+                this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
+              } else {
+                this.showHideForms('show')
               }
+              if (typeof request.daac_id !== 'undefined') {
+                this.$store.commit("pushGlobalParams", ['group', request.daac_id])
+              }
+              if (typeof request.step_data != 'undefined' && typeof request.step_data.form_id !== 'undefined') {
+                this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
+              }
+              if (this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined' && typeof request.step_data.data.form_id !== 'undefined'){
+                this.$store.commit("pushGlobalParams", ['formId', request.step_data.data.form_id])
+              }
+              if (this.$route.params.formId) {
+                this.$store.commit("pushGlobalParams", ['formId', this.$route.params.formId])
+              }
+              url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`
+              $.getJSON(url, (form) => {
+                this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
+                resolve(this.$store.state.global_params['formShortName'])
+              }) 
             }).fail(function() { 
-              // console.error(`error in getForm ${err}`)
+              const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+              if (!this.$testing){
+                localStorage.removeItem('auth-token')
+                window.location.href = url
+              } else { this.confirmExit(url) }
             })
           }
         })
@@ -230,15 +269,20 @@ export default {
       // Go the component page specified with all the updated params needed
       // @arg comp [String] can be 'daacs', 'dashboard', 'overview', or 'feedback'
       goToComponent(comp){
-        let formId, requestId, group;
+        let formId, requestId, group, path;
         group = this.$store.state.global_params['group'];
         formId = this.$store.state.global_params['formId'];
         requestId = this.$store.state.global_params['requestId'];
         this.setActiveNav(comp.toLowerCase());
-        if(this.$router.history.current.path != `/${comp.toLowerCase()}/${group}`){
-          this.$router.replace({
+        if (comp.match(/daacs/g)){
+          path = `/${comp.toLowerCase()}/selection`
+        } else {
+          path = `/${comp.toLowerCase()}/${requestId}`
+        }
+        if(this.$router.history.current.path != path){
+          this.$router.push({
             name: comp,
-            path: `/${comp.toLowerCase()}/${group}`,
+            path: path,
             params: {
               formId: formId,
               requestId: requestId,
@@ -246,21 +290,6 @@ export default {
             }
           });
         }
-      },
-      // @vuese
-      // This sets the route to the default route as indicated in the config file 
-      // under 'VUE_APP_DEFAULT_ROUTE'. This should happen if first routed to the domain itself.
-      routeToDefault(){
-        let loc;
-        if (process.env.VUE_APP_DEFAULT_ROUTE.match(/daacs/g)){
-          loc = 'daacs';
-        } else if (process.env.VUE_APP_DEFAULT_ROUTE.match(/questions/g)){
-          loc = 'questions';
-        }
-        this.setActiveNav(loc);
-        this.$store.commit("pushGlobalParams", ['group',`selection`]);
-        this.$store.commit("pushGlobalParams", ['form_state', `edit`]);
-        this.$router.replace(`${process.env.VUE_APP_DEFAULT_ROUTE}`);
       },
       // @vuese
       // Fetchs the questions data
@@ -273,192 +302,142 @@ export default {
           });
           let url;
           if (this.$testing){
-            url = `../../${this.$store.state.global_params['form_short_name']}.json`
+            url = `../../${this.$store.state.global_params['formShortName']}.json`
           } else {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
           }
           $.getJSON(url, (forms) => {
-              var question = [];
-              this.contacts = [];
-              let contact = false;
-              if (this.$testing && 
-                typeof this.$store.state.global_params['formId'] == 'undefined' &&
-                (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
-              ) {
-                for (let f in forms) {
-                  if (
-                    this.$store.state.global_params['form_short_name'].match(/data_accession_request/g) &&
-                    typeof forms[f].short_name != "undefined" &&
-                    forms[f].short_name.toLowerCase().match(/data_accession_request/g)
-                  ) {
-                    this.$store.state.global_params['formId'] = forms[f]["id"];
-                    this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
-                    break;
-                  } else if (
-                    this.$store.state.global_params['form_short_name'].match(/data_publication_request/g) &&
-                    typeof forms[f].short_name != "undefined" &&
-                    forms[f].short_name.toLowerCase().match(/data_publication_request/g)
-                  ) {
-                    this.$store.state.global_params['formId'] = forms[f]["id"];
-                    this.$store.commit("pushGlobalParams", ['formTitle', forms[f]["long_name"]])
-                    break;
-                  }
+            if (this.$testing && 
+              typeof this.$store.state.global_params['formId'] == 'undefined' &&
+              (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
+            ) {
+              for (let f in forms) {
+                if (this.$store.state.global_params['formShortName'] == forms[f].short_name) {
+                  this.$store.state.global_params['formId'] = forms[f]["id"];
+                  break;
                 }
               }
-              if(!this.$testing && typeof this.$store !== 'undefined'
-              && this.$store.state.global_params['formId'] !== "" && this.$store.state.global_params['group'] !== "") {
-                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
+            }
+            var question = [];
+            this.contacts = [];
+            let contact = false;
+            if(!this.$testing 
+              && typeof this.$store !== 'undefined'
+              && this.$store.state.global_params['formId'] !== 'undefined'
+              && this.$store.state.global_params['formId'] !== "" 
+              && this.$store.state.global_params['group'] !== "") {
+              url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
+            }
+            $.getJSON(url, (questions) => {
+              if (typeof this.daacs === 'undefined') {
+                this.fetchDaacs().then(() => {
+                  let daacData = this.getDaac(this.$store.state.global_params['group'])
+                  if(typeof daacData!= 'undefined'){
+                    this.selected = daacData.long_name;
+                    this.daac_name = daacData.long_name;
+                  }
+                });
               }
-              $.getJSON(url, (questions) => {
-                for (var section in questions["sections"]) {
-                  var heading = questions["sections"][section]["heading"];
-                  var heading_required =
-                    questions["sections"][section]["required"] || false;
-                  var heading_show_if =
-                    questions["sections"][section]["show_if"] || [];
-                  var questions_section =
-                    questions["sections"][section]["questions"];
-                  questions_section["heading"] = heading;
-                  questions_section["heading_required"] = heading_required;
-                  questions_section["heading_show_if"] = heading_show_if;
-                  for (var q in questions_section) {
-                    if (typeof questions_section[q].long_name != "undefined") {
-                      let text = questions_section[q].text;
-                      let long_name = questions_section[q].long_name;
-                      let help = questions_section[q].help;
-                      if (
-                        (typeof text != "undefined" &&
-                          text.toLowerCase().match(/person/g)) ||
-                        (typeof text != "undefined" &&
-                          text.toLowerCase().match(/contact/g)) ||
-                        (typeof long_name != "undefined" &&
-                          long_name.toLowerCase().match(/person/g)) ||
-                        (typeof long_name != "undefined" &&
-                          long_name.toLowerCase().match(/contact/g)) ||
-                        (typeof help != "undefined" &&
-                          help.toLowerCase().match(/person/g)) ||
-                        (typeof help != "undefined" &&
-                          help.toLowerCase().match(/contact/g))
-                      ) {
-                        contact = true;
-                      }
+              for (var section in questions["sections"]) {
+                var heading = questions["sections"][section]["heading"];
+                var heading_required =
+                  questions["sections"][section]["required"] || false;
+                var heading_show_if =
+                  questions["sections"][section]["show_if"] || [];
+                var questions_section =
+                  questions["sections"][section]["questions"];
+                questions_section["heading"] = heading;
+                questions_section["heading_required"] = heading_required;
+                questions_section["heading_show_if"] = heading_show_if;
+                for (var q in questions_section) {
+                  if (typeof questions_section[q].long_name != "undefined") {
+                    let text = questions_section[q].text;
+                    let long_name = questions_section[q].long_name;
+                    let help = questions_section[q].help;
+                    if (
+                      (typeof text != "undefined" &&
+                        text.toLowerCase().match(/person/g)) ||
+                      (typeof text != "undefined" &&
+                        text.toLowerCase().match(/contact/g)) ||
+                      (typeof long_name != "undefined" &&
+                        long_name.toLowerCase().match(/person/g)) ||
+                      (typeof long_name != "undefined" &&
+                        long_name.toLowerCase().match(/contact/g)) ||
+                      (typeof help != "undefined" &&
+                        help.toLowerCase().match(/person/g)) ||
+                      (typeof help != "undefined" &&
+                        help.toLowerCase().match(/contact/g))
+                    ) {
+                      contact = true;
                     }
-                    if (typeof questions_section[q].inputs != "undefined") {
-                      for (var input in questions_section[q].inputs) {
-                        var options = [];
-                        if (
-                          contact &&
-                          typeof questions_section[q].inputs[input].label != 
-                          "undefined" && 
-                          questions_section[q].inputs[input].label.match(/name/gi)
-                        ) {
-                          questions_section[q].inputs[input].contact = true;
-                          contact = false;
-                        }
-                        if (
-                          typeof questions_section[q].inputs[input].enums !=
-                          "undefined"
-                        ) {
-                          for (var e in questions_section[q].inputs[input].enums) {
-                            var option =
-                              questions_section[q].inputs[input].enums[e];
-                            if (
-                              Array.isArray(
-                                questions_section[q].inputs[input].enums
-                              )
-                            ) {
-                              options.push({ value: option, text: option });
-                            } else if (
-                              typeof questions_section[q].inputs[input].enums
-                                .value != "undefined" &&
-                              typeof questions_section[q].inputs[input].enums
-                                .text != "undefined"
-                            ) {
-                              var text =
-                                questions_section[q].inputs[input].enums.text;
-                              var value =
-                                questions_section[q].inputs[input].enums.value;
-                              options.push({ value: value, text: text });
-                            }
+                  }
+                  if (typeof questions_section[q].inputs != "undefined") {
+                    for (var input in questions_section[q].inputs) {
+                      var options = [];
+                      if (
+                        contact &&
+                        typeof questions_section[q].inputs[input].label != 
+                        "undefined" && 
+                        questions_section[q].inputs[input].label.match(/name/gi)
+                      ) {
+                        questions_section[q].inputs[input].contact = true;
+                        contact = false;
+                      }
+                      if (
+                        typeof questions_section[q].inputs[input].enums !=
+                        "undefined"
+                      ) {
+                        for (var e in questions_section[q].inputs[input].enums) {
+                          var option =
+                            questions_section[q].inputs[input].enums[e];
+                          if (
+                            Array.isArray(
+                              questions_section[q].inputs[input].enums
+                            )
+                          ) {
+                            options.push({ value: option, text: option });
+                          } else if (
+                            typeof questions_section[q].inputs[input].enums
+                              .value != "undefined" &&
+                            typeof questions_section[q].inputs[input].enums
+                              .text != "undefined"
+                          ) {
+                            var text =
+                              questions_section[q].inputs[input].enums.text;
+                            var value =
+                              questions_section[q].inputs[input].enums.value;
+                            options.push({ value: value, text: text });
                           }
                         }
-                        if (options.length > 0) {
-                          questions_section[q].inputs[input]["options"] = options;
-                        }
+                      }
+                      if (options.length > 0) {
+                        questions_section[q].inputs[input]["options"] = options;
                       }
                     }
                   }
-                  question.push(questions_section);
                 }
-                this.questions = question;
-                resolve(question)
-              }).fail(function() { 
-                // console.error('error in fetchQuestions')
-              });
-            }
-          );
-        })
-      },
-      // @vuese
-      // Evaluates the route and changes it if applicable
-      setRoute(){
-        let route_to_default = this.checkAuth()
-        let params = {}
-        if (this.$route.query.formId) {
-          params['formId'] = this.$route.query.formId
-          this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
-          this.getForm()
-        }
-        if (route_to_default && !this.$testing){
-          this.routeToDefault();
-        } else {
-          let path = '';
-          let form_state = '';
-          if(this.$route && this.$route.query) {
-            if (this.$route.query.formId) {
-              params['formId'] = this.$route.query.formId
-              this.$store.commit("pushGlobalParams", ['formId',`${this.$route.query.formId}`]);
-            }
-            if (this.$route.query.requestId) {
-              params['requestId'] = this.$route.query.requestId
-              this.$store.commit("pushGlobalParams", ['requestId',`${this.$route.query.requestId}`]);
-            }
-            if (this.$route.query.group) {
-              params['group'] = this.$route.query.group
-              this.$store.commit("pushGlobalParams", ['group',`${this.$route.query.group}`]);
-            } else {
-              this.$store.commit("pushGlobalParams", ['group',`selection`]);
-            }
-          }
-          if(params['requestId']){
-            form_state = `saved` 
-          } else if (Object.keys(params).length === 0 || params['group'] == null || params['group'] == 'selection' || this.$route.path.match(/daacs/g)) {
-            form_state = `daacs` 
-          } else {
-            form_state = `edit` 
-          }
-          this.$store.commit("pushGlobalParams", ['form_state', form_state]);
-          if(params['group']) {
-            path = `/questions/${params['group']}`
-          } else {
-            path = `/daacs/selection`
-            this.$store.commit("pushGlobalParams", ['group',`selection`]);
-            params['group'] = 'selection'
-          }
-          if (this.$route.path.match(/daacs/g)){
-            this.setActiveNav('daacs');
-          } else if (this.$route.path.match(/questions/g)){
-            this.setActiveNav('questions')
-          }
-          if (this.$route.path != path) {
-            this.$router.replace({
-              name: form_state,
-              path: path,
-              params: params
+                question.push(questions_section);
+              }
+              this.questions = question;
+              resolve(question)
+              if(question.length > 0){
+                this.showHideForms('show')
+              }
+            }).fail(function() { 
+              const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+              if (!this.$testing){
+                localStorage.removeItem('auth-token')
+                window.location.href = url
+              } else { this.confirmExit(url) }
             });
-          }
-          this.setActiveLocationWithoutReload(path)
-        }
+          }).fail(function() { 
+            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            if (!this.$testing){
+              localStorage.removeItem('auth-token')
+              window.location.href = url
+            } else { this.confirmExit(url) }
+          });
+        });
       },
       // @vuese
       // Compares objects 
@@ -525,24 +504,6 @@ export default {
         }, 10)
       },
       // @vuese
-      // Set / Resets active location.href value without updating state
-      // @arg id [String] hash of daac
-      setActiveLocationWithoutReload(id){
-        if(typeof id !='undefined' && id != null){
-          let after_protocol, new_url;
-          let to_href = decodeURIComponent(id).replace(/ /g,'_').toLowerCase()
-          let next_url = `${to_href}`
-          if(typeof next_url.split('http://')[1] != 'undefined'){
-            after_protocol = next_url.split('http://')[1].replace(/\/\//g,'/')
-            new_url = `http://${after_protocol}`
-          } else {
-            after_protocol = next_url.replace(/\/\//g,'/')
-            new_url = `${after_protocol}`
-          }
-          history.replaceState('updating daac in href', window.document.title, new_url);
-        }
-      },
-      // @vuese
       // Sends data to the API
       // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
       // @arg DAAC [String] hash of the group to set in the json, 
@@ -550,7 +511,7 @@ export default {
       sendDataToApi(bvModal, DAAC, operation = "save") {
         let action;
         let skip_modal = false;
-        let form = this.$store.state.global_params['form_short_name']
+        let form = this.$store.state.global_params['formShortName']
         let was_draft = false
         let json = {
           data: JSON.parse(this.$store.state.global_params[`${form}_outputs`])[
@@ -585,7 +546,7 @@ export default {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
             },
-            url: `${process.env.VUE_APP_API_ROOT}/submission/${operation}`,
+            url: `${process.env.VUE_APP_API_ROOT}/data/submission/operation/${operation}`,
             data: JSON.stringify(json),
             dataType: "json",
             contentType: "application/json; charset=utf-8",
@@ -656,18 +617,18 @@ export default {
       // @arg message [String] any other function messages to include, 
       // @arg operation [String] action (save, draft, submit), 
       // @arg skip_modal [Boolean] optional defaults to false
-      async redirectNotification(bvModal, message, operation, skip_modal = false) {
+      async redirectNotification(bvModal, message, operation = 'submit', skip_modal = false, custom_ok_title="Success!", custom_confirm_title="Confirmation") {
         if(operation == "submit" && !skip_modal){
           const value = await bvModal.msgBoxOk(
           `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`, 
           {
-            title: "Success!",
+            title: custom_ok_title,
             size: "sm",
             buttonSize: "sm",
             okTitle: "OK",
-            footerClass: "p-2",
+            footerClass: "p-2 redirect-modal",
             hideHeaderClose: false,
-            centered: true,
+            centered: true
           })
           if (value) {
             this.exitForm();
@@ -676,13 +637,13 @@ export default {
           const value = await bvModal.msgBoxConfirm(
           `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
           {
-            title: "Confirmation",
+            title: custom_confirm_title,
             size: "sm",
             buttonSize: "sm",
             okVariant: "danger",
             okTitle: "YES",
             cancelTitle: "NO",
-            footerClass: "p-2",
+            footerClass: "p-2 redirect-modal",
             hideHeaderClose: false,
             centered: true,
           })
@@ -748,6 +709,21 @@ export default {
         }
       },
       // @vuese
+      // Exit confirmed.
+      // @arg url [String] the url to be routed to.
+      confirmExit(url){
+        $("#eui-banner").addClass("hidden");
+        if (this.$testing) {
+          // eslint-disable-next-line
+          console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
+          setTimeout(() => {
+            this.showHideForms('show')
+          }, "100")
+        } else {
+          window.location.href = url;
+        }
+      },
+      // @vuese
       // Exits the form to requests page if user confirms
       // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
       // @arg message [String] any other function messages to include, 
@@ -765,12 +741,10 @@ export default {
             centered: true,
           })
           .then(() => {
-            $("#eui-banner").addClass("hidden");
-            window.location.href = url;
+            this.confirmExit(url)
           })
         } else {
-          $("#eui-banner").addClass("hidden");
-          window.location.href = url;
+          this.confirmExit(url)
         }
       },
       // @vuese
@@ -789,7 +763,7 @@ export default {
           this.$v.$touch();
         }
         const data = this.values;
-        let form = this.$store.state.global_params['form_short_name']
+        let form = this.$store.state.global_params['formShortName']
         if (data !== JSON.stringify({})) {
           this.$values = data;
           this.$output_object["data"] = this.$values;

@@ -8,26 +8,22 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/questions/:group/:formId/:requestId',
-    name: 'saved',
-    component: FormsQuestions
-  },
-  {
-    path: '/questions/:group',
+    path: '/questions/:requestId',
     name: 'edit',
+    alias: '/questions/:requestId/',
     component: FormsQuestions
   },
   {
-    path: '/daacs/:group',
-    name: 'daacs',
-    component: FormsDaacs,
-    alias: '/daacs/selection',
+    path: '/questions/:requestId/:formId',
+    name: 'saved',
+    alias: '/questions/:requestId/:formId/',
+    component: FormsQuestions
   },
   {
-    path: '/*',
-    name: 'default',
-    component: FormsDaacs,
-    alias: '/daacs/selection'
+    path: '/daacs/selection',
+    name: 'daacs',
+    alias: '/daacs/selection/',
+    component: FormsDaacs
   },
   {
     path: '/404*',
