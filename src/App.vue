@@ -55,7 +55,7 @@
         },
         beforeMount(){
             this.checkAuth()
-            let version = "1.0.8"
+            let version = "1.0.9"
             if(localStorage.getItem("version") != version){
                 localStorage.clear();
                 localStorage.setItem("version", version);
@@ -76,6 +76,12 @@
                 } else if (typeof this.$route.query.token == 'undefined') {
                     this.showHideForms('hide')
                     this.redirectNotification(this.$bvModal, '', 'submit', false, 'Forms require a Request Id')
+                }
+            } else {
+                if (this.$route.query.requestId){
+                    this.$store.commit("pushGlobalParams", ['formTitle', 'Earthdata Publication Forms '])
+                    this.$store.commit("pushGlobalParams", ['requestId',`${this.$route.query.requestId}`]);
+                    this.getIDs()
                 }
             }
         },
@@ -168,6 +174,10 @@
         border-radius:5px;
         padding: 5px;
         border: 1px solid #cac8c8;
+    }
+    .single-column td,
+    .single-column th:first-child {
+        width:80%
     }
     a {
         cursor:pointer;

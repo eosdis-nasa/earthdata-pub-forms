@@ -10,9 +10,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
-## 1.0.8 - 2022-06-23
 
-- Added getIDs to resolve before everything else to fix sometimes not loading on server
+## 1.0.9 - 2022-06-23
+
+- Added getIDs to resolve before everything else in order to fix sometimes not loading on server
+
+## 1.0.8 - 2022-06-22
+
+- Changed content of DOI to table, added move up down feature.
+
+## 1.0.7 - 2022-06-20
+
+- Added in for direct route to selection page.
+
+## 1.0.6 - 2022-05-27
+
+- Changed daac selection header, added back hidden daacs, added a paragraph explaining why some daacs are disabled.
 
 ## 1.0.5 - 2022-05-24
 
