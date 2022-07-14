@@ -70,7 +70,6 @@ export default {
           }
           $.getJSON(url, daacs => {
             for (var dict in daacs) {
-              if (daacs[dict].hidden) continue;
               items.push(daacs[dict]);
             }
             this.daacs = items
@@ -168,7 +167,9 @@ export default {
               }
               url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`
               $.getJSON(url, (form) => {
-                this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                if (!window.location.href.match(/selection/g)){
+                  this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                }
                 this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
                 resolve(this.$store.state.global_params['formShortName'])
               }) 

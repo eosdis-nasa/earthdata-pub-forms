@@ -5,7 +5,9 @@
       <b-container name="daacs-container" id="daacs-container">
         <div class="daac-div">
           <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
-            <br />
+            <div class="mt-3 disabled-daacs">
+              Some DAACs are not available in Earthdata Pub because they are onboarding. DAACs will become selectable as they are onboarded. DAACs that are not selectable are not yet using Earthdata Pub for data publication. To publish data with a non-selectable DAAC, contact the DAAC. Contact information can be found on the <a :href=overviewRoot alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Earthdata Pub Overview</a> page.
+            </div>
             <!-- Radio Div with Description -->
             <div>
               <div class="radio_div table">
@@ -18,17 +20,18 @@
                   :value="item.long_name"
                   @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
                   v-model="selected"
+                  :disabled="item.hidden"
                 ><span>{{ item.short_name }}</span><span>{{item.discipline}}</span></b-form-radio>
               </div>
             </div>
             <!-- End of Radio Div with Description -->
             <!-- Selected Info -->
-            <div>
+            <div class="info_section">
               <div class="mt-3" v-if="selected && selected !== 'Unknown DAAC'">
                 <strong>{{ selected }}</strong>
                 <div v-if="selected" id="selected_description"></div>
               </div>
-              <div class="mt-3" v-if="selected">
+              <div class="mt-3 link-to-daac" v-if="selected">
                 For more information, visit
                 <a href="#" id="selected_daac_link" target="_blank" aria-label="Link to selected DAAC">
                   <span id="selected_daac"></span>'s website
@@ -36,9 +39,13 @@
                 </a>
               </div>
               <!-- Submit Button -->
-              <div v-if="selected">
-                <b-button class="eui-btn--secondary" @click="cancelForm()" aria-label="cancel button" id="daac_cancel_button">Cancel</b-button>
-                <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
+              <div v-if="selected" class="button_bar">
+                <div align=left class="left_button_bar">
+                  <b-button class="eui-btn--secondary" @click="cancelForm()" aria-label="cancel button" id="daac_cancel_button">Cancel</b-button>
+                </div>
+                <div align=left class="right_button_bar">
+                  <b-button class="eui-btn--green" @click="submitForm()" aria-label="select button" id="daac_select_button">Select</b-button>
+                </div>
               </div>
               <!-- End of Submit Button -->
             </div>
@@ -71,7 +78,17 @@ export default {
     };
   },
   props: {},
-  computed: {},
+  computed: {
+    overviewRoot () {
+      return process.env.VUE_APP_OVERVIEW_ROOT
+    },
+    notHidden: function () {
+      return this.daacs.filter(i => i.hidden === false)
+    },
+    hidden: function () {
+      return this.daacs.filter(i => i.hidden === true)
+    },
+  },
   validations: {},
   watch: {
     loaded: function(val) {
@@ -249,6 +266,16 @@ export default {
 };
 </script>
 <style scoped>
+  .button_bar {
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between;*/
+    margin-top:0;
+  }
+  .disabled-daacs{
+    margin-bottom:1rem;
+    margin-top: 0.5rem!important;
+  }
   #daac_select_button, 
   #daac_cancel_button {
     margin-top:2rem;
