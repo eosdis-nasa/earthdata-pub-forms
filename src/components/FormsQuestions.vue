@@ -66,7 +66,7 @@
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" aria-label="Question Required Message"/>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
-                        <span class="col text-right section_required" v-if="question.required == true && ($v.values[`section_${a_key}`] || {}).$error || ($v.values[`question_${a_key}_${b_key}`] || {}).$error">required</span>
+                        <span class="col text-right section_required" v-if="question.required == true">required</span>
                       </h3>
                       <p class="text-muted" v-if="question.help != 'undefined'" v-html="question.help"></p>
                       <!-- Input -->
@@ -185,7 +185,6 @@
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
-                                    :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                     button-only
                                     dropleft
                                   >
@@ -217,7 +216,7 @@
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <template>
-                                  <span class='table_required' v-if='(input.required || checkRequiredIf(input)) && ($v.values[`section_${a_key}`] || {}).$error || ($v.values[`question_${a_key}_${b_key}`] || {}).$error || ($v.values[input.control_id] || {}).$error'>required</span>
+                                  <span class='table_required' v-if='input.required || checkRequiredIf(input)'>required</span>
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'single-column':(question.inputs[c_key]['enums'].length === 1), 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     bordered 
@@ -307,7 +306,7 @@
                                   :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
-                                  <span class='required' v-if='!($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error && (input.required || checkRequiredIf(input))'>required</span>
+                                  <span class='required' v-if='input.required || checkRequiredIf(input)'>required</span>
                               </b-form-radio-group>
                               <!-- End of Radio Group Type of Input -->
                               <!-- Select Type of Input -->
