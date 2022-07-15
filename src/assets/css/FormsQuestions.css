@@ -39,6 +39,11 @@
   min-width: unset;
   max-width: 200px;
 }
+.table_required {
+  float:right;
+  color: #DB1400 !important;
+  font-size: 16px!important;
+}
 .btable.form-control {
   display: inline-flex;
   margin-left: 10px;
