@@ -66,7 +66,7 @@
                       <input type="hidden" :id="`question_${a_key}_${b_key}`" v-if="question.required" aria-label="Question Required Message"/>
                       <h3 :for="question.short_name" class="eui-label-nopointer">{{question.long_name}}:
                         <span class="small" :id="question.short_name || a_key">{{question.text}}</span>
-                        <span class="col text-right section_required" v-if="question.required == true">required </span>
+                        <span class="col text-right section_required" v-if="question.required == true">required</span>
                       </h3>
                       <p class="text-muted" v-if="question.help != 'undefined'" v-html="question.help"></p>
                       <!-- Input -->
@@ -163,7 +163,7 @@
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                   :max="getAttribute('max', question.inputs[c_key])"
                                   :min="getAttribute('min', question.inputs[c_key])"
-                                  :placeholder="input.required ? 'required' : ''"
+                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   type="text"
                                   autocomplete="off"
                                   :aria-label="input.control_id"
@@ -185,7 +185,6 @@
                                     :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
                                     :max="getAttribute('max', question.inputs[c_key])"
                                     :min="getAttribute('min', question.inputs[c_key])"
-                                    :placeholder="input.required ? 'required' : ''"
                                     button-only
                                     dropleft
                                   >
@@ -208,7 +207,7 @@
                                         :aria-label="`${input.control_id}_${direction}`"
                                         :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                         :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                        :placeholder="input.required ? 'required' : ''"
+                                        :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                         >
                                     </b-form-input>
                                   </span>
@@ -217,6 +216,7 @@
                               <!-- Table Type of Input -->
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <template>
+                                  <span class='table_required' v-if='input.required || checkRequiredIf(input)'>required</span>
                                   <b-editable-table 
                                     :class="{ 'editable-table': true, 'single-column':(question.inputs[c_key]['enums'].length === 1), 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                     bordered 
@@ -287,7 +287,7 @@
                                   :rows="getAttribute('rows', question.inputs[c_key])"
                                   :maxlength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minlength="getAttribute('minlength', question.inputs[c_key])"
-                                  :placeholder="input.required ? 'required' : ''"
+                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   v-if="input.type == 'textarea'">
                               </b-form-textarea>
                               <!-- End of Textarea Type of Input -->
@@ -306,7 +306,7 @@
                                   :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
-                                  <span class='required' v-if='input.required'>required</span>
+                                  <span class='required' v-if='input.required || checkRequiredIf(input)'>required</span>
                               </b-form-radio-group>
                               <!-- End of Radio Group Type of Input -->
                               <!-- Select Type of Input -->
@@ -321,7 +321,7 @@
                                   :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="input.required ? 'required' : ''"
+                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-select>
                               <!-- End of Select Type of Input -->
@@ -336,7 +336,7 @@
                                   size="lg" 
                                   v-if="input.type == 'file'"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :placeholder="input.required ? 'required' : ''"
+                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-file>
                               <!-- End of File Type of Input -->
