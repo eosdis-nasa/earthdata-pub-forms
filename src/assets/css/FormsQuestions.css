@@ -30,6 +30,8 @@
 .bbox {
   min-width: 100px;
   max-width: 100px;
+  margin-top:5px!important;
+  margin-bottom:5px!important;
 }
 .bbox.form-control {
   display: inline-flex;
