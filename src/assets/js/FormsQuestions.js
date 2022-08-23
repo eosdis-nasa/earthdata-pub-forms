@@ -147,7 +147,8 @@ export default {
     for (let [group_index, group] of obj.entries()) {
       if (
         typeof group.heading_required != "undefined" &&
-        group.heading_required
+        group.heading_required &&
+        this.showIf(group.heading_show_if)
       ) {
         val_fields.values[`section_${group_index}`] = {
           required: requiredIf(() => {
@@ -161,7 +162,7 @@ export default {
         };
       }
       for (let [question_index, question] of group.entries()) {
-        if (typeof question.required != "undefined" && question.required) {
+        if (typeof question.required != "undefined" && question.required && this.showIf(question.show_if)) {
           val_fields.values[`question_${group_index}_${question_index}`] = {
             required: requiredIf(() => {
               return this.validateQuestionInputsRequired(question.inputs);
@@ -170,147 +171,149 @@ export default {
         }
         if (typeof question.inputs != "undefined") {
           for (let fld of question.inputs) {
-            if (fld.type == "bbox") {
-              for (let direction of ["north", "east", "south", "west"]) {
-                val_fields.values[`${fld.control_id}_${direction}`] = {
-                  bbox: () => {
-                    return this.getBboxError(fld, direction) == "";
-                  },
-                };
+            if (this.showIf(fld.show_if)) {
+              if (fld.type == "bbox") {
+                for (let direction of ["north", "east", "south", "west"]) {
+                  val_fields.values[`${fld.control_id}_${direction}`] = {
+                    bbox: () => {
+                      return this.getBboxError(fld, direction) == "";
+                    },
+                  };
+                  if (typeof fld.required != "undefined" && fld.required) {
+                    val_fields.values[
+                      `${fld.control_id}_${direction}`
+                    ].required = required;
+                  } else if (typeof fld.required_if != "undefined") {
+                    val_fields.values[
+                      `${fld.control_id}_${direction}`
+                    ].required = requiredIf(() => {
+                      return this.checkRequiredIf(fld)
+                    });
+                  }
+                }
+              } else if (fld.type == "table") {
+                let enum_arr = []
+                for (let subfield in fld.enums){
+                  enum_arr.push(fld.enums[subfield]['key'])
+                }
+                val_fields.values[`${fld.control_id}`] = {};
                 if (typeof fld.required != "undefined" && fld.required) {
                   val_fields.values[
-                    `${fld.control_id}_${direction}`
+                    `${fld.control_id}`
                   ].required = required;
                 } else if (typeof fld.required_if != "undefined") {
                   val_fields.values[
-                    `${fld.control_id}_${direction}`
+                    `${fld.control_id}`
                   ].required = requiredIf(() => {
-                    return this.checkRequiredIf(fld)
+                    for (let req_fld of fld.required_if) {
+                      try {
+                        if (
+                          typeof this.values[req_fld.field] != "undefined" &&
+                          this.values[req_fld.field].toString() ===
+                            req_fld.value.toString()
+                        ) {
+                          return true;
+                        }
+                      } catch (e) {
+                        // test
+                      }
+                    }
+                    return false;
                   });
                 }
-              }
-            } else if (fld.type == "table") {
-              let enum_arr = []
-              for (let subfield in fld.enums){
-                enum_arr.push(fld.enums[subfield]['key'])
-              }
-              val_fields.values[`${fld.control_id}`] = {};
-              if (typeof fld.required != "undefined" && fld.required) {
-                val_fields.values[
-                  `${fld.control_id}`
-                ].required = required;
-              } else if (typeof fld.required_if != "undefined") {
-                val_fields.values[
-                  `${fld.control_id}`
-                ].required = requiredIf(() => {
-                  for (let req_fld of fld.required_if) {
-                    try {
-                      if (
-                        typeof this.values[req_fld.field] != "undefined" &&
-                        this.values[req_fld.field].toString() ===
-                          req_fld.value.toString()
-                      ) {
-                        return true;
-                      }
-                    } catch (e) {
-                      // test
-                    }
+              } else {
+                if (typeof fld.required != "undefined" && fld.required) {
+                  if (fld.type != "checkbox") {
+                    val_fields.values[fld.control_id] = {
+                      required,
+                    };
                   }
-                  return false;
-                });
-              }
-            } else {
-              if (typeof fld.required != "undefined" && fld.required) {
-                if (fld.type != "checkbox") {
+                } else if (typeof fld.required_if != "undefined") {
                   val_fields.values[fld.control_id] = {
-                    required,
+                    required: requiredIf(() => {
+                      try {
+                        for (let req_fld of fld.required_if) {
+                          try {
+                            if (
+                              typeof this.values[req_fld.field] != "undefined" &&
+                              this.values[req_fld.field].toString() ===
+                                req_fld.value.toString()
+                            ) {
+                              return true;
+                            }
+                          } catch (e) {
+                            // test
+                          }
+                        }
+                        return false;
+                      } catch (e) {
+                        //test
+                      }
+                    }),
                   };
                 }
-              } else if (typeof fld.required_if != "undefined") {
-                val_fields.values[fld.control_id] = {
-                  required: requiredIf(() => {
-                    try {
-                      for (let req_fld of fld.required_if) {
-                        try {
-                          if (
-                            typeof this.values[req_fld.field] != "undefined" &&
-                            this.values[req_fld.field].toString() ===
-                              req_fld.value.toString()
-                          ) {
-                            return true;
-                          }
-                        } catch (e) {
-                          // test
-                        }
-                      }
-                      return false;
-                    } catch (e) {
-                      //test
+                if (
+                  typeof fld.attributes != "undefined" &&
+                  typeof fld.attributes.pattern != "undefined"
+                ) {
+                  val_fields.values[fld.control_id] =
+                    val_fields.values[fld.control_id] || {};
+                  val_fields.values[fld.control_id].patternMatch = () => {
+                    if (typeof this.values[fld.control_id] != "undefined") {
+                      return new RegExp(fld.attributes.pattern).test(
+                        this.values[fld.control_id]
+                      );
                     }
-                  }),
-                };
-              }
-              if (
-                typeof fld.attributes != "undefined" &&
-                typeof fld.attributes.pattern != "undefined"
-              ) {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].patternMatch = () => {
-                  if (typeof this.values[fld.control_id] != "undefined") {
-                    return new RegExp(fld.attributes.pattern).test(
-                      this.values[fld.control_id]
-                    );
-                  }
-                  return false;
-                };
-              }
-              if (fld.type == "date") {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].startEndDates = () => {
-                  if (typeof fld.control_id != "undefined") {
-                    if (!this.isDateValid(fld.control_id, "greater")){
-                      return false;
-                    } 
-                    if (!this.isDateValid(fld.control_id, "validity")){
-                      return false;
-                    }
-                    return true
-                  }
-                  return true;
-                };
-              }
-              if (fld.type == "number") {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].noNegatives = () => {
-                  if (parseInt(this.values[fld.control_id]) < 0){
                     return false;
-                  }
-                  return true;
-                };
-              }
-              if (
-                typeof fld.attributes != "undefined" &&
-                typeof fld.attributes.minlength != "undefined"
-              ) {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].minLength = minLength(
-                  fld.attributes.minlength
-                );
-              }
+                  };
+                }
+                if (fld.type == "date") {
+                  val_fields.values[fld.control_id] =
+                    val_fields.values[fld.control_id] || {};
+                  val_fields.values[fld.control_id].startEndDates = () => {
+                    if (typeof fld.control_id != "undefined") {
+                      if (!this.isDateValid(fld.control_id, "greater")){
+                        return false;
+                      } 
+                      if (!this.isDateValid(fld.control_id, "validity")){
+                        return false;
+                      }
+                      return true
+                    }
+                    return true;
+                  };
+                }
+                if (fld.type == "number") {
+                  val_fields.values[fld.control_id] =
+                    val_fields.values[fld.control_id] || {};
+                  val_fields.values[fld.control_id].noNegatives = () => {
+                    if (parseInt(this.values[fld.control_id]) < 0){
+                      return false;
+                    }
+                    return true;
+                  };
+                }
+                if (
+                  typeof fld.attributes != "undefined" &&
+                  typeof fld.attributes.minlength != "undefined"
+                ) {
+                  val_fields.values[fld.control_id] =
+                    val_fields.values[fld.control_id] || {};
+                  val_fields.values[fld.control_id].minLength = minLength(
+                    fld.attributes.minlength
+                  );
+                }
 
-              if (
-                typeof fld.attributes != "undefined" &&
-                typeof fld.attributes.maxlength != "undefined"
-              ) {
-                val_fields.values[fld.control_id] =
-                  val_fields.values[fld.control_id] || {};
-                val_fields.values[fld.control_id].maxLength = maxLength(
-                  fld.attributes.maxlength
-                );
+                if (
+                  typeof fld.attributes != "undefined" &&
+                  typeof fld.attributes.maxlength != "undefined"
+                ) {
+                  val_fields.values[fld.control_id] =
+                    val_fields.values[fld.control_id] || {};
+                  val_fields.values[fld.control_id].maxLength = maxLength(
+                    fld.attributes.maxlength
+                  );
+                }
               }
             }
           }
