@@ -30,6 +30,8 @@
 .bbox {
   min-width: 100px;
   max-width: 100px;
+  margin-top:5px!important;
+  margin-bottom:5px!important;
 }
 .bbox.form-control {
   display: inline-flex;
@@ -38,6 +40,11 @@
 .btable {
   min-width: unset;
   max-width: 200px;
+}
+.table_required {
+  float:right;
+  color: #DB1400 !important;
+  font-size: 16px!important;
 }
 .btable.form-control {
   display: inline-flex;
