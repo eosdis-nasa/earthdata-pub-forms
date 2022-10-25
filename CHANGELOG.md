@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.11 - 2022-10-25
+
+- Updated verbage from data to request
+
 ## 1.0.10 - 2022-07-27
 
 - Fixed required label for tables.
