@@ -554,7 +554,7 @@ export default {
             success: (response) => {
               this.requestId = response.id;
               this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
-              let message = `Your data have been ${action}.`
+              let message = `Your request has been ${action}.`
               if (operation == "submit") {
                 this.$values = {};
                 this.confirm = false;
@@ -587,7 +587,7 @@ export default {
             },
             error: (XMLHttpRequest, textStatus, errorThrown) => {
               bvModal.msgBoxOk(
-                `Your data could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
+                `Your request could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
                 {
                   title: "Error!",
                   size: "sm",
@@ -660,7 +660,7 @@ export default {
       // @arg bvModal [Object] the alert object to modify if an alert is necessary
       errorsNotification(bvModal) {
         bvModal.msgBoxOk(
-          "You have errors to correct before you can submit data.  You can save data.",
+          "You have errors to correct before you can submit your request.  You can save your request as a draft and come back.",
           {
             title: "Errors",
             size: "sm",
