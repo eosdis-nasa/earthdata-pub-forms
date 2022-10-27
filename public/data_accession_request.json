@@ -238,6 +238,41 @@
           "version": 1
         },
         {
+          "short_name": "list_of_data_producers_and_groups",
+          "long_name": "Data Producers for Data Citation",
+          "text": "Please list the people or groups that were involved in the creation of this data product in the order that they should be credited in the data product citation.",
+          "help": "The DAAC will use this information to construct a data product citation, which is a reference to data for the purpose of credit attribution and facilitation of data access.\n\nExample data product citations:\nMcGill, Matthew , Dennis L Hlavka, John E. Yorks and Patrick A. Selmer. 2019. GOES-R PLT Cloud Physics LiDAR (CPL). Dataset available online from the NASA Global Hydrology Resource Center DAAC, Huntsville, Alabama, U.S.A. DOI: http://dx.doi.org/10.5067/GOESRPLT/CPL/DATA101\n\nCARVE Science Team. 2017. CARVE: In-flight Photos from the CARVE Aircraft, Alaska, 2013-2015. ORNL DAAC, Oak Ridge, Tennessee, USA. https://doi.org/10.3334/ORNLDAAC/1435",
+          "inputs": [
+            {
+              "type": "table",
+              "control_id": "data_producers_table",
+              "enums": [
+                {
+                  "key": "producer_first_name",
+                  "label": "First Name",
+                  "type": "text",
+                  "editable": true
+                },
+                {
+                  "key": "producer_middle_initial",
+                  "label": "Middle Initial",
+                  "type": "text",
+                  "editable": true
+                },
+                {
+                  "key": "producer_last_name_or_organization",
+                  "label": "Last Name or Group",
+                  "type": "text",
+                  "editable": true
+                }
+              ],
+              "required": true
+            }
+          ],
+          "id": "8a364184-42ac-48fe-b831-acb2eb08c729",
+          "version": 1
+        },
+        {
           "short_name": "science_value",
           "long_name": "Science Value of Data Product",
           "text": "Please describe the science value of this data product.",
