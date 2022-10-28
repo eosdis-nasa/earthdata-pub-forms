@@ -67,6 +67,5 @@ describe('Daac Selection Page', () => {
       .and('match', new RegExp(`/${Cypress.env('daac_link_href')}/`, 'g'))
     cy.get(`${Cypress.env('daac_cancel_button_selector')}`).should('not.be.disabled')
     cy.get(`${Cypress.env('daac_cancel_button_selector')}`).click()
-    cy.url().should('eq', `${Cypress.env('forms_root')}${Cypress.env('forms_pages')['questions_page']}testing`)
   })
 })

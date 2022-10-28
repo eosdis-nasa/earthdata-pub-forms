@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.12 - 2022-10-28
+
+- Removed jquery library
+
 ## 1.0.11 - 2022-10-25
 
 - Updated verbage from data to request

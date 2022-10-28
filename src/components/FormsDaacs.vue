@@ -58,8 +58,6 @@
   </div>
 </template>
 <script>
-// Jquery javascript
-import $ from "jquery";
 import mixin from "../mixins/mixin.js";
 
 // This Daacs component gets DAAC data and displays abbreviations as a radio selection.  
@@ -173,9 +171,15 @@ export default {
       if(short_name.match(/Unknown/g)){
         short_name = `${process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}`
       } 
-      $("#selected_daac").html(short_name);
-      $("#selected_daac_link").attr("href", url);
-      $("#selected_description").html(description);
+      if (document.getElementById("selected_daac")!=null){
+        document.getElementById("selected_daac").innerHTML = short_name;
+      }
+      if (document.getElementById("selected_daac_link")!=null){
+        document.getElementById("selected_daac_link").href = url;
+      }
+      if (document.getElementById("selected_description")!=null){
+        document.getElementById("selected_description").innerHTML = description;
+      }
       this.setActiveNav("daacs");
       this.selected = long_name;
       return [short_name, id];
@@ -254,8 +258,8 @@ export default {
             default_daac != "" &&
             default_daac != "SELECTION"
           ) {
-            if ($(`label[for^='${default_daac}']`)) {
-              $(`label[for^='${default_daac}']`).click();
+            if (document.querySelectorAll(`label[for^='${default_daac}']`)) {
+              document.querySelectorAll(`label[for^='${default_daac}']`).click();
             }
           }
         }
