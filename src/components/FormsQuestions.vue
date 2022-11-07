@@ -39,6 +39,7 @@
                     <b-button v-else class="eui-btn--red" type="reset" id="reset_data" name="reset_data" aria-label="cancel button" @click="cancelForm()" disabled>{{ cancelLabel }}</b-button>
                 </div>
             </div>
+            <div id="messageBox" style="display:none"><br></div>
         </div>
       </fixed-header>
     <b-container name="questions_container" id="questions_container">

@@ -241,6 +241,9 @@ fieldset {
 .console_bar {
   float: right;
 }
+#messageBox {
+  text-align: center;
+}
 @media (min-width: 1200px) {
   .navbar.vue-fixed-header--isFixed {
     position: fixed;

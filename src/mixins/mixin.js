@@ -1,6 +1,3 @@
-// Jquery javascript
-import $ from "jquery";
-
 // This mixins file acts as a common js file and the functions are shared between components.
 export default {
     props:{
@@ -53,34 +50,44 @@ export default {
       },
       // @vuese
       // Gets the DAAC data
-      async fetchDaacs() {
+      fetchDaacs() {
         return new Promise((resolve) => {
           // Gets DAAC data for template
           var items = [];
-          $.ajaxSetup({
-            headers : {
-              'Authorization' : `Bearer ${localStorage.getItem('auth-token')}`,
-            }
-          });
           let url;
+          const options = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('auth-token')}`
+            }
+          };
           if (this.$testing){
             url = "../../../daacs.json"
           } else {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_DAACS_URL}`
           }
-          $.getJSON(url, daacs => {
-            for (var dict in daacs) {
-              items.push(daacs[dict]);
-            }
-            this.daacs = items
-            resolve(items);
-          }).fail(function() { 
-            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-            if (!this.$testing){
-              localStorage.removeItem('auth-token')
-              window.location.href = url
-            } else { this.confirmExit(url) }
-          })
+          fetch(`${url}`, options)
+            .then(async response => {
+              const data = await response.json();
+              for (var dict in data) {
+                items.push(data[dict]);
+              }
+              // check for error response
+              if (!response.ok) {
+                // get error message from body or default to response statusText
+                const error = (data && data.message) || response.statusText;
+                return Promise.reject(error);
+              }
+
+              this.daacs = items
+              resolve(items)
+            })
+            .catch(() => {
+              url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+              if (!this.$testing){
+                localStorage.removeItem('auth-token')
+                window.location.href = url
+              } else { this.confirmExit(url) }
+            });
         })
       },
       // @vuese
@@ -141,45 +148,55 @@ export default {
             resolve(this.$store.state.global_params['formShortName'])
           } else if (typeof this.$store.state.global_params['requestId'] !=='undefined') {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`
-            $.ajaxSetup({
+            const options = {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-              },
-            });
-            $.getJSON(url, (request) => {
-              if (request.error){
-                this.showHideForms('hide')
-                this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
-              } else {
-                this.showHideForms('show')
+                Authorization: `Bearer ${localStorage.getItem('auth-token')}`
               }
-              if (typeof request.daac_id !== 'undefined') {
-                this.$store.commit("pushGlobalParams", ['group', request.daac_id])
-              }
-              if (typeof request.step_data != 'undefined' && typeof request.step_data.form_id !== 'undefined') {
-                this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
-              }
-              if (this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined' && typeof request.step_data.data.form_id !== 'undefined'){
-                this.$store.commit("pushGlobalParams", ['formId', request.step_data.data.form_id])
-              }
-              if (this.$route.params.formId) {
-                this.$store.commit("pushGlobalParams", ['formId', this.$route.params.formId])
-              }
-              url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`
-              $.getJSON(url, (form) => {
-                if (!window.location.href.match(/selection/g)){
-                  this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+            };
+            fetch(`${url}`, options)
+              .then(async response => {
+                const request = await response.json();
+                if (request.error){
+                  this.showHideForms('hide')
+                  this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
+                } else {
+                  this.showHideForms('show')
                 }
-                this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
-                resolve(this.$store.state.global_params['formShortName'])
-              }) 
-            }).fail(function() { 
-              const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-              if (!this.$testing){
-                localStorage.removeItem('auth-token')
-                window.location.href = url
-              } else { this.confirmExit(url) }
-            })
+                if (typeof request.daac_id !== 'undefined') {
+                  this.$store.commit("pushGlobalParams", ['group', request.daac_id])
+                }
+                if (typeof request.step_data != 'undefined' && typeof request.step_data.form_id !== 'undefined') {
+                  this.$store.commit("pushGlobalParams", ['formId', request.step_data.form_id])
+                }
+                if (this.$store.state.global_params['formId'] === 'undefined' && typeof request.step_data !== 'undefined' && typeof request.step_data.data !== 'undefined' && typeof request.step_data.data.form_id !== 'undefined'){
+                  this.$store.commit("pushGlobalParams", ['formId', request.step_data.data.form_id])
+                }
+                if (this.$route.params.formId) {
+                  this.$store.commit("pushGlobalParams", ['formId', this.$route.params.formId])
+                }
+                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}`
+                fetch(`${url}`, options)
+                  .then(async response => {
+                    const form = await response.json();
+                    if (!window.location.href.match(/selection/g)){
+                      this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
+                    }
+                    this.$store.commit("pushGlobalParams", ['formShortName', form.short_name])
+                    resolve(this.$store.state.global_params['formShortName'])
+                  }).catch(() => {
+                    let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+                    if (!this.$testing){
+                      localStorage.removeItem('auth-token')
+                      window.location.href = url
+                    } else { this.confirmExit(url) }
+                  });
+              }).catch(() => {
+                url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+                if (!this.$testing){
+                  localStorage.removeItem('auth-token')
+                  window.location.href = url
+                } else { this.confirmExit(url) }
+              });
           }
         })
       },
@@ -205,10 +222,15 @@ export default {
         if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
           if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
             (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
-            $.getJSON(
-            `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
-            (answers) => {
-              if(!answers.error){
+            const options = {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('auth-token')}`
+              }
+            };
+            fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
+              .then(async response => {
+                const answers = await response.json();
+                if(!answers.error){
                   if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                   this.$bvModal
                     .msgBoxConfirm(
@@ -235,12 +257,12 @@ export default {
                 }
               }
             })
-          } 
+          }
           else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
             (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
             this.$bvModal
             .msgBoxConfirm(
-              `You are navigating away from this form. You will lose any unsaved data. Are you you sure you want to continue?`,
+              `You are navigating away from this form. You will lose any unsaved data. Are you sure you want to continue?`,
               {
                 title: "Please Confirm",
                 size: "lg",
@@ -296,148 +318,153 @@ export default {
       // Fetchs the questions data
       async fetchQuestions() {
         return new Promise((resolve) => {
-          $.ajaxSetup({
+          const options = {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-            },
-          });
+              Authorization: `Bearer ${localStorage.getItem('auth-token')}`
+            }
+          };
           let url;
           if (this.$testing){
             url = `../../${this.$store.state.global_params['formShortName']}.json`
           } else {
             url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORMS_URL}?order=desc`
           }
-          $.getJSON(url, (forms) => {
-            if (this.$testing && 
-              typeof this.$store.state.global_params['formId'] == 'undefined' &&
-              (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
-            ) {
-              for (let f in forms) {
-                if (this.$store.state.global_params['formShortName'] == forms[f].short_name) {
-                  this.$store.state.global_params['formId'] = forms[f]["id"];
-                  break;
+          fetch(`${url}`, options)
+            .then(async response => {
+              const forms = await response.json();
+              if (this.$testing && 
+                typeof this.$store.state.global_params['formId'] == 'undefined' &&
+                (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
+              ) {
+                for (let f in forms) {
+                  if (this.$store.state.global_params['formShortName'] == forms[f].short_name) {
+                    this.$store.state.global_params['formId'] = forms[f]["id"];
+                    break;
+                  }
                 }
               }
-            }
-            var question = [];
-            this.contacts = [];
-            let contact = false;
-            if(!this.$testing 
-              && typeof this.$store !== 'undefined'
-              && this.$store.state.global_params['formId'] !== 'undefined'
-              && this.$store.state.global_params['formId'] !== "" 
-              && this.$store.state.global_params['group'] !== "") {
-              url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
-            }
-            $.getJSON(url, (questions) => {
-              if (typeof this.daacs === 'undefined') {
-                this.fetchDaacs().then(() => {
-                  let daacData = this.getDaac(this.$store.state.global_params['group'])
-                  if(typeof daacData!= 'undefined'){
-                    this.selected = daacData.long_name;
-                    this.daac_name = daacData.long_name;
-                  }
-                });
+              var question = [];
+              this.contacts = [];
+              let contact = false;
+              if(!this.$testing 
+                && typeof this.$store !== 'undefined'
+                && this.$store.state.global_params['formId'] !== 'undefined'
+                && this.$store.state.global_params['formId'] !== "" 
+                && this.$store.state.global_params['group'] !== "") {
+                url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
-              for (var section in questions["sections"]) {
-                var heading = questions["sections"][section]["heading"];
-                var heading_required =
-                  questions["sections"][section]["required"] || false;
-                var heading_show_if =
-                  questions["sections"][section]["show_if"] || [];
-                var questions_section =
-                  questions["sections"][section]["questions"];
-                questions_section["heading"] = heading;
-                questions_section["heading_required"] = heading_required;
-                questions_section["heading_show_if"] = heading_show_if;
-                for (var q in questions_section) {
-                  if (typeof questions_section[q].long_name != "undefined") {
-                    let text = questions_section[q].text;
-                    let long_name = questions_section[q].long_name;
-                    let help = questions_section[q].help;
-                    if (
-                      (typeof text != "undefined" &&
-                        text.toLowerCase().match(/person/g)) ||
-                      (typeof text != "undefined" &&
-                        text.toLowerCase().match(/contact/g)) ||
-                      (typeof long_name != "undefined" &&
-                        long_name.toLowerCase().match(/person/g)) ||
-                      (typeof long_name != "undefined" &&
-                        long_name.toLowerCase().match(/contact/g)) ||
-                      (typeof help != "undefined" &&
-                        help.toLowerCase().match(/person/g)) ||
-                      (typeof help != "undefined" &&
-                        help.toLowerCase().match(/contact/g))
-                    ) {
-                      contact = true;
+              fetch(`${url}`, options)
+              .then(async response => {
+                const questions = await response.json();
+                if (typeof this.daacs === 'undefined') {
+                  this.fetchDaacs().then(() => {
+                    let daacData = this.getDaac(this.$store.state.global_params['group'])
+                    if(typeof daacData!= 'undefined'){
+                      this.selected = daacData.long_name;
+                      this.daac_name = daacData.long_name;
                     }
-                  }
-                  if (typeof questions_section[q].inputs != "undefined") {
-                    for (var input in questions_section[q].inputs) {
-                      var options = [];
+                  });
+                }
+                for (var section in questions["sections"]) {
+                  var heading = questions["sections"][section]["heading"];
+                  var heading_required =
+                    questions["sections"][section]["required"] || false;
+                  var heading_show_if =
+                    questions["sections"][section]["show_if"] || [];
+                  var questions_section =
+                    questions["sections"][section]["questions"];
+                  questions_section["heading"] = heading;
+                  questions_section["heading_required"] = heading_required;
+                  questions_section["heading_show_if"] = heading_show_if;
+                  for (var q in questions_section) {
+                    if (typeof questions_section[q].long_name != "undefined") {
+                      let text = questions_section[q].text;
+                      let long_name = questions_section[q].long_name;
+                      let help = questions_section[q].help;
                       if (
-                        contact &&
-                        typeof questions_section[q].inputs[input].label != 
-                        "undefined" && 
-                        questions_section[q].inputs[input].label.match(/name/gi)
+                        (typeof text != "undefined" &&
+                          text.toLowerCase().match(/person/g)) ||
+                        (typeof text != "undefined" &&
+                          text.toLowerCase().match(/contact/g)) ||
+                        (typeof long_name != "undefined" &&
+                          long_name.toLowerCase().match(/person/g)) ||
+                        (typeof long_name != "undefined" &&
+                          long_name.toLowerCase().match(/contact/g)) ||
+                        (typeof help != "undefined" &&
+                          help.toLowerCase().match(/person/g)) ||
+                        (typeof help != "undefined" &&
+                          help.toLowerCase().match(/contact/g))
                       ) {
-                        questions_section[q].inputs[input].contact = true;
-                        contact = false;
+                        contact = true;
                       }
-                      if (
-                        typeof questions_section[q].inputs[input].enums !=
-                        "undefined"
-                      ) {
-                        for (var e in questions_section[q].inputs[input].enums) {
-                          var option =
-                            questions_section[q].inputs[input].enums[e];
-                          if (
-                            Array.isArray(
-                              questions_section[q].inputs[input].enums
-                            )
-                          ) {
-                            options.push({ value: option, text: option });
-                          } else if (
-                            typeof questions_section[q].inputs[input].enums
-                              .value != "undefined" &&
-                            typeof questions_section[q].inputs[input].enums
-                              .text != "undefined"
-                          ) {
-                            var text =
-                              questions_section[q].inputs[input].enums.text;
-                            var value =
-                              questions_section[q].inputs[input].enums.value;
-                            options.push({ value: value, text: text });
+                    }
+                    if (typeof questions_section[q].inputs != "undefined") {
+                      for (var input in questions_section[q].inputs) {
+                        var options = [];
+                        if (
+                          contact &&
+                          typeof questions_section[q].inputs[input].label != 
+                          "undefined" && 
+                          questions_section[q].inputs[input].label.match(/name/gi)
+                        ) {
+                          questions_section[q].inputs[input].contact = true;
+                          contact = false;
+                        }
+                        if (
+                          typeof questions_section[q].inputs[input].enums !=
+                          "undefined"
+                        ) {
+                          for (var e in questions_section[q].inputs[input].enums) {
+                            var option =
+                              questions_section[q].inputs[input].enums[e];
+                            if (
+                              Array.isArray(
+                                questions_section[q].inputs[input].enums
+                              )
+                            ) {
+                              options.push({ value: option, text: option });
+                            } else if (
+                              typeof questions_section[q].inputs[input].enums
+                                .value != "undefined" &&
+                              typeof questions_section[q].inputs[input].enums
+                                .text != "undefined"
+                            ) {
+                              var text =
+                                questions_section[q].inputs[input].enums.text;
+                              var value =
+                                questions_section[q].inputs[input].enums.value;
+                              options.push({ value: value, text: text });
+                            }
                           }
                         }
-                      }
-                      if (options.length > 0) {
-                        questions_section[q].inputs[input]["options"] = options;
+                        if (options.length > 0) {
+                          questions_section[q].inputs[input]["options"] = options;
+                        }
                       }
                     }
                   }
+                  question.push(questions_section);
                 }
-                question.push(questions_section);
-              }
-              this.questions = question;
-              resolve(question)
-              if(question.length > 0){
-                this.showHideForms('show')
-              }
-            }).fail(function() { 
+                this.questions = question;
+                resolve(question)
+                if(question.length > 0){
+                  this.showHideForms('show')
+                }
+              })
+              .catch(() => {
+                const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+                if (!this.$testing){
+                  localStorage.removeItem('auth-token')
+                  window.location.href = url
+                } else { this.confirmExit(url) }
+              });
+            }).catch(() => {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
                 localStorage.removeItem('auth-token')
                 window.location.href = url
               } else { this.confirmExit(url) }
             });
-          }).fail(function() { 
-            const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-            if (!this.$testing){
-              localStorage.removeItem('auth-token')
-              window.location.href = url
-            } else { this.confirmExit(url) }
-          });
         });
       },
       // @vuese
@@ -505,6 +532,17 @@ export default {
         }, 10)
       },
       // @vuese
+      // Failed response sends error to console.log
+      failedResponse(error){
+        // eslint-disable-next-line
+        console.log('failed response', error)
+        /*const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+        if (!this.$testing){
+          localStorage.removeItem('auth-token')
+          window.location.href = url
+        } else { this.confirmExit(url) }*/
+      },
+      // @vuese
       // Sends data to the API
       // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
       // @arg DAAC [String] hash of the group to set in the json, 
@@ -542,16 +580,8 @@ export default {
           skip_modal = true
         }
         if(!this.$testing){
-          $.ajax({
-            type: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-            },
-            url: `${process.env.VUE_APP_API_ROOT}/data/submission/operation/${operation}`,
-            data: JSON.stringify(json),
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            success: (response) => {
+          this.postData(`${process.env.VUE_APP_API_ROOT}/data/submission/operation/${operation}`, json)
+            .then((response) => {
               this.requestId = response.id;
               this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
               let message = `Your request has been ${action}.`
@@ -584,10 +614,10 @@ export default {
                   this.redirectNotification(bvModal, message, 'save', skip_modal);
                 }
               }
-            },
-            error: (XMLHttpRequest, textStatus, errorThrown) => {
+            })
+            .catch((error) => {
               bvModal.msgBoxOk(
-                `Your request could not be ${action}. Error returned: ${errorThrown}.  Please try again.`,
+                `Your request could not be ${action}. Error returned: ${error}.  Please try again.`,
                 {
                   title: "Error!",
                   size: "sm",
@@ -598,8 +628,7 @@ export default {
                   centered: true,
                 }
               );
-            },
-          });
+            });
         } else {
           bvModal.msgBoxOk('Data did not save.  Testing is set to true.', {
             title: "Success!",
@@ -610,6 +639,28 @@ export default {
             hideHeaderClose: false,
             centered: true,
           })
+        }
+      },
+      async postData(url, data={}){
+        // Default options are marked with *
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": `Bearer ${localStorage.getItem('auth-token')}`
+            },
+            body: JSON.stringify(data)
+          }).catch(function(e) {
+            return this.failedResponse(e)
+          });
+          if (response.statusText.match(/Forbidden/g)){
+            return this.failedResponse()
+          } else {
+            return response.json(); // parses JSON response into native JavaScript objects
+          }
+        } catch(e) {
+          return this.failedResponse(e)
         }
       },
       // @vuese
@@ -713,7 +764,9 @@ export default {
       // Exit confirmed.
       // @arg url [String] the url to be routed to.
       confirmExit(url){
-        $("#eui-banner").addClass("hidden");
+        if(document.getElementById("eui-banner")!=null){
+          document.getElementById("eui-banner").classList.add("hidden");
+        }
         if (this.$testing) {
           // eslint-disable-next-line
           console.log(`Normally href would be set to ${url}, but not when in testing mode.`)
