@@ -5,8 +5,6 @@ import {
   minLength,
   maxLength,
 } from "vuelidate/lib/validators";
-// Jquery javascript
-import $ from "jquery";
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
@@ -677,7 +675,7 @@ export default {
     // @arg fld_from [String] the id of the element it's coming from, 
     // @arg contact_key [String] the contact key needed to check checkbox state
     setContact(fld_to, fld_from, contact_key) {
-      let checked = !$(`#same_as_${fld_to}_${contact_key}`).is(":checked");
+      let checked = !document.getElementById(`same_as_${fld_to}_${contact_key}`).checked;
       let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
       let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
       if (checked) {
@@ -807,18 +805,22 @@ export default {
     // Handle html5 invalidity on form
     // @arg evt [Object] the event
     handleInvalid(evt) {
-      $("#" + evt.target.name + "_invalid").text(evt.target.validationMessage);
+      if(document.getElementById(evt.target.name + "_invalid") != null){
+        document.getElementById(evt.target.name + "_invalid").textContent = evt.target.validationMessage;
+        document.getElementById(evt.target.name + "_invalid").classList.remove("hidden");
+      }
       if (evt.target.validationMessage != "") {
         this.validation_errors = {
           ...this.validation_errors,
           [evt.target.name]: evt.target.validationMessage,
         };
-        $("#" + evt.target.name + "_invalid").removeClass("hidden");
       } else {
+        if(document.getElementById(evt.target.name + "_invalid") != null){
+          document.getElementById(evt.target.name + "_invalid").classList.add("hidden");
+        }
         if (evt.target.name in this.validation_errors) {
           delete this.validation_errors[evt.target.name];
         }
-        $("#" + evt.target.name + "_invalid").addClass("hidden");
       }
       if (this.$v.$anyError) {
         this.$v.$touch();
@@ -851,30 +853,45 @@ export default {
         this.$store.state.global_params['requestId'] != '' && 
         typeof this.$store.state.global_params['requestId'] !== 'undefined' && 
         !this.$testing) {
-        $.getJSON(
-        `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`,
-        (answers) => {
-          if(answers.error){
-            return {}
+        const options = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('auth-token')}`
           }
-          this.valueHistory = []
-          this.values = answers.form_data;
-          setTimeout(() => {
-            this.setContacts(this.values);
-          }, "3000")
-        })
+        };
+        fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
+          .then(async response => {
+            const answers = await response.json();
+            if(answers.error){
+              return {}
+            }
+            this.valueHistory = []
+            this.values = answers.form_data;
+            setTimeout(() => {
+              this.setContacts(this.values);
+            }, "3000")
+          }).catch(() => {
+            let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
+            if (!this.$testing){
+              localStorage.removeItem('auth-token')
+              window.location.href = url
+            } else { this.confirmExit(url) }
+          });
       }
     },
     // @vuese
     // Cancels current edits and exits the form
     okToCancel() {
-      $("#eui-banner").addClass("hidden");
+      if (document.getElementById("eui-banner")!=null){
+        document.getElementById("eui-banner").classList.add("hidden");
+      }
       if (Object.keys(this.values).length > 0) {
         this.$refs.form.reset();
         this.$values = {};
         this.$v.$touch();
       }
-      $("#reset_data").focus();
+      if (document.getElementById("reset_data")!=null){
+        document.getElementById("reset_data").focus();
+      }
       this.confirm = false;
       this.exitForm();
     },
