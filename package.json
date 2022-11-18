@@ -58,7 +58,6 @@
     "bootstrap-vue-editable-table": "0.1.0-beta.9",
     "cypress-localstorage-commands": "^1.6.1",
     "dotenv": "^14.3.2",
-    "jquery": "^3.6.0",
     "js-logger": "^1.6.1",
     "jsonwebtoken": "^8.5.1",
     "snyk": "^1.786.0",
