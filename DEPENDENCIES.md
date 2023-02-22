@@ -20,9 +20,3 @@ Open source licenses:
 | `vuejs-logger`     | `https://github.com/justinkames/vuejs-logger/blob/master/LICENSE`      |
 | `vuelidate`        | `https://github.com/vuelidate/vuelidate/blob/master/LICENSE`           |
 | `vuex`             | `https://github.com/vuejs/vuex/blob/dev/LICENSE`                       |
-
-NASA pays for a Snyk license.
-
-| Dependencies | License                                            |
-| ------------ | -------------------------------------------------- |
-| `snyk`       | `https://github.com/snyk/snyk/blob/master/LICENSE` |
