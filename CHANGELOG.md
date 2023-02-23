@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 <!-- Unreleased changes can be added here. -->
+## 1.0.13 - 2023-02-23
+
+- Updated data format question in test jsons
 
 ## 1.0.12 - 2022-10-28
 
