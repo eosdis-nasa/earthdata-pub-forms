@@ -1,4 +1,4 @@
-FROM node:14.19.1-slim
+FROM node:18.14.1-slim
 
 # apt update -y
 # RUN apt-get -y update \
