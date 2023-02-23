@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 <!-- Unreleased changes can be added here. -->
- - Updated Node version to v18.14.1
+- Updated data format question in test jsons
+- Updated Node version to v18.14.1
 
 ## 1.0.12 - 2022-10-28
 
