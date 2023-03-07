@@ -15,7 +15,7 @@
   "homepage": "https://git.earthdata.nasa.gov/projects/EDPUB/repos/forms/browse",
   "private": true,
   "engines": {
-    "node": "14.19.1"
+    "node": "18.14.1"
   },
   "scripts": {
     "clean-modules": "rm -rf package-lock.json node_modules/",
@@ -60,7 +60,6 @@
     "dotenv": "^14.3.2",
     "js-logger": "^1.6.1",
     "jsonwebtoken": "^9.0.0",
-    "snyk": "^1.786.0",
     "vue": "^2.6.14",
     "vue-fixed-header": "^3.2.15",
     "vue-router": "^3.5.3",
@@ -70,9 +69,9 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^5.0.0-rc.1",
-    "@vue/cli-service": "^4.5.15",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "@vuese/cli": "^2.1.0",
     "acorn": "^8.6.0",
     "axe-core": "^4.4.2",
@@ -83,7 +82,7 @@
     "eslint-plugin-vue": "^8.2.0",
     "eslint-webpack-plugin": "^3.1.1",
     "serve": "^13.0.2",
-    "vue-template-compiler": "^2.6.14"
-  },
-  "snyk": true
+    "vue-template-compiler": "^2.6.14",
+    "node-polyfill-webpack-plugin": "^2.0.1"
+  }
 }
