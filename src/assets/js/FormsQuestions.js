@@ -28,7 +28,11 @@ export default {
       requestId: "",
       daac_name: "",
       valueHistory: [{fromUndo: true}],
-      valueHistoryUndoIdx: 0
+      valueHistoryUndoIdx: 0,
+      alertVariant: 'success',
+      alertMessage: '',
+      dismissSecs: 7,
+      dismissCountDown: 0
     };
   },
   props: {
@@ -344,6 +348,8 @@ export default {
     })
   },
   methods: {
+    // @vuese
+    // Sets local variables
     setLocalVars() {
       if(typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] !== ''){
         this.formId = this.$store.state.global_params['formId']
@@ -358,6 +364,9 @@ export default {
         window.headerComponent.daac = this.daac
       }
     },
+    // @vuese
+    // Checks if field is a required_if field
+    // @arg fld [String] the id of the field in question, 
     checkRequiredIf(fld) {
       if (fld.required_if) {
         try {
@@ -380,6 +389,8 @@ export default {
       }
       return false;
     },
+    // @vuese
+    // Accessibility hack that manipulates library components
     accessibilityHack(){
       let buttons = document.getElementsByTagName('button')
       for (const ea in buttons){

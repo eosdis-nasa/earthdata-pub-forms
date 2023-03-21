@@ -33,6 +33,18 @@
   margin-top:5px!important;
   margin-bottom:5px!important;
 }
+.alert{
+  text-align: center!important;
+  border-radius:unset!important;
+  /*display: flex;*/
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-top:1rem!important;
+  margin-bottom:unset!important;
+}
 .bbox.form-control {
   display: inline-flex;
   margin-left: 10px;
@@ -233,16 +245,13 @@ fieldset {
   -webkit-box-pack: justify;
   justify-content: space-between;
   padding: 1rem;
-  margin-bottom:1rem;
+  /*margin-bottom:1rem;*/
 }
 .console_container {
   height: 1em;
 }
 .console_bar {
   float: right;
-}
-#messageBox {
-  text-align: center;
 }
 @media (min-width: 1200px) {
   .navbar.vue-fixed-header--isFixed {
