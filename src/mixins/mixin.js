@@ -560,7 +560,6 @@ export default {
           log: JSON.parse(this.$store.state.global_params[`${form}_outputs`])["log"],
           versions: this.$versions
         };
-        console.log(json)
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
           json["form_id"] = this.$store.state.global_params['formId'];
         }
