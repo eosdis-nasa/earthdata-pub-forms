@@ -124,7 +124,4 @@ export default {
     line-height: 90px;
     vertical-align: bottom;
   }
-  #earthdata-tophat2 {
-    display:none!important;
-  }
 </style>
