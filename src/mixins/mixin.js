@@ -398,6 +398,9 @@ export default {
                         contact = true;
                       }
                     }
+                    if (parseInt(questions_section[q].version) > 0) {
+                      this.$versions[questions_section[q].short_name]=questions_section[q].version
+                    }
                     if (typeof questions_section[q].inputs != "undefined") {
                       for (var input in questions_section[q].inputs) {
                         var options = [];
@@ -553,10 +556,9 @@ export default {
         let form = this.$store.state.global_params['formShortName']
         let was_draft = false
         let json = {
-          data: JSON.parse(this.$store.state.global_params[`${form}_outputs`])[
-            "data"
-          ],
+          data: JSON.parse(this.$store.state.global_params[`${form}_outputs`])["data"],
           log: JSON.parse(this.$store.state.global_params[`${form}_outputs`])["log"],
+          versions: this.$versions
         };
         if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") {
           json["form_id"] = this.$store.state.global_params['formId'];

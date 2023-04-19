@@ -36,6 +36,7 @@ Vue.prototype.$values = {}
 Vue.prototype.$logging_object = {}
 // Collection object of output prototypes
 Vue.prototype.$output_object = {}
+Vue.prototype.$versions = {}
 
 // Use simple logger
 Vue.use(VueLogger, logOptions);
