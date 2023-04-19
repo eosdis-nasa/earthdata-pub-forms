@@ -603,44 +603,23 @@ export default {
                 }
               } else {
                 if(!skip_modal){
-                    bvModal.msgBoxOk(message, {
-                    title: "Success!",
-                    size: "sm",
-                    buttonSize: "sm",
-                    okTitle: "OK",
-                    footerClass: "p-2",
-                    hideHeaderClose: false,
-                    centered: true,
-                  })
+                  this.alertVariant = 'success'
+                  this.alertMessage = message
+                  this.showAlert();
                 } else {
                   this.redirectNotification(bvModal, message, 'save', skip_modal);
                 }
               }
             })
             .catch((error) => {
-              bvModal.msgBoxOk(
-                `Your request could not be ${action}. Error returned: ${error}.  Please try again.`,
-                {
-                  title: "Error!",
-                  size: "sm",
-                  buttonSize: "sm",
-                  okTitle: "OK",
-                  footerClass: "p-2",
-                  hideHeaderClose: false,
-                  centered: true,
-                }
-              );
+              this.alertVariant = 'danger'
+              this.alertMessage = `Your request could not be ${action}. Error returned: ${error}.  Please try again.`
+              this.showAlert();
             });
         } else {
-          bvModal.msgBoxOk('Data did not save.  Testing is set to true.', {
-            title: "Success!",
-            size: "sm",
-            buttonSize: "sm",
-            okTitle: "OK",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          })
+          this.alertVariant = 'success'
+          this.alertMessage = "Data did not save.  Testing is set to true."
+          this.showAlert();
         }
       },
       async postData(url, data={}){
@@ -709,21 +688,22 @@ export default {
         }
       },
       // @vuese
-      // Alerts the user to errors and shows error messages
-      // @arg bvModal [Object] the alert object to modify if an alert is necessary
-      errorsNotification(bvModal) {
-        bvModal.msgBoxOk(
-          "You have errors to correct before you can submit your request.  You can save your request as a draft and come back.",
-          {
-            title: "Errors",
-            size: "sm",
-            buttonSize: "sm",
-            okTitle: "OK",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        );
+      // Updates the count down property
+      countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+      },
+      // @vuese
+      // Shows an alert then resets the countdown property
+      showAlert() {
+        this.dismissCountDown = this.dismissSecs
+      },
+      // @vuese
+      // Alerts the user to errors and shows error messages in the fixed header
+      errorsNotification() {
+        // Variant possiblities are 'primary, secondary, success, danger, warning, info, light, dark'
+        this.alertVariant = 'danger'
+        this.alertMessage = "You have errors to correct before you can submit your request.  You can save your request as a draft and come back."
+        this.showAlert();
       },
       // @vuese
       // Resets form
@@ -840,7 +820,7 @@ export default {
           ) {
             this.sendDataToApi(this.$bvModal, DAAC, operation);
           } else {
-            this.errorsNotification(this.$bvModal);
+            this.errorsNotification();
           }
         }
       }
