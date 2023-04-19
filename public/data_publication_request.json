@@ -326,7 +326,7 @@
         },
         {
           "short_name": "data_product_restrictions",
-          "long_name": "Data Product Restrictions",
+          "long_name": "Open Data Policy",
           "text": "Can this data product be publicly released in compliance with NASA's Open Data Policy?",
           "help": "For a description of the open data policy, please refer to the <a href='https://earthdata.nasa.gov/collaborate/open-data-services-and-software/data-information-policy' target=_blank>NASA Earthdata Data and Information Policy web page <i class='fas fa-external-link-alt'></i></a>.",
           "inputs": [
@@ -959,7 +959,7 @@
           "short_name": "sample_data_file",
           "long_name": "Sample Data File(s)",
           "text": "Please provide a URL to a sample file(s).",
-          "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand the data format, structure, and content.",
+          "help": "Providing sample data files that are representative of the range of data within this data product will help the DAAC understand and provide feedback on the data format, structure, and content.",
           "inputs": [
             {
               "type": "text",
