@@ -1,7 +1,6 @@
 <template>
   <!-- FormsHeader with eui class -->
   <div class="doc-mast header" role="banner">
-    <div id="earthdata-tophat2"></div>
     <div class="container">
       <!-- Logo and menu -->
       <div class="eui-application-logo" role="heading" aria-level="2">
