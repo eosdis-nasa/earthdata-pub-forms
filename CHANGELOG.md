@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 <!-- Unreleased changes can be added here. -->
-
+- Added auto-expanding textarea functionality
 
 ## 1.0.13 - 2023-05-12
 - Updated modals not involving user input or confirmation to bootstrap-vue alerts
