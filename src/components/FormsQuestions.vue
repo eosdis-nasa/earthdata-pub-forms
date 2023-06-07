@@ -291,6 +291,8 @@
                                   :maxlength="getAttribute('maxlength', question.inputs[c_key])"
                                   :minlength="getAttribute('minlength', question.inputs[c_key])"
                                   :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
+                                  @focus="resize(input.control_id)"
+                                  @keyup="resize(input.control_id)"
                                   v-if="input.type == 'textarea'">
                               </b-form-textarea>
                               <!-- End of Textarea Type of Input -->
