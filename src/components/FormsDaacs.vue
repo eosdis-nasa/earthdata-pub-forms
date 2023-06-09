@@ -6,7 +6,7 @@
         <div class="daac-div">
           <b-form-group name="form-group" id="form-group" label="Select a DAAC.">
             <div class="mt-3 disabled-daacs">
-              Some DAACs are not available in Earthdata Pub because they are onboarding. DAACs will become selectable as they are onboarded. DAACs that are not selectable are not yet using Earthdata Pub for data publication. To publish data with a non-selectable DAAC, contact the DAAC. Contact information can be found on the <a :href=overviewRoot alt="go EDPub Overview Pages" title="go EDPub Overview Pages">Earthdata Pub Overview</a> page.
+              Some DAACs are not selectable on the form because they are not yet using Earthdata Pub for data publication. To publish data with one of those DAACs, please contact them directly. DAAC websites can be found in the <a :href="overviewRootPublicationDaacs" alt="go to NASA Daac Section" title="go NASA Daac Section">NASA DAACs</a> section of Earthdata Pub.
             </div>
             <!-- Radio Div with Description -->
             <div>
@@ -77,8 +77,8 @@ export default {
   },
   props: {},
   computed: {
-    overviewRoot () {
-      return process.env.VUE_APP_OVERVIEW_ROOT
+    overviewRootPublicationDaacs () {
+      return `${process.env.VUE_APP_OVERVIEW_ROOT}/data_publication_guidelines#daacs`;
     },
     notHidden: function () {
       return this.daacs.filter(i => i.hidden === false)
