@@ -521,9 +521,9 @@
         },
         {
           "short_name": "temporal_coverage_notes",
-          "long_name": "Temporal Information Notes",
-          "text": "Please provide any additional information about the temporal coverage that will help the DAAC understand this data product.",
-          "help": "Examples of useful temporal coverage information include: seasonal data; data covering multiple, individual deployments; significant gaps in instrument operation; data from transit/ferry flights included.",
+          "long_name": "Additional Temporal Information",
+          "text": "Is there any additional temporal information that will help the DAAC understand this data product?",
+          "help": "Examples of useful temporal information include: seasonal data; data covering multiple, individual deployments; significant gaps in instrument operation; data from transit/ferry flights included.",
           "inputs": [
             {
               "type": "textarea",
@@ -677,8 +677,8 @@
         },
         {
           "short_name": "spatial_notes",
-          "long_name": "Spatial Information Notes",
-          "text": "Please describe any additional information about the spatial coverage that will help the DAAC understand this data product.",
+          "long_name": "Additional Spatial Information",
+          "text": "Is there any additional spatial information that will help the DAAC understand this data product?",
           "inputs": [
             {
               "type": "textarea",
