@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 <!-- Unreleased changes can be added here. -->
-- Updated content of daac selection form to match new overview pages per info team request.
-- Added auto-expanding textarea functionality
+
+## 1.0.14
+
+- Update content for testing jsons
+- Add auto-expanding textarea functionality
+- Updated content of daac selection form to match new overview pages
 
 ## 1.0.13 - 2023-06-22
 
