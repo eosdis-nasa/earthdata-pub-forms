@@ -1,6 +1,6 @@
 {
   "name": "earthdata-pub-forms",
-  "version": "1.0.0",
+  "version": "1.0.13",
   "description": "Forms for Earthdata Pub API",
   "main": "index.js",
   "repository": {
