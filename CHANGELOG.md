@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated content of daac selection form to match new overview pages per info team request.
 - Added auto-expanding textarea functionality
 
-## 1.0.13 - 2023-05-12
+## 1.0.13 - 2023-06-22
+
 - Updated modals not involving user input or confirmation to bootstrap-vue alerts
 - Updated data format question in test jsons
 - Updated Node version to v18.14.1
