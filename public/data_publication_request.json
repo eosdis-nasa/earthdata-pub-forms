@@ -346,7 +346,7 @@
           "short_name": "product_temporal_coverage",
           "long_name": "Data Product Temporal Coverage",
           "text": "What period of time is covered by the entire data product, upon planned delivery to the DAAC?",
-          "help": "The temporal coverage should encompass the beginning date of the first data file and the ending date of the last data file, even if there are time gaps.",
+          "help": "The temporal coverage should encompass the beginning date of the first data file and the ending date of the last data file at the time of initial delivery to the DAAC, even if there are time gaps or data production will be ongoing.",
           "inputs": [
             {
               "type": "date",
@@ -366,8 +366,8 @@
         },
         {
           "short_name": "data_product_status",
-          "long_name": "Data Product Status",
-          "text": "After this data product has been published at the DAAC, will you continue to collect or create new data to extend the time series?",
+          "long_name": "Ongoing Data Production",
+          "text": "After this data product has been published at the DAAC, will you continue to collect or produce new data files to extend the temporal coverage?",
           "help": "",
           "inputs": [
             {
@@ -452,7 +452,7 @@
           "short_name": "file_temporal_coverage",
           "long_name": "Data File Temporal Coverage",
           "text": "On average, how much time is covered by an individual data file?",
-          "help": "",
+          "help": "If a data file represents a single point in time, meaning the start and end times of the file would be identical, choose 'Instantaneous'. If the temporal coverage cannot be reasonably represented by a single value, choose 'Varies'.",
           "inputs": [
             {
               "type": "number",
@@ -474,6 +474,7 @@
                 "Week(s)",
                 "Month(s)",
                 "Year(s)",
+                "Instantaneous",
                 "Varies"
               ],
               "required": true
@@ -484,7 +485,7 @@
         },
         {
           "short_name": "value_temporal_resolution",
-          "long_name": "Temporal Resolution",
+          "long_name": "Data Value Temporal Resolution",
           "text": "On average, what is the temporal resolution of an individual data value within the data files?",
           "help": "The temporal resolution is specific to the data stored in this data product and does not necessarily represent the input data or instrument sampling rate. \n\nFor example, if measurements are taken for 1 second every 8 minutes and those 1 second measurements are represented in the data values, the temporal resolution is 1 second. If the 1 second measurements are averaged every hour and those 1-hour averages are represented in the data values, the temporal resolution is 1 hour.",
           "inputs": [
@@ -520,9 +521,9 @@
         },
         {
           "short_name": "temporal_coverage_notes",
-          "long_name": "Temporal Coverage Notes",
-          "text": "Please provide any additional information about the temporal coverage that will help the DAAC understand this data product.",
-          "help": "Examples of useful temporal coverage information include: seasonal data; data covering multiple, individual deployments; significant gaps in instrument operation; data from transit/ferry flights included.",
+          "long_name": "Additional Temporal Information",
+          "text": "Is there any additional temporal information that will help the DAAC understand this data product?",
+          "help": "Examples of useful temporal information include: seasonal data; data covering multiple, individual deployments; significant gaps in instrument operation; data from transit/ferry flights included.",
           "inputs": [
             {
               "type": "textarea",
@@ -561,9 +562,9 @@
         },
         {
           "short_name": "spatial_horizontal",
-          "long_name": "Horizontal Spatial Coverage",
+          "long_name": "Data Product Horizontal Spatial Coverage",
           "text": "What are the coordinates for the geographic area(s) covered by the entire data product?",
-          "help": "If more than three distinct spatial coverage bounding boxes exist for this data product, please add a comment to the Spatial Coverage Notes.",
+          "help": "If more than three distinct spatial coverage bounding boxes exist for this data product, please add a comment to the Spatial Information Notes.",
           "inputs": [
             {
               "type": "bbox",
@@ -584,7 +585,7 @@
         },
         {
           "short_name": "spatial_vertical",
-          "long_name": "Vertical Spatial Coverage",
+          "long_name": "Data Product Vertical Spatial Coverage",
           "text": "Does this data product have a vertical dimension?",
           "inputs": [
             {
@@ -602,7 +603,7 @@
           "short_name": "spatial_vertical_details",
           "long_name": "Upper and Lower Limits",
           "text": "What are the upper and lower limits of the vertical spatial coverage of the data product?",
-          "help": "Please provide any additional details needed to understand what these numbers mean in the Spatial Coverage Notes. For example, the point of reference for the values given in the vertical spatial coverage.",
+          "help": "Please provide any additional details needed to understand what these numbers mean in the Spatial Information Notes. For example, the point of reference for the values given in the vertical spatial coverage.",
           "show_if": [
             {
               "field": "spatial_vertical_answer",
@@ -660,9 +661,9 @@
         },
         {
           "short_name": "spatial_resolution",
-          "long_name": "Spatial Resolution",
+          "long_name": "Data Value Spatial Resolution",
           "text": "What is the spatial resolution of an individual data value within the data files?",
-          "help": "Please provide the nominal size of the geographic area covered by a single data value. For example: 25 km at nadir; a 0.25 degree x 0.25 degree grid cell at the equator; points along a path; a 10 km x 10 km x 5 km radar slice.",
+          "help": "Please provide the nominal size of the geographic area covered by a single data value. For example: 25 km at nadir; a 0.25 degree x 0.25 degree grid cell at the equator; points along a path; a 10 km x 10 km x 5 km radar slice. If the spatial resolution varies for data values, you can list 'varies'. If a spatial resolution is not applicable, you can list 'not applicable.'",
           "inputs": [
             {
               "type": "text",
@@ -676,8 +677,8 @@
         },
         {
           "short_name": "spatial_notes",
-          "long_name": "Spatial Coverage Notes",
-          "text": "Please describe any additional information about the spatial coverage that will help the DAAC understand this data product.",
+          "long_name": "Additional Spatial Information",
+          "text": "Is there any additional spatial information that will help the DAAC understand this data product?",
           "inputs": [
             {
               "type": "textarea",
