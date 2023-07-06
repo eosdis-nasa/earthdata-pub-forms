@@ -184,7 +184,7 @@
     }
     .form-control {
         border-radius:5px;
-        height: unset!important;
+        height: unset;
     }
     .same-as-html5{
         border-radius:5px!important;

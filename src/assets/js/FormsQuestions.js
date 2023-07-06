@@ -364,6 +364,11 @@ export default {
         window.headerComponent.daac = this.daac
       }
     },
+    resize(id) {
+      const textarea = document.getElementById(id)
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    },
     // @vuese
     // Checks if field is a required_if field
     // @arg fld [String] the id of the field in question, 
