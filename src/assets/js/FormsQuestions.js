@@ -82,8 +82,8 @@ export default {
                 if (this.values[sameAs].toString() == 'true') {
                   for (let v in this.values) {
                     if (new RegExp(`^same_as_.*_${v}$`).test(sameAs)) {
-                      let to_base_name = sameAs.replace(/^same_as_/, '').replace(new RegExp(`_${v}$`), '').replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
-                      let from_base_name = v.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      let to_base_name = sameAs.replace(/^same_as_/, '').replace(new RegExp(`_${v}$`), '').replace(/_name/g, "").replace(/_organization/g,'').replace(/_department/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
+                      let from_base_name = v.replace(/_name/g, "").replace(/_organization/g,'').replace(/_department/g,'').replace(/_email/g, '').replace(/_orcid/g,'')
                       for (let ea in this.values) {
                         if (new RegExp(`^${from_base_name}_`).test(ea)) {
                           this.$set(this.values, ea.replace(`${from_base_name}_`, `${to_base_name}_`), this.values[ea])
@@ -692,8 +692,8 @@ export default {
     // @arg contact_key [String] the contact key needed to check checkbox state
     setContact(fld_to, fld_from, contact_key) {
       let checked = !document.getElementById(`same_as_${fld_to}_${contact_key}`).checked;
-      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
-      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      let to_base_name = fld_to.replace(/_name/g, "").replace(/_organization/g,'').replace(/_department/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
+      let from_base_name = fld_from.replace(/_name/g, "").replace(/_organization/g,'').replace(/_department/g,'').replace(/_email/g, '').replace(/_orcid/g,'');
       if (checked) {
         for (let ea in this.values) {
           if (new RegExp(`^${from_base_name}_`).test(ea)) {
@@ -739,7 +739,7 @@ export default {
     // Compares to see if any sameas is checked
     // @arg control_id [String] the control id to compare against
     anySameAsSelected(control_id) {
-      return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
+      return this.sameAsSelected(control_id.replace(/_name/g, "").replace(/_organization/g,'').replace(/_department/g,'').replace(/_email/g, '').replace(/_orcid/g,''));
     },
     // @vuese
     // Gets contacts and builds options for checkbox
