@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- Unreleased changes can be added here. -->
 
+## 1.0.15
+
+- Added 'Department' to 'Same As' functionality
+- Updated NASA Official
+
 ## 1.0.14
 
 - Update content for testing jsons

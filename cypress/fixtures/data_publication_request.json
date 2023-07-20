@@ -30,6 +30,12 @@
               "required": true
             },
             {
+              "type": "text",
+              "control_id": "data_producer_info_department",
+              "label": "Department",
+              "required": false
+            },
+            {
               "type": "email",
               "control_id": "data_producer_info_email",
               "label": "Email",
@@ -66,6 +72,12 @@
               "required": true
             },
             {
+              "type": "text",
+              "control_id": "poc_department",
+              "label": "Department",
+              "required": false
+            },
+            {
               "type": "email",
               "control_id": "poc_email",
               "label": "Email",
@@ -100,6 +112,12 @@
               "label": "Organization",
               "validation_error_msg": "Please enter an organization.",
               "required": true
+            },
+            {
+              "type": "text",
+              "control_id": "long_term_support_poc_department",
+              "label": "Department",
+              "required": false
             },
             {
               "type": "email",
