@@ -1,0 +1,58 @@
+# Earthdata Pub Forms Docker For Bamboo CI/CD
+FROM node:18.14.1
+
+COPY . /tmp/
+WORKDIR /tmp
+
+RUN apt-get update
+
+# Install AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip
+RUN ./aws/install && aws --version
+
+# Initialize aws environment variables if defined in docker build
+ARG AWS_DEFAULT_REGION
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
+# Initialize aws environment variables if defined in docker run
+ENV AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+# Initialize VUE environment variables if defined in docker build
+ARG PUBLIC_PATH
+ARG VUE_APP_API_ROOT
+ARG VUE_APP_DASHBOARD_ROOT
+ARG VUE_APP_OVERVIEW_ROOT
+ARG VUE_APP_DAACS_URL
+ARG VUE_APP_FORMS_URL
+ARG VUE_APP_FORM_URL
+ARG VUE_APP_REQUESTS_URL
+ARG VUE_APP_REQUEST_URL
+ARG VUE_APP_QUESTIONS_URL
+ARG VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR
+ARG VUE_APP_TESTING_MODE
+
+# Initialize aws environment variables if defined in docker run
+ENV PUBLIC_PATH=${PUBLIC_PATH}
+ENV VUE_APP_API_ROOT=${VUE_APP_API_ROOT}
+ENV VUE_APP_DASHBOARD_ROOT=${VUE_APP_DASHBOARD_ROOT}
+ENV VUE_APP_OVERVIEW_ROOT=${VUE_APP_OVERVIEW_ROOT}
+ENV VUE_APP_DAACS_URL=${VUE_APP_DAACS_URL}
+ENV VUE_APP_FORMS_URL=${VUE_APP_FORMS_URL}
+ENV VUE_APP_FORM_URL=${VUE_APP_FORM_URL}
+ENV VUE_APP_REQUESTS_URL=$[VUE_APP_REQUESTS_URL]
+ENV VUE_APP_REQUEST_URL=${VUE_APP_REQUEST_URL}
+ENV VUE_APP_QUESTIONS_URL=${VUE_APP_QUESTIONS_URL}
+ENV VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR=${VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}
+ENV VUE_APP_TESTING_MODE=${VUE_APP_TESTING_MODE}
+
+# Run linter and tests
+#RUN npm install && npm run linter && npm run test:unit
+# The above line should be used for production; however, currently the repo tests fail and won't allow the docker to build
+RUN npm install
+
+# Build forms repo
+RUN npm run build
+

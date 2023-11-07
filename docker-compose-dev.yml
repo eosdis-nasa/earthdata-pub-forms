@@ -1,0 +1,16 @@
+version: '3'
+services:
+    forms:
+        build: 
+            context: .
+            dockerfile: Dockerfile-dev
+        image: earthdata-pub-forms
+        environment: 
+            API_ROOT: "http://localhost:8080"
+            DASHBOARD_ROOT: "http://localhost:3000"
+            OVERVIEW_ROOT: "http://localhost:8082"
+        ports:
+            - "8081:8080"
+        volumes:
+            - ./:/app
+        tty: true
