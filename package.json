@@ -46,7 +46,8 @@
     "stop-dev": "npm run stop-api; npm run stop-dashboard; npm run stop-forms-dev; npm run stop-overview-dev",
     "view-logs": "npm run start-api; docker-compose -f docker-compose.yml up",
     "build-docs": "vuese gen --include='**/(components|mixins)/*.(vue|js)'",
-    "open-docs": "vuese serve --open"
+    "open-docs": "vuese serve --open",
+    "test:unit": "jest -c jest.config.js --all"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
@@ -68,21 +69,29 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.6",
     "@babel/eslint-parser": "^7.16.3",
+    "@babel/preset-env": "^7.23.6",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
+    "@vue/test-utils": "^1.3.6",
     "@vuese/cli": "^2.1.0",
     "acorn": "^8.6.0",
     "axe-core": "^4.4.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^29.7.0",
     "babel-plugin-js-logger": "^1.0.17",
     "cypress": "^9.7.0",
     "cypress-axe": "^0.14.0",
     "eslint": "^7.4.0",
     "eslint-plugin-vue": "^8.2.0",
     "eslint-webpack-plugin": "^3.1.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "serve": "^13.0.2",
-    "vue-template-compiler": "^2.6.14",
-    "node-polyfill-webpack-plugin": "^2.0.1"
+    "vue-jest": "^3.0.7",
+    "vue-template-compiler": "^2.6.14"
   }
 }
