@@ -31,7 +31,7 @@ instructions.
 
 We use npm for local package management, to install the requirements:
 
-```
+```bash
 nvm install v18.14.1
 nvm use
 npm install
@@ -41,7 +41,7 @@ npm install
 
 To start and build all containers (api, dashboard, forms and overview):
 
-```
+```bash
 npm run start-dev
 ```
 
@@ -58,7 +58,7 @@ Finally, test that the overview is working by clicking the forms 'Overview' link
 
 You can spin down all containers, by running this command:
 
-```
+```bash
 npm run stop-dev
 ```
 
@@ -66,13 +66,13 @@ If forms was ever previously opened, you may need to clear the localStorage in t
 
 To run forms locally:
 
-```
+```bash
 npm run start-forms-dev
 ```
 
 The vue app can also be run locally using:
 
-```
+```bash
 npm use
 npm install
 npm run build
@@ -81,7 +81,7 @@ npm run serve
 
 To view logs from the Docker container:
 
-```
+```bash
 npm run view-logs
 ```
 
@@ -112,7 +112,7 @@ makes container deployment simple. See the [Dockerfile](./Dockerfile) and
 
 To deploy using docker-compose:
 
-```
+```bash
 docker-compose up
 ```
 
@@ -127,7 +127,7 @@ is served within the container.
 The Docker container can be entered to run npm or vue commands that will persist
 outside of the container. To enter the container:
 
-```
+```bash
 docker exec -it forms_forms_1 /bin/bash
 ```
 
@@ -144,20 +144,20 @@ You may have a few system libraries to install.
 
 Next view cypress.json to make sure your local dev settings match.  To run the overview app locally along with testing, run:
 
-```
+```bash
 npm run start-forms-dev
 npm run start-overview-dev
 ```
 
 After that it is done:
 
-```
+```bash
 npm run cypress OR npx cypress open 
 ```
 
 The last command will open cypress tests in browser mode.  To run in headless mode:
 
-```
+```bash
 npm run cypress-headless OR npx cypress run OR cypress-headless-all (for all browsers supported)
 ```
 
@@ -181,25 +181,25 @@ To build documentation:
 
 install:
 
-```
+```bash
 npm install -g @vuese/cli 
 ```
 
 or
 
-```
+```bash
 yarn global add vuese
 ```
 
 then build:
 
-```
+```bash
 npm run build-docs
 ```
 
 then serve:
 
-```
+```bash
 npm run open-docs
 ```
 
