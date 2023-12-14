@@ -1,7 +1,6 @@
 # Earthdata Pub Forms
 
-This is the readme for the questions piece of forms and describes the API data accepted
-and digested by forms.
+This is the readme for the questions piece of forms and describes the API data accepted and digested by forms.
 
 ## Table of Contents
 

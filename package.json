@@ -8,7 +8,7 @@
     "url": "https://github.com/eosdis-nasa/earthdata-pub-forms.git"
   },
   "author": "Earthdata Pub Dev Team",
-  "license": "Apache-2.0",
+  "license": "BSD 3-Clause License",
   "bugs": {
     "url": "https://bugs.earthdata.nasa.gov/browse/EDPUB"
   },
@@ -30,8 +30,8 @@
     "snyk-prepare": "npm run snyk-protect",
     "link-api": "npm link ../earthdata-pub-api",
     "link-repos": "npm run link-api && cd ../earthdata-pub-dashboard && npm run link-api",
-    "start-api": "npm run link-api; docker-compose -f ./node_modules/earthdata-pub-modules/docker-compose.yml up -d; ",
-    "stop-api": "docker-compose -f ./node_modules/earthdata-pub-modules/docker-compose.yml down",
+    "start-api": "npm run link-api; docker-compose -f ./node_modules/earthdata-pub-api/docker-compose.yml up -d; ",
+    "stop-api": "docker-compose -f ./node_modules/earthdata-pub-api/docker-compose.yml down",
     "start-forms": "docker-compose -f docker-compose.yml up -d",
     "stop-forms": "docker-compose -f docker-compose.yml down",
     "start-dashboard": "cd ../earthdata-pub-dashboard && npm run start",
