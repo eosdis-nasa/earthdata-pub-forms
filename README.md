@@ -45,7 +45,7 @@ To start and build all containers (api, dashboard, forms and overview):
 npm run start-dev
 ```
 
-Currently the most current branches of each repo are the 'develop' branches.
+The most current branch of each repo is the 'develop' branches.
 
 You can navigate to 'http://localhost:8080/docs' to verify the api is running.
 
@@ -161,8 +161,7 @@ The last command will open cypress tests in browser mode.  To run in headless mo
 npm run cypress-headless OR npx cypress run OR cypress-headless-all (for all browsers supported)
 ```
 
-Firefox does not have a bypass for CORS, so at the time of this writing, the browsers
-cypress tests can be run on are chrome, chromium, edge, and electron.
+Firefox does not have a bypass for CORS, so at the time of this writing, the browsers cypress tests can be run on are chrome, chromium, edge, and electron.
 Cypress says firefox needs to add the equivalent CORS bypass like cypress.json/chromeWebSecurity.
 
 ## Deploying
