@@ -2,6 +2,7 @@ module.exports = {
   testEnvironment: "jsdom",
   rootDir: './',
   roots: [
+    '<rootDir>/src',
     '<rootDir>/test'
   ],
     moduleNameMapper: {
@@ -15,6 +16,8 @@ module.exports = {
         ".*\\.(vue)$": "vue-jest"
     },
     collectCoverage: true,
+    coverageProvider: "v8",
+    collectCoverageFrom: ["**/*.{js,vue}", "!**/node_modules/**", "!**/*.config.js"],
     coverageThreshold:{
         global:{
         branches: 5,
