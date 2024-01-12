@@ -22,5 +22,8 @@ module.exports = {
         '**/tests/unit/**/*.spec.{j,t}s?(x)'
       ]
     }
-  ]
+  ],
+  "globals": {
+    "cy": true
+  }
 }

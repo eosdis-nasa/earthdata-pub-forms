@@ -1,0 +1,59 @@
+.button_bar {
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between;*/
+    margin-top: 0;
+}
+
+.disabled-daacs {
+    margin-bottom: 1rem;
+    margin-top: 0.5rem !important;
+}
+
+#daac_select_button,
+#daac_cancel_button {
+    margin-top: 2rem;
+    padding: 0.5em 1em;
+}
+
+#daac_cancel_button {
+    margin-right: 2rem;
+}
+
+.form-group {
+    margin-top: 2rem;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+#selected_daac,
+.external-link-alt,
+#selected_daac_link {
+    color: #2275AA;
+}
+
+.radio_head_div {
+    padding-left: 24px;
+    border-top: none !important;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.radio_div span,
+.radio_div input {
+    display: table-cell;
+    min-width: 120px;
+}
+
+.radio_div div {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #dee2e6;
+}
+
+fieldset#form-group.form-group {
+    margin-left: unset;
+    margin-right: unset;
+    padding-left: unset;
+    padding-right: unset;
+    /*min-width:1110px;*/
+}

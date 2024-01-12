@@ -1,0 +1,42 @@
+#nav {
+    padding: 5px;
+    text-align: right;
+    padding-bottom: 1.75rem;
+    margin-right: 5px;
+}
+
+#nav a {
+    color: white;
+}
+
+#nav a.router-link-exact-active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+img.logo {
+    margin-top: 1rem;
+    border: unset;
+    padding: unset !important;
+}
+
+h1 {
+    margin: 0.25em 0 0.67em 0;
+    border-bottom: 1px solid #cbcbcb;
+    padding-bottom: 0.2em;
+    font-weight: 100;
+    font-size: 2em;
+}
+
+.header {
+    width: 100%;
+    background: #2276ac;
+    box-shadow: 0 5px 5px rgba(189, 195, 199, 0.15);
+    display: flex;
+    color: white;
+}
+
+#title {
+    line-height: 90px;
+    vertical-align: bottom;
+}

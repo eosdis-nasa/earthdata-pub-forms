@@ -1,0 +1,15 @@
+{
+    "all": true,
+    "include": [
+        "**/*.js",
+        "**/*.vue"
+    ],
+    "exclude": [
+        "**/cypress/*",
+        "**/node_modules/*",
+        "**/dist/*",
+        "**/*.config.js",
+        "**/coverage/*",
+        "**/html_coverage/*"
+    ]
+}

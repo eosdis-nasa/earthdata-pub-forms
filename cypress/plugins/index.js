@@ -18,9 +18,15 @@
 // eslint-disable-next-line no-unused-vars
 require('dotenv').config()
 
+const istanbul = require('istanbul-lib-coverage')
+const { join } = require('path')
+const { existsSync, mkdirSync, writeFileSync, readFileSync } = require('fs')
+const execa = require('execa')
+
 module.exports = (on, config) => {
+
   config.env.dashboard_root = process.env.VUE_APP_DASHBOARD_ROOT
-  config.env.api_root=process.env.VUE_APP_API_ROOT
+  config.env.api_root = process.env.VUE_APP_API_ROOT
   config.env.api_daacs_url = process.env.VUE_APP_DAACS_URL
   config.env.api_forms_url = process.env.VUE_APP_FORMS_URL
   config.env.api_form_url = process.env.VUE_APP_FORM_URL
@@ -29,6 +35,80 @@ module.exports = (on, config) => {
   config.env.api_questions_url = process.env.VUE_APP_QUESTIONS_URL
   config.env.forms_unknown_website_link_singular = process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR
   config.env.forms_testing_mode = process.env.VUE_APP_TESTING_MODE
+
+  const outputFolder = '.nyc_output'
+  const coverageFolder = join(process.cwd(), outputFolder)
+  const nycFilename = join(coverageFolder, 'out.json')
+
+  if (!existsSync(outputFolder)) {
+    mkdirSync(outputFolder)
+    console.log('created folder %s for output coverage', outputFolder)
+  }
+
+  if (!existsSync(coverageFolder)) {
+    mkdirSync(coverageFolder)
+    console.log('created folder %s for output coverage', coverageFolder)
+  }
+
+  on('task', {
+    /**
+     * Clears accumulated code coverage information.
+     *
+     * Interactive mode with "cypress open"
+     *    - running a single spec or "Run all specs" needs to reset coverage
+     * Headless mode with "cypress run"
+     *    - runs EACH spec separately, so we cannot reset the coverage
+     *      or we will lose the coverage from previous specs.
+     */
+    resetCoverage({ isInteractive }) {
+      if (isInteractive) {
+        console.log('reset code coverage in interactive mode')
+        const coverageMap = istanbul.createCoverageMap({})
+        writeFileSync(nycFilename, JSON.stringify(coverageMap, null, 2))
+      }
+      /*
+        Else:
+          in headless mode, assume the coverage file was deleted
+          before the `cypress run` command was called
+          example: rm -rf .nyc_output || true
+      */
+
+      return null
+    },
+
+    /**
+     * Combines coverage information from single test
+     * with previously collected coverage.
+     */
+    combineCoverage(coverage) {
+      const previous = existsSync(nycFilename)
+        ? JSON.parse(readFileSync(nycFilename))
+        : istanbul.createCoverageMap({})
+      const coverageMap = istanbul.createCoverageMap(previous)
+      coverageMap.merge(coverage)
+      writeFileSync(nycFilename, JSON.stringify(coverageMap, null, 2))
+      console.log('wrote coverage file %s', nycFilename)
+
+      return null
+    },
+
+    /**
+     * Saves coverage information as a JSON file and calls
+     * NPM script to generate HTML report
+     */
+    coverageReport() {
+      console.log('saving coverage report')
+      return execa('npm', ['run', 'report:coverage'], { stdio: 'inherit' })
+    }
+  })
+
+  /* Object.assign({}, config, {
+    fixturesFolder: 'cypress/e2e/fixtures',
+    integrationFolder: 'cypress/e2e/includes api and dashboard',
+    screenshotsFolder: 'cypress/e2e/screenshots',
+    videosFolder: 'cypress/e2e/videos',
+    supportFile: 'cypress/support/e2e.js'
+  }) */
 
   on('before:browser:launch', (browser = {}, launchOptions) => {
     // `args` is an array of all the arguments that will
