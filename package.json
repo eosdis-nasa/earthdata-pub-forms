@@ -26,7 +26,7 @@
     "cypress": "npx cypress open",
     "cypress-headless": "npx cypress run",
     "cypress-headless-all": "npx cypress run --browser chrome; npx cypress run --browser chromium; npx cypress run --browser edge; npx cypress run --browser electron",
-    "link-api": "npm link ../api",
+    "link-api": "npm link ../earthdata-pub-api",
     "link-repos": "npm run link-api && cd ../earthdata-pub-dashboard && npm run link-api",
     "open-docs": "vuese serve --open",
     "snyk-prepare": "npm run snyk-protect",
