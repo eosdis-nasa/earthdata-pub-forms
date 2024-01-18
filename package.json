@@ -12,7 +12,7 @@
     "preinstrument": "npm run clean && npm run remake-dirs",
     "remake-dirs": "mkdir -m 777 build || true && mkdir -m 777 build/src || true ",
     "test:unit": "jest -c jest.config.js --all",
-    "instrument": "npx nyc instrument --compact false src build/src || true && cp -r src/assets/ build/src || true && npx nyc instrument --compact false src/assets build/src/assets",
+    "instrument": "npx nyc instrument --compact false src build/src || true && cp -r src/assets build/src || true && npx nyc instrument --compact false src/assets build/src/assets",
     "cp": "cp .* build || true && cp *.config.js build || true && cp package.json build || true && cp -r public build || true && cp -r cypress build || true",
     "clean": "rm -rf build",
     "report:coverage": "nyc report --reporter=text-summary --exclude-after-remap false",

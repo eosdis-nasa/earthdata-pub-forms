@@ -16,8 +16,8 @@ describe('sanity testing', () => {
   })
   it('Tests reseeding the database', () => {
     cy.request(Cypress.env('api_reseed'))
-        .should((response) => {
-          expect(response.status).to.eq(200)
-        })
+      .should((response) => {
+        expect(response.status).to.eq(200)
+      })
   })
 })
