@@ -34,7 +34,6 @@ Then we run forms using the following command **from the build directory**:
 
 ### Run Cypress tests and build the coverage report
 
-- Run Cypress E2E tests **in the build directory with the instructed code** (skip the sanity and login tests) using the command `npm run cypress`. You should be able to see the coverage stats in dev tools during the flow, as a json object. The text summary report will automatically be built and displayed during the run.
-- After all tests are run, to generate the html report, use `npm run report:coverage-all`. The html takes a lot longer to run, so I opted for a separate step, rather then wait that long after every test spec ran.
+- Run Cypress E2E tests **in the build directory with the instructed code** using the command `npm run cypress` and run all specs. You should be able to see the coverage stats in dev tools during the flow, as a json object. The text summary report will automatically be built and displayed during the run.
 - You can now view the report in your browser. I opt to cleanup the build/.nyc_output/out.json file by doing a search for '.js', then removing all the gibberish before that.
 - To keep from storing double files everywhere, **from the forms directory** run `npm run finalize-coverage`.  This moves the build/.nyc_output directory with the cooresponding json file into the build/coverage directory, then it moves the coverage directory up a level then removes the build directory.

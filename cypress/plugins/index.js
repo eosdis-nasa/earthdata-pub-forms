@@ -62,7 +62,7 @@ module.exports = (on, config) => {
      */
     resetCoverage({ isInteractive }) {
       if (isInteractive) {
-        console.log('reset code coverage in interactive mode')
+        console.log('Reset code coverage in interactive mode')
         const coverageMap = istanbul.createCoverageMap({})
         writeFileSync(nycFilename, JSON.stringify(coverageMap, null, 2))
       }
@@ -87,7 +87,7 @@ module.exports = (on, config) => {
       const coverageMap = istanbul.createCoverageMap(previous)
       coverageMap.merge(coverage)
       writeFileSync(nycFilename, JSON.stringify(coverageMap, null, 2))
-      console.log('wrote coverage file %s', nycFilename)
+      console.log('Combined coverage and wrote coverage file %s', nycFilename)
 
       return null
     },
@@ -97,7 +97,7 @@ module.exports = (on, config) => {
      * NPM script to generate HTML report
      */
     coverageReport() {
-      console.log('saving coverage report')
+      console.log('Saving coverage report')
       return execa('npm', ['run', 'report:coverage'], { stdio: 'inherit' })
     }
   })
