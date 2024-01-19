@@ -266,8 +266,3 @@ describe('Forms E2E testing', () => {
         })
     })
 })
-after(() => {
-    // when all tests finish, lets generate the coverage report
-    cy.task('coverageReport')
-    cy.wait(10000);
-})
