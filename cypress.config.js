@@ -80,6 +80,8 @@ module.exports = defineConfig({
             return config
         },
         baseUrl: "http://localhost:8081",
+        experimentalMemoryManagement: true,
+        numTestsKeptInMemory: 0
     },
     /* component: {
       supportFile: 'cypress/support/e2e.js',
