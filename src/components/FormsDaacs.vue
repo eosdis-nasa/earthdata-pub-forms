@@ -16,9 +16,7 @@
               <div class="radio_div table">
                 <div class="radio_head_div font-weight-bold"><span>DAAC</span><span>Discipline</span></div>
                 <b-form-radio v-for="(item, index) in daacs" :key="index" :name="item.short_name.replace(' ', '_')"
-                  :id="`${item.id}`" :value="item.long_name"
-                  @click="setSelectedValues(item.url, item.id, item.short_name, item.long_name, item.description)"
-                  v-model="selected" :disabled="item.hidden"><span>{{ item.short_name
+                  :id="`${item.id}`" :value="item.long_name" v-model="selected" :disabled="item.hidden"><span>{{ item.short_name
                   }}</span><span>{{ item.discipline }}</span></b-form-radio>
               </div>
             </div>

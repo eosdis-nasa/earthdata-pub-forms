@@ -70,44 +70,13 @@ export default {
         // @vuese
         // On selected, sets current daac objects from values
         // @arg current_daac [String] hash,  
-        // @arg url [String], 
-        // @arg id [String] hash, 
-        // @arg short_name [String], 
-        // @arg long_name [String], 
-        // @arg description [String]
-        setCurrentDaacObjects(
-            current_daac,
-            url,
-            id,
-            short_name,
-            long_name,
-            description
-        ) {
-            var daac_specific_data;
-            if (
-                typeof url == "undefined" ||
-                typeof id == "undefined" ||
-                typeof short_name == "undefined" ||
-                typeof long_name == "undefined" ||
-                typeof description == "undefined"
-            ) {
-                daac_specific_data = this.getDaac(current_daac);
-            }
-            if (typeof url == "undefined") {
-                url = daac_specific_data["url"];
-            }
-            if (typeof id == "undefined") {
-                id = daac_specific_data["id"];
-            }
-            if (typeof short_name == "undefined") {
-                short_name = daac_specific_data["short_name"];
-            }
-            if (typeof long_name == "undefined") {
-                long_name = daac_specific_data["long_name"];
-            }
-            if (typeof description == "undefined") {
-                description = daac_specific_data["description"];
-            }
+        setCurrentDaacObjects(current_daac) {
+            const daac_specific_data = this.getDaac(current_daac);
+            const url = daac_specific_data["url"];
+            const id = daac_specific_data["id"];
+            let short_name = daac_specific_data["short_name"];
+            const long_name = daac_specific_data["long_name"];
+            const description = daac_specific_data["description"];
             if (short_name.match(/Unknown/g)) {
                 short_name = `${process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}`
             }
@@ -126,21 +95,10 @@ export default {
         },
         // @vuese
         // On selected, builds dynamic text and sets html dynamically with the link
-        // @arg daac url [String], 
-        // @arg id [String] hash, 
-        // @arg short_name [String], 
-        // @arg long_name [String], 
-        // @arg description [String]
-        setSelectedValues(url, id, short_name, long_name, description) {
-            let current = this.setCurrentDaacObjects(
-                this.selected,
-                url,
-                id,
-                short_name,
-                long_name,
-                description
-            );
-            id = current[1]
+        setSelectedValues() {
+            let current = this.setCurrentDaacObjects(this.selected);
+            const id = current[1];
+            const short_name = current[0]
             this.$store.state.global_params['group'] = id
             window.headerComponent.daac = id
             return short_name;
