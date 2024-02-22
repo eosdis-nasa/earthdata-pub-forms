@@ -1,6 +1,6 @@
 module.exports = {
   presets: [
-    '@vue/cli-plugin-babel/preset'
+    '@babel/preset-env'
   ],
-  plugins: ['js-logger']
+  plugins: ['js-logger'] 
 }

@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormsFooter renders correctly 1`] = `
+<footer
+  class="mt-auto"
+>
+  <div
+    class="container"
+  >
+    <nav
+      role="navigation"
+    >
+      <ul
+        class="footer-links"
+      >
+        <li>
+          NASA Official: Doug Newman
+        </li>
+         
+        <li>
+          <a
+            alt="FOIA"
+            href="https://www.nasa.gov/FOIA/index.html"
+            target="_blank"
+            title="FOIA"
+          >
+            FOIA
+          </a>
+        </li>
+         
+        <li>
+          <a
+            alt="NASA Privacy Policy"
+            href="https://www.nasa.gov/about/highlights/HP_Privacy.html"
+            target="_blank"
+            title="NASA Privacy Policy"
+          >
+            NASA Privacy Policy
+          </a>
+        </li>
+         
+        <li>
+          <a
+            alt="USA dot gov"
+            href="https://www.usa.gov/"
+            target="_blank"
+            title="USA dot gov"
+          >
+            USA.gov
+          </a>
+        </li>
+         
+        <li>
+          <a
+            alt="Feedback Form"
+            href="javascript:feedback.showForm();"
+            title="Feedback Form"
+          >
+            Feedback
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+`;
