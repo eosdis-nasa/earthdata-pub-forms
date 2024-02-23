@@ -60,8 +60,8 @@
 <script>
 import mixin from "../mixins/mixin.js";
 
-// This Daacs component gets DAAC data and displays abbreviations as a radio selection.  
-// On selection, it displays a link to the selected DAAC website, description and a 'Select 
+// This Daacs component gets DAAC data and displays abbreviations as a radio selection.
+// On selection, it displays a link to the selected DAAC website, description and a 'Select
 // Button' is displayed to allow users to move on.
 export default {
   mixins: [mixin],
@@ -129,11 +129,11 @@ export default {
     },
     // @vuese
     // On selected, sets current daac objects from values
-    // @arg current_daac [String] hash,  
-    // @arg url [String], 
-    // @arg id [String] hash, 
-    // @arg short_name [String], 
-    // @arg long_name [String], 
+    // @arg current_daac [String] hash,
+    // @arg url [String],
+    // @arg id [String] hash,
+    // @arg short_name [String],
+    // @arg long_name [String],
     // @arg description [String]
     setCurrentDaacObjects(
       current_daac,
@@ -170,7 +170,7 @@ export default {
       }
       if(short_name.match(/Unknown/g)){
         short_name = `${process.env.VUE_APP_UNKNOWN_WEBSITE_LINK_SINGULAR}`
-      } 
+      }
       if (document.getElementById("selected_daac")!=null){
         document.getElementById("selected_daac").innerHTML = short_name;
       }
@@ -186,10 +186,10 @@ export default {
     },
     // @vuese
     // On selected, builds dynamic text and sets html dynamically with the link
-    // @arg daac url [String], 
-    // @arg id [String] hash, 
-    // @arg short_name [String], 
-    // @arg long_name [String], 
+    // @arg daac url [String],
+    // @arg id [String] hash,
+    // @arg short_name [String],
+    // @arg long_name [String],
     // @arg description [String]
     setSelectedValues(url, id, short_name, long_name, description) {
       let current = this.setCurrentDaacObjects(
@@ -230,14 +230,14 @@ export default {
       }
       if (typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != "") {
         args['group'] = this.$store.state.global_params['group']
-        this.saveFile();
-      } 
+        this.initializeSubmission()
+      }
     },
     // @vuese
     // Gets the current daac selected from the store and updates
     getCurrentDaacAndUpdate() {
       if (
-        (typeof this.$store !== 'undefined' && 
+        (typeof this.$store !== 'undefined' &&
           this.$store.state.global_params['group'] != "undefined" &&
           this.$store.state.global_params['group'] != null &&
           this.$store.state.global_params['group'] != "" &&
@@ -245,11 +245,11 @@ export default {
       ) {
         let default_daac;
         let selected;
-        if (typeof this.$store !== 'undefined' && 
+        if (typeof this.$store !== 'undefined' &&
           (this.$store.state.global_params['group'] != "" ||
           typeof this.$store.state.global_params['group'] !== "undefined")) {
           selected = this.getDaac(this.$store.state.global_params['group']);
-        } 
+        }
         if (typeof selected !== "undefined") {
           let id = selected["id"];
           default_daac = id;
@@ -280,7 +280,7 @@ export default {
     margin-bottom:1rem;
     margin-top: 0.5rem!important;
   }
-  #daac_select_button, 
+  #daac_select_button,
   #daac_cancel_button {
     margin-top:2rem;
     padding: 0.5em 1em;
