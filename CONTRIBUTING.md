@@ -35,8 +35,8 @@ General coding standards are:
 1. document as you go
 2. make your code readable
 3. think about security from the start
-5. use a linter (such as [ESLint](https://eslint.org/))
-6. use .gitignore to exclude files that should not be in a repo (see this repo's
+4. use a linter (such as [ESLint](https://eslint.org/))
+5. use .gitignore to exclude files that should not be in a repo (see this repo's
 [.gitignore](./.gitignore))
 
 An IDE, such as [VS Code](https://code.visualstudio.com/), helps to create and
