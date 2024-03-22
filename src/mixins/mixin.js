@@ -68,6 +68,7 @@ export default {
           fetch(`${url}`, options)
             .then(async response => {
               const data = await response.json();
+              this.checkApiResponse(data)
               for (var dict in data) {
                 items.push(data[dict]);
               }
@@ -156,6 +157,7 @@ export default {
             fetch(`${url}`, options)
               .then(async response => {
                 const request = await response.json();
+                this.checkApiResponse(request)
                 if (request.error){
                   this.showHideForms('hide')
                   this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
@@ -178,6 +180,7 @@ export default {
                 fetch(`${url}`, options)
                   .then(async response => {
                     const form = await response.json();
+                    this.checkApiResponse(form)
                     if (!window.location.href.match(/selection/g)){
                       this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
                     }
@@ -230,6 +233,7 @@ export default {
             fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
               .then(async response => {
                 const answers = await response.json();
+                this.checkApiResponse(answers)
                 if(!answers.error){
                   if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                   this.$bvModal
@@ -332,6 +336,7 @@ export default {
           fetch(`${url}`, options)
             .then(async response => {
               const forms = await response.json();
+              this.checkApiResponse(forms)
               if (this.$testing &&
                 typeof this.$store.state.global_params['formId'] == 'undefined' &&
                 (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
@@ -356,6 +361,7 @@ export default {
               fetch(`${url}`, options)
               .then(async response => {
                 const questions = await response.json();
+                this.checkApiResponse(questions)
                 if (typeof this.daacs === 'undefined') {
                   this.fetchDaacs().then(() => {
                     let daacData = this.getDaac(this.$store.state.global_params['group'])
@@ -512,6 +518,18 @@ export default {
         return true;
       },
       // @vuese
+      // Checks api response for errors and redirects to dashboard error page with generic error message when there's a response.error.code present
+      // @arg response [Object]
+      checkApiResponse(response){
+        const errorCode = response?.error?.code || 200
+        if(errorCode !== 200){
+            const redirectUrl = `${process.env.VUE_APP_DASHBOARD_ROOT}/error`
+            if (!this.$testing){
+                window.location.href = redirectUrl
+            } else { this.confirmExit(redirectUrl) }
+        }
+      },
+      // @vuese
       // Set active nav element
       // @arg activeElement [Object],
       // @arg navs [Array] defaults to ['daacs', 'questions'],
@@ -583,7 +601,8 @@ export default {
         }
         if(!this.$testing){
           this.postData(`${process.env.VUE_APP_API_ROOT}/data/submission/operation/${operation}`, json)
-            .then((response) => {
+            .then(async response => {
+              this.checkApiResponse(response)
               this.requestId = response.id;
               this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
               let message = `Your request has been ${action}.`
@@ -635,6 +654,7 @@ export default {
           }).catch(function(e) {
             return this.failedResponse(e)
           });
+          this.checkApiResponse(response)
           if (response.statusText.match(/Forbidden/g)){
             return this.failedResponse()
           } else {
