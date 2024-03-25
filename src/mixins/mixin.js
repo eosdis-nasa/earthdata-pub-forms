@@ -611,7 +611,7 @@ export default {
                 }
               }
             })
-            .catch((error) => {
+            .catch(() => {
               this.alertVariant = 'danger'
               this.alertMessage = `An internal error occurred. If the error continues, reach out to the EDPub development team.`
               this.showAlert();
