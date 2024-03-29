@@ -875,10 +875,11 @@ export default {
           }
         };
         fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
-          .then(async response => {
-            const answers = await response.json();
+          .then(r => r.json())
+          .then((answers) => {
+            this.checkApiResponse(answers)
             if(answers.error){
-              return {}
+                return {}
             }
             this.valueHistory = []
             this.values = answers.form_data;
