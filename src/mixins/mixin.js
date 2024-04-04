@@ -96,11 +96,11 @@ export default {
       getDaac(daac_specific) {
         // Gets DAAC data for template
         if (typeof daac_specific === "undefined") {
-          return { 
-            id: "", 
-            short_name: "", 
-            long_name: "", 
-            url: "", 
+          return {
+            id: "",
+            short_name: "",
+            long_name: "",
+            url: "",
             description: ""
           };
         }
@@ -215,12 +215,12 @@ export default {
           }
       },
       // @vuese
-      // Sorts the current value data and saved data, compares for any differences.  
+      // Sorts the current value data and saved data, compares for any differences.
       // If there are differences, asks user to save before continuing to switch components or leaving
       // @arg comp [String] can be 'daacs', 'dashboard', 'overview', or 'feedback'
       compareDataAskLeave(comp){
         if((typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)) {
-          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" && 
+          if (typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "" &&
             (this.$store.state.global_params['requestId'] != '' && typeof this.$store.state.global_params['requestId'] !== 'undefined')) {
             const options = {
               headers: {
@@ -258,7 +258,7 @@ export default {
               }
             })
           }
-          else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") && 
+          else if ((typeof this.$store !== 'undefined' && this.$store.state.global_params['formId'] != "") &&
             (typeof window.questionsComponent != 'undefined' && typeof window.questionsComponent.values != 'undefined' && Object.keys(window.questionsComponent.values).length > 0)){
             this.$bvModal
             .msgBoxConfirm(
@@ -280,7 +280,7 @@ export default {
                 this.changeLocation(comp)
               }
             });
-          }  
+          }
           else {
             this.changeLocation(comp)
           }
@@ -332,7 +332,7 @@ export default {
           fetch(`${url}`, options)
             .then(async response => {
               const forms = await response.json();
-              if (this.$testing && 
+              if (this.$testing &&
                 typeof this.$store.state.global_params['formId'] == 'undefined' &&
                 (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
               ) {
@@ -346,10 +346,10 @@ export default {
               var question = [];
               this.contacts = [];
               let contact = false;
-              if(!this.$testing 
+              if(!this.$testing
                 && typeof this.$store !== 'undefined'
                 && this.$store.state.global_params['formId'] !== 'undefined'
-                && this.$store.state.global_params['formId'] !== "" 
+                && this.$store.state.global_params['formId'] !== ""
                 && this.$store.state.global_params['group'] !== "") {
                 url = `${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_FORM_URL}/${this.$store.state.global_params['formId']}?daac_id=${this.$store.state.global_params['group']}`;
               }
@@ -406,8 +406,8 @@ export default {
                         var options = [];
                         if (
                           contact &&
-                          typeof questions_section[q].inputs[input].label != 
-                          "undefined" && 
+                          typeof questions_section[q].inputs[input].label !=
+                          "undefined" &&
                           questions_section[q].inputs[input].label.match(/name/gi)
                         ) {
                           questions_section[q].inputs[input].contact = true;
@@ -471,20 +471,20 @@ export default {
         });
       },
       // @vuese
-      // Compares objects 
-      // @arg x [Object], 
+      // Compares objects
+      // @arg x [Object],
       // @arg y [Object]
       object_equals( x, y ) {
         if ( x === y ) return true;
           // if both x and y are null or undefined and exactly the same
-      
+
         if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
           // if they are not strictly equal, they both need to be Objects
-      
+
         if ( x.constructor !== y.constructor ) return false;
           // they must have the exact same prototype chain, the closest we can do is
           // test there constructor.
-      
+
         for ( var p in x ) {
           // eslint-disable-next-line no-prototype-builtins
           if ( ! x.hasOwnProperty( p ) ) continue;
@@ -492,29 +492,29 @@ export default {
           // eslint-disable-next-line no-prototype-builtins
           if ( ! y.hasOwnProperty( p ) ) return false;
             // allows to compare x[ p ] and y[ p ] when set to undefined
-      
+
           if ( x[ p ] === y[ p ] ) continue;
             // if they have the same strict value or identity then they are equal
-      
+
           if ( typeof( x[ p ] ) !== "object" ) return false;
             // Numbers, Strings, Functions, Booleans must be strictly equal
-      
+
           if ( ! this.object_equals( x[ p ],  y[ p ] ) ) return false;
             // Objects and Arrays must be tested recursively
         }
-      
+
         for ( p in y )
           // eslint-disable-next-line no-prototype-builtins
           if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
             return false;
               // allows x[ p ] to be set to undefined
-      
+
         return true;
       },
       // @vuese
       // Set active nav element
-      // @arg activeElement [Object], 
-      // @arg navs [Array] defaults to ['daacs', 'questions'], 
+      // @arg activeElement [Object],
+      // @arg navs [Array] defaults to ['daacs', 'questions'],
       // @arg activeClass [String] defaults to 'router-link-exact-active router-link-active'
       setActiveNav(activeElement, navs = ['daacs', 'questions'], activeClass = 'router-link-exact-active router-link-active'){
         setTimeout(() => {
@@ -528,7 +528,7 @@ export default {
                 if(window.document.getElementById(`${navs[n]}_nav_link`) != null){
                   prevClassname = window.document.getElementById(`${navs[n]}_nav_link`).className
                   window.document.getElementById(`${navs[n]}_nav_link`).className = prevClassname.replace(activeClass,'')
-                }                
+                }
               }
             }
           }
@@ -547,8 +547,8 @@ export default {
       },
       // @vuese
       // Sends data to the API
-      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
-      // @arg DAAC [String] hash of the group to set in the json, 
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary,
+      // @arg DAAC [String] hash of the group to set in the json,
       // @arg operation [String] action optional and defaults to 'save' out of ('save', 'draft', 'submit')
       sendDataToApi(bvModal, DAAC, operation = "save") {
         let action;
@@ -646,14 +646,14 @@ export default {
       },
       // @vuese
       // Asks the user if they want to be redirected to the dashboard requests page.
-      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
-      // @arg message [String] any other function messages to include, 
-      // @arg operation [String] action (save, draft, submit), 
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary,
+      // @arg message [String] any other function messages to include,
+      // @arg operation [String] action (save, draft, submit),
       // @arg skip_modal [Boolean] optional defaults to false
       async redirectNotification(bvModal, message, operation = 'submit', skip_modal = false, custom_ok_title="Success!", custom_confirm_title="Confirmation") {
         if(operation == "submit" && !skip_modal){
           const value = await bvModal.msgBoxOk(
-          `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`, 
+          `${message} You will be redirected to Earthdata Pub Dashboard Requests Page.`,
           {
             title: custom_ok_title,
             size: "sm",
@@ -666,7 +666,7 @@ export default {
           if (value) {
             this.exitForm();
           }
-      } else if (!skip_modal){
+        } else if (!skip_modal){
           const value = await bvModal.msgBoxConfirm(
           `${message} Do you want to be redirected to Earthdata Pub Dashboard Requests Page?`,
           {
@@ -761,8 +761,8 @@ export default {
       },
       // @vuese
       // Exits the form to requests page if user confirms
-      // @arg bvModal [Object] the alert object to modify if an alert is necessary, 
-      // @arg message [String] any other function messages to include, 
+      // @arg bvModal [Object] the alert object to modify if an alert is necessary,
+      // @arg message [String] any other function messages to include,
       // @arg skip_modal [Boolean] optional defaults to false
       exitForm(bvModal, message, skip_modal = false) {
         let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`;
@@ -788,8 +788,8 @@ export default {
       // @arg operation [String] action (save, draft, submit)
       saveFile(operation = "save") {
         let DAAC;
-        if (this.daac == null && 
-          typeof this.$store !== 'undefined' && 
+        if (this.daac == null &&
+          typeof this.$store !== 'undefined' &&
           this.$store.state.global_params['group'] != "") {
           DAAC = this.$store.state.global_params['group']
         } else {
@@ -823,6 +823,16 @@ export default {
             this.errorsNotification();
           }
         }
+      },
+      //@vuese
+      // Used to initialize a new submission
+      async initializeSubmission(){
+        const daacId = this.$store.state.global_params['group']
+        const urlApi = `${process.env.VUE_APP_API_ROOT}/data/submission/operation/initialize`
+        const urlReturn = `${process.env.VUE_APP_DASHBOARD_ROOT}/requests`
+
+        await this.postData(urlApi, {daac_id: daacId})
+        this.confirmExit(urlReturn)
       }
   }
 }
