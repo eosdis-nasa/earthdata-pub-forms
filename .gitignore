@@ -149,7 +149,7 @@ website
 autodocs
 
 .snyk
-package-lock.json
+#package-lock.json
 
 # Videos/Screenshots from testing
 cypress/screenshots/*
