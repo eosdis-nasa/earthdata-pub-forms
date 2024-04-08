@@ -330,24 +330,27 @@
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
                               </b-form-select>
                               <!-- End of Select Type of Input -->
+                              <!-- Selected Input File Name -->
+                              <div class="mt-3" v-if="input.type == 'file'">{{ uploadQuestionId === input.control_id ? uploadStatusMsg : "Select a file"}}</div>
+                              <!-- End of Selected Input File Name -->
                               <!-- File Type of Input -->
                               <b-form-file
                                   :class="{ 'form-file-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                   :type="input.type" 
                                   :id="input.control_id" 
                                   :scope="Boolean(values[input.control_id])"
-                                  :name="input.control_id" 
-                                  v-model="values[input.control_id]" 
+                                  :name="input.control_id"
+                                  :ref=input.control_id
+                                  v-model="uploadFile" 
                                   size="lg" 
+                                  browse-text="Upload"
                                   v-if="input.type == 'file'"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
-                                  :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))">
+                                  :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))"
+                                  @change="uploadFiles($event, input.control_id)">
                               </b-form-file>
                               <!-- End of File Type of Input -->
-                              <!-- Selected Input File Name -->
-                              <div class="mt-3" v-if="input.type == 'file' && values[input.control_id] != ''">Selected file: {{ values[input.control_id] ? values[input.control_id].name : '' }}</div>
-                              <!-- End of Selected Input File Name -->
                               <p :id="`${input.control_id}_invalid`" class="eui-banner--danger hidden form-control validation"></p>
                             </template>
                           </b-row>

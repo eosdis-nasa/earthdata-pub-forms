@@ -8,6 +8,7 @@ import {
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
+import localUpload from 'edpub-data-upload-utility';
 
 // This FormsQuestions component gets the questions data for the selected daac and
 // sets the template properties, methods, and custom validation used.
@@ -32,7 +33,10 @@ export default {
       alertVariant: 'success',
       alertMessage: '',
       dismissSecs: 7,
-      dismissCountDown: 0
+      dismissCountDown: 0,
+      uploadFile: null,
+      uploadQuestionId: "",
+      uploadStatusMsg: "Select a file"
     };
   },
   props: {
@@ -938,6 +942,96 @@ export default {
     redoToPreviousState() {
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
+    },
+
+    resetUploads(alertMsg, statusMsg, controlId) {
+      // Display error message if there is an alert message
+      if (alertMsg != '' && alertMsg != null)  {
+        this.alertVariant = 'danger';
+        this.alertMessage = alertMsg;
+        this.showAlert();
+      }
+
+      // Update the Status Message
+      this.uploadStatusMsg = statusMsg;
+
+      // Clear the upload text box
+      this.$refs[controlId][0].reset();
+
+    },
+
+    updateUploadStatusWithTimeout(msg, timeout) {
+      setTimeout(() => {
+        msg ? this.uploadStatusMsg = msg : null
+      }, timeout);
+    },
+
+    validateFile(file, controlId) {
+      let valid = false;
+      let msg = '';
+      let statusMsg = 'Please select a different file.'
+      if (file.name.match(/\.([^\.]+)$/) !== null) {
+        var ext = file.name.match(/\.([^\.]+)$/)[1];
+        if (ext.match(/exe/gi)) {
+          msg = 'exe is an invalid file type.';
+          this.resetUploads(msg, statusMsg, controlId);
+
+        } else {
+          valid = true
+        }
+      } else {
+        msg = 'The file must have an extension.';
+        this.resetUploads(msg, statusMsg, controlId)
+      }
+      return valid;
+    },
+
+    async uploadFiles(event, controlId){
+      const file = event.target.files[0]
+      this.uploadQuestionId = controlId;
+      let alertMsg = '';
+      let statusMsg = '';
+
+      if (this.validateFile(file, controlId)) {
+        this.uploadStatusMsg = 'Uploading';
+        
+        const upload = new localUpload();
+        const requestId = this.$store.state.global_params['requestId'];
+        try {
+          let payload = {
+            fileObj: file,
+            authToken: localStorage.getItem('auth-token'),
+          }          
+          if (requestId !== '' && requestId != undefined && requestId !== null) {
+            payload['apiEndpoint'] = `${process.env.VUE_APP_API_ROOT}/data/upload/getPostUrl`;
+            payload['submissionId'] = requestId
+          } 
+          const resp = await upload.uploadFile(payload)
+          let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+          if (error) {
+            alertMsg = `An error has occured on uploadFile: ${error}.`;
+            statusMsg = `Select a file`;  
+            console.log(`An error has occured on uploadFile: ${error}.`);
+            this.resetUploads(alertMsg, statusMsg, controlId);
+          } else {
+            alertMsg = '';
+            statusMsg = 'Upload Complete';
+            this.resetUploads(alertMsg, statusMsg, controlId);
+            this.updateUploadStatusWithTimeout('Select another file', 1000)
+
+            if (requestId !== '' && requestId != undefined && requestId !== null){
+              console.log("TODO PRINT FILE LIST")
+              // TODO update the data thing with the uploaded files.
+        //       this.getFileList()
+            }
+          }
+        } catch (error) {
+          console.log(`try catch error: ${error.stack}`);
+          alertMsg = `An error has occured on uploadFile`;
+          statusMsg = `Select a file`
+          this.resetUploads(alertMsg, statusMsg, controlId);
+        }
+      } 
     }
   }
 };
