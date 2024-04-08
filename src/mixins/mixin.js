@@ -9,16 +9,12 @@ export default {
       // Checks for authorization token, if none passed in, redirects to dashboard_root/auth
       checkAuth(){
         const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
-        if(typeof this.$route.query.token == 'undefined' && !this.$testing) {
+        if(localStorage.getItem('auth-token') == null && typeof this.$route.query.token == 'undefined' && !this.$testing) {
           // eslint-disable-next-line
-          console.log('In token undefined and not testing')
-          if(localStorage.getItem('auth-token') == null){
-            // eslint-disable-next-line
-            console.log('In token undefined and not testing and auth-token == null')
-            localStorage.setItem('forms-arrived-from', window.location.href)
-            window.stop()
-            window.location.href = url
-          }
+          console.log('In token undefined and not testing and auth-token == null')
+          localStorage.setItem('forms-arrived-from', window.location.href)
+          window.stop()
+          window.location.href = url
         } else {
           // eslint-disable-next-line
           console.log('In NOT token undefined or testing')
