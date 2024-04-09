@@ -36,7 +36,26 @@ export default {
       dismissCountDown: 0,
       uploadFile: null,
       uploadQuestionId: "",
-      uploadStatusMsg: "Select a file"
+      uploadStatusMsg: "Select a file",
+      uploadedFiles: [],
+      uploadFields: [
+        {
+          key: 'file_name',
+          label: 'Filename'
+        }, {
+          key: 'size',
+          label: 'Size',
+          formatter: (value) => {
+            return this.calculateStorage(value)
+          }
+        }, {
+          key:'sha256Checksum',
+          label:'sha256Checksum', 
+        }, {
+          key: 'lastModified',
+          label: 'Last Modified'
+        }
+      ]
     };
   },
   props: {
@@ -348,6 +367,7 @@ export default {
       this.fetchQuestions().then(() => {
         this.accessibilityHack(),
         this.loadAnswers()
+        this.getFileList();
       })
     })
   },
@@ -960,6 +980,63 @@ export default {
 
     },
 
+    async listFileUploadsBySubmission(requestId) {
+      const url = `${process.env.VUE_APP_API_ROOT}/data/upload/list/${requestId}`;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": `Bearer ${localStorage.getItem('auth-token')}`
+          }
+        }).catch(function(e) {
+          return this.failedResponse(e)
+        });
+        this.checkApiResponse(response)
+        if (response.statusText.match(/Forbidden/g)){
+          return this.failedResponse()
+        } else {
+          return response.json(); // parses JSON response into native JavaScript objects
+        }
+      } catch(e) {
+        return this.failedResponse(e)
+      }
+
+    },
+
+    async getFileList() {
+      const requestId = this.$store.state.global_params['requestId'];
+      if (requestId !== '' && requestId != undefined && requestId !== null) {
+      await(this.listFileUploadsBySubmission(requestId))
+          .then((resp) => {
+            if (JSON.stringify(resp) === '{}' || JSON.stringify(resp) === '[]' || (resp.data && resp.data.length === 0)) {
+              return
+            }
+            let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+            if (error){
+              if (!error.match(/not authorized/gi) && !error.match(/not implemented/gi)) {
+                const str = `An error has occurred while getting the list of files: ${error}.`;
+                console.log(str)
+                return
+              } else {
+                return
+              }
+            }
+  
+            const files = resp.data;
+            
+            files.sort(function (a, b) {
+              var keyA = new Date(a.last_modified),
+                keyB = new Date(b.last_modified);
+              if (keyA > keyB) return -1;
+              if (keyA < keyB) return 1;
+              return 0;
+            });
+            this.uploadedFiles = files;
+          });
+      }
+    },
+
     updateUploadStatusWithTimeout(msg, timeout) {
       setTimeout(() => {
         msg ? this.uploadStatusMsg = msg : null
@@ -1020,9 +1097,7 @@ export default {
             this.updateUploadStatusWithTimeout('Select another file', 1000)
 
             if (requestId !== '' && requestId != undefined && requestId !== null){
-              console.log("TODO PRINT FILE LIST")
-              // TODO update the data thing with the uploaded files.
-        //       this.getFileList()
+              this.getFileList();
             }
           }
         } catch (error) {

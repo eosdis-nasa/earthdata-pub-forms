@@ -345,11 +345,29 @@
                                   size="lg" 
                                   browse-text="Upload"
                                   v-if="input.type == 'file'"
+                                  :no-drop="Boolean(true)"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))"
                                   @change="uploadFiles($event, input.control_id)">
                               </b-form-file>
+                              <div v-if="input.type == 'file'" class="table-div w-100">
+                                <br/>
+                                <br/>
+                                <br/>
+                                <template>
+                                  <p>Files Previously Uploaded</p>
+                                  <b-table 
+                                    bordered 
+                                    responsive 
+                                    sticky-header 
+                                    show-empty
+                                    :items="uploadedFiles"
+                                    :fields="uploadFields"
+                                    >
+                                  </b-table>
+                                </template>
+                              </div>
                               <!-- End of File Type of Input -->
                               <p :id="`${input.control_id}_invalid`" class="eui-banner--danger hidden form-control validation"></p>
                             </template>

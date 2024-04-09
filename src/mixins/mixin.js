@@ -853,6 +853,18 @@ export default {
 
         await this.postData(urlApi, {daac_id: daacId})
         this.confirmExit(urlReturn)
+      },
+
+      calculateStorage(n){
+        const number = +n;
+        if (!n || Number.isNaN(number)) return nullValue;
+      
+        if (number === 0) return n;
+      
+        if (number < 1e9) return `${(number / 1e6).toFixed(2)} MB`;
+        if (number < 1e12) return `${(number / 1e9).toFixed(2)} GB`;
+        if (number < 1e15) return `${(number / 1e12).toFixed(2)} TB`;
+        return `${(number / 1e15).toFixed(2)} PB`;
       }
   }
 }
