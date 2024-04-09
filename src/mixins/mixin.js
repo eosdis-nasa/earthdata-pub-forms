@@ -22,7 +22,7 @@ export default {
           localStorage.setItem('auth-token', this.$route.query.token)
           if(localStorage.getItem('forms-arrived-from') != null){
             let formsArrivedFrom = localStorage.getItem('forms-arrived-from')
-            // localStorage.removeItem('forms-arrived-from')
+            localStorage.removeItem('forms-arrived-from')
             window.location.href = formsArrivedFrom
           } else if ((Object.keys(this.$route.params).length === 0 && !window.location.href.match(/token/g)) && !window.location.href.match(/daacs/g)){
             this.showHideForms('hide')
@@ -85,7 +85,7 @@ export default {
             .catch(() => {
               url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
-                // localStorage.removeItem('auth-token')
+                localStorage.removeItem('auth-token')
                 window.location.href = url
               } else { this.confirmExit(url) }
             });
@@ -189,14 +189,14 @@ export default {
                   }).catch(() => {
                     let url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                     if (!this.$testing){
-                      // localStorage.removeItem('auth-token')
+                      localStorage.removeItem('auth-token')
                       window.location.href = url
                     } else { this.confirmExit(url) }
                   });
               }).catch(() => {
                 url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                 if (!this.$testing){
-                  // localStorage.removeItem('auth-token')
+                  localStorage.removeItem('auth-token')
                   window.location.href = url
                 } else { this.confirmExit(url) }
               });
@@ -463,14 +463,14 @@ export default {
               .catch(() => {
                 const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
                 if (!this.$testing){
-                  // localStorage.removeItem('auth-token')
+                  localStorage.removeItem('auth-token')
                   window.location.href = url
                 } else { this.confirmExit(url) }
               });
             }).catch(() => {
               const url = `${process.env.VUE_APP_DASHBOARD_ROOT}/auth?redirect=forms`
               if (!this.$testing){
-                // localStorage.removeItem('auth-token')
+                localStorage.removeItem('auth-token')
                 window.location.href = url
               } else { this.confirmExit(url) }
             });
