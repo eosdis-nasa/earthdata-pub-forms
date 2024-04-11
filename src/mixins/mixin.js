@@ -630,9 +630,9 @@ export default {
                 }
               }
             })
-            .catch((error) => {
+            .catch(() => {
               this.alertVariant = 'danger'
-              this.alertMessage = `Your request could not be ${action}. Error returned: ${error}.  Please try again.`
+              this.alertMessage = `An internal error occurred. If the error continues, reach out to the EDPub development team.`
               this.showAlert();
             });
         } else {
