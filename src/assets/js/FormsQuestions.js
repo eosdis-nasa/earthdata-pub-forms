@@ -1052,8 +1052,8 @@ export default {
       let valid = false;
       let msg = '';
       let statusMsg = 'Please select a different file.'
-      if (file.name.match(/\.([^\.]+)$/) !== null) {
-        var ext = file.name.match(/\.([^\.]+)$/)[1];
+      if (file.name.match(/\.([^.]+)$/) !== null) {
+        var ext = file.name.match(/\.([^.]+)$/)[1];
         if (ext.match(/exe/gi)) {
           msg = 'exe is an invalid file type.';
           this.resetUploads(msg, statusMsg, controlId);

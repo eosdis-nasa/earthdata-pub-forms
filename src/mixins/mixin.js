@@ -857,7 +857,7 @@ export default {
 
       calculateStorage(n){
         const number = +n;
-        if (!n || Number.isNaN(number)) return nullValue;
+        if (!n || Number.isNaN(number)) return '--';
       
         if (number === 0) return n;
       
