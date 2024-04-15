@@ -14,10 +14,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # install project dependencies
-RUN npm install
+#RUN npm install
 
 # install Vue CLI
-RUN npm install @vue/cli
+#RUN npm install @vue/cli
 
 EXPOSE 8080
 CMD ["npm", "run", "serve"]
