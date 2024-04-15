@@ -616,6 +616,11 @@ export default {
           if (has_all_directions) {
             return false;
           }
+        } else if (input.type == "file") {
+            // TODO Once we have the uploaded files split by type this will need to be updated
+            if (Array.isArray(this.uploadedFiles) && this.uploadedFiles.length) {
+              return false;
+            }
         } else {
           if (
             typeof this.values[input.control_id] != "undefined" &&
