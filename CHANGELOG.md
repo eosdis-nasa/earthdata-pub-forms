@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+- Updated eslintrc and linted code.
 - Added redirect to dashboard error page if response from api has a response.error.code and it's not 200.
 <!-- Unreleased changes can be added here. -->
 

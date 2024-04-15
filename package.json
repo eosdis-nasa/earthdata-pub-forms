@@ -70,6 +70,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "@babel/eslint-parser": "^7.16.3",
+    "eslint-config-airbnb-base": "^14.1.0",
     "@babel/preset-env": "^7.23.6",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",

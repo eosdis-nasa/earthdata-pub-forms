@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import FormsDaacs from '@/components/FormsDaacs'
-import FormsQuestions from '@/components/FormsQuestions'
-import PageNotFound from '@/components/PageNotFound'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import FormsDaacs from '@/components/FormsDaacs';
+import FormsQuestions from '@/components/FormsQuestions';
+import PageNotFound from '@/components/PageNotFound';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -30,12 +30,12 @@ const routes = [
     name: '404',
     component: PageNotFound
   }
-]
+];
 
 const router = new VueRouter({
   routes,
   mode: 'history',
   base: process.env.BASE_URL
-})
+});
 
-export default router
+export default router;
