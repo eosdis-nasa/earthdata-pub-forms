@@ -103,6 +103,23 @@ span span:nth-child(-n+1) label {
 .col-form-label {
   /* font-weight: bold; */
 }
+.mx-table td {
+  border: none;
+}
+.mx-datepicker {
+  width: 100%;
+}
+table td{
+  border: none;
+}
+.mx-input:focus{
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 h3 span label {
   font-size: 16px!important;
 }
@@ -131,11 +148,14 @@ input::placeholder, textarea::placeholder {
 .date_formats {
   padding-top: 8px;
   position: absolute;
-  left: 70px;
+  left: 180px;
 }
 .date_formats_required {
   padding-top: 7px;
   padding-left:10px;
+}
+.time_formats_required {
+  padding-left:50px;
 }
 label {
   margin: .5rem!important;

@@ -98,7 +98,7 @@
                           <b-row v-else>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.label !== '' && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
-                              <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
+                              <span class="date_formats" v-if="input.type == 'datetimePicker'">Format: <span class="date_formats_required">YYYY-MM-DD hh:mm AM/PM</span></span>
                               <label v-if="(input.type == 'textarea' || input.type == 'text') && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                  {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </label>
@@ -153,47 +153,24 @@
                                   >
                               </b-form-input>
                               <!-- Date Type of Input -->
-                              <b-input-group>
-                                <b-form-input
-                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
-                                  v-model="values[input.control_id]"
-                                  size="lg" 
-                                  v-if="input.type == 'date'"
-                                  @blur="fixDate"
-                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                  :max="getAttribute('max', question.inputs[c_key])"
-                                  :min="getAttribute('min', question.inputs[c_key])"
-                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
-                                  type="text"
-                                  autocomplete="off"
-                                  :aria-label="input.control_id"
-                                ></b-form-input>
-                                <b-input-group-append>
-                                  <b-form-datepicker 
-                                    :id="`${input.control_id}_button`"
-                                    :name="`${input.control_id}_button`"
-                                    :aria-controls="`date button`"
-                                    :aria-labelledby="`${input.control_id}_button`"
-                                    :aria-describedby="`${input.control_id}_button`"
-                                    :aria-label="`${input.control_id}_button`"
-                                    :label-nav="`Date Picker`"
-                                    :label-calendar="`Date Picker`"
-                                    v-model="values[input.control_id]"
-                                    size="lg" 
-                                    v-if="input.type == 'date'"
-                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                    :max="getAttribute('max', question.inputs[c_key])"
-                                    :min="getAttribute('min', question.inputs[c_key])"
-                                    button-only
-                                    dropleft
-                                  >
-                                  </b-form-datepicker>
-                                </b-input-group-append>
-                              </b-input-group>
+                             
+                                  <date-picker    
+                                    v-if="input.type == 'datetimePicker'"
+                                    input-class = "form-control form-control-lg extra_space test"
+                                    format="YYYY-MM-DD hh:mm A"
+                                    confirm-text
+                                    type="datetime" 
+                                    valueType="format"
+                                    placeholder="required"
+                                    :show-time-panel="showTimePanel"
+                                    v-model="values[input.control_id]">
+                                    <template v-slot:footer>
+                                      <button class="mx-btn mx-btn-text" @click="toggleTimePanel">
+                                        {{ showTimePanel ? 'select date' : 'select time' }}
+                                      </button>
+                                    </template>
+                                  </date-picker> 
+                                
                               <!-- End of Text Type of Input -->
                               <!-- BBOX Type of Input -->
                               <div v-if="input.type == 'bbox'" class="w-100">
@@ -387,8 +364,8 @@
                                     {{ heading.heading }} - {{ question.long_name }} {{ typeof input.label !== 'undefined' && input.label !=='' && input.label !== 'undefined' ? ` - ${input.label}` : ''}}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                                     <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
-                                    <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
-                                    <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id]"> Date must be less than or equal to End date</template>
+                                    <template v-else-if="input.type == 'datetimePicker' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
+                                    <template v-else-if="input.type == 'datetimePicker' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id]"> Date must be less than or equal to End date</template>
                                     <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                                     <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
                                     <template v-else-if="$v.values[input.control_id].maxLength !== undefined && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>

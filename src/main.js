@@ -10,6 +10,8 @@ import Vuelidate from 'vuelidate'
 import VueLogger from 'vuejs-logger';
 import GoTop from '@inotom/vue-go-top';
 import mixin from "@/mixins/mixin.js";
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
 // global prototype to set to local jsons instead of calling api
 Vue.prototype.$testing = (`${process.env.VUE_APP_TESTING_MODE}` == 'true');
@@ -48,7 +50,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
 // Optionally install vuelidatejs plugin
 Vue.use(Vuelidate)
-Vue.use(GoTop);
+Vue.use(GoTop)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -79,7 +81,7 @@ dom.watch()
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('font-awesome-layers', FontAwesomeLayers)
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
-
+Vue.component('date-picker', DatePicker)
 // Custom components
 import FormsDaacs from '@/components/FormsDaacs.vue'
 import FormsQuestions from '@/components/FormsQuestions.vue'

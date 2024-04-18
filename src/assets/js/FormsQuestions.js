@@ -18,6 +18,7 @@ export default {
     return {
       values: {},
       questions: [],
+      showTimePanel: false,
       contacts: [],
       contact_fields: [],
       saveTimeout: 0,
@@ -269,7 +270,7 @@ export default {
                     return false;
                   };
                 }
-                if (fld.type == "date") {
+                if (fld.type == "datetimePicker") {
                   val_fields.values[fld.control_id] =
                     val_fields.values[fld.control_id] || {};
                   val_fields.values[fld.control_id].startEndDates = () => {
@@ -348,6 +349,9 @@ export default {
     })
   },
   methods: {
+    toggleTimePanel() {
+      this.showTimePanel = !this.showTimePanel;
+    },
     // @vuese
     // Sets local variables
     setLocalVars() {
@@ -528,17 +532,11 @@ export default {
         start = id.replace(/end/g, "start");
       }
       if (typeof this.values[start] != 'undefined' && typeof this.values[end] != 'undefined'){
-        let start_bits = this.values[start].split("-");
-        let end_bits = this.values[end].split("-");
         let start_date_obj = new Date(
-          start_bits[0],
-          start_bits[1] - 1,
-          start_bits[2]
+          this.values[start]
         );
         let end_date_obj = new Date(
-          end_bits[0],
-          end_bits[1] - 1,
-          end_bits[2]
+          this.values[end]
         );
         if (
           id.match(/start/g) &&
