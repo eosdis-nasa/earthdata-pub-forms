@@ -1021,6 +1021,7 @@ export default {
             if (error){
               if (!error.match(/not authorized/gi) && !error.match(/not implemented/gi)) {
                 const str = `An error has occurred while getting the list of files: ${error}.`;
+                // eslint-disable-next-line
                 console.log(str)
                 return
               } else {
@@ -1093,6 +1094,7 @@ export default {
           if (error) {
             alertMsg = `An error has occured on uploadFile: ${error}.`;
             statusMsg = `Select a file`;  
+            // eslint-disable-next-line
             console.log(`An error has occured on uploadFile: ${error}.`);
             this.resetUploads(alertMsg, statusMsg, controlId);
           } else {
@@ -1106,6 +1108,7 @@ export default {
             }
           }
         } catch (error) {
+          // eslint-disable-next-line
           console.log(`try catch error: ${error.stack}`);
           alertMsg = `An error has occured on uploadFile`;
           statusMsg = `Select a file`
