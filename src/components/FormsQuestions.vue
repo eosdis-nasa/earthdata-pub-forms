@@ -331,7 +331,9 @@
                               </b-form-select>
                               <!-- End of Select Type of Input -->
                               <!-- Selected Input File Name -->
-                              <div class="mt-3" v-if="input.type == 'file'">{{ uploadQuestionId === input.control_id ? uploadStatusMsg : "Select a file"}}</div>
+                              <div class="mt-3" v-if="input.type == 'file'">{{ uploadQuestionId === input.control_id ? uploadStatusMsg : "Select a file"}}
+                              <b-spinner small label="Loading..." v-if="uploadStatusMsg== 'Uploading' &&  uploadQuestionId === input.control_id"></b-spinner>
+                              </div>
                               <!-- End of Selected Input File Name -->
                               <!-- File Type of Input -->
                               <b-form-file
@@ -346,7 +348,7 @@
                                   browse-text="Upload"
                                   v-if="input.type == 'file'"
                                   :no-drop="Boolean(true)"
-                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
+                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || Boolean(uploadStatusMsg=='Uploading')"
                                   :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
                                   :multiple="Boolean(getAttribute('multiple', question.inputs[c_key]))"
                                   @change="uploadFiles($event, input.control_id)">
