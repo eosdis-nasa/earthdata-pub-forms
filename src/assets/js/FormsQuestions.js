@@ -1001,6 +1001,10 @@ export default {
         if (response.statusText.match(/Forbidden/g)){
           return this.failedResponse()
         } else {
+          // eslint-disable-next-line
+          console.log("glistFileUploadsBySubmission -> else")
+          // eslint-disable-next-line
+          console.log(response.json)
           return response.json(); // parses JSON response into native JavaScript objects
         }
       } catch(e) {
@@ -1014,6 +1018,10 @@ export default {
       if (requestId !== '' && requestId != undefined && requestId !== null) {
       await(this.listFileUploadsBySubmission(requestId))
           .then((resp) => {
+            // eslint-disable-next-line
+            console.log("getFileList -> .then")
+            // eslint-disable-next-line
+            console.log(resp)
             if (JSON.stringify(resp) === '{}' || JSON.stringify(resp) === '[]' || (resp.data && resp.data.length === 0)) {
               return
             }
