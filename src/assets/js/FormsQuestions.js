@@ -8,7 +8,6 @@ import {
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
-import { onMounted } from "vue";
 
 // This FormsQuestions component gets the questions data for the selected daac and
 // sets the template properties, methods, and custom validation used.
