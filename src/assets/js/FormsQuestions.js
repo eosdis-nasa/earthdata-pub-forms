@@ -1037,20 +1037,20 @@ export default {
               }
             }
   
-            const files = resp.data;
+            const files = resp
             // eslint-disable-next-line
             console.log("Returned files")
             // eslint-disable-next-line
             console.log(files)
 
             
-            // files.sort(function (a, b) {
-            //   var keyA = new Date(a.last_modified),
-            //     keyB = new Date(b.last_modified);
-            //   if (keyA > keyB) return -1;
-            //   if (keyA < keyB) return 1;
-            //   return 0;
-            // });
+            files.sort(function (a, b) {
+              var keyA = new Date(a.last_modified),
+                keyB = new Date(b.last_modified);
+              if (keyA > keyB) return -1;
+              if (keyA < keyB) return 1;
+              return 0;
+            });
             this.uploadedFiles = files;
             // eslint-disable-next-line
             console.log("returning from getFileList")
