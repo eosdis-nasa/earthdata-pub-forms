@@ -1,4 +1,5 @@
 // This mixins file acts as a common js file and the functions are shared between components.
+import moment from 'moment';
 export default {
     props:{
     },
@@ -855,6 +856,7 @@ export default {
         this.confirmExit(urlReturn)
       },
 
+      // Copied from earthdata-pub-dashboard/app/src/js/utils/format.js
       calculateStorage(n){
         const number = +n;
         if (!n || Number.isNaN(number)) return '--';
@@ -865,6 +867,18 @@ export default {
         if (number < 1e12) return `${(number / 1e9).toFixed(2)} GB`;
         if (number < 1e15) return `${(number / 1e12).toFixed(2)} TB`;
         return `${(number / 1e15).toFixed(2)} PB`;
+      },
+
+      // Copied from earthdata-pub-dashboard/app/src/js/utils/format.js
+      shortDateShortTimeYearFirstJustValue(datestring) {
+        if (!datestring) { return '--'; }
+        let day, time;
+        if (datestring) {
+          const date = moment(datestring);
+          day = date.format('MMM D, YYYY');
+          time = date.format('h:mm a');
+        }
+        return `${day} ${time}`;
       }
   }
 }

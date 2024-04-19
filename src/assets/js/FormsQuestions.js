@@ -53,7 +53,10 @@ export default {
           label:'sha256Checksum', 
         }, {
           key: 'lastModified',
-          label: 'Last Modified'
+          label: 'Last Modified',
+          formatter: (value) => {
+            return this.shortDateShortTimeYearFirstJustValue(value);
+          }
         }
       ]
     };
@@ -1029,11 +1032,11 @@ export default {
               }
             }
   
-            const files = resp.data;
+            const files = resp
             
             files.sort(function (a, b) {
-              var keyA = new Date(a.last_modified),
-                keyB = new Date(b.last_modified);
+              var keyA = new Date(a.lastModified), 
+                keyB = new Date(b.lastModified);
               if (keyA > keyB) return -1;
               if (keyA < keyB) return 1;
               return 0;
