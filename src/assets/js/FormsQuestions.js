@@ -39,7 +39,8 @@ export default {
       alertVariant: 'success',
       alertMessage: '',
       dismissSecs: 7,
-      dismissCountDown: 0
+      dismissCountDown: 0,
+      timer: null
     };
   },
   props: {
@@ -346,6 +347,10 @@ export default {
         this.loadAnswers();
       });
     });
+    // 10 min timer on loop
+    this.timer = setInterval(() => {
+      this.saveFile('draft', true);
+    }, (1000 * 60 * 10));
   },
   methods: {
     // @vuese
@@ -945,5 +950,8 @@ export default {
       this.valueHistoryUndoIdx--;
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])));
     }
+  },
+  beforeUnmount() {
+    clearInterval(this.timer);
   }
 };

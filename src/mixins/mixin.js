@@ -579,7 +579,7 @@ export default {
     // @arg bvModal [Object] the alert object to modify if an alert is necessary,
     // @arg DAAC [String] hash of the group to set in the json,
     // @arg operation [String] action optional and defaults to 'save' out of ('save', 'draft', 'submit')
-    sendDataToApi(bvModal, DAAC, operation = 'save') {
+    sendDataToApi(bvModal, DAAC, operation = 'save', auto = false) {
       let action;
       let skipModal = false;
       const form = this.$store.state.global_params.formShortName;
@@ -608,7 +608,7 @@ export default {
       } else {
         action = 'submitted';
       }
-      if (typeof this.questions === 'undefined') {
+      if (typeof this.questions === 'undefined' || auto) {
         skipModal = true;
       }
       if (!this.$testing) {
@@ -627,9 +627,9 @@ export default {
                 this.exitForm(bvModal, message, skipModal);
               }
             } else if (wasDraft) {
-              if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION === 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
+              if ((typeof process.env.VUE_APP_REDIRECT_CONFIRMATION === 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) && !skipModal) {
                 this.redirectNotification(bvModal, message, 'draft');
-              } else {
+              } else if (!auto) {
                 this.exitForm(bvModal, message, skipModal);
               }
             } else if (!skipModal) {
@@ -731,10 +731,14 @@ export default {
     },
     // @vuese
     // Alerts the user to errors and shows error messages in the fixed header
-    errorsNotification() {
+    errorsNotification(auto = false) {
       // Variant possiblities are 'primary, secondary, success, danger, warning, info, light, dark'
       this.alertVariant = 'danger';
       this.alertMessage = 'You have errors to correct before you can submit your request.  You can save your request as a draft and come back.';
+      if (auto) {
+        this.alertVariant = 'danger';
+        this.alertMessage = 'Be advised, auto-save is not currently working.  Alert Earthdata Pub Dev team.';
+      }
       this.showAlert();
     },
     // @vuese
@@ -817,7 +821,7 @@ export default {
     // @vuese
     // Used to save file
     // @arg operation [String] action (save, draft, submit)
-    saveFile(operation = 'save') {
+    saveFile(operation = 'save', auto = false) {
       let DAAC;
       if (this.daac == null
         && typeof this.$store !== 'undefined'
@@ -850,9 +854,9 @@ export default {
           (!this.$v.$anyError && operation === 'submit')
           || operation !== 'submit'
         ) {
-          this.sendDataToApi(this.$bvModal, DAAC, operation);
+          this.sendDataToApi(this.$bvModal, DAAC, operation, auto);
         } else {
-          this.errorsNotification();
+          this.errorsNotification(auto);
         }
       }
     },

@@ -33,6 +33,14 @@
   margin-top:5px!important;
   margin-bottom:5px!important;
 }
+.text-muted {
+  word-wrap: break-word!important;
+}
+@media (min-width: 1200px) {
+  #title {
+    word-wrap: break-word;
+  }
+}
 .alert{
   text-align: center!important;
   border-radius:unset!important;
@@ -57,6 +65,7 @@
   float:right;
   color: #DB1400 !important;
   font-size: 16px!important;
+  margin-top: 1rem;
 }
 .btable.form-control {
   display: inline-flex;
