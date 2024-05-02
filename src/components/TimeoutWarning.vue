@@ -97,7 +97,8 @@
         };
         fetch(`${process.env.VUE_APP_API_ROOT}/token/refresh`, options)
         .then(r => r.json())
-        .then(({ token }) => {
+        .then((response, { token }) => {
+          this.checkApiResponse(response)
           clearInterval(this.interval);
           this.interval = false;
           localStorage.setItem('auth-token', token);

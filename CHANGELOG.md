@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-<!-- Unreleased changes can be added here. -->
+- Forms app mobile improvements
+- Updated eslintrc and linted code.
+- Added redirect to dashboard error page if response from api has a response.error.code and it's not 200.
+- Removed hardcoded version validation
 
 ## 1.0.15
 

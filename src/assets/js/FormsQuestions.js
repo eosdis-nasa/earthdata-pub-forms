@@ -8,6 +8,7 @@ import {
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
+import localUpload from 'edpub-data-upload-utility';
 
 // This FormsQuestions component gets the questions data for the selected daac and
 // sets the template properties, methods, and custom validation used.
@@ -33,7 +34,33 @@ export default {
       alertVariant: 'success',
       alertMessage: '',
       dismissSecs: 7,
-      dismissCountDown: 0
+      dismissCountDown: 0,
+      uploadFile: null,
+      uploadQuestionId: "",
+      uploadStatusMsg: "Select a file",
+      uploadedFiles: [],
+      uploadFields: [
+        {
+          key: 'file_name',
+          label: 'Filename'
+        }, {
+          key: 'size',
+          label: 'Size',
+          formatter: (value) => {
+            return this.calculateStorage(value)
+          }
+        }, {
+          key:'sha256Checksum',
+          label:'sha256Checksum', 
+        }, {
+          key: 'lastModified',
+          label: 'Last Modified',
+          formatter: (value) => {
+            return this.shortDateShortTimeYearFirstJustValue(value);
+          }
+        }
+      ],
+      timer: null,
     };
   },
   props: {
@@ -277,7 +304,7 @@ export default {
                     if (typeof fld.control_id != "undefined") {
                       if (!this.isDateValid(fld.control_id, "greater")){
                         return false;
-                      } 
+                      }
                       if (!this.isDateValid(fld.control_id, "validity")){
                         return false;
                       }
@@ -326,7 +353,7 @@ export default {
     let DAAC_SET;
     if(typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != ''){
       DAAC_SET = this.$store.state.global_params['group']
-    } 
+    }
     if (DAAC_SET !== null) {
       this.$required = JSON.stringify(val_fields.values);
     }
@@ -345,8 +372,13 @@ export default {
       this.fetchQuestions().then(() => {
         this.accessibilityHack(),
         this.loadAnswers()
+        this.getFileList();
       })
     })
+    this.timer = setInterval(() => {
+      this.saveFile("draft", true)
+    }, (1000 * 60 * 10)); //10 min timer on loop
+
   },
   methods: {
     toggleTimePanel() {
@@ -375,7 +407,7 @@ export default {
     },
     // @vuese
     // Checks if field is a required_if field
-    // @arg fld [String] the id of the field in question, 
+    // @arg fld [String] the id of the field in question,
     checkRequiredIf(fld) {
       if (fld.required_if) {
         try {
@@ -415,7 +447,7 @@ export default {
     // @vuese
     // Goes to daacs after asking if okay if new data present.
     goToDaacs(){
-      this.compareDataAskLeave('daacs') 
+      this.compareDataAskLeave('daacs')
     },
     // @vuese
     // Adds a new row to the table
@@ -445,7 +477,7 @@ export default {
     },
     // @vuese
     // Removes the selected table row
-    // @arg tableId [String] the id of the table in question, 
+    // @arg tableId [String] the id of the table in question,
     // @arg item [Array] the item in question
     removeRow(tableId, item) {
       for (let r = 0;r < this.values[tableId].length;r++) {
@@ -465,7 +497,7 @@ export default {
     },
     // @vuese
     // Moves the selected table row
-    // @arg tableId [String] the id of the table in question, 
+    // @arg tableId [String] the id of the table in question,
     // @arg item [Array] the item in question
     // @arg direction [String] which direction the item should move to.
     moveUpDown(tableId, item, direction, canMove = false) {
@@ -520,7 +552,7 @@ export default {
     // @vuese
     // Checks if date text is valid
     // Validates the the end date is > or = start
-    // @arg id [String] the hash id used to lookup the value, 
+    // @arg id [String] the hash id used to lookup the value,
     // @arg check_type [String] optional, accepts "greater" or "validity" with "greater" being default
     isDateValid(id, check_type = "greater") {
       let start, end;
@@ -590,6 +622,11 @@ export default {
           if (has_all_directions) {
             return false;
           }
+        } else if (input.type == "file") {
+            // TODO Once we have the uploaded files split by type this will need to be updated
+            if (Array.isArray(this.uploadedFiles) && this.uploadedFiles.length) {
+              return false;
+            }
         } else {
           if (
             typeof this.values[input.control_id] != "undefined" &&
@@ -609,7 +646,7 @@ export default {
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
-    // @arg fld [Object] the bbox field, 
+    // @arg fld [Object] the bbox field,
     // @arg direction [String] The direction of the fld
     getBboxError(fld, direction) {
       if (
@@ -685,8 +722,8 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
-    // @arg fld_to [String] the id of the element to set to, 
-    // @arg fld_from [String] the id of the element it's coming from, 
+    // @arg fld_to [String] the id of the element to set to,
+    // @arg fld_from [String] the id of the element it's coming from,
     // @arg contact_key [String] the contact key needed to check checkbox state
     setContact(fld_to, fld_from, contact_key) {
       let checked = !document.getElementById(`same_as_${fld_to}_${contact_key}`).checked;
@@ -708,14 +745,14 @@ export default {
     },
     // @vuese
     // Returns the same as id as string
-    // @arg control_id [String] the control id, 
+    // @arg control_id [String] the control id,
     // @arg contact_fld [String] the contact field
     getSameAsId(control_id, contact_fld) {
       return `same_as_${control_id}_${contact_fld}`
     },
     // @vuese
     // Compares to see if same is checked
-    // @arg control_id [String] the control id to compare against, 
+    // @arg control_id [String] the control id to compare against,
     // @arg contact_fld [String] the contact field to compare against
     sameAsSelected(control_id, contact_fld) {
       let matchRegExp = new RegExp(`^same_as_${control_id}_`)
@@ -788,7 +825,7 @@ export default {
     },
     // @vuese
     // Gets characters remaining from textarea
-    // @arg value [String] the current value, 
+    // @arg value [String] the current value,
     // @arg maxlength [Number] the maxlength to compare against the value
     charactersRemaining(value, maxlength) {
       let left = maxlength;
@@ -803,7 +840,7 @@ export default {
     },
     // @vuese
     // Gets input attributes and filters out those that are undefined
-    // @arg attr [String] the input attribute value, 
+    // @arg attr [String] the input attribute value,
     // @arg input [String] the input the attribute belongs to
     getAttribute(attr, input) {
       let attribute_value = undefined;
@@ -841,7 +878,7 @@ export default {
       }
     },
     // @vuese
-    // Prevents submit to apply validation; 
+    // Prevents submit to apply validation;
     // @arg evt [Object] the event
     enterSubmitForm() {
       if (this.enterSubmit) {
@@ -861,11 +898,11 @@ export default {
     // @vuese
     // Loads answers using request id
     loadAnswers() {
-      if (JSON.stringify(this.values) == '{}' && 
-        typeof this.$store !== 'undefined' && 
-        this.$store.state.global_params['formId'] != "" && 
-        this.$store.state.global_params['requestId'] != '' && 
-        typeof this.$store.state.global_params['requestId'] !== 'undefined' && 
+      if (JSON.stringify(this.values) == '{}' &&
+        typeof this.$store !== 'undefined' &&
+        this.$store.state.global_params['formId'] != "" &&
+        this.$store.state.global_params['requestId'] != '' &&
+        typeof this.$store.state.global_params['requestId'] !== 'undefined' &&
         !this.$testing) {
         const options = {
           headers: {
@@ -873,10 +910,11 @@ export default {
           }
         };
         fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
-          .then(async response => {
-            const answers = await response.json();
+          .then(r => r.json())
+          .then((answers) => {
+            this.checkApiResponse(answers)
             if(answers.error){
-              return {}
+                return {}
             }
             this.valueHistory = []
             this.values = answers.form_data;
@@ -935,6 +973,157 @@ export default {
     redoToPreviousState() {
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
+    },
+
+    resetUploads(alertMsg, statusMsg, controlId) {
+      // Display error message if there is an alert message
+      if (alertMsg != '' && alertMsg != null)  {
+        this.alertVariant = 'danger';
+        this.alertMessage = alertMsg;
+        this.showAlert();
+      }
+
+      // Update the Status Message
+      this.uploadStatusMsg = statusMsg;
+
+      // Clear the upload text box
+      this.$refs[controlId][0].reset();
+
+    },
+
+    async listFileUploadsBySubmission(requestId) {
+      const url = `${process.env.VUE_APP_API_ROOT}/data/upload/list/${requestId}`;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": `Bearer ${localStorage.getItem('auth-token')}`
+          }
+        }).catch(function(e) {
+          return this.failedResponse(e)
+        });
+        this.checkApiResponse(response)
+        if (response.statusText.match(/Forbidden/g)){
+          return this.failedResponse()
+        } else {
+          return response.json(); // parses JSON response into native JavaScript objects
+        }
+      } catch(e) {
+        return this.failedResponse(e)
+      }
+
+    },
+
+    async getFileList() {
+      const requestId = this.$store.state.global_params['requestId'];
+      if (requestId !== '' && requestId != undefined && requestId !== null) {
+      await(this.listFileUploadsBySubmission(requestId))
+          .then((resp) => {
+            if (JSON.stringify(resp) === '{}' || JSON.stringify(resp) === '[]' || (resp.data && resp.data.length === 0)) {
+              return
+            }
+            let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+            if (error){
+              if (!error.match(/not authorized/gi) && !error.match(/not implemented/gi)) {
+                const str = `An error has occurred while getting the list of files: ${error}.`;
+                // eslint-disable-next-line
+                console.log(str)
+                return
+              } else {
+                return
+              }
+            }
+  
+            const files = resp
+            
+            files.sort(function (a, b) {
+              var keyA = new Date(a.lastModified), 
+                keyB = new Date(b.lastModified);
+              if (keyA > keyB) return -1;
+              if (keyA < keyB) return 1;
+              return 0;
+            });
+            this.uploadedFiles = files;
+          });
+      }
+    },
+
+    updateUploadStatusWithTimeout(msg, timeout) {
+      setTimeout(() => {
+        msg ? this.uploadStatusMsg = msg : null
+      }, timeout);
+    },
+
+    validateFile(file, controlId) {
+      let valid = false;
+      let msg = '';
+      let statusMsg = 'Please select a different file.'
+      if (file.name.match(/\.([^.]+)$/) !== null) {
+        var ext = file.name.match(/\.([^.]+)$/)[1];
+        if (ext.match(/exe/gi)) {
+          msg = 'exe is an invalid file type.';
+          this.resetUploads(msg, statusMsg, controlId);
+
+        } else {
+          valid = true
+        }
+      } else {
+        msg = 'The file must have an extension.';
+        this.resetUploads(msg, statusMsg, controlId)
+      }
+      return valid;
+    },
+
+    async uploadFiles(event, controlId){
+      const file = event.target.files[0]
+      this.uploadQuestionId = controlId;
+      let alertMsg = '';
+      let statusMsg = '';
+
+      if (this.validateFile(file, controlId)) {
+        this.uploadStatusMsg = 'Uploading';
+        
+        const upload = new localUpload();
+        const requestId = this.$store.state.global_params['requestId'];
+        try {
+          let payload = {
+            fileObj: file,
+            authToken: localStorage.getItem('auth-token'),
+          }          
+          if (requestId !== '' && requestId != undefined && requestId !== null) {
+            payload['apiEndpoint'] = `${process.env.VUE_APP_API_ROOT}/data/upload/getPostUrl`;
+            payload['submissionId'] = requestId
+          } 
+          const resp = await upload.uploadFile(payload)
+          let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+          if (error) {
+            alertMsg = `An error has occured on uploadFile: ${error}.`;
+            statusMsg = `Select a file`;  
+            // eslint-disable-next-line
+            console.log(`An error has occured on uploadFile: ${error}.`);
+            this.resetUploads(alertMsg, statusMsg, controlId);
+          } else {
+            alertMsg = '';
+            statusMsg = 'Upload Complete';
+            this.resetUploads(alertMsg, statusMsg, controlId);
+            this.updateUploadStatusWithTimeout('Select another file', 1000)
+
+            if (requestId !== '' && requestId != undefined && requestId !== null){
+              this.getFileList();
+            }
+          }
+        } catch (error) {
+          // eslint-disable-next-line
+          console.log(`try catch error: ${error.stack}`);
+          alertMsg = `An error has occured on uploadFile`;
+          statusMsg = `Select a file`
+          this.resetUploads(alertMsg, statusMsg, controlId);
+        }
+      } 
     }
+  },
+  beforeUnmount() {
+    clearInterval(this.timer);
   }
 };

@@ -20,10 +20,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const logOptions = {
   isEnabled: true,
-  logLevel : isProduction ? 'error' : 'debug',
-  stringifyArguments : false,
-  showLogLevel : true,
-  showMethodName : true,
+  logLevel: isProduction ? 'error' : 'debug',
+  stringifyArguments: false,
+  showLogLevel: true,
+  showMethodName: true,
   separator: '-',
   showConsoleColors: true
 };
@@ -97,11 +97,11 @@ new Vue({
   router,
   store,
 
-  created(){
+  created() {
   },
 
-  mounted(){
-    
+  mounted() {
+
   },
 
   render: h => h(App)

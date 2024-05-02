@@ -1,4 +1,5 @@
 // This mixins file acts as a common js file and the functions are shared between components.
+import moment from 'moment';
 export default {
     props:{
     },
@@ -68,6 +69,7 @@ export default {
           fetch(`${url}`, options)
             .then(async response => {
               const data = await response.json();
+              this.checkApiResponse(data)
               for (var dict in data) {
                 items.push(data[dict]);
               }
@@ -156,6 +158,7 @@ export default {
             fetch(`${url}`, options)
               .then(async response => {
                 const request = await response.json();
+                this.checkApiResponse(request)
                 if (request.error){
                   this.showHideForms('hide')
                   this.redirectNotification(this.$bvModal, `The following Request Id ${this.$store.state.global_params['requestId']} was not found.`, 'submit', false, 'Request Not Found')
@@ -178,6 +181,7 @@ export default {
                 fetch(`${url}`, options)
                   .then(async response => {
                     const form = await response.json();
+                    this.checkApiResponse(form)
                     if (!window.location.href.match(/selection/g)){
                       this.$store.commit("pushGlobalParams", ['formTitle', form.long_name])
                     }
@@ -230,6 +234,7 @@ export default {
             fetch(`${process.env.VUE_APP_API_ROOT}${process.env.VUE_APP_REQUEST_URL}/${this.$store.state.global_params['requestId']}`, options)
               .then(async response => {
                 const answers = await response.json();
+                this.checkApiResponse(answers)
                 if(!answers.error){
                   if(!this.object_equals(answers.form_data, window.questionsComponent.values)){
                   this.$bvModal
@@ -332,6 +337,7 @@ export default {
           fetch(`${url}`, options)
             .then(async response => {
               const forms = await response.json();
+              this.checkApiResponse(forms)
               if (this.$testing &&
                 typeof this.$store.state.global_params['formId'] == 'undefined' &&
                 (this.$store.state.global_params['group'] !== "selection" || this.$store.state.global_params['group'] != "")
@@ -356,6 +362,7 @@ export default {
               fetch(`${url}`, options)
               .then(async response => {
                 const questions = await response.json();
+                this.checkApiResponse(questions)
                 if (typeof this.daacs === 'undefined') {
                   this.fetchDaacs().then(() => {
                     let daacData = this.getDaac(this.$store.state.global_params['group'])
@@ -512,6 +519,18 @@ export default {
         return true;
       },
       // @vuese
+      // Checks api response for errors and redirects to dashboard error page with generic error message when there's a response.error.code present
+      // @arg response [Object]
+      checkApiResponse(response){
+        const errorCode = response?.error?.code || 200
+        if(errorCode !== 200){
+            const redirectUrl = `${process.env.VUE_APP_DASHBOARD_ROOT}/error`
+            if (!this.$testing){
+                window.location.href = redirectUrl
+            } else { this.confirmExit(redirectUrl) }
+        }
+      },
+      // @vuese
       // Set active nav element
       // @arg activeElement [Object],
       // @arg navs [Array] defaults to ['daacs', 'questions'],
@@ -550,7 +569,7 @@ export default {
       // @arg bvModal [Object] the alert object to modify if an alert is necessary,
       // @arg DAAC [String] hash of the group to set in the json,
       // @arg operation [String] action optional and defaults to 'save' out of ('save', 'draft', 'submit')
-      sendDataToApi(bvModal, DAAC, operation = "save") {
+      sendDataToApi(bvModal, DAAC, operation = "save", auto = false) {
         let action;
         let skip_modal = false;
         let form = this.$store.state.global_params['formShortName']
@@ -578,12 +597,13 @@ export default {
         } else {
           action = "submitted";
         }
-        if (typeof this.questions == 'undefined'){
+        if (typeof this.questions == 'undefined' || auto){
           skip_modal = true
         }
         if(!this.$testing){
           this.postData(`${process.env.VUE_APP_API_ROOT}/data/submission/operation/${operation}`, json)
-            .then((response) => {
+            .then(async response => {
+              this.checkApiResponse(response)
               this.requestId = response.id;
               this.$store.commit("pushGlobalParams",['requestId',`${this.requestId}`]);
               let message = `Your request has been ${action}.`
@@ -596,9 +616,9 @@ export default {
                   this.exitForm(bvModal, message, skip_modal)
                 }
               } else if (was_draft){
-                if (typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) {
+                if ((typeof process.env.VUE_APP_REDIRECT_CONFIRMATION == 'undefined' || JSON.parse(process.env.VUE_APP_REDIRECT_CONFIRMATION)) && !skip_modal) {
                   this.redirectNotification(bvModal, message, 'draft')
-                } else {
+                } else if (!auto) {
                   this.exitForm(bvModal, message, skip_modal)
                 }
               } else {
@@ -611,9 +631,9 @@ export default {
                 }
               }
             })
-            .catch((error) => {
+            .catch(() => {
               this.alertVariant = 'danger'
-              this.alertMessage = `Your request could not be ${action}. Error returned: ${error}.  Please try again.`
+              this.alertMessage = `An internal error occurred. If the error continues, reach out to the EDPub development team.`
               this.showAlert();
             });
         } else {
@@ -635,6 +655,7 @@ export default {
           }).catch(function(e) {
             return this.failedResponse(e)
           });
+          this.checkApiResponse(response)
           if (response.statusText.match(/Forbidden/g)){
             return this.failedResponse()
           } else {
@@ -699,10 +720,14 @@ export default {
       },
       // @vuese
       // Alerts the user to errors and shows error messages in the fixed header
-      errorsNotification() {
+      errorsNotification(auto = false) {
         // Variant possiblities are 'primary, secondary, success, danger, warning, info, light, dark'
         this.alertVariant = 'danger'
         this.alertMessage = "You have errors to correct before you can submit your request.  You can save your request as a draft and come back."
+        if (auto) {
+          this.alertVariant = 'danger'
+          this.alertMessage = "Be advised, auto-save is not currently working.  Alert Earthdata Pub Dev team."
+        }
         this.showAlert();
       },
       // @vuese
@@ -786,7 +811,7 @@ export default {
       // @vuese
       // Used to save file
       // @arg operation [String] action (save, draft, submit)
-      saveFile(operation = "save") {
+      saveFile(operation = "save", auto = false) {
         let DAAC;
         if (this.daac == null &&
           typeof this.$store !== 'undefined' &&
@@ -818,9 +843,9 @@ export default {
             (!this.$v.$anyError && operation == "submit") ||
             operation != "submit"
           ) {
-            this.sendDataToApi(this.$bvModal, DAAC, operation);
+            this.sendDataToApi(this.$bvModal, DAAC, operation, auto);
           } else {
-            this.errorsNotification();
+            this.errorsNotification(auto);
           }
         }
       },
@@ -833,6 +858,31 @@ export default {
 
         await this.postData(urlApi, {daac_id: daacId})
         this.confirmExit(urlReturn)
+      },
+
+      // Copied from earthdata-pub-dashboard/app/src/js/utils/format.js
+      calculateStorage(n){
+        const number = +n;
+        if (!n || Number.isNaN(number)) return '--';
+      
+        if (number === 0) return n;
+      
+        if (number < 1e9) return `${(number / 1e6).toFixed(2)} MB`;
+        if (number < 1e12) return `${(number / 1e9).toFixed(2)} GB`;
+        if (number < 1e15) return `${(number / 1e12).toFixed(2)} TB`;
+        return `${(number / 1e15).toFixed(2)} PB`;
+      },
+
+      // Copied from earthdata-pub-dashboard/app/src/js/utils/format.js
+      shortDateShortTimeYearFirstJustValue(datestring) {
+        if (!datestring) { return '--'; }
+        let day, time;
+        if (datestring) {
+          const date = moment(datestring);
+          day = date.format('MMM D, YYYY');
+          time = date.format('h:mm a');
+        }
+        return `${day} ${time}`;
       }
   }
 }

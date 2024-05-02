@@ -59,17 +59,12 @@ export default {
   },
   beforeMount() {
     this.checkAuth()
-    let version = "1.0.9"
-    if (localStorage.getItem("version") != version) {
-      localStorage.clear();
-      localStorage.setItem("version", version);
-    }
     if (!window.location.href.match(/daacs/g)) {
       if (this.$route.params.requestId || this.$testing) {
         if (this.$testing) {
           // The Data Publication Form has a third contact person
           const json_name = 'data_accession_request'
-          // const json_name = 'data_publication_request' 
+          // const json_name = 'data_publication_request'
           this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
           this.$store.commit("pushGlobalParams", ['formShortName', json_name])
           this.$store.commit("pushGlobalParams", ['requestId', `20e78804-c171-4549-bdab-6c7cf8e0fc72`]);
@@ -430,6 +425,119 @@ footer .badge {
 .modal-open {
   padding-right: unset !important;
   overflow: unset !important;
+}
+
+@media (max-width: 767px) {
+
+  .bbox {
+    min-width: unset !important;
+    max-width: unset !important;
+  }
+
+  button {
+    font-size: larger !important;
+  }
+
+  #draft_data,
+  #save_data {
+    width: 213px;
+  }
+
+  #title {
+    vertical-align: unset !important;
+    line-height: unset !important;
+    font-size: calc(1.5rem + 1vw);
+  }
+
+  #earthdata-tophat2 .th-fbm-link-container {
+    margin: 0px 0 0;
+  }
+
+  img.logo {
+    max-width: 25% !important;
+  }
+
+  #product_temporal_coverage_start_button,
+  #product_temporal_coverage_end_button {
+    display: none
+  }
+
+  #product_temporal_coverage_start,
+  #product_temporal_coverage_end {
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  button {
+    font-size: unset !important;
+  }
+
+  #draft_data,
+  #save_data {
+    width: unset !important;
+  }
+
+  #undo_button,
+  #redo_button {
+    width: unset !important;
+  }
+}
+
+@media (max-width: 333px) {
+
+  #draft_data,
+  #save_data {
+    width: 213px !important;
+  }
+}
+
+@media (min-width: 500px) {
+  .bbox {
+    min-width: 80px !important;
+    max-width: 80px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  #title {
+    line-height: 90px;
+    vertical-align: bottom !important;
+  }
+}
+
+@media (min-width: 390px) {
+
+  #product_temporal_coverage_start_button,
+  #product_temporal_coverage_end_button {
+    display: unset !important
+  }
+
+  #product_temporal_coverage_start,
+  #product_temporal_coverage_end {
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+  }
+}
+
+@media (max-width: 684px) {
+
+  #undo_button,
+  #redo_button {
+    width: 85px !important;
+  }
+}
+
+#earthdata-tophat2 .th-status-link-container,
+#earthdata-tophat2 .th-help-link-container,
+#earthdata-tophat2 .th-fbm-link-container {
+  height: unset !important
+}
+
+#undo_button,
+#redo_button {
+  width: 85px;
 }
 
 .section_required {
