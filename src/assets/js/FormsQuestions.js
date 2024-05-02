@@ -58,7 +58,8 @@ export default {
             return this.shortDateShortTimeYearFirstJustValue(value);
           }
         }
-      ]
+      ],
+      timer: null,
     };
   },
   props: {
@@ -302,7 +303,7 @@ export default {
                     if (typeof fld.control_id != "undefined") {
                       if (!this.isDateValid(fld.control_id, "greater")){
                         return false;
-                      } 
+                      }
                       if (!this.isDateValid(fld.control_id, "validity")){
                         return false;
                       }
@@ -351,7 +352,7 @@ export default {
     let DAAC_SET;
     if(typeof this.$store !== 'undefined' && this.$store.state.global_params['group'] != ''){
       DAAC_SET = this.$store.state.global_params['group']
-    } 
+    }
     if (DAAC_SET !== null) {
       this.$required = JSON.stringify(val_fields.values);
     }
@@ -373,6 +374,10 @@ export default {
         this.getFileList();
       })
     })
+    this.timer = setInterval(() => {
+      this.saveFile("draft", true)
+    }, (1000 * 60 * 10)); //10 min timer on loop
+
   },
   methods: {
     // @vuese
@@ -398,7 +403,7 @@ export default {
     },
     // @vuese
     // Checks if field is a required_if field
-    // @arg fld [String] the id of the field in question, 
+    // @arg fld [String] the id of the field in question,
     checkRequiredIf(fld) {
       if (fld.required_if) {
         try {
@@ -438,7 +443,7 @@ export default {
     // @vuese
     // Goes to daacs after asking if okay if new data present.
     goToDaacs(){
-      this.compareDataAskLeave('daacs') 
+      this.compareDataAskLeave('daacs')
     },
     // @vuese
     // Adds a new row to the table
@@ -468,7 +473,7 @@ export default {
     },
     // @vuese
     // Removes the selected table row
-    // @arg tableId [String] the id of the table in question, 
+    // @arg tableId [String] the id of the table in question,
     // @arg item [Array] the item in question
     removeRow(tableId, item) {
       for (let r = 0;r < this.values[tableId].length;r++) {
@@ -488,7 +493,7 @@ export default {
     },
     // @vuese
     // Moves the selected table row
-    // @arg tableId [String] the id of the table in question, 
+    // @arg tableId [String] the id of the table in question,
     // @arg item [Array] the item in question
     // @arg direction [String] which direction the item should move to.
     moveUpDown(tableId, item, direction, canMove = false) {
@@ -543,7 +548,7 @@ export default {
     // @vuese
     // Checks if date text is valid
     // Validates the the end date is > or = start
-    // @arg id [String] the hash id used to lookup the value, 
+    // @arg id [String] the hash id used to lookup the value,
     // @arg check_type [String] optional, accepts "greater" or "validity" with "greater" being default
     isDateValid(id, check_type = "greater") {
       let start, end;
@@ -643,7 +648,7 @@ export default {
     },
     // @vuese
     // Gets custom bbox validation errors; returns blank if valid
-    // @arg fld [Object] the bbox field, 
+    // @arg fld [Object] the bbox field,
     // @arg direction [String] The direction of the fld
     getBboxError(fld, direction) {
       if (
@@ -719,8 +724,8 @@ export default {
     },
     // @vuese
     // Copies over contact information from the 'same as' checkbox for contact
-    // @arg fld_to [String] the id of the element to set to, 
-    // @arg fld_from [String] the id of the element it's coming from, 
+    // @arg fld_to [String] the id of the element to set to,
+    // @arg fld_from [String] the id of the element it's coming from,
     // @arg contact_key [String] the contact key needed to check checkbox state
     setContact(fld_to, fld_from, contact_key) {
       let checked = !document.getElementById(`same_as_${fld_to}_${contact_key}`).checked;
@@ -742,14 +747,14 @@ export default {
     },
     // @vuese
     // Returns the same as id as string
-    // @arg control_id [String] the control id, 
+    // @arg control_id [String] the control id,
     // @arg contact_fld [String] the contact field
     getSameAsId(control_id, contact_fld) {
       return `same_as_${control_id}_${contact_fld}`
     },
     // @vuese
     // Compares to see if same is checked
-    // @arg control_id [String] the control id to compare against, 
+    // @arg control_id [String] the control id to compare against,
     // @arg contact_fld [String] the contact field to compare against
     sameAsSelected(control_id, contact_fld) {
       let matchRegExp = new RegExp(`^same_as_${control_id}_`)
@@ -822,7 +827,7 @@ export default {
     },
     // @vuese
     // Gets characters remaining from textarea
-    // @arg value [String] the current value, 
+    // @arg value [String] the current value,
     // @arg maxlength [Number] the maxlength to compare against the value
     charactersRemaining(value, maxlength) {
       let left = maxlength;
@@ -837,7 +842,7 @@ export default {
     },
     // @vuese
     // Gets input attributes and filters out those that are undefined
-    // @arg attr [String] the input attribute value, 
+    // @arg attr [String] the input attribute value,
     // @arg input [String] the input the attribute belongs to
     getAttribute(attr, input) {
       let attribute_value = undefined;
@@ -875,7 +880,7 @@ export default {
       }
     },
     // @vuese
-    // Prevents submit to apply validation; 
+    // Prevents submit to apply validation;
     // @arg evt [Object] the event
     enterSubmitForm() {
       if (this.enterSubmit) {
@@ -895,11 +900,11 @@ export default {
     // @vuese
     // Loads answers using request id
     loadAnswers() {
-      if (JSON.stringify(this.values) == '{}' && 
-        typeof this.$store !== 'undefined' && 
-        this.$store.state.global_params['formId'] != "" && 
-        this.$store.state.global_params['requestId'] != '' && 
-        typeof this.$store.state.global_params['requestId'] !== 'undefined' && 
+      if (JSON.stringify(this.values) == '{}' &&
+        typeof this.$store !== 'undefined' &&
+        this.$store.state.global_params['formId'] != "" &&
+        this.$store.state.global_params['requestId'] != '' &&
+        typeof this.$store.state.global_params['requestId'] !== 'undefined' &&
         !this.$testing) {
         const options = {
           headers: {
@@ -1119,5 +1124,8 @@ export default {
         }
       } 
     }
+  },
+  beforeUnmount() {
+    clearInterval(this.timer);
   }
 };
