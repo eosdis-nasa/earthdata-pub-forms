@@ -153,24 +153,19 @@
                                   >
                               </b-form-input>
                               <!-- Date Type of Input -->
-                             
-                                  <date-picker    
-                                    v-if="input.type == 'datetimePicker'"
-                                    input-class = "form-control form-control-lg extra_space test"
-                                    format="YYYY-MM-DD hh:mm A"
-                                    confirm-text
-                                    type="datetime" 
-                                    valueType="format"
-                                    placeholder="required"
-                                    :show-time-panel="showTimePanel"
-                                    v-model="values[input.control_id]">
-                                    <template v-slot:footer>
-                                      <button class="mx-btn mx-btn-text" @click="toggleTimePanel">
-                                        {{ showTimePanel ? 'select date' : 'select time' }}
-                                      </button>
-                                    </template>
-                                  </date-picker> 
-                                
+                                <date-picker    
+                                  v-if="input.type == 'datetimePicker'"
+                                  :type="input.type"
+                                  :input-class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'form-control form-control-lg extra_space': 'true' }"
+                                  :id="input.control_id" 
+                                  :name="input.control_id"
+                                  v-model="values[input.control_id]"                                     
+                                  format="YYYY-MM-DD hh:mm A"
+                                  type="datetime" 
+                                  valueType="format"
+                                  placeholder="required"
+                                  >
+                                </date-picker> 
                               <!-- End of Text Type of Input -->
                               <!-- BBOX Type of Input -->
                               <div v-if="input.type == 'bbox'" class="w-100">
