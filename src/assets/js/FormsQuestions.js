@@ -8,6 +8,7 @@ import {
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
+import localUpload from 'edpub-data-upload-utility';
 
 // This FormsQuestions component gets the questions data for the selected daac and
 // sets the template properties, methods, and custom validation used.
@@ -33,6 +34,31 @@ export default {
       alertMessage: '',
       dismissSecs: 7,
       dismissCountDown: 0,
+      uploadFile: null,
+      uploadQuestionId: "",
+      uploadStatusMsg: "Select a file",
+      uploadedFiles: [],
+      uploadFields: [
+        {
+          key: 'file_name',
+          label: 'Filename'
+        }, {
+          key: 'size',
+          label: 'Size',
+          formatter: (value) => {
+            return this.calculateStorage(value)
+          }
+        }, {
+          key:'sha256Checksum',
+          label:'sha256Checksum', 
+        }, {
+          key: 'lastModified',
+          label: 'Last Modified',
+          formatter: (value) => {
+            return this.shortDateShortTimeYearFirstJustValue(value);
+          }
+        }
+      ],
       timer: null,
     };
   },
@@ -345,6 +371,7 @@ export default {
       this.fetchQuestions().then(() => {
         this.accessibilityHack(),
         this.loadAnswers()
+        this.getFileList();
       })
     })
     this.timer = setInterval(() => {
@@ -597,6 +624,11 @@ export default {
           if (has_all_directions) {
             return false;
           }
+        } else if (input.type == "file") {
+            // TODO Once we have the uploaded files split by type this will need to be updated
+            if (Array.isArray(this.uploadedFiles) && this.uploadedFiles.length) {
+              return false;
+            }
         } else {
           if (
             typeof this.values[input.control_id] != "undefined" &&
@@ -943,6 +975,154 @@ export default {
     redoToPreviousState() {
       this.valueHistoryUndoIdx--
       this.$set(this, 'values', JSON.parse(JSON.stringify(this.valueHistory[this.valueHistory.length - this.valueHistoryUndoIdx - 1])))
+    },
+
+    resetUploads(alertMsg, statusMsg, controlId) {
+      // Display error message if there is an alert message
+      if (alertMsg != '' && alertMsg != null)  {
+        this.alertVariant = 'danger';
+        this.alertMessage = alertMsg;
+        this.showAlert();
+      }
+
+      // Update the Status Message
+      this.uploadStatusMsg = statusMsg;
+
+      // Clear the upload text box
+      this.$refs[controlId][0].reset();
+
+    },
+
+    async listFileUploadsBySubmission(requestId) {
+      const url = `${process.env.VUE_APP_API_ROOT}/data/upload/list/${requestId}`;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": `Bearer ${localStorage.getItem('auth-token')}`
+          }
+        }).catch(function(e) {
+          return this.failedResponse(e)
+        });
+        this.checkApiResponse(response)
+        if (response.statusText.match(/Forbidden/g)){
+          return this.failedResponse()
+        } else {
+          return response.json(); // parses JSON response into native JavaScript objects
+        }
+      } catch(e) {
+        return this.failedResponse(e)
+      }
+
+    },
+
+    async getFileList() {
+      const requestId = this.$store.state.global_params['requestId'];
+      if (requestId !== '' && requestId != undefined && requestId !== null) {
+      await(this.listFileUploadsBySubmission(requestId))
+          .then((resp) => {
+            if (JSON.stringify(resp) === '{}' || JSON.stringify(resp) === '[]' || (resp.data && resp.data.length === 0)) {
+              return
+            }
+            let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+            if (error){
+              if (!error.match(/not authorized/gi) && !error.match(/not implemented/gi)) {
+                const str = `An error has occurred while getting the list of files: ${error}.`;
+                // eslint-disable-next-line
+                console.log(str)
+                return
+              } else {
+                return
+              }
+            }
+  
+            const files = resp
+            
+            files.sort(function (a, b) {
+              var keyA = new Date(a.lastModified), 
+                keyB = new Date(b.lastModified);
+              if (keyA > keyB) return -1;
+              if (keyA < keyB) return 1;
+              return 0;
+            });
+            this.uploadedFiles = files;
+          });
+      }
+    },
+
+    updateUploadStatusWithTimeout(msg, timeout) {
+      setTimeout(() => {
+        msg ? this.uploadStatusMsg = msg : null
+      }, timeout);
+    },
+
+    validateFile(file, controlId) {
+      let valid = false;
+      let msg = '';
+      let statusMsg = 'Please select a different file.'
+      if (file.name.match(/\.([^.]+)$/) !== null) {
+        var ext = file.name.match(/\.([^.]+)$/)[1];
+        if (ext.match(/exe/gi)) {
+          msg = 'exe is an invalid file type.';
+          this.resetUploads(msg, statusMsg, controlId);
+
+        } else {
+          valid = true
+        }
+      } else {
+        msg = 'The file must have an extension.';
+        this.resetUploads(msg, statusMsg, controlId)
+      }
+      return valid;
+    },
+
+    async uploadFiles(event, controlId){
+      const file = event.target.files[0]
+      this.uploadQuestionId = controlId;
+      let alertMsg = '';
+      let statusMsg = '';
+
+      if (this.validateFile(file, controlId)) {
+        this.uploadStatusMsg = 'Uploading';
+        
+        const upload = new localUpload();
+        const requestId = this.$store.state.global_params['requestId'];
+        try {
+          let payload = {
+            fileObj: file,
+            authToken: localStorage.getItem('auth-token'),
+          }          
+          if (requestId !== '' && requestId != undefined && requestId !== null) {
+            payload['apiEndpoint'] = `${process.env.VUE_APP_API_ROOT}/data/upload/getPostUrl`;
+            payload['submissionId'] = requestId
+          } 
+          const resp = await upload.uploadFile(payload)
+          let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
+          if (error) {
+            alertMsg = `An error has occured on uploadFile: ${error}.`;
+            statusMsg = `Select a file`;  
+            // eslint-disable-next-line
+            console.log(`An error has occured on uploadFile: ${error}.`);
+            this.resetUploads(alertMsg, statusMsg, controlId);
+          } else {
+            alertMsg = '';
+            statusMsg = 'Upload Complete';
+            this.resetUploads(alertMsg, statusMsg, controlId);
+            this.updateUploadStatusWithTimeout('Select another file', 1000)
+
+            if (requestId !== '' && requestId != undefined && requestId !== null){
+              this.getFileList();
+            }
+          }
+        } catch (error) {
+          // eslint-disable-next-line
+          console.log(`try catch error: ${error.stack}`);
+          alertMsg = `An error has occured on uploadFile`;
+          statusMsg = `Select a file`
+          this.resetUploads(alertMsg, statusMsg, controlId);
+        }
+      } 
     }
   },
   beforeUnmount() {
