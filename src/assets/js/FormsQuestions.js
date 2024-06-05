@@ -19,6 +19,7 @@ export default {
     return {
       values: {},
       questions: [],
+      showTimePanel: false,
       contacts: [],
       contact_fields: [],
       saveTimeout: 0,
@@ -50,7 +51,7 @@ export default {
           }
         }, {
           key:'sha256Checksum',
-          label:'sha256Checksum', 
+          label:'sha256Checksum',
         }, {
           key: 'lastModified',
           label: 'Last Modified',
@@ -296,7 +297,7 @@ export default {
                     return false;
                   };
                 }
-                if (fld.type == "date") {
+                if (fld.type == "datetimePicker") {
                   val_fields.values[fld.control_id] =
                     val_fields.values[fld.control_id] || {};
                   val_fields.values[fld.control_id].startEndDates = () => {
@@ -380,6 +381,9 @@ export default {
 
   },
   methods: {
+    toggleTimePanel() {
+      this.showTimePanel = !this.showTimePanel;
+    },
     // @vuese
     // Sets local variables
     setLocalVars() {
@@ -560,17 +564,11 @@ export default {
         start = id.replace(/end/g, "start");
       }
       if (typeof this.values[start] != 'undefined' && typeof this.values[end] != 'undefined'){
-        let start_bits = this.values[start].split("-");
-        let end_bits = this.values[end].split("-");
         let start_date_obj = new Date(
-          start_bits[0],
-          start_bits[1] - 1,
-          start_bits[2]
+          this.values[start]
         );
         let end_date_obj = new Date(
-          end_bits[0],
-          end_bits[1] - 1,
-          end_bits[2]
+          this.values[end]
         );
         if (
           id.match(/start/g) &&
@@ -1036,11 +1034,11 @@ export default {
                 return
               }
             }
-  
+
             const files = resp
-            
+
             files.sort(function (a, b) {
-              var keyA = new Date(a.lastModified), 
+              var keyA = new Date(a.lastModified),
                 keyB = new Date(b.lastModified);
               if (keyA > keyB) return -1;
               if (keyA < keyB) return 1;
@@ -1077,6 +1075,21 @@ export default {
       return valid;
     },
 
+    async refreshAutth(){
+      const options = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`
+        }
+      };
+      await fetch(`${process.env.VUE_APP_API_ROOT}/token/refresh`, options)
+      .then(r => r.json())
+      .then(( { token }) => {
+        console.log('from refresh', token)
+        localStorage.setItem('auth-token', token);
+        this.$store.commit("setToken", token);
+      });
+    },
+
     async uploadFiles(event, controlId){
       const file = event.target.files[0]
       this.uploadQuestionId = controlId;
@@ -1085,23 +1098,24 @@ export default {
 
       if (this.validateFile(file, controlId)) {
         this.uploadStatusMsg = 'Uploading';
-        
+
         const upload = new localUpload();
         const requestId = this.$store.state.global_params['requestId'];
         try {
+          await this.refreshAutth();
           let payload = {
             fileObj: file,
             authToken: localStorage.getItem('auth-token'),
-          }          
+          }
           if (requestId !== '' && requestId != undefined && requestId !== null) {
             payload['apiEndpoint'] = `${process.env.VUE_APP_API_ROOT}/data/upload/getPostUrl`;
             payload['submissionId'] = requestId
-          } 
+          }
           const resp = await upload.uploadFile(payload)
           let error = resp?.data?.error || resp?.error || resp?.data?.[0]?.error
           if (error) {
             alertMsg = `An error has occured on uploadFile: ${error}.`;
-            statusMsg = `Select a file`;  
+            statusMsg = `Select a file`;
             // eslint-disable-next-line
             console.log(`An error has occured on uploadFile: ${error}.`);
             this.resetUploads(alertMsg, statusMsg, controlId);
@@ -1122,7 +1136,7 @@ export default {
           statusMsg = `Select a file`
           this.resetUploads(alertMsg, statusMsg, controlId);
         }
-      } 
+      }
     }
   },
   beforeUnmount() {

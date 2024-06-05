@@ -64,7 +64,7 @@ export default {
         if (this.$testing) {
           // The Data Publication Form has a third contact person
           const json_name = 'data_accession_request'
-          // const json_name = 'data_publication_request' 
+          // const json_name = 'data_publication_request'
           this.$store.commit("pushGlobalParams", ['formTitle', 'Testing Title'])
           this.$store.commit("pushGlobalParams", ['formShortName', json_name])
           this.$store.commit("pushGlobalParams", ['requestId', `20e78804-c171-4549-bdab-6c7cf8e0fc72`]);
@@ -538,5 +538,109 @@ footer .badge {
 #undo_button,
 #redo_button {
   width: 85px;
+}
+
+.section_required {
+  color: #DB1400 !important;
+  font-size: 16px !important;
+}
+
+.required {
+  color: #DB1400 !important;
+  padding-top: 7px !important;
+  padding-right: 9.5px !important;
+  font-size: 16px !important;
+  width: -webkit-fill-available !important;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  /* Edge */
+  color: #DB1400 !important;
+  font-size: 16px !important;
+}
+
+input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #DB1400 !important;
+  font-size: 16px !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #DB1400 !important;
+  font-size: 16px !important;
+}
+
+.form-file-error,
+.form-select-error,
+.form-radio-group-error,
+.form-textarea-error,
+.form-checkbox-error,
+.form-input-error,
+.form-group-error,
+.form-section-error,
+.form-table-error {
+  border-color: #DB1400 !important;
+}
+
+.form-group-error,
+.form-radio-group-error,
+.form-section-error,
+.form-table-error {
+  border-radius: 5px !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-top: 8px !important;
+  padding-bottom: 5px !important;
+}
+
+.form-group {
+  margin-bottom: unset !important;
+}
+
+input {
+  border-radius: 5px !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-top: 8px !important;
+  padding-bottom: 5px !important;
+  border-color: #b2b2b2 !important;
+}
+
+.mx-input-wrapper input {
+  margin-top: 16px !important;
+  width: -webkit-fill-available !important;
+  line-height: 1.5 !important;
+}
+
+.radio_checkbox_group_error {
+  border-color: #DB1400 !important;
+  border-radius: 5px !important;
+}
+
+.mx-table-date th{
+  text-align: center;
+}
+
+.mx-calendar-content .cell.active {
+  background-color: #2276ac !important;
+}
+
+.mx-time-column .mx-time-item.active {
+  color: #2276ac !important;
+}
+
+.mx-datepicker-btn-confirm:hover {
+  color: #2276ac !important;
+}
+
+.mx-table{
+  border-collapse: collapse !important;
 }
 </style>
