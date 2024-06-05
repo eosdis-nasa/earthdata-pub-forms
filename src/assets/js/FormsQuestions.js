@@ -1084,7 +1084,6 @@ export default {
       await fetch(`${process.env.VUE_APP_API_ROOT}/token/refresh`, options)
       .then(r => r.json())
       .then(( { token }) => {
-        console.log('from refresh', token)
         localStorage.setItem('auth-token', token);
         this.$store.commit("setToken", token);
       });
