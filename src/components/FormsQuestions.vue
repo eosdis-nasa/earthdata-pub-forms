@@ -79,13 +79,13 @@
                             <span  :key="c_key">
                               <span v-if="input.type == 'checkbox'" class="checkbox">
                                 <!-- Checkbox Type of Input -->
-                                <b-form-checkbox 
+                                <b-form-checkbox
                                   :class="{ 'form-checkbox-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'checkboxes':true }"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
+                                  size="lg"
                                   value="true"
                                   unchecked-value="false"
                                   :aria-label="input.label"
@@ -98,13 +98,13 @@
                           <b-row v-else>
                             <template v-if="showIf(input.show_if)">
                               <label :for="input.control_id || `${input}_${c_key}`" class="eui-label" v-if="input.label !== undefined && input.label !== '' && input.type != 'checkbox' && input.type != 'bbox' && input.type != 'table'">{{input.label}}:</label>
-                              <span class="date_formats" v-if="input.type == 'date'">Format: <span class="date_formats_required">YYYY-MM-DD</span></span>
+                              <span class="date_formats" v-if="input.type == 'datetimePicker'">Format: <span class="date_formats_required">YYYY-MM-DD hh:mm AM/PM</span></span>
                               <label v-if="(input.type == 'textarea' || input.type == 'text') && parseInt(charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))) > 0">
                                  {{charactersRemaining(values[input.control_id], getAttribute('maxlength', question.inputs[c_key]))}} characters left
                               </label>
                               <span v-for="(contact, contact_key) in contacts" :key="contact_key">
                                 <span id="contact_span" v-if="input.contact == true && contact != '' && question.long_name != contact && values[contact_fields[contact_key]] && !sameAsSelected(input.control_id, contact_fields[contact_key]) && !sameAsSelected(contact_fields[contact_key])">
-                                  <b-form-checkbox 
+                                  <b-form-checkbox
                                     class="eui-checkbox"
                                     v-if="input.contact == true"
                                     v-model="values[getSameAsId(input.control_id, contact_fields[contact_key])]"
@@ -114,32 +114,32 @@
                                     aria-label="Set Contact"
                                     @keyup.space.native="setContact(input.control_id, contact_fields[contact_key], contact_key)">
                                   </b-form-checkbox>
-                                  <label 
+                                  <label
                                     :id="`same_as_${input.control_id}_${contact_key}_label`"
-                                    :for="`same_as_${input.control_id}_${contact_key}`" 
-                                    v-if="input.contact == true" 
+                                    :for="`same_as_${input.control_id}_${contact_key}`"
+                                    v-if="input.contact == true"
                                     @click="setContact(input.control_id, contact_fields[contact_key], contact_key)"
-                                    class="eui-label"> 
-                                    Same as {{contact}} 
+                                    class="eui-label">
+                                    Same as {{contact}}
                                   </label>
                                 </span>
                               </span>
                               <!-- Text Type of Input -->
-                              <b-form-input 
+                              <b-form-input
                                   :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
-                                  v-if="input.type == 'text' || 
-                                  input.type == 'password' || 
-                                  input.type == 'number' || 
-                                  input.type == 'url' || 
-                                  input.type == 'email' || 
+                                  size="lg"
+                                  v-if="input.type == 'text' ||
+                                  input.type == 'password' ||
+                                  input.type == 'number' ||
+                                  input.type == 'url' ||
+                                  input.type == 'email' ||
                                   input.type == 'search' ||
                                   input.type == 'range' ||
-                                  input.type == 'tel' || 
+                                  input.type == 'tel' ||
                                   input.type == 'time'"
                                   :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key])) || anySameAsSelected(input.control_id)"
@@ -153,58 +153,31 @@
                                   >
                               </b-form-input>
                               <!-- Date Type of Input -->
-                              <b-input-group>
-                                <b-form-input
-                                  :class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                              <!-- eslint-disable -->
+                                <date-picker
+                                  v-if="input.type == 'datetimePicker'"
+                                  :type="input.type"
+                                  :input-class="{ 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'form-control form-control-lg extra_space': 'true' }"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
-                                  v-if="input.type == 'date'"
-                                  @blur="fixDate"
-                                  :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                  :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                  :max="getAttribute('max', question.inputs[c_key])"
-                                  :min="getAttribute('min', question.inputs[c_key])"
-                                  :placeholder="input.required || checkRequiredIf(input) ? 'required' : ''"
-                                  type="text"
-                                  autocomplete="off"
-                                  :aria-label="input.control_id"
-                                ></b-form-input>
-                                <b-input-group-append>
-                                  <b-form-datepicker 
-                                    :id="`${input.control_id}_button`"
-                                    :name="`${input.control_id}_button`"
-                                    :aria-controls="`date button`"
-                                    :aria-labelledby="`${input.control_id}_button`"
-                                    :aria-describedby="`${input.control_id}_button`"
-                                    :aria-label="`${input.control_id}_button`"
-                                    :label-nav="`Date Picker`"
-                                    :label-calendar="`Date Picker`"
-                                    v-model="values[input.control_id]"
-                                    size="lg" 
-                                    v-if="input.type == 'date'"
-                                    :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
-                                    :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
-                                    :max="getAttribute('max', question.inputs[c_key])"
-                                    :min="getAttribute('min', question.inputs[c_key])"
-                                    button-only
-                                    dropleft
+                                  format="YYYY-MM-DD hh:mm A"
+                                  type="datetime"
+                                  valueType="format"
+                                  placeholder="required"
                                   >
-                                  </b-form-datepicker>
-                                </b-input-group-append>
-                              </b-input-group>
+                                </date-picker>
                               <!-- End of Text Type of Input -->
                               <!-- BBOX Type of Input -->
                               <div v-if="input.type == 'bbox'" class="w-100">
                                 <template v-for="(direction, d_key) in ['north', 'east', 'south', 'west']">
                                   <span :key="`${b_key}_${d_key}`">
                                     <label :for="`${input.control_id}_${direction}`" class="eui-label-nopointer">{{direction.substring(0, 1).toUpperCase()}}:</label>
-                                    <b-form-input 
+                                    <b-form-input
                                         :class="{ 'bbox': true, 'form-input-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[`${input.control_id}_${direction}`] || {}).$error }"
-                                        type="text" 
-                                        :id="`${input.control_id}_${direction}`" 
-                                        :name="`${input.control_id}_${direction}`" 
+                                        type="text"
+                                        :id="`${input.control_id}_${direction}`"
+                                        :name="`${input.control_id}_${direction}`"
                                         v-model="values[`${input.control_id}_${direction}`]"
                                         size="lg"
                                         :aria-label="`${input.control_id}_${direction}`"
@@ -220,41 +193,41 @@
                               <div v-if="input.type == 'table'" class="table-div w-100">
                                 <template>
                                   <span class='table_required' v-if='input.required || checkRequiredIf(input)'>required</span>
-                                  <b-editable-table 
+                                  <b-editable-table
                                     :class="{ 'editable-table': true, 'single-column':(question.inputs[c_key]['enums'].length === 1), 'form-table-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                    bordered 
+                                    bordered
                                     fixed
-                                    responsive 
-                                    sticky-header 
+                                    responsive
+                                    sticky-header
                                     show-empty
                                     :id="input.control_id"
                                     :value="values[input.control_id]"
                                     :items="values[input.control_id]"
                                     :fields="question.inputs[c_key]['enums'].concat([{key:'X'}])">
                                     <template #head(X)="data">
-                                      <b-button 
-                                        class="" 
-                                        type="add_row" 
-                                        id="add_row_button" 
-                                        aria-label="add row button" 
+                                      <b-button
+                                        class=""
+                                        type="add_row"
+                                        id="add_row_button"
+                                        aria-label="add row button"
                                         style="margin: 0px;"
                                         @click="addRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="plus"/>
                                       </b-button>
                                     </template>
                                     <template #cell(X)="data">
-                                      <b-button 
-                                        class="button" 
-                                        aria-label="remove row button" 
+                                      <b-button
+                                        class="button"
+                                        aria-label="remove row button"
                                         style="margin:0px"
                                         @click="removeRow(input.control_id, data.item)">
                                         <font-awesome-icon icon="trash-alt"/>
                                       </b-button>
                                       <template v-if="moveUpDown(input.control_id, data.item, 'up', true)">
                                         &nbsp;
-                                        <b-button 
-                                          class="button" 
-                                          aria-label="move up button" 
+                                        <b-button
+                                          class="button"
+                                          aria-label="move up button"
                                           style="margin:0px"
                                           @click="moveUpDown(input.control_id, data.item, 'up')">
                                           <font-awesome-icon icon="arrow-up"/>
@@ -262,9 +235,9 @@
                                       </template>
                                       <template v-if="moveUpDown(input.control_id, data.item, 'down', true)">
                                         &nbsp;
-                                        <b-button 
-                                          class="button" 
-                                          aria-label="move down button" 
+                                        <b-button
+                                          class="button"
+                                          aria-label="move down button"
                                           style="margin:0px"
                                           @click="moveUpDown(input.control_id, data.item, 'down')">
                                           <font-awesome-icon icon="arrow-down"/>
@@ -276,13 +249,13 @@
                               </div>
                               <!-- end of table type of Input -->
                               <!-- Textarea Type of Input -->
-                              <b-form-textarea 
+                              <b-form-textarea
                                   :class="{ 'form-textarea-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error, 'extra_space': !input.label }"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
+                                  size="lg"
                                   :aria-label="input.control_id"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
                                   :readonly="readonly || Boolean(getAttribute('readonly', question.inputs[c_key]))"
@@ -300,14 +273,14 @@
                               <b-form-radio-group
                                   :class="{ 'form-radio-group-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
                                   class="w-100"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
+                                  size="lg"
                                   value="true"
                                   unchecked-value="false"
-                                  v-if="input.type == 'radio'" 
+                                  v-if="input.type == 'radio'"
                                   :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))">
@@ -317,12 +290,12 @@
                               <!-- Select Type of Input -->
                               <b-form-select
                                   :class="{ 'form-select-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
-                                  :name="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
+                                  :name="input.control_id"
                                   v-model="values[input.control_id]"
-                                  size="lg" 
-                                  v-if="input.type == 'select'" 
+                                  size="lg"
+                                  v-if="input.type == 'select'"
                                   :aria-label="input.control_id"
                                   :options="input.options"
                                   :disabled="disabled || Boolean(getAttribute('disabled', question.inputs[c_key]))"
@@ -338,13 +311,13 @@
                               <!-- File Type of Input -->
                               <b-form-file
                                   :class="{ 'form-file-error': !($v.values[`section_${a_key}`] || {}).$error && !($v.values[`question_${a_key}_${b_key}`] || {}).$error && ($v.values[input.control_id] || {}).$error }"
-                                  :type="input.type" 
-                                  :id="input.control_id" 
+                                  :type="input.type"
+                                  :id="input.control_id"
                                   :scope="Boolean(values[input.control_id])"
                                   :name="input.control_id"
                                   :ref=input.control_id
-                                  v-model="uploadFile" 
-                                  size="lg" 
+                                  v-model="uploadFile"
+                                  size="lg"
                                   browse-text="Upload"
                                   v-if="input.type == 'file'"
                                   :no-drop="Boolean(true)"
@@ -359,10 +332,10 @@
                                 <br/>
                                 <template>
                                   <p>Files Previously Uploaded</p>
-                                  <b-table 
-                                    bordered 
-                                    responsive 
-                                    sticky-header 
+                                  <b-table
+                                    bordered
+                                    responsive
+                                    sticky-header
                                     show-empty
                                     :items="uploadedFiles"
                                     :fields="uploadFields"
@@ -387,7 +360,7 @@
                                           <template v-else>is required</template>
                                         </span>
                                       </template>
-                                    </template> 
+                                    </template>
                                     <span v-else-if="input.validation_error_msg !== undefined" v-html="input.validation_error_msg"></span>
                                     <template v-else-if="$v.values[`${input.control_id}_${direction}`].required !== undefined && !$v.values[`${input.control_id}_${direction}`].required">is required</template>
                                     <template v-else>{{  getBboxError(input, direction) }}</template>
@@ -410,8 +383,8 @@
                                     {{ heading.heading }} - {{ question.long_name }} {{ typeof input.label !== 'undefined' && input.label !=='' && input.label !== 'undefined' ? ` - ${input.label}` : ''}}
                                     <template v-if="$v.values[input.control_id].required !== undefined && !$v.values[input.control_id].required">is required</template>
                                     <template v-else-if="input.type == 'number'"> - Numbers must be positive digits.</template>
-                                    <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
-                                    <template v-else-if="input.type == 'date' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id]"> Date must be less than or equal to End date</template>
+                                    <template v-else-if="input.type == 'datetimePicker' && !isDateValid(input.control_id, 'validity') && $v.values[input.control_id]"> Date must be in one of the following formats: YYYY-MM-DD, MM/DD/YYYY, M-D-YYYY, MM/D/YYYY, Mon D YYYY, DD Month YYYY, Month D, YYYY</template>
+                                    <template v-else-if="input.type == 'datetimePicker' && !isDateValid(input.control_id, 'greater') && $v.values[input.control_id]"> Date must be less than or equal to End date</template>
                                     <template v-else-if="$v.values[input.control_id].patternMatch !== undefined && !$v.values[input.control_id].patternMatch">does not match pattern {{ input.attributes.pattern }}</template>
                                     <template v-else-if="$v.values[input.control_id].minLength !== undefined && !$v.values[input.control_id].minLength">requires a minimum length of {{ input.attributes.minlength }}</template>
                                     <template v-else-if="$v.values[input.control_id].maxLength !== undefined && !$v.values[input.control_id].maxLength">is over the maximum length of {{ input.attributes.maxlength }}</template>
