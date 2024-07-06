@@ -1085,7 +1085,7 @@ export default {
       .then(r => r.json())
       .then(( { token, user }) => {
         localStorage.setItem('auth-token', token);
-        localStorage.setItem('auth-user', {...user, ...{authenticated: true}})
+        localStorage.setItem('auth-user', JSON.stringify({...user, ...{authenticated: true}}))
         this.$store.commit("setToken", token);
       });
     },
