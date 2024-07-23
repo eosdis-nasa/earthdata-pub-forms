@@ -8,7 +8,7 @@ import {
 import FixedHeader from "vue-fixed-header";
 import BEditableTable from 'bootstrap-vue-editable-table';
 import mixin from "@/mixins/mixin.js";
-import localUpload from 'edpub-data-upload-utility';
+import localUpload from '@edpub/upload-utility';
 
 // This FormsQuestions component gets the questions data for the selected daac and
 // sets the template properties, methods, and custom validation used.
