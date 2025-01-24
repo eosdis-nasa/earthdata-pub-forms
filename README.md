@@ -1,13 +1,13 @@
-⛔️ DEPRECATED - This repository has been integrated directly to the Earthdata Pub Dashboard
+:no-entry: [DEPRECATED] - This repository has been integrated directly to the Earthdata Pub Dashboard
 rather than remaining a standalone module: https://github.com/eosdis-nasa/earthdata-pub-dashboard/pull/77
 
-# DEPRECATED  - Earthdata Pub Forms
+# [DEPRECATED]  - Earthdata Pub Forms
 
 This is the Forms code repository for Earthdata Pub (EDPub).
 
 ## Table of Contents
 
-- [DEPRECATED  - Earthdata Pub Forms](#deprecated----earthdata-pub-forms)
+- [\[DEPRECATED\]  - Earthdata Pub Forms](#deprecated----earthdata-pub-forms)
   - [Table of Contents](#table-of-contents)
   - [Contributing](#contributing)
   - [Installing](#installing)
