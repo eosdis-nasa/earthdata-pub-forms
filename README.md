@@ -1,4 +1,4 @@
-:no-entry: [DEPRECATED] - This repository has been integrated directly to the Earthdata Pub Dashboard
+:no_entry: [DEPRECATED] - This repository has been integrated directly to the Earthdata Pub Dashboard
 rather than remaining a standalone module: https://github.com/eosdis-nasa/earthdata-pub-dashboard/pull/77
 
 # [DEPRECATED]  - Earthdata Pub Forms
